@@ -3,11 +3,11 @@ from ROOT import *
 # Need to be in cmsenv to use these 
 # It seems these may be necessary for veiwing jet info in SIM objects 
 
-gROOT.ProcessLine( 'gSystem->Load( "libFWCoreFWLite.so" );' )
-#gROOT.ProcessLine( 'FWLiteEnabler::enable();' )
-gROOT.ProcessLine( 'AutoLibraryLoader::enable();' )
-gROOT.ProcessLine( 'gSystem->Load( "libDataFormatsFWLite.so" );' )
-gROOT.ProcessLine( 'gSystem->Load( "libDataFormatsPatCandidates.so" );' )
+# gROOT.ProcessLine( 'gSystem->Load( "libFWCoreFWLite.so" );' )
+# #gROOT.ProcessLine( 'FWLiteEnabler::enable();' )
+# gROOT.ProcessLine( 'AutoLibraryLoader::enable();' )
+# gROOT.ProcessLine( 'gSystem->Load( "libDataFormatsFWLite.so" );' )
+# gROOT.ProcessLine( 'gSystem->Load( "libDataFormatsPatCandidates.so" );' )
 
 ## Cuts to selection
 Cut = ''
@@ -18,11 +18,11 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 #[ name of tree branch, name of pdf file, name of variable, number of bins, min bin, max bin]
 #Vars = []
 Vars = []
-#Vars.append(['patPhotons_slimmedPhotons__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Photon_pT', 'patPhotons p_{t}',100,0,100])
-#Vars.append(['patJets_slimmedJets__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Jet_pT', 'patJet p_{t}',100,0,100])
+Vars.append(['patPhotons_slimmedPhotons__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Photon_pT', 'patPhotons p_{t}',100,0,100])
+Vars.append(['patJets_slimmedJets__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Jet_pT', 'patJet p_{t}',100,0,100])
 #Vars.append(['@recoGenJets_kt4GenJets__SIM.obj.size()', 'Jet_pT', 'patJet p_{t}',100,0,100])
 #Vars.append(['recoGenJets_ak4GenJets__SIM.obj.pt', 'Jet_pT', 'patJet p_{t}',100,0,100])
-Vars.append(['recoGenMETs_genMetTrue__SIM.obj.pt_', 'MET_pT', 'MET p_{t}',200,0,700])
+#Vars.append(['recoGenMETs_genMetTrue__SIM.obj.pt_', 'MET_pT', 'MET p_{t}',200,0,700])
 
 
 
@@ -53,5 +53,5 @@ Files = []
 #Files.append(['/afs/cern.ch/work/a/atishelm/private/CMSSW_7_1_25/src/ggF_X1000_WWgg_jjenugg_20events_MiniAOD.root','e#nujjgg',kPink,kMagenta, 0, 1])
 #Files.append(['/afs/cern.ch/work/a/atishelm/private/ggF_X1000_WWgg_enuenugg_woPU_3events_MiniAOD.root','e#nujjgg',kGreen,kGreen-9, 0, 1])
 #Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/WWgg_jjenugg_signal/190115_225031/0000/ggF_X1000_WWgg_jjenugg_20events_9.root','jje#nugg_combined',kBlue,kCyan-9, 0, 1])
-Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root','crab_file',kBlue,kCyan-9, 0, 1])
+Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root','enuenugg_woPU',kBlue,kCyan-9, 0, 1])
 

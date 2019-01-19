@@ -5,22 +5,25 @@
 # 
 # The purpose of this bash script is to create microAOD's from X->HH->WWgg pythia fragments.
 # Steps: LHE,GEN,SIM,DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016,RAW2DIGI,RECO,EI,PAT,flashggmicroAOD
-# Run this from /afs/cern.ch/work/a/atishelm/private
+# Run this from /afs/cern.ch/work/a/atishelm/private/HH_WWgg
 
 # Read user input for pythia fragment name, number of events 
 # To add crab steps, just need to replace cmsRun steps with a crab step. 
 
 # command to run: . Create_WWgg_MicroAOD.sh enuenuggwoPU
 
-source /afs/cern.ch/work/a/atishelm/private/MC_Producer_Setup.sh
-source /afs/cern.ch/work/a/atishelm/private/Gen_Crab_Steps.sh
+source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
+source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
+source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
 
 #LHE,GEN,SIM
 
-if [ $chosen_startingstep == GEN ]
+#if [ $chosen_startingstep == GEN ]
+if [ $chosen_step == GEN ]
 then
 
-    started=true 
+    #started=true 
+    cmssw_v=CMSSW_7_1_25
 
     #!/bin/bash
     source /cvmfs/cms.cern.ch/cmsset_default.sh
@@ -33,21 +36,17 @@ then
     cd CMSSW_7_1_25/src
     eval `scram runtime -sh`
 
+    echo "Looking for pythia fragment at $PythiaFragPath"
+
     scram b
     cd ../../
     seed=$(date +%s)
     cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename $ConfigFileName --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
 
     #cmsRun $ConfigFileName # Replace this with crab command 
-    gen_crab $ConfigFileName $chosen_events $chosen_pileup
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v 
 
-    if [ $chosen_endingstep == GEN ]
-    then
-        echo 'Finished final desired step'
-        echo 'Exiting'
-        cd /afs/cern.ch/work/a/atishelm/private
-        return
-    fi
+    end_script 
 
 fi 
 
@@ -55,10 +54,12 @@ fi
 
 #---With CMSSW_8_0_21
 
-if [ $chosen_startingstep == DR ] || [ "$started" = true ]
+#if [ $chosen_startingstep == DR ] || [ "$started" = true ]
+if [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
 then
 
-    started=true
+    #started=true
+    cmssw_v=CMSSW_8_0_21
 
     #!/bin/bash
     source /cvmfs/cms.cern.ch/cmsset_default.sh
@@ -74,62 +75,122 @@ then
     scram b
     cd ../../
 
-    DR1Output=${GenSimOutput%?????}
-    DR1Config=$DR1Output
-    DR2Config=$DR1Output
-    DR2Output=$DR1Output
+    crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    echo "Crab Input = $crab_input"
 
-    DR1Output+=_DRstep1.root
-    DR2Output+=_DRstep2.root
-    DR1Config+=_DRstep1.py
-    DR2Config+=_DRstep2.py
+    PathNoRoot=${GenSimOutput%?????} # remove .root
+    EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
 
-    voms-proxy-init -voms cms -rfc
+    DR1Output=$EndofPath 
+    DR1Config=$EndofPath 
+    DR2Config=$EndofPath 
+    DR2Output=$EndofPath 
+
+    DR1Output+=_DR1.root 
+    DR2Output+=_DR2.root
+    DR1Config+=_DR1.py
+    DR2Config+=_DR2.py
+
+    #voms-proxy-init -voms cms -rfc
 
     # With Pileup
 
     if [ $chosen_pileup == wPU ]
     then
-        echo 'Performing DR with Pileup'
-        cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-        cmsRun $DR1Config
+        if [ $chosen_step == DR1 ]
+        then 
 
-        # From MCM
-        cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            echo 'Performing DR1 with Pileup'
 
-        cmsRun $DR2Config 
-    fi
+            # Make sure proxy available for pileup files 
+            check_proxy
 
-    if [ $chosen_pileup == woPU ]
+            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            #cmsRun $DR1Config
+
+            submit_crab_postGEN $DR1Config $cmssw_v $crab_input
+
+            end_script 
+ 
+
+        elif [ $chosen_step == DR2 ]
+        then 
+            echo 'Performing DR2 with Pileup'
+            # From MCM
+            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            #cmsRun $DR2Config 
+
+            submit_crab_postGEN $DR2Config $cmssw_v $crab_input
+
+            end_script 
+
+        fi # if wPU and (if DR1 elif DR2) 
+
+    elif [ $chosen_pileup == woPU ]
     then
-        echo 'Performing DR without Pileup'
+        
         # Without Pileup (need to test)
 
-        cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGI,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+        if [ $chosen_step == DR1 ]
+        then
+            echo 'Performing DR1 without Pileup'
 
-        cmsRun $DR1Config
+            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGI,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-        cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,L1Reco,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            #cmsRun $DR1Config
 
-        cmsRun $DR2Config 
+            submit_crab_postGEN $DR1Config $cmssw_v $crab_input
 
-    fi
+            end_script 
 
-    if [ $chosen_endingstep == DR ]
-    then
-        echo 'Finished final desired step. Exiting.'
-        return
-    fi
+        elif [ $chosen_step == DR2 ]
+        then
+            echo 'Performing DR2 without Pileup'
 
-fi
+            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,L1Reco,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            #cmsRun $DR2Config 
+
+            submit_crab_postGEN $DR2Config $cmssw_v $crab_input
+
+            end_script 
+        
+        fi # if woPU and (if DR1 elif DR2) 
+
+    fi # if wPU elif woPU 
+
+fi # if DR1 or DR2 
 
 # MiniAOD
 
-if [ $chosen_startingstep == MINIAOD ] || [ "$started" = true ]
+if [ $chosen_step == MINIAOD ]
 then
 
-    started=true
+    crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    echo "Crab Input = $crab_input"
+
+    PathNoRoot=${GenSimOutput%?????} # remove .root
+    EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
+
+    MINIAODInput=$GenSimOutput
+
+    MINIAODOutput=$EndofPath 
+    MINIAODOutput+=_MINIAOD.root
+
+    MINIAODConfig=$EndofPath
+    MINIAODConfig+=_MINIAOD.py
+
+    DR1Config=$EndofPath 
+    DR2Config=$EndofPath 
+
+    #started=true
+    cmssw_v=CMSSW_8_0_21
+
     #!/bin/bash
     source /cvmfs/cms.cern.ch/cmsset_default.sh
     export SCRAM_ARCH=slc6_amd64_gcc530
@@ -141,30 +202,27 @@ then
     cd CMSSW_8_0_21/src
     eval `scram runtime -sh`
 
-    AODOutput=${GenSimOutput%?????}
-    AODConfig=$AODOutput
-    AODOutput+=_MiniAOD.root
-    AODConfig+=_MiniAOD.py
-
-    #test=
+    # AODOutput=${GenSimOutput%?????}
+    # AODConfig=$AODOutput
+    # AODOutput+=_MiniAOD.root
+    # AODConfig+=_MiniAOD.py
 
     scram b
     cd ../../
-    cmsDriver.py step1 --filein file:$DR2Output --fileout file:$AODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --nThreads 4 --era Run2_2016 --python_filename $AODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    cmsDriver.py step1 --filein file:$MINIAODInput --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --nThreads 4 --era Run2_2016 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-    cmsRun $AODConfig
+    #cmsRun $AODConfig
 
-    if [ $chosen_endingstep == MINIAOD ]
-    then
-        echo 'Finished final desired step. Exiting.'
-        return
-    fi
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $crab_input
+
+    end_script 
 
 fi 
 
 # # MicroAOD
 
 # if [ $chosen_startingstep == MicroAOD ] || [ "$started" = true ]
+# if [ $chosen_startingstep == MicroAOD ] 
 # then
 
 #     cd CMSSW_8_0_26_patch1/src/flashgg/
