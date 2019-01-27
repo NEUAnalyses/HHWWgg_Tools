@@ -11,7 +11,9 @@ jjenu_wPU_DR1 enuenu_woPU_DR1 enuenu_wPU_DR1
 enuenu_wPU_DR2 enuenu_woPU_DR2 
 enuenu_woPU_MINIAOD jjenu_noPU_DR1 jjenu_ePU_DR2 jjenu_wPU_MINIAOD 
 jjenu_wPU_DR2 jjenu_woPU_DR2
-jjenu_woPU_MINIAOD enuenu_woPU_MICROAOD jjenu_woPU_MICROAOD enuenu_wPU_MINIAOD)
+jjenu_woPU_MINIAOD enuenu_woPU_MICROAOD jjenu_woPU_MICROAOD enuenu_wPU_MINIAOD
+munumunu 
+jjenu_allj )
 
 for config in "${configs[@]}"
 do
@@ -24,11 +26,14 @@ done
 
 # Currently using this group space for crab outputs:
 # /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/
+# /eos/cms/store/user/atishelm/
 
 # Gen configs 
 # Need to include pythia fragment
 enuenuwPU=( ["filename"]=ggF_X1000_WWgg_enuenugg ["step"]=GEN ["events"]=1000)
 jjenu=( ["filename"]=ggF_X1000_WWgg_jjenugg ["step"]=GEN ["events"]=1000)
+munumunu=( ["filename"]=ggF_X1000_WWgg_munumunugg ["step"]=GEN ["events"]=1000)
+jjenu_allj=( ["filename"]=ggF_X1000_WWgg_jjenugg_allj ["step"]=GEN ["events"]=1000)
 
 # DR1 config
 # Need to include location of Gen output file 
@@ -82,7 +87,7 @@ then
     echo '  enuenunopuMINIAOD'
     echo 
     echo 'Exiting'
-    return
+    exit 1;
 fi
 
 chosen_config=$1
@@ -158,20 +163,21 @@ then
 
 
 else 
+    # GEN 
     # Params: filename, pileup, step, events 
 
     chosen_filename_=${chosen_config}[filename]
-    chosen_pileup_=${chosen_config}[pileup]
+    #chosen_pileup_=${chosen_config}[pileup]
     chosen_events_=${chosen_config}[events]
 
     chosen_filename=${!chosen_filename_}
-    chosen_pileup=${!chosen_pileup_}
+    #chosen_pileup=${!chosen_pileup_}
     chosen_events=${!chosen_events_}
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
     echo "  filename: $chosen_filename"
-    echo "  pileup: $chosen_pileup"
+    #echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
 
     #started=false
@@ -183,22 +189,22 @@ else
 
     # Define output file name 
     GenSimOutput=$chosen_filename
-    GenSimOutput+='_'
+    #GenSimOutput+='_'
 
     # Add PU info to file name 
-    if [ $chosen_pileup == wPU ]
-        then
-        GenSimOutput+="wPU"
+    # if [ $chosen_pileup == wPU ]
+    #     then
+    #     GenSimOutput+="wPU"
 
-    fi 
+    # fi 
 
-    if [ $chosen_pileup == woPU ]
-        then
-        GenSimOutput+="woPU"
+    # if [ $chosen_pileup == woPU ]
+    #     then
+    #     GenSimOutput+="woPU"
 
-    fi 
+    # fi 
 
-    GenSimOutput+='_'
+    #GenSimOutput+='_'
 
     GenSimOutput+=$chosen_events
     GenSimOutput+=events
@@ -241,5 +247,5 @@ end_script(){
     echo "Finished desired step: $chosen_step "
     echo "Exiting"
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg
-    return
+    exit 1;
 }

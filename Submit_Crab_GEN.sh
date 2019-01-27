@@ -48,14 +48,14 @@ submit_crab_GEN(){
     echo " " >> TmpCrabConfig.py
 
     echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py
-    echo "config.General.workArea = 'crab_projects_2'" >> TmpCrabConfig.py # Give this a unique name? 
+    echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py # Give this a unique name?  
     echo "config.General.transferOutputs = True" >> TmpCrabConfig.py
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
     echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
     echo " " >> TmpCrabConfig.py
-    echo "config.Data.outputPrimaryDataset = 'MinBias'" >> TmpCrabConfig.py
+    echo "config.Data.outputPrimaryDataset = 'GEN_Outputs'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'EventBased'" >> TmpCrabConfig.py
     echo "config.Data.unitsPerJob = $((EvtsPerJob))" >> TmpCrabConfig.py # number of events per job for MC 
     #echo "NJOBS = 10  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py

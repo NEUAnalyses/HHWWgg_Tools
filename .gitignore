@@ -1,3 +1,4 @@
 misc/*
 *.pyc
 CMSSW*
+testing_bash.sh
