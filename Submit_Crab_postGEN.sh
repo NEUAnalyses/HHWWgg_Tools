@@ -15,6 +15,8 @@
 
 submit_crab_postGEN(){
 
+    #!/bin/bash
+
     cmssw_v=$2
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$2/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     cmsenv
@@ -27,6 +29,9 @@ submit_crab_postGEN(){
 
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
+    IDName=${IDName#"cmssw_configs/"} # Remove cmssw folder part from eventual crab config path
+    echo "IDName = $IDName"
+    
     IDName=${IDName%???} # Remove .py 
 
     ccname=$IDName
@@ -43,15 +48,16 @@ submit_crab_postGEN(){
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
-    echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created 
+    echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
     echo "config.JobType.numCores = 4" >> TmpCrabConfig.py # Assuming 4 threads 
     echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.Data.outputPrimaryDataset = 'MinBias'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'FileBased'" >> TmpCrabConfig.py
     echo "config.Data.unitsPerJob = 1" >> TmpCrabConfig.py # Number of output files    
-    echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
-    echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
+    #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
+    #echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
+    echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py
@@ -59,10 +65,13 @@ submit_crab_postGEN(){
     echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py  
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
+    # Should there be a crab_configs and cmssw_configs folder for each CMSSW? 
+    # For now There is a single crab_configs and cmssw_configs folder in HH_WWgg because I'm only using one cmssw version 
     cp TmpCrabConfig.py $ccname
+    mv $ccname ../../crab_configs/$ccname  
     rm TmpCrabConfig.py 
 
-    crab submit -c $ccname 
+    crab submit -c ../../crab_configs/$ccname 
     crab status 
 
     }

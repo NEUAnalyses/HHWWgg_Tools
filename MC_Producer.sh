@@ -7,18 +7,15 @@
 # Steps: LHE,GEN,SIM,DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016,RAW2DIGI,RECO,EI,PAT,flashggmicroAOD
 # Run this from /afs/cern.ch/work/a/atishelm/private/HH_WWgg
 
-# Read user input for pythia fragment name, number of events 
-# To add crab steps, just need to replace cmsRun steps with a crab step. 
-
 # command to run: . Create_WWgg_MicroAOD.sh enuenuggwoPU
 
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
+source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/make_microAOD.sh
 
 #LHE,GEN,SIM
 
-#if [ $chosen_startingstep == GEN ]
 if [ $chosen_step == GEN ]
 then
 
@@ -83,8 +80,11 @@ then
     # Should be ID of specific decay channel/PUconfig/events 
 
     DR1Output=$EndofPath 
-    DR1Config=$EndofPath 
-    DR2Config=$EndofPath 
+
+    DR1Config="cmssw_configs/"
+    DR2Config="cmssw_configs/"
+    DR1Config+=$EndofPath 
+    DR2Config+=$EndofPath 
     DR2Output=$EndofPath 
 
     DR1Output+=_DR1.root 
@@ -221,17 +221,26 @@ fi
 
 # # MicroAOD
 
-# if [ $chosen_startingstep == MicroAOD ] || [ "$started" = true ]
-# if [ $chosen_startingstep == MicroAOD ] 
-# then
+# https://github.com/atishelmanch/H4G/tree/master/Gen/microAOD
+# ^^ Follow this for how to do flashgg crab submissions 
+# For now will just make one file at a time w/o crab 
 
-#     cd CMSSW_8_0_26_patch1/src/flashgg/
+if [ $chosen_step == MICROAOD ]
+then
+
+#     move to flashgg 
+#     cd /afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg
 #     cmsenv
-#     cmsRun MicroAOD/test/microAODstd.py
-#     cmsRun MicroAOD/test/microAODstd.py processType = sig data....=
 
-#     # # # Output file will be MicroAODOutput.root (specified by microAODstd.py. microAODstd.py also needs input file name)
+#     make microAODstd.py file which takes desired MINIAOD as input 
+
+      mini_aod_path=${chosen_miniaodoutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+      make_microAOD $mini_aod_path $chosen_events
+      end_script
 
 #     Then should run tagger step 
     
-# fi 
+
+
+
+fi 
