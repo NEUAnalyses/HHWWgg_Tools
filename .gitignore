@@ -2,3 +2,5 @@ misc/*
 *.pyc
 CMSSW*
 testing_bash.sh
+crab_configs/*
+cmssw_configs/*

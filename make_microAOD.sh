@@ -12,7 +12,7 @@ make_microAOD(){
     echo "Making flashgg microaod from miniaod located at: $miniaod_path"
 
     cd /afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg
-    cmsenv 
+    cmsenv
 
     # Create microAODstd config file with desired input miniaod file 
 

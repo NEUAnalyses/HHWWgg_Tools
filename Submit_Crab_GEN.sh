@@ -17,6 +17,7 @@ submit_crab_GEN(){
 
     cmssw_v=$3
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
+    echo "pwd = $PWD"
     cmsenv
 
     # Check if there is a VOMS proxy for using CRAB 
@@ -27,12 +28,14 @@ submit_crab_GEN(){
 
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
+    IDName=${IDName#"cmssw_configs/"} # Remove cmssw folder part from eventual crab config path
+    echo "IDName = $IDName"
     IDName=${IDName%???} # Remove .py 
 
     ccname=$IDName
     ccname+="_CrabConfig.py" # Crab Configuration file name 
 
-    echo "Total events = $2"
+    #echo "Total events = $2"
     totevts=$2 
     #njobs=10 # Predetermined number of files to spread MC events over 
     njobs=1 # Predetermined number of files to spread MC events over 
@@ -54,6 +57,15 @@ submit_crab_GEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
     echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
+
+    if [ $version == 939 ]
+    then
+        echo "config.JobType.numCores = 8" >> TmpCrabConfig.py # Need 8 threads for 939 config 
+        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py # for 939 
+    else
+        echo 'GEN version is not 939. Not adding cores nor memory lines to crab configuration'
+    fi 
+
     echo " " >> TmpCrabConfig.py
     echo "config.Data.outputPrimaryDataset = 'GEN_Outputs'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'EventBased'" >> TmpCrabConfig.py
@@ -67,13 +79,15 @@ submit_crab_GEN(){
     echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     #echo "config.Data.userInputFiles = ['/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root'] # If DR1 step, this should be GEN file " >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
-    #echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py  
+    echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     cp TmpCrabConfig.py $ccname
+    mv $ccname ../../crab_configs/$ccname  # Will this work? 
     rm TmpCrabConfig.py 
 
-    crab submit -c $ccname 
+    #crab submit -c $ccname 
+    crab submit -c ../../crab_configs/$ccname
     crab status 
 
     }

@@ -7,22 +7,28 @@
 # Steps: LHE,GEN,SIM,DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016,RAW2DIGI,RECO,EI,PAT,flashggmicroAOD
 # Run this from /afs/cern.ch/work/a/atishelm/private/HH_WWgg
 
-# command to run: . Create_WWgg_MicroAOD.sh enuenuggwoPU
+# command to run: sh Create_WWgg_MicroAOD.sh <key>
+# Example: sh Create_WWgg_MicroAOD.sh enuenujj
+
+# This version will include the MCM commands obtained from:
+# https://cms-pdmv.cern.ch/mcm/chained_requests?contains=HIG-RunIISummer15wmLHEGS-00486&page=0&shown=15
 
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/make_microAOD.sh
 
+# CMSSW version of gen step 
+version=7125
+
 #LHE,GEN,SIM
 
 if [ $chosen_step == GEN ]
 then
 
-    #started=true 
+    # MCM Steps 
     cmssw_v=CMSSW_7_1_25
 
-    #!/bin/bash
     source /cvmfs/cms.cern.ch/cmsset_default.sh
     export SCRAM_ARCH=slc6_amd64_gcc481
     if [ -r CMSSW_7_1_25/src ] ; then 
@@ -182,7 +188,8 @@ then
     MINIAODOutput=$EndofPath 
     MINIAODOutput+=_MINIAOD.root
 
-    MINIAODConfig=$EndofPath
+    MINIAODConfig="cmssw_configs/"
+    MINIAODConfig+=$EndofPath
     MINIAODConfig+=_MINIAOD.py
 
     DR1Config=$EndofPath 

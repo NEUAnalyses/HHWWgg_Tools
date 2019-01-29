@@ -49,10 +49,27 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
     echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
-    echo "config.JobType.numCores = 4" >> TmpCrabConfig.py # Assuming 4 threads 
-    echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
+
+
+
+    if [ $version == 939 ]
+    then
+        echo "config.JobType.numCores = 8" >> TmpCrabConfig.py # Need 8 threads for 939 config 
+        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py # does this work? 
+
+    elif [ $version == 7125 ] 
+    then 
+
+        echo "config.JobType.numCores = 4" >> TmpCrabConfig.py # Assuming 4 threads 
+        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
+
+    else
+        echo 'GEN version is neither 939 nor 7125. Not adding cores nor memory lines to crab configuration'
+    fi 
+
+
     echo " " >> TmpCrabConfig.py
-    echo "config.Data.outputPrimaryDataset = 'MinBias'" >> TmpCrabConfig.py
+    echo "config.Data.outputPrimaryDataset = 'postGEN_Outputs'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'FileBased'" >> TmpCrabConfig.py
     echo "config.Data.unitsPerJob = 1" >> TmpCrabConfig.py # Number of output files    
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
@@ -60,7 +77,7 @@ submit_crab_postGEN(){
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
-    echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py
+    echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
     echo " " >> TmpCrabConfig.py
     echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py  
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
