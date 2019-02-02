@@ -23,6 +23,8 @@ version=7125
 
 #LHE,GEN,SIM
 
+chosen_threads=noval
+
 if [ $chosen_step == GEN ]
 then
 
@@ -47,7 +49,7 @@ then
     cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM,LHE --customise SLHCUpgradeSimulations/Configuration/postLS1Customs.customisePostLS1,Configuration/DataProcessing/Utils.addMonitoring --datatier GEN-SIM,LHE --conditions MCRUN2_71_V1::All --beamspot Realistic50ns13TeVCollision --step LHE,GEN,SIM --magField 38T_PostLS1 --python_filename $ConfigFileName --no_exec --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
 
     #cmsRun $ConfigFileName # Replace this with crab command 
-    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v 
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads
 
     end_script 
 
@@ -113,11 +115,13 @@ then
             # Make sure proxy available for pileup files 
             check_proxy
 
-            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            chosen_threads=4
+
+            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads $chosen_threads --datamix PreMix --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             #cmsRun $DR1Config
 
-            submit_crab_postGEN $DR1Config $cmssw_v $crab_input
+            submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
  
@@ -126,11 +130,12 @@ then
         then 
             echo 'Performing DR2 with Pileup'
             # From MCM
-            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            chosen_threads=4
+            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads $chosen_threads --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             #cmsRun $DR2Config 
 
-            submit_crab_postGEN $DR2Config $cmssw_v $crab_input
+            submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
 
@@ -145,11 +150,13 @@ then
         then
             echo 'Performing DR1 without Pileup'
 
-            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGI,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            chosen_threads=4
+
+            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step DIGI,L1,DIGI2RAW,HLT:@frozen2016 --nThreads $chosen_threads --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             #cmsRun $DR1Config
 
-            submit_crab_postGEN $DR1Config $cmssw_v $crab_input
+            submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
 
@@ -157,11 +164,13 @@ then
         then
             echo 'Performing DR2 without Pileup'
 
-            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,L1Reco,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            chosen_threads=4
+
+            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,L1Reco,RECO,EI --nThreads $chosen_threads --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             #cmsRun $DR2Config 
 
-            submit_crab_postGEN $DR2Config $cmssw_v $crab_input
+            submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
         
@@ -216,11 +225,12 @@ then
 
     scram b
     cd ../../
-    cmsDriver.py step1 --filein file:$MINIAODInput --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --nThreads 4 --era Run2_2016 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    chosen_threads=4
+    cmsDriver.py step1 --filein file:$MINIAODInput --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step PAT --nThreads $chosen_threads --era Run2_2016 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
     #cmsRun $AODConfig
 
-    submit_crab_postGEN $MINIAODConfig $cmssw_v $crab_input
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $crab_input $chosen_threads
 
     end_script 
 
@@ -247,7 +257,6 @@ then
 
 #     Then should run tagger step 
     
-
 
 
 fi 

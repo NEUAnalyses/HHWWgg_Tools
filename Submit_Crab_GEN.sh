@@ -16,8 +16,10 @@
 submit_crab_GEN(){
 
     cmssw_v=$3
+    chosen_threads=$4 
+    echo "chosen threads: $chosen_threads "
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
-    echo "pwd = $PWD"
+    #echo "pwd = $PWD"
     cmsenv
 
     # Check if there is a VOMS proxy for using CRAB 
@@ -50,20 +52,67 @@ submit_crab_GEN(){
     echo "config = config()" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
 
-    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py
-    echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py # Give this a unique name?  
+    #echo "IDName = $IDName"
+
+    # if crab working area already exists, increment to unique name 
+    working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
+
+    # Do until unused working area name is found 
+    # Make into some unique name function? Don't need to yet I guess 
+    i=$((0))
+    while : ; do
+
+        if [ $i == 0 ]; then
+
+            # If default working area doesn't exist, use this name 
+            if [ ! -d $working_area ]; then 
+
+                echo "Creating crab working area: '$working_area' for this crab request"
+                # No need to increment IDName 
+                break 
+        
+            fi
+
+        else 
+        
+            tmp_IDName=$IDName
+            tmp_IDName+=_$i 
+            working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
+            if [ ! -d $working_area ]; then
+
+                echo "Creating crab working area: '$working_area' for this crab request"
+                IDName=$tmp_IDName 
+                # Use incremented IDName 
+                break 
+
+            fi 
+    
+        fi
+
+    i=$((i+1))
+
+    #echo "i = $i"
+    #if [ $i == 2 ]; then
+    #    break 
+    #fi
+
+    done
+
+    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py # If workArea/requestName exists already, this will not go through 
+    echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py  
     echo "config.General.transferOutputs = True" >> TmpCrabConfig.py
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
     echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
-    if [ $version == 939 ]
+    #if [ $version == 939 ]
+    if [ $chosen_threads != noval ]
     then
-        echo "config.JobType.numCores = 8" >> TmpCrabConfig.py # Need 8 threads for 939 config 
-        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py # for 939 
+        echo "config.JobType.numCores = $chosen_threads" >> TmpCrabConfig.py  
+        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
     else
-        echo 'GEN version is not 939. Not adding cores nor memory lines to crab configuration'
+        echo "no thread customization chosen. Not including numCores or maxMemory options in crab config file."
     fi 
 
     echo " " >> TmpCrabConfig.py
