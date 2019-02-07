@@ -2,6 +2,13 @@ from PlotterTools import *
 from ROOT import *
 gROOT.SetBatch(1) # Don't display canvas when drawing 
 
+# GEN
+
+#ROOT.PyConfig.IgnoreCommandLineOptions = True
+#from DataFormats.FWLite import Handle, Runs, Lumis, Events
+#import sys
+
+
 #gStyle.SetOptStat(1) # Stats Box option  
 
 # For each variable 
