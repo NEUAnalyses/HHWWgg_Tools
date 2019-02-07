@@ -10,7 +10,9 @@ jjenu_woPU_MINIAOD enuenu_woPU_MICROAOD jjenu_woPU_MICROAOD enuenu_wPU_MINIAOD
 munumunu 
 jjenu_allj jjenu_allj_noeq 
 munumunu_DR1 munumunu_DR2 munumunu_MINIAOD munumunu_MICROAOD
-jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU )
+jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU 
+direc_test 
+jjenu_939_MINIAOD_woPU )
 
 for config in "${configs[@]}"
 do
@@ -48,6 +50,7 @@ jjenunoPUDR1=( ["DRInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/Mic
 munumunu_DR1=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1000_WWgg_munumunugg1000events_GEN/190127_224243/0000/ggF_X1000_WWgg_munumunugg1000events_GEN_1.root ["pileup"]=woPU ["step"]=DR1 ["events"]=1000)
 jjenu_939_DR1_woPU=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_GEN_1/190202_165351/0000/ggF_X250_WWgg_jjenugg_1000events_GEN_1.root ["pileup"]=woPU ["step"]=DR1 ["events"]=1000)
 jjenu_939_DR1_wPU=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_GEN/190129_124659/0000/ggF_X250_WWgg_jjenugg_1000events_GEN_1.root ["pileup"]=wPU ["step"]=DR1 ["events"]=1000)
+direc_test=( ["DRInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_10000events_woPU/190116_231820/0000/nonLHE/ ["pileup"]=woPU ["step"]=DR1 ["events"]=1000)
 
 # DR2
 # DRInput is the full path to a DR1 output file produced with a configuration from the step above
@@ -68,6 +71,7 @@ jjenu_939_DR2_woPU=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/gg
 #enuenunopuMINIAOD=( ["MINIAODInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2/190119_123028/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1.root ["pileup"]=woPU ["step"]=MINIAOD ["events"]=1000)
 jjenu_wPU_MINIAOD=( ["MINIAODInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_wPU_1000events_GEN_1_DR1_1_DR2/190121_000523/0000/ggF_X1000_WWgg_jjenugg_wPU_1000events_GEN_1_DR1_1_DR2_1.root ["pileup"]=wPU ["step"]=MINIAOD ["events"]=1000)
 munumunu_MINIAOD=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2/190129_073314/0000/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2_1.root ["pileup"]=woPU ["step"]=MINIAOD ["events"]=1000)
+jjenu_939_MINIAOD_woPU=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_DR2/190202_203200/0000/ggF_X250_WWgg_jjenugg_1000events_DR2_1.root ["pileup"]=woPU ["step"]=MINIAOD ["events"]=1000)
 #jjenu_woPU_MINIAOD=( ["MINIAODInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2/190121_093215/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1.root ["pileup"]=woPU ["step"]=MINIAOD ["events"]=1000)
 #enuenu_wPU_MINIAOD=( ["MINIAODInput"]=/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2/190121_093215/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1.root ["pileup"]=wPU ["step"]=MINIAOD ["events"]=1000)
 

@@ -1,7 +1,7 @@
 from ROOT import *
 
 ## Cuts to selection
-Cut = ''
+gtz_Cut = ' > 0' # greater than zero cut
 ## Plots output location
 outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 
@@ -10,8 +10,8 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 Vars = []
 
 # MINIAOD variables
-Vars.append(['patPhotons_slimmedPhotons__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Photon_pT', 'patPhotons p_{t}',100,0,100,'patphoton_pt'])
-Vars.append(['patJets_slimmedJets__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Jet_pT', 'patJet p_{t}',100,0,100,'patjet_pt'])
+#Vars.append(['patPhotons_slimmedPhotons__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Photon_pT', 'patPhotons p_{t}',100,0,100,'patphoton_pt'])
+#Vars.append(['patJets_slimmedJets__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', 'Jet_pT', 'patJet p_{t}',100,0,100,'patjet_pt'])
 
 # MICROAOD variables 
 # Vars.append(['flashggDiPhotonCandidates_flashggDiPhotons__FLASHggMicroAOD.obj.m_state.p4Polar_.fCoordinates.fM', 'DiPhotonMass', 'DiPhotonMass',50,0,250])     
@@ -29,6 +29,11 @@ Vars.append(['patJets_slimmedJets__PAT.obj.m_state.p4Polar_.fCoordinates.fPt', '
 #flashggDiPhotonCandidates_flashggDiPhotons__FLASHggMicroAOD.obj.m_state.p4Polar_.fCoordinates.fEta
 #flashggDiPhotonCandidates_flashggDiPhotons__FLASHggMicroAOD.obj.m_state.p4Polar_.fCoordinates.fPt
 
+# HHWWggCandidateDumper file variables 
+
+Vars.append(['n_ps_dipho','n_ps_dipho','n_ps_dipho',10,0,10,'n_ps_dipho'])
+Vars.append(['ps_dipho_mass','ps_dipho_mass','ps_dipho_mass',50,0,200,'ps_dipho_mass'])
+
 # Maybe add directories here that are searched, where histograms are added together so no need for large hadd 
 
 ##Files to be plotted
@@ -39,7 +44,6 @@ Files = []
 #Files.append(['/afs/cern.ch/work/a/atishelm/private/CMSSW_7_1_25/src/ggF_X1000_WWgg_jjenugg_20events_MiniAOD.root','e#nujjgg',kPink,kMagenta, 0, 1])
 #Files.append(['/afs/cern.ch/work/a/atishelm/private/ggF_X1000_WWgg_enuenugg_woPU_3events_MiniAOD.root','e#nujjgg',kGreen,kGreen-9, 0, 1])
 #Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/WWgg_jjenugg_signal/190115_225031/0000/ggF_X1000_WWgg_jjenugg_20events_9.root','jje#nugg_combined',kBlue,kCyan-9, 0, 1])
-Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root','enuenugg_woPU',kBlue,kCyan-9, 0, 1])
 
 #Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_wPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_082606/0000/ggF_X1000_WWgg_jjenugg_wPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root','jjenugg_wPU',kBlue,kCyan-9, 0, 1])
 
@@ -47,7 +51,13 @@ Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWgg
 
 # MINIAOD Files
 
-Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_101134/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root','csenu_woPU_miniaod',kRed,kRed-10, 0, 1])
+#Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_101134/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root','csenu_woPU_miniaod',kRed,kRed-10, 0, 1])
+#Files.append(['/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_MINIAOD/190202_205801/0000/ggF_X250_WWgg_jjenugg_1000events_MINIAOD_1.root','jjincenugg_woPU_miniaod',kGreen,kGreen-9, 0, 1])
+#Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root','enuenugg_woPU',kBlue,kCyan-9, 0, 1])
+
+Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/Abe.root ','qqenugg_woPU',kBlue,kCyan-9, 0, 1])
+
+#/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/Abe.root 
 
 #Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/myMicroAODoutput_ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root','enuenu_woPU_micro',kBlue,kCyan-9, 0, 1])
 #Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/myMicroAODOutput_ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root','jjenu_woPU_micro',kRed,kRed-9, 0, 1])

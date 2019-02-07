@@ -247,14 +247,14 @@ then
 
     cmssw_v=CMSSW_9_4_7
 
-    crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    crab_input=${PrevStepOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
     echo "Crab Input = $crab_input"
 
-    PathNoRoot=${GenSimOutput%?????} # remove .root
+    PathNoRoot=${PrevStepOutput%?????} # remove .root
     EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
     # Should be ID of specific decay channel/PUconfig/events 
 
-    MINIAODInput=$GenSimOutput
+    MINIAODInput=$PrevStepOutput
 
     # Remove previous step from name 
     MINIAODOutput=$EndofPath 
@@ -281,7 +281,7 @@ then
     cd CMSSW_9_4_7/src
     eval `scram runtime -sh`
 
-    # AODOutput=${GenSimOutput%?????}
+    # AODOutput=${PrevStepOutput%?????}
     # AODConfig=$AODOutput
     # AODOutput+=_MiniAOD.root
     # AODConfig+=_MiniAOD.py

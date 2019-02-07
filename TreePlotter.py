@@ -19,11 +19,13 @@ for v in Vars:
       #print'file number: ',fi
       #print'file: ',f
       
-      ch = TChain('Events')
+      #ch = TChain('Events')
+      ch = TChain('HHWWggCandidateDumper/trees/_13TeV_All')
       ch.Add(f[0])
       hname1 = v[1]+'_'+f[1]
       h1 = TH1F(hname1, v[2] + '_' + f[1], v[3], v[4], v[5])
-      ch.Draw(v[0]+'>>'+hname1,TCut(Cut))
+      #ch.Draw(v[0]+'>>'+hname1,TCut(Cut))
+      ch.Draw(v[0]+'>>'+hname1,TCut( str(v[0]) + gtz_Cut))
       total1 = h1.Integral()
       h1.SetLineColor(f[2])
       h1.SetFillColor(f[3])

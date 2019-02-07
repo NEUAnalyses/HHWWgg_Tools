@@ -127,6 +127,7 @@ submit_crab_postGEN(){
 
     
 
+    #echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
     echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
     echo " " >> TmpCrabConfig.py
     echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py  
