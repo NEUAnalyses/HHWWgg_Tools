@@ -26,6 +26,11 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 fi = []
 
 fi.append(['enuenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root',kBlue,kCyan])
+fi.append(['csenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_130646/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kRed+4,kRed]) # This only has 999 entries for some reason. This could be important to understand/fix before submitting fragment. 
+
+
+
+
 #fi.append('root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root')
 
 # Let's check out enuenu, munumunu, qqenu, qqmunu files. 
@@ -51,38 +56,74 @@ vs.append(['px',100,-1000,1000])
 vs.append(['py',100,-1000,1000])
 vs.append(['pz',100,-1000,1000])
 vs.append(['pt',100,0,1000])
+#vs.append([])
 
 # Single Particles
 sp = []
 sp.append('H') # order of appended variables here might matter at first 
 sp.append('W')
 
+# number of particles
+nps = len(sp)
+nfi = len(fi)
+
 # Max events 
 me = 1000
 
+print
+print 'Time to plot some fun GEN variables'
+print
+
+# At the end will contain all histos for combining 
+v_histos = [] # [variableindex][particleindex][histogramindex], len(histogramindices) = number of files 
+
 # Plot each variable for each file, then together 
-for v in vs:
-    print 'Plotting variable: ',v[0]
+for iv,v in enumerate(vs):
+    print 'Plotting variable ', iv, ': ',v[0]
+
+    # will contain all file histos for the current variable
+    # for a given unique variable (ex: px, H1) I want them plotted together for comparison 
+    # Maybe not super important since what I want for now is reco level plotted with gen level for same variable 
+    # How can you know at reco level which is which? Can we only compare di-variables? (ex: invariant mass, dphi, deta)
+
+    v_histos.append([]) # for variable iv 
+    for i in range(0,nps): # for each particle
+        #print 'i = ',i
+        v_histos[iv].append([]) 
+
+    #v_histos[0].append([]) # for plots of zeroeth particle 
         
-    for f in fi:
-        print 'Plotting file: ',f[0] 
+    for fn,f in enumerate(fi):
+        print ' Plotting file: ',f[0] 
         events = Events(f[1])
 
-        # Make histograms just before looping file events 
-        # number of histos to declare = One variable * One file * len(single particles) 
+        # Make histograms just before looping file events for given file 
         histos = []
         for spar in sp:
-            # Currently assuming there are two of each single particle (H and W)
+            ## Currently assuming there are two of each single particle (H and W)
+            # I don't think I can make plots of 'H1' and 'H2' variables, since the 'first' and 'second' higgs may change on an event by event basis
+            # In case I eventually realize I can, I'll save the lines here: 
+            # 
+            # <<<
+
             #if spar == 'H':
             #print 'Creating histo for single particle: '
-            ID1 = spar + '1_' + v[0] + '_' + f[0]  
-            s1 = ID1
-            ID2 = spar + '2_' + v[0] + '_' + f[0] 
-            s2 = ID2
-            exec('ID1 = TH1F(s1,s1,v[1],v[2],v[3])')
-            exec('ID2 = TH1F(s2,s2,v[1],v[2],v[3])')
-            histos.append([ID1,s1,spar])
-            histos.append([ID2,s2,spar])
+            #ID1 = spar + '1_' + v[0] + '_' + f[0]  
+            #s1 = ID1
+            #ID2 = spar + '2_' + v[0] + '_' + f[0] 
+            #s2 = ID2
+            #exec('ID1 = TH1F(s1,s1,v[1],v[2],v[3])')
+            #exec('ID2 = TH1F(s2,s2,v[1],v[2],v[3])')
+
+            #histos.append([ID1,s1,spar])
+            #histos.append([ID2,s2,spar])
+
+            #
+            # >>>
+            ID = 'GEN_' + spar + '_' + v[0] + '_' + f[0]
+            h = TH1F(ID,ID,v[1],v[2],v[3])
+            histos.append([h,ID,spar])
+            #histos = [particle1,particle2,...] 
 
         # Loop events 
         # fills histos appropriately each time 
@@ -92,14 +133,16 @@ for v in vs:
             genParticles = genHandle.product()
 
             # Plot for each desired particle 
-            for pa in sp:
+            for pi,pa in enumerate(sp):
+                # H first 
+                # pi == 0
                 if pa == 'H':
 
                     higgs = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in [25]]
                     if len(higgs) == 2:
                         for hi,h in enumerate(higgs):
                             val = eval('h.' + v[0] + '()')
-                            histos[hi][0].Fill(val) 
+                            histos[pi][0].Fill(val) 
                                                 
                     elif len(higgs) != 2:
                         print "Length of higgs vector is not 2. Skipping event"
@@ -107,22 +150,30 @@ for v in vs:
                     else:
                         print "Is it even possible for this condition to occur?"
 
-                if pa == 'W':
+                # pi == 1
+                elif pa == 'W':
 
                     Ws = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in [24]]
                     if len(Ws) == 2:
                         for Wi,W in enumerate(Ws):
                             val = eval('W.' + v[0] + '()')
-                            histos[Wi+2][0].Fill(val) #[histo_index][histo_object]
+                            # Knowing histos[1] is W boson
+                            histos[pi][0].Fill(val) #[histo_index][0=histo_object]
                             
                     elif len(Ws) != 2:
                         print "Length of W vector is not 2. Skipping event"
 
                     else:
                         print "Is it even possible for this condition to occur?"
+                else:
+                    print 'I am not prepared for any of the particles in your desired single particles list'
+                    print 'Please either choose a different desired particle, or write something to deal with your desired particle'
 
-        # Save histos 
-        print 'Saving histos'
+        # Finished going through all events 
+        # Save single file histos 
+        print 'Saving file histos'
+        pn = 0 # particle number 
+        # number of histograms in histos is number of particles 
         for hi,h in enumerate(histos):
             print 'Saving histo ',hi 
             c1 = TCanvas('c1', 'c1', 800, 600)
@@ -131,60 +182,58 @@ for v in vs:
             h[0].Draw()
             #c1.Update()
             c1.SaveAs(outputLoc + h[1] + '.png')
+            #v_histos[iv].append([]) # For each particle
+            v_histos[iv][hi].append(h)
+
+            # total number of histos per file = num_particles = nps
+            #if (hi%(nps/nfi) == 0) and (hi != 0): # on the next particle, increment v_histos to keep particle plots separate 
+            #    v_histos[iv].append([]) 
+            #    pn += 1
+            #    v_histos[iv][pn].append(h)
+            #else:
+            #    v_histos[iv][pn].append(h)
+
+    print 'Plotted variable: ', v[0], 'for all files'
+
+    # For a given variable there are len(single_particles) plots 
+
+    #v_h = TH1F()
 
 
+      
+    # Is it interesting to plot the same variable for different particles? 
+    # Should it be separated by particle? 
+    #for particle in v_histos[iv] 
 
-#---
+    #for part in v_histos[iv]
 
-# # Loop events 
-# for iev, event in enumerate(events):
-#     if iev >= 1000: break #only look at 1000 events for now 
-#     event.getByLabel('prunedGenParticles', genHandle)
-#     genParticles = genHandle.product()
+    # for each particle 
+    #phists = particle histograms. length = number of files 
+    #for hi,phists in enumerate(v_histos[iv]):
+    for phists in v_histos[iv]:
+        print 'phists = ',phists
+        c0 = TCanvas('c0', 'c0', 800, 600)
+        leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
+        for hi,h in enumerate(phists):
+            # list for each particle [[],[],[],...] # item for each file 
+            #print'v_histos = ',v_histos
+            #print'v_histos[', iv ,  '] = ',v_histos[iv]
+            #print'h = ',h
 
-#     # I want plots for:
-#     # Radion, higgs, W's, (leptons + neutrinos, quarks)
+            leg.AddEntry(h[0],h[1], 'lf') # histo object, legend entry (ID)
+            #leg.SetTextSize(0.02)
+            h[0].SetTitle(v[0] + ' Combined ')
+            h[0].SetFillColor(kWhite)
+            if hi == 0:
+                #hh1[0].SetTitle(v[1] + ' Combined ')
+                #gStyle.SetOptStat(0) # No Stats Box
+                h[0].Draw('h')
+            if hi > 0:
+                #gStyle.SetOptStat(0) # No Stats Box
+                h[0].Draw('h same')
 
-#     #radion = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in [25]] #pdgid? 
+        #gStyle.SetOptStat(0) # No Stats Box
+        leg.Draw('same')
+        c0.SaveAs( outputLoc + 'GEN_' + h[2] + '_' + v[0] + '_combined' + '.png')
 
-#     higgs = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in [25]]
-#     if len(higgs) != 2:
-#         print "No higgs found"
-#         #print "what is happening"
-#     else:
-#         #deltaphi = dphi(higgs[0].p4(), higgs[1].p4())
-#         hXmval = invmass(higgs[0].p4(), higgs[1].p4())
-#         #print 'two higgs found'
-#         hXm.Fill(hXmval)
-
-#     # W+- boson 
-#     W = [p for p in genParticles if p.isHardProcess() and p.pdgId() in [24]] # Adds W plus and minus 
-#     if len(W) != 1:
-#         print "There is not exactly 1 W's in this event. Skipping."
-#     else:
-#         #print 'Found Ws' 
-#         #val1 = invmass(W[0].p4(), W[1].p4())
-
-#         val = W[0].px()
-#         htest.Fill(val)
-
-#         # How do you plot four momentum components? .p4(i)? 
-#         #print W[0].px() 
-#         #for i in W[0]:
-#             #print 'i = ',i
-#         # .px(), .py(), .energy(), 
-#         #for i in W[0].p4():
-#             #print'i ',i
-
-#         #print'val1 = ',val1
-
-#         #hHm.Fill(val1)
-#         #hWphi.Fill(val2)
-
-# htest.Draw("")
-# ROOT.gPad.Print("test.root")
-
-# # hHm.Draw("")
-# # ROOT.gPad.Print("test2.root")
-
-#---
+print 'All variables plotted. My work here is done' 
