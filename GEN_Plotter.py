@@ -25,9 +25,9 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 # Files 
 fi = []
 
-fi.append(['enuenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root',kBlue,kCyan])
-fi.append(['csenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_130646/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kRed+4,kRed]) # This only has 999 entries for some reason. This could be important to understand/fix before submitting fragment. 
-
+fi.append(['munumunugg','root://cmsxrootd.fnal.gov//store/user/atishelm/postGEN_Outputs/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190129_081915/0000/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kViolet,kViolet])
+fi.append(['enuenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root',kCyan,kCyan])
+fi.append(['csenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_130646/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kRed,kRed]) # This only has 999 entries for some reason. This could be important to understand/fix before submitting fragment. 
 
 
 
@@ -52,18 +52,18 @@ fi.append(['csenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant
 # need to be methods of reco::GenParticle 
 # need to do something different if it requires full vectors like angle between or invariant mass 
 vs = []
-vs.append(['px',100,-1000,1000]) 
-vs.append(['py',100,-1000,1000])
-vs.append(['pz',100,-1000,1000])
+#vs.append(['px',100,-1000,1000]) 
+#vs.append(['py',100,-1000,1000])
+#vs.append(['pz',100,-1000,1000])
 vs.append(['pt',100,0,1000])
 #vs.append([])
 
 # Single Particles
 sp = []
 sp.append('H') # order of appended variables here might matter at first 
-sp.append('W')
+#sp.append('W')
 
-# number of particles
+# number of particles, files 
 nps = len(sp)
 nfi = len(fi)
 
@@ -71,7 +71,7 @@ nfi = len(fi)
 me = 1000
 
 print
-print 'Time to plot some fun GEN variables'
+print 'It\'s time to plot some fun GEN variables'
 print
 
 # At the end will contain all histos for combining 
@@ -86,15 +86,15 @@ for iv,v in enumerate(vs):
     # Maybe not super important since what I want for now is reco level plotted with gen level for same variable 
     # How can you know at reco level which is which? Can we only compare di-variables? (ex: invariant mass, dphi, deta)
 
-    v_histos.append([]) # for variable iv 
-    for i in range(0,nps): # for each particle
+    v_histos.append([]) # for all variable iv plots 
+    for i in range(0,nps): # for each particle, needs to be present in each file 
         #print 'i = ',i
-        v_histos[iv].append([]) 
+        v_histos[iv].append([]) # list for all plots for given particle 
 
     #v_histos[0].append([]) # for plots of zeroeth particle 
         
     for fn,f in enumerate(fi):
-        print ' Plotting file: ',f[0] 
+        print '   Filling histos for file: ',f[0] 
         events = Events(f[1])
 
         # Make histograms just before looping file events for given file 
@@ -171,19 +171,28 @@ for iv,v in enumerate(vs):
 
         # Finished going through all events 
         # Save single file histos 
-        print 'Saving file histos'
+        print '     Saving ', f[0], ' histos'
         pn = 0 # particle number 
         # number of histograms in histos is number of particles 
         for hi,h in enumerate(histos):
-            print 'Saving histo ',hi 
+            print '         Saving histo ',hi 
+            print 'h = ',h
             c1 = TCanvas('c1', 'c1', 800, 600)
             h[0].SetLineColor(f[2])
             h[0].SetFillColor(f[3])
             h[0].Draw()
             #c1.Update()
             c1.SaveAs(outputLoc + h[1] + '.png')
+            #h.SaveAs("histopath.root")
             #v_histos[iv].append([]) # For each particle
-            v_histos[iv][hi].append(h)
+            #v_histos[iv][hi].append(h)
+            # Check which particle, add to its list of plots for this variable 
+            if h[2] == 'H': # Currently [iv][0] associated with H, [iv][1] with W. 
+                v_histos[iv][0].append(h)
+            elif h[2] == 'W':
+                v_histos[iv][1].append(h)
+            else:
+                'Can\'t find this plot\'s particle:', h[2] ,' in list of expected particles'
 
             # total number of histos per file = num_particles = nps
             #if (hi%(nps/nfi) == 0) and (hi != 0): # on the next particle, increment v_histos to keep particle plots separate 
@@ -194,13 +203,12 @@ for iv,v in enumerate(vs):
             #    v_histos[iv][pn].append(h)
 
     print 'Plotted variable: ', v[0], 'for all files'
+    print 'Now combining results for each particle'
 
     # For a given variable there are len(single_particles) plots 
 
     #v_h = TH1F()
 
-
-      
     # Is it interesting to plot the same variable for different particles? 
     # Should it be separated by particle? 
     #for particle in v_histos[iv] 
@@ -210,30 +218,75 @@ for iv,v in enumerate(vs):
     # for each particle 
     #phists = particle histograms. length = number of files 
     #for hi,phists in enumerate(v_histos[iv]):
+    #print 'v_histos[iv] = ',v_histos[iv]
+    #print 'v_histos[iv][0] = ',v_histos[iv][0]
+    #print 'v_histos[iv][0][2][0] = ',v_histos[iv][0][2][0]
+    #leg = TLegend(0.6, 0.7, 0.89, 0.89)
     for phists in v_histos[iv]:
         print 'phists = ',phists
+        #leg = TLegend(0.6, 0.7, 0.89, 0.89)
+        these_hists = []
+        these_hists_ = []
+
+        for i in range(0,nfi):
+            print'i = ',i
+            print 'phists[',i,'] = ',phists[i]
+            print 'phists[',i,'][0] = ',phists[i][0]
+            these_hists.append(phists[i])
+            print'these_hists = ',these_hists 
+            these_hists_.append(phists[i][0])
+
+        print'these_hists_ = ',these_hists_
+        #print 'phists[2] = ',phists[2]
+
+        #print 'phists[2][0] = ',phists[2][0]
         c0 = TCanvas('c0', 'c0', 800, 600)
-        leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
-        for hi,h in enumerate(phists):
+        #leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
+        #for hi,h in enumerate(phists):
+        #for hi,hinfo in enumerate(phists):
+        #for hi in range(0,len(phists)):
+
+        # Draw, add to legend 
+        #print'these_hists = ',these_hists 
+
+        # The legend was messing everything up 
+        # This somehow caused the third histogram to be lost from memory 
+
+        print'these_hists_ before loop = ',these_hists_
+        for hi,hinfo in enumerate(these_hists):
+            # if hi == 0:
+            #     leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
+            print'these_hists_ in loop = ',these_hists_
+
+            print 'hinfo = ',hinfo 
+            print'these_hists_[',hi,'] = ',these_hists_[hi]
             # list for each particle [[],[],[],...] # item for each file 
             #print'v_histos = ',v_histos
             #print'v_histos[', iv ,  '] = ',v_histos[iv]
-            #print'h = ',h
+            #print'hi = ',hi
+            #print'hinfo = ',hinfo
+            #print'phists[hi] = ',phists[hi]
+            #hinfo = phists[hi]
+            #print'phists[hi][0] = ',phists[hi][0]
+            #print'hinfo[0] = ',hinfo[0]
 
-            leg.AddEntry(h[0],h[1], 'lf') # histo object, legend entry (ID)
+            #leg.AddEntry(these_hists_[hi],hinfo[1], 'lf') # histo object, legend entry (ID)
             #leg.SetTextSize(0.02)
-            h[0].SetTitle(v[0] + ' Combined ')
-            h[0].SetFillColor(kWhite)
+            these_hists_[hi].SetTitle(v[0] + ' Combined ')
+            these_hists_[hi].SetFillColor(kWhite)
             if hi == 0:
                 #hh1[0].SetTitle(v[1] + ' Combined ')
                 #gStyle.SetOptStat(0) # No Stats Box
-                h[0].Draw('h')
+                these_hists_[hi].SetStats(0)
+                these_hists_[hi].Draw('h')
             if hi > 0:
+                these_hists_[hi].SetStats(0)
                 #gStyle.SetOptStat(0) # No Stats Box
-                h[0].Draw('h same')
+                these_hists_[hi].Draw('h same')
 
         #gStyle.SetOptStat(0) # No Stats Box
-        leg.Draw('same')
-        c0.SaveAs( outputLoc + 'GEN_' + h[2] + '_' + v[0] + '_combined' + '.png')
+        #leg.Draw('same')
+        c0.SaveAs( outputLoc + 'GEN_' + hinfo[2] + '_' + v[0] + '_combined' + '.png')
+        #leg.~TLegend()
 
 print 'All variables plotted. My work here is done' 
