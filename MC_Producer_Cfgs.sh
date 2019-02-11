@@ -12,7 +12,8 @@ jjenu_allj jjenu_allj_noeq
 munumunu_DR1 munumunu_DR2 munumunu_MINIAOD munumunu_MICROAOD
 jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU 
 direc_test 
-jjenu_939_MINIAOD_woPU )
+jjenu_939_MINIAOD_woPU
+qqqqgg_GEN )
 
 for config in "${configs[@]}"
 do
@@ -26,6 +27,8 @@ done
 # Gen configs 
 # filename is pythia fragment in path: 
 #   /afs/cern.ch/work/a/atishelm/private/HH_WWgg/CMSSW_X_X_X/src/Configuration/GenProduction/python/<filename>.py 
+qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000)
+
 enuenuwPU=( ["filename"]=ggF_X1000_WWgg_enuenugg ["step"]=GEN ["events"]=1000)
 jjenu=( ["filename"]=ggF_X1000_WWgg_jjenugg ["step"]=GEN ["events"]=1000)
 munumunu=( ["filename"]=ggF_X1000_WWgg_munumunugg ["step"]=GEN ["events"]=1000)

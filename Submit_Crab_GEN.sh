@@ -20,13 +20,14 @@ submit_crab_GEN(){
     echo "chosen threads: $chosen_threads "
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"
-    cmsenv
+    #cmsenv
 
     # Check if there is a VOMS proxy for using CRAB 
     check_proxy 
 
     # Source CRAB 
     source /cvmfs/cms.cern.ch/crab3/crab.sh
+    cmsenv
 
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
@@ -39,8 +40,8 @@ submit_crab_GEN(){
 
     #echo "Total events = $2"
     totevts=$2 
-    #njobs=10 # Predetermined number of files to spread MC events over 
-    njobs=1 # Predetermined number of files to spread MC events over 
+    njobs=10 # Predetermined number of files to spread MC events over. Allows for parallel jobs. Very powerful..
+    #njobs=1 # Predetermined number of files to spread MC events over 
 
     echo "totevts = $totevts"
     echo "njobs = $njobs"
@@ -119,8 +120,8 @@ submit_crab_GEN(){
     echo "config.Data.outputPrimaryDataset = 'GEN_Outputs'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'EventBased'" >> TmpCrabConfig.py
     echo "config.Data.unitsPerJob = $((EvtsPerJob))" >> TmpCrabConfig.py # number of events per job for MC 
-    #echo "NJOBS = 10  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
-    echo "NJOBS = 1  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
+    echo "NJOBS = $njobs  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
+    #echo "NJOBS = 1  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
     echo "config.Data.totalUnits = config.Data.unitsPerJob * NJOBS" >> TmpCrabConfig.py # Total number of events over all jobs (files) 
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
@@ -128,7 +129,7 @@ submit_crab_GEN(){
     echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     #echo "config.Data.userInputFiles = ['/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root'] # If DR1 step, this should be GEN file " >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
-    echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
+    #echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     cp TmpCrabConfig.py $ccname
