@@ -17,6 +17,7 @@ submit_crab_GEN(){
 
     cmssw_v=$3
     chosen_threads=$4 
+    num_jobs=$5
     echo "chosen threads: $chosen_threads "
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"
@@ -40,7 +41,7 @@ submit_crab_GEN(){
 
     #echo "Total events = $2"
     totevts=$2 
-    njobs=10 # Predetermined number of files to spread MC events over. Allows for parallel jobs. Very powerful..
+    njobs=$num_jobs # Predetermined number of files to spread MC events over. Allows for parallel jobs. Very powerful..
     #njobs=1 # Predetermined number of files to spread MC events over 
 
     echo "totevts = $totevts"

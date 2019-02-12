@@ -13,7 +13,8 @@ munumunu_DR1 munumunu_DR2 munumunu_MINIAOD munumunu_MICROAOD
 jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU 
 direc_test 
 jjenu_939_MINIAOD_woPU
-qqqqgg_GEN )
+qqqqgg_GEN
+qqqqgg_DR1_nopu )
 
 for config in "${configs[@]}"
 do
@@ -22,12 +23,23 @@ do
     declare -A $config 
 done
 
-# Number of events should be a multiple of 10 
+# Number of events should be a multiple of number of jobs 
+
+# Config by fragment:
+# qqqqgg_nopu
+# GEN
+qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
+
+# DR1
+# for now DRInput should be directory path ending in '*'
+qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobs"]=10 )
+
+# ---
 
 # Gen configs 
 # filename is pythia fragment in path: 
 #   /afs/cern.ch/work/a/atishelm/private/HH_WWgg/CMSSW_X_X_X/src/Configuration/GenProduction/python/<filename>.py 
-qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000)
+qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
 
 enuenuwPU=( ["filename"]=ggF_X1000_WWgg_enuenugg ["step"]=GEN ["events"]=1000)
 jjenu=( ["filename"]=ggF_X1000_WWgg_jjenugg ["step"]=GEN ["events"]=1000)

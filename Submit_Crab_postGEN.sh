@@ -17,8 +17,56 @@ submit_crab_postGEN(){
 
     #!/bin/bash
 
+    unset file_paths # Make sure array name is free in memory 
+    declare -a file_paths # unassociative array 
+    
+    echo "0 = $0"
+    echo "1 = $1"
+    echo "2 = $2"
+    echo "3 = $3"
+    echo "4 = $4"
+
     cmssw_v=$2
-    chosen_threads=$4 
+    chosen_threads=$3 
+    chosen_jobs=$4
+    file_paths=("$@") # saves all inputs to array. Could be convinient for cleaning up later.
+
+
+
+    echo "chosen_jobs = $chosen_jobs"
+    # Remove first four arguments 
+
+    file_paths=("${file_paths[@]:4}") 
+
+
+
+    # Create userInputFiles list for crab submission:
+
+    path_list=''
+
+    last_path=${file_paths[${#file_paths[@]}-1]} # file_paths[-1] not working for some reason 
+    echo "last_path = $last_path"
+
+
+    #crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    #echo "Crab Input = $crab_input"
+
+    for path in "${file_paths[@]}"; 
+        do echo "path = $path"
+        path_=$path
+        path=${path#"file:/eos/cms"}; # add prefix 
+        path="${path:0:p}'${path:p}" # add starting quote
+        path+="'" # add end quote
+        path_list+=$path; 
+
+        if [ $path_ != $last_path ] # If not the path of the last element, add a comma
+        then 
+            path_list+=','
+        fi 
+    done
+
+    echo "path list = $path_list"
+
     echo "chosen threads: $chosen_threads "
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     cmsenv
@@ -32,9 +80,11 @@ submit_crab_postGEN(){
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
     #IDName=${IDName#"cmssw_configs/"} # Remove cmssw folder part from eventual crab config path
-    IDName=${IDName#"$cmssw_v/src/cmssw_configs/"} # Remove '/CMSSW_X_X_X/src/cmssw_configs' from ID 
+    IDName=${IDName#"$cmssw_v/src/cmssw_configs/"} # Remove 'CMSSW_X_X_X/src/cmssw_configs' from ID 
     
     IDName=${IDName%???} # Remove .py 
+
+    echo "IDName = $IDName"
 
     ccname=$IDName
     ccname+="_CrabConfig.py" # Crab Configuration file name 
@@ -44,9 +94,6 @@ submit_crab_postGEN(){
     echo "from CRABClient.UserUtilities import config, getUsernameFromSiteDB" >> TmpCrabConfig.py
     echo "config = config()" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
-
-
-
 
     # if crab working area already exists, increment to unique name 
     working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
@@ -92,11 +139,6 @@ submit_crab_postGEN(){
 
     done
 
-
-
-
-
-
     echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py
 
     echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py
@@ -118,7 +160,8 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.Data.outputPrimaryDataset = 'postGEN_Outputs'" >> TmpCrabConfig.py
     echo "config.Data.splitting = 'FileBased'" >> TmpCrabConfig.py
-    echo "config.Data.unitsPerJob = 1" >> TmpCrabConfig.py # Number of output files    
+    #echo "config.Data.unitsPerJob = 1" >> TmpCrabConfig.py # Number of output files   
+    echo "config.Data.unitsPerJob = $chosen_jobs" >> TmpCrabConfig.py # Number of output files (need to verify this for DR1)  
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
@@ -128,9 +171,10 @@ submit_crab_postGEN(){
     
 
     #echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
-    echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
+    #echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
+    echo "config.Data.userInputFiles = [$path_list] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
     echo " " >> TmpCrabConfig.py
-    echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py  
+    #echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # might need this 
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     # Now using multiple cmssw version, so will have a crab_configs and cmssw_configs folder for each CMSSW 

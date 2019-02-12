@@ -21,14 +21,17 @@ then
 
     chosen_filename_=${chosen_config}[filename]
     chosen_events_=${chosen_config}[events]
+    chosen_jobs_=${chosen_config}[jobs]
 
     chosen_filename=${!chosen_filename_}
     chosen_events=${!chosen_events_}
+    chosen_jobs=${!chosen_jobs_}
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
     echo "  filename: $chosen_filename"
     echo "  events: $chosen_events"
+    echo "  jobs: $chosen_jobs"
 
     # Define Pythia fragment path relative to CMSSW release src 
     PythiaFragPath=Configuration/GenProduction/python/
@@ -59,7 +62,40 @@ then
 
     chosen_genoutput_=${chosen_config}[DRInput]
     chosen_genoutput=${!chosen_genoutput_}
-    GenSimOutput=$chosen_genoutput
+    GenSimOutput=$chosen_genoutput # Should be a directory ending in '*'
+    
+    # Turn directory into comma separated files for DR steps
+    # If DR1 step, want to ignore LHE files created by GEN step
+
+    #$GenSimOutput+='*' # to search for all files 
+
+    # Could make a function to do this job. 
+
+    unset f_paths # Make sure array name is free in memory 
+    declare -a f_paths # unassociative array 
+
+    f_paths=() 
+    for path in `grep -L "inLHE" $GenSimOutput`; # ignore files containing 'inLHE'
+        do f_paths+=("file:$path");
+        done  
+
+    # Then want single string whith comma separated names for cmsDriver command 
+
+    SinglePath=${f_paths[0]}
+
+    paths_string=''
+
+    last_path=${f_paths[${#f_paths[@]}-1]} # f_paths[-1] not working for some reason 
+
+    for path in "${f_paths[@]}"; 
+        do paths_string+=$path; 
+        if [ $path != $last_path ] # If not the path of the last element, add a comma
+        then 
+            paths_string+=','
+        fi 
+        done
+
+    #echo "paths_string = $paths_string"
 
     chosen_pileup_=${chosen_config}[pileup]
     chosen_pileup=${!chosen_pileup_}
@@ -67,11 +103,15 @@ then
     chosen_events_=${chosen_config}[events]
     chosen_events=${!chosen_events_}
 
+    chosen_jobs_=${chosen_config}[jobs]
+    chosen_jobs=${!chosen_jobs_}
+
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
-    echo "  input filename: $chosen_genoutput"
+    echo "  input file(s) directory: $chosen_genoutput"
     echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
+    echo "  jobs: $chosen_jobs"
 
 elif [ $chosen_step == MINIAOD ]
 then

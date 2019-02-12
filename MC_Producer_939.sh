@@ -52,8 +52,11 @@ then
     seed=$(date +%s)
     cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN,SIM --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
 
+    # Without LHE. Not sure if this works. I think it fails. 
+    #cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN,SIM --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
+
     #cmsRun $ConfigFileName # Replace this with crab command 
-    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs 
 
     end_script 
 
@@ -87,8 +90,9 @@ then
     scram b
     cd ../../
 
-    crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
-    echo "Crab Input = $crab_input"
+    crab_input=''
+    #crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    #echo "Crab Input = $crab_input"
 
     # If path ends in '.root', it's a single file  
     # If path ends in '/', it's a directory
@@ -97,11 +101,19 @@ then
     EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
     # Should be ID of specific decay channel/PUconfig/events 
 
-    DR1Output=$EndofPath 
+    SinglePathNoRoot=${SinglePath%?????} # remove .root
+    EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
+
+    echo "EndofSinglePath = $EndofSinglePath"
+
+    #DR1Output=$EndofPath 
+    DR1Output=$EndofSinglePath 
 
     DR1Config=$cmssw_v/src/cmssw_configs/
     DR2Config=$cmssw_v/src/cmssw_configs/
-    DR1Config+=$EndofPath 
+    #DR1Config+=$EndofPath 
+    DR1Config+=$EndofSinglePath 
     DR2Config+=$EndofPath 
     DR2Output=$EndofPath 
 
@@ -149,9 +161,13 @@ then
 
             chosen_threads=8
 
-            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            #cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             #cmsRun $DR1Config
+
+            #echo "DR1Config = $DR1Config"
 
             submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
 
@@ -192,7 +208,9 @@ then
 
             chosen_threads=8
 
-            cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            #cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             # The one below worked once for some reason, while I remember the top one failing, even though they look the same 
             #cmsDriver.py step1 --filein file:testoutput.root --fileout file:test_Dr1output.root --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads 8 --era Run2_2017 --python_filename DR1config.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 10
@@ -201,7 +219,10 @@ then
 
             #cmsRun $DR1Config
 
-            submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
+            echo "DR1Config = $DR1Config"
+
+            #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_jobs "${f_paths[@]}"
 
             end_script 
 

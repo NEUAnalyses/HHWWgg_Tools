@@ -26,7 +26,15 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 # Files 
 fi = []
 # [fileID,path,linecolor,fillcolor]
-fi.append(['X250_qqenugg','root://cmsxrootd.fnal.gov//store/user/atishelm/postGEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_MINIAOD/190202_205801/0000/ggF_X250_WWgg_jjenugg_1000events_MINIAOD_1.root',kGreen,kGreen])
+#fi.append(['X250_qqenugg','root://cmsxrootd.fnal.gov//store/user/atishelm/postGEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_MINIAOD/190202_205801/0000/ggF_X250_WWgg_jjenugg_1000events_MINIAOD_1.root',kGreen,kGreen])
+
+fi.append(['X1250_qqqqugg','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_3/190211_144340/0000/ggF_X1250_WWgg_qqqqgg_1000events_GEN_6.root',kGreen,kGreen])
+
+# If a directory is given, combine. 
+
+fi.append(['X1250_qqqqugg','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_3/190211_144340/0000/ggF_X1250_WWgg_qqqqgg_1000events_GEN_6.root',kGreen,kGreen])
+
+
 #fi.append(['X1000_munumunugg','root://cmsxrootd.fnal.gov//store/user/atishelm/postGEN_Outputs/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190129_081915/0000/ggF_X1000_WWgg_munumunugg1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kViolet,kViolet])
 #fi.append(['X1000_enuenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root',kCyan,kCyan])
 #fi.append(['csenugg','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD/190121_130646/0000/ggF_X1000_WWgg_jjenugg_woPU_1000events_GEN_1_DR1_1_DR2_1_MINIAOD_1.root',kRed,kRed]) # This only has 999 entries for some reason. This could be important to understand/fix before submitting fragment. 
@@ -57,7 +65,9 @@ vs = []
 #vs.append(['py',100,-1000,1000])
 #vs.append(['pz',100,-1000,1000])
 #vs.append(['pt',100,0,1000])
-vs.append(['invm',100,0,500])
+vs.append(['invm',100,0,500]) # Invariant mass 
+#vs.append(['Tmass',100,0,500]) # Transverse mass
+
 #vs.append(['eta',50,-5,5])
 #vs.append(['phi',50,-5,5])
 
@@ -73,7 +83,7 @@ sp = []
 #sp.append('W') 
 sp.append('qq') # diquark pair 
 #sp.append('e') # electron(s)
-sp.append('nu') # neutrino(s)
+#sp.append('nu') # neutrino(s)
 
 # number of particles, files 
 nps = len(sp)
@@ -121,7 +131,8 @@ for iv,v in enumerate(vs):
         # fills histos appropriately each time 
         for iev, event in enumerate(events):
             if iev >= me: break # Max events 
-            event.getByLabel('prunedGenParticles', genHandle)
+            #event.getByLabel('prunedGenParticles', genHandle)
+            event.getByLabel('genParticles', genHandle)
             genParticles = genHandle.product()
 
             # Plot for each desired particle 
@@ -178,8 +189,25 @@ for iv,v in enumerate(vs):
                             for hi,q in enumerate(qs):
                                 val = eval('q.' + v[0] + '()')
                                 histos[pi][0].Fill(val) 
+
+                    elif len(qs) == 4:
+                    # get the four quarks 
+                    # order by pT 
+                    # Take invariant mass of 
+
+                        if v[0] == 'invm':
+                            val = ROOT.Math.VectorUtil.InvariantMass(qs[0].p4(),qs[1].p4())
+                            #val = Math.VectorUtil.InvariantMass(qs[0],qs[1])
+                            #val = InvariantMass(qs[0].p4(),qs[1].p4())
+                            #val = invmass(qs[0],qs[1])
+                            histos[pi][0].Fill(val) 
+
+                        else: 
+                            for hi,q in enumerate(qs):
+                                val = eval('q.' + v[0] + '()')
+                                histos[pi][0].Fill(val) 
                     else:
-                        print 'Not exactly 2 quarks in this event'
+                        print 'Not exactly 4 quarks in this event'
 
                 # pi == 3
                 elif pa == 'e':
@@ -220,7 +248,8 @@ for iv,v in enumerate(vs):
         # number of histograms in histos is number of particles 
         for hi,h in enumerate(histos):
             print '      Saving histo ',hi 
-            #print 'h = ',h
+            print 'h = ',h
+            print 'v_histos = ',v_histos
             c1 = TCanvas('c1', 'c1', 800, 600)
             h[0].SetLineColor(f[2])
             h[0].SetFillColor(f[3])
