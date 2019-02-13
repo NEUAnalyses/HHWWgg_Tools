@@ -14,7 +14,12 @@ jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU
 direc_test 
 jjenu_939_MINIAOD_woPU
 qqqqgg_GEN
-qqqqgg_DR1_nopu )
+qqqqgg_DR1_nopu
+qqqqgg_DR2_nopu
+qqenugg_GEN
+qqmunugg_GEN
+enuenugg_GEN
+munumunugg_GEN )
 
 for config in "${configs[@]}"
 do
@@ -29,10 +34,17 @@ done
 # qqqqgg_nopu
 # GEN
 qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
+qqenugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqenugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
+qqmunugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqmunugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
+enuenugg_GEN=( ["filename"]=ggF_X1250_WWgg_enuenugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
+munumunugg_GEN=( ["filename"]=ggF_X1250_WWgg_munumunugg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
 
 # DR1
 # for now DRInput should be directory path ending in '*'
 qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobs"]=10 )
+
+# DR2 
+qqqqgg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR1/190212_132101/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=1000 ["jobs"]=1 )
 
 # ---
 

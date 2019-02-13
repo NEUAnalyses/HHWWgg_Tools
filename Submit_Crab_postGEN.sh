@@ -54,7 +54,7 @@ submit_crab_postGEN(){
     for path in "${file_paths[@]}"; 
         do echo "path = $path"
         path_=$path
-        path=${path#"file:/eos/cms"}; # add prefix 
+        path=${path#"file:/eos/cms"}; # remove prefix. Don't need this for crab config userinput files 
         path="${path:0:p}'${path:p}" # add starting quote
         path+="'" # add end quote
         path_list+=$path; 

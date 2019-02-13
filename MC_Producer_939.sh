@@ -114,7 +114,8 @@ then
     DR2Config=$cmssw_v/src/cmssw_configs/
     #DR1Config+=$EndofPath 
     DR1Config+=$EndofSinglePath 
-    DR2Config+=$EndofPath 
+    #DR2Config+=$EndofPath 
+    DR2Config+=$EndofSinglePath 
     DR2Output=$EndofPath 
 
     # Remove previous step from name 
@@ -219,7 +220,7 @@ then
 
             #cmsRun $DR1Config
 
-            echo "DR1Config = $DR1Config"
+            #echo "DR1Config = $DR1Config"
 
             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
             submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_jobs "${f_paths[@]}"
@@ -247,11 +248,16 @@ then
 
             chosen_threads=8
 
-            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+            #cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            cmsDriver.py step2 --filein $paths_string --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+
+            
 
             #cmsRun $DR2Config 
 
-            submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
+            #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_jobs "${f_paths[@]}"
 
             end_script 
         
