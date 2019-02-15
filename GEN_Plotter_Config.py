@@ -4,7 +4,7 @@
 # Abe Tishelman-Charny 
 
 # Configuration for GEN_Plotter.py 
-from ROOT import * 
+#from ROOT import * 
 from DataFormats.FWLite import Handle, Runs, Lumis, Events
 
 genHandle = Handle('vector<reco::GenParticle>')
@@ -20,31 +20,10 @@ outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 #ch = 'SL'
 #ch = 'FH'
 
-#channel setup definitions here 
-# select certain particles after 
-
-# Particles to Plot
-# Need to set here for now 
-ptp = []
-
-#ptp.append('H')
-ptp.append('l')
-
-
-#ptp.append(all_particles["H"]) 
-#ptp.append(all_particles["W"]) 
-#ptp.append(all_particles["g"]) 
-#ptp.append(all_particles["q"]) 
-#ptp.append(all_particles["l"]) 
-#ptp.append(all_particles["nu"]) 
-
-# Files 
 # Directories 
-#fi = []
-
 d = []
 
-# [fileID,path,linecolor,fillcolor]
+# [channel type, fileID, path, linecolor, fillcolor]
 
 # --------------
 
@@ -57,7 +36,7 @@ d = []
 
 # Semi Leptonic
 #   qqenu
-d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/'],kMagenta,kMagenta-10])
+d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/'],'kMagenta','kMagenta-10'])
 
 #   qqmunu
 #fi.append(['X1250_qqmunugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqmunugg_1000events_GEN/190212_183122/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqmunugg_1000events_GEN/190212_183122/0000/'],kGreen,kGreen-10])
@@ -68,21 +47,16 @@ d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1
 
 # --------------
 
-# Variables 
-# https://root.cern.ch/doc/v612/namespaceROOT_1_1Math_1_1VectorUtil.html
+# Particles to Plot
+# Need to set here for now 
+ptp = []
 
-dphi = ROOT.Math.VectorUtil.DeltaPhi
-#deltaR = ROOT.Math.VectorUtil.DeltaR
-#Wphi = ROOT.Math.VectorUtil.Phi_0_2pi
-invmass = ROOT.Math.VectorUtil.InvariantMass
-#invmass = Math.VectorUtil.InvariantMass
-
-# Histograms 
-#hdrpt = ROOT.TH1F("deltaphiHH", "deltaphiHH", 32, 0, 3.2)
-#HHdphivsRadionpT
+#ptp.append('H')
+#ptp.append('l')
+ptp.append('q')
 
 # Variables 
-# need to be methods of reco::GenParticle 
+# need to be methods of reco::GenParticle or pruned genparticle depending on what gen file has (can use minaod as well)
 # need to do something different if it requires full vectors like angle between or invariant mass 
 vs = []
 #vs.append(['px',100,-1000,1000]) 
@@ -99,32 +73,35 @@ vs.append(['pt',100,0,1000])
 
 #vs.append(['eta',50,-5,5])
 #vs.append(['phi',50,-5,5])
+# https://root.cern.ch/doc/v612/namespaceROOT_1_1Math_1_1VectorUtil.html
+
+#dphi = ROOT.Math.VectorUtil.DeltaPhi
+#deltaR = ROOT.Math.VectorUtil.DeltaR
+#Wphi = ROOT.Math.VectorUtil.Phi_0_2pi
+#invmass = ROOT.Math.VectorUtil.InvariantMass
+#invmass = Math.VectorUtil.InvariantMass
 
 # Can implement two vector dependent variables like dphi in any part where length of particle vector is two. 
-
-#vs.append(['',50,-5,5])
-
-#vs.append([])
 
 # number of particles, files 
 nps = len(ptp)
 nfi = len(d)
 
-colors=[kGreen,kGreen+2]
+colors=['kGreen','kGreen+2']
 
 # Max events 
-me = 10 # per file 
+me = -1 # per file 
 max_files=1
 
 def get_pparams(ch_,ptp_):
 
     # All possible particles
     all_particles = {
-    # "particle": ['<particle>',number per event,pdgID's]
+    # "particle": ['<particle>',<number per event>,[<pdgID1>,<pdgID2>,...]]
     "H": ['H',2,[25]], # Higgs boson
     "W": ['W',2,[24]], # W boson
     "g": ['g',2,[22]], # photon
-    "q": ['q',0,[1,2,3,4,5]], # quark   # later make flavor subcategories
+    "q": ['q',0,[1,2,3,4,5]], # quark   # can make flavor subcategories
     "l": ['l',0,[11,13]], # lepton
     "nu": ['nu',0,[12,14]] # neutrino 
     }
@@ -151,39 +128,79 @@ def get_pparams(ch_,ptp_):
         sys.exit()
 
     pparams_ = []
+    
     for p_ in ptp_: 
         for key in all_particles:
             if p_ == key:
+                # append ID number to match histos with particle filling 
+                nparams_ = len(pparams_)
+                all_particles[key].append(nparams_)
+
                 pparams_.append(all_particles[key])
-
-    
-
+                
     return pparams_ 
 
-# def create_h():
-
-
-def order_particles(ps_):
-    max_pt = 0
+# order particles 
+def ordptcls(ps_):
+    lead_pt = -1
     nparts = len(ps_)
     tmp_ps = []
-    #for i in range(len(ps_)):
-        #tmp_ps.append()
-        #append 
+
+    for i in range(len(ps_)):
+        tmp_ps.append([])
+        
+    # Get leading pt value 
     for p in ps_:
-        fourvec = ps_.p4()
+        fourvec = p.p4()
         pt = fourvec.pt()
-        if pt > max_pt:
-            print 'not setup yet'
-            
+        #print 'pt = ',pt 
+        #print 'lead_pt = ',lead_pt 
+        # if new leading pt, push other elements back and set 0th to leading pt particle 
+        if pt > lead_pt: 
+            # Push all elements back one 
+            rs = 0
+            tmp_ps = p_back(tmp_ps,rs)
 
+            # Set leading element to lead pt particle 
+            lead_pt = pt 
+            tmp_ps[0] = [p,lead_pt]
 
-    # pts_ = []
-    # for p in ps_:
-    #     fourvec = ps_.p4()
-    #     pt = fourvec.pt()
-    #     pts_.append(pt)
-    # # order pts
-    # for i in enumerate(pts_)
+        # if the current pt is not leading, need to figure out where to place it 
+        # Is it subleading? 
+        # If there are only two particles, it's subleading 
+        elif nparts == 2:
+            tmp_ps[1] = [p,pt]
+        elif nparts == 4:
+            # If there are four particles
+            # If particle is greater than current subleading, it's the new subleading. 
+            if pt > tmp_ps[1][1]:
+                rs = 1 # rs = replacement spot  
+                tmp_ps = p_back(tmp_ps,rs)
+                tmp_ps[rs] = [p,pt] 
+            # If particle is greater than current subsubleading, it's the new subsubleading. 
+            elif pt > tmp_ps[2][1]:
+                rs = 2
+                tmp_ps = p_back(tmp_ps,rs)
+                tmp_ps[rs] = [p,pt]
+            # If it's less than subsubleading, it's the subsubsubleading particle
+            else: 
+                tmp_ps[3] = [p,pt]
 
-    return ops_
+        else:
+            print 'I don\'t know what to do with ', nparts, ' particles'
+            print 'exiting'
+            sys.exit()
+
+    return tmp_ps
+
+def p_back(tmp_ps_,rs_):
+
+    nparts_ = len(tmp_ps_)
+    for i in range(nparts_):
+        eli_ = nparts_ - (i+1) #element index to change  
+        #print'eli = ',eli 
+        if eli_ == rs_: continue # is about to replace element we want to replace ourselves. 
+        else: 
+            #print'eli = ',eli 
+            tmp_ps_[eli_] = tmp_ps_[eli_-1]
+    return tmp_ps_

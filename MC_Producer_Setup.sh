@@ -103,22 +103,49 @@ then
     chosen_events_=${chosen_config}[events]
     chosen_events=${!chosen_events_}
 
-    chosen_jobs_=${chosen_config}[jobs]
-    chosen_jobs=${!chosen_jobs_}
+    chosen_job_size_=${chosen_config}[jobsize]
+    chosen_job_size=${!chosen_job_size_}
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
     echo "  input file(s) directory: $chosen_genoutput"
     echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
-    echo "  jobs: $chosen_jobs"
+    echo "  job size: $chosen_job_size"
 
 elif [ $chosen_step == MINIAOD ]
 then
 
     chosen_genoutput_=${chosen_config}[MINIAODInput]
     chosen_genoutput=${!chosen_genoutput_}
-    PrevStepOutput=$chosen_genoutput
+    PrevStepOutput=$chosen_genoutput # directory ending in '*'
+
+
+    unset f_paths # Make sure array name is free in memory 
+    declare -a f_paths # unassociative array 
+
+    f_paths=() 
+    for path in `grep -L "inLHE" $PrevStepOutput`; # ignore files containing 'inLHE'
+        do f_paths+=("file:$path");
+        done  
+
+    # Then want single string whith comma separated names for cmsDriver command 
+
+    SinglePath=${f_paths[0]}
+
+    paths_string=''
+
+    last_path=${f_paths[${#f_paths[@]}-1]} # f_paths[-1] not working for some reason 
+
+    for path in "${f_paths[@]}"; 
+        do paths_string+=$path; 
+        if [ $path != $last_path ] # If not the path of the last element, add a comma
+        then 
+            paths_string+=','
+        fi 
+        done
+
+    #echo "paths_string = $paths_string"
 
     chosen_pileup_=${chosen_config}[pileup]
     chosen_pileup=${!chosen_pileup_}
@@ -126,11 +153,15 @@ then
     chosen_events_=${chosen_config}[events]
     chosen_events=${!chosen_events_}
 
+    chosen_job_size_=${chosen_config}[jobsize]
+    chosen_job_size=${!chosen_job_size_}
+
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
-    echo "  input filename: $chosen_genoutput"
+    echo "  input file(s) directory: $PrevStepOutput"
     echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
+    echo "  job size: $chosen_job_size"
 
 elif [ $chosen_step == MICROAOD ]
 then
@@ -139,8 +170,8 @@ then
     chosen_miniaodoutput=${!chosen_miniaodoutput_}
     GenSimOutput=$chosen_miniaodoutput
 
-    chosen_pileup_=${chosen_config}[pileup]
-    chosen_pileup=${!chosen_pileup_}
+    #chosen_pileup_=${chosen_config}[pileup]
+    #chosen_pileup=${!chosen_pileup_}
 
     chosen_events_=${chosen_config}[events]
     chosen_events=${!chosen_events_}
@@ -148,7 +179,7 @@ then
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
     echo "  input filename: $chosen_miniaodoutput"
-    echo "  pileup: $chosen_pileup"
+    #echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
 
 else 

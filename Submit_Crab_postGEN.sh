@@ -28,17 +28,17 @@ submit_crab_postGEN(){
 
     cmssw_v=$2
     chosen_threads=$3 
-    chosen_jobs=$4
+    chosen_job_size=$4
+    #chosen_events=$5
     file_paths=("$@") # saves all inputs to array. Could be convinient for cleaning up later.
 
-
-
-    echo "chosen_jobs = $chosen_jobs"
+    echo "chosen_job_size = $chosen_job_size" # Number of input files per job 
     # Remove first four arguments 
 
     file_paths=("${file_paths[@]:4}") 
 
-
+    # EvtsPerJob=$((totevts/chosen_jobs))
+    # echo "EvtsPerJob = $EvtsPerJob"
 
     # Create userInputFiles list for crab submission:
 
@@ -159,22 +159,21 @@ submit_crab_postGEN(){
 
     echo " " >> TmpCrabConfig.py
     echo "config.Data.outputPrimaryDataset = 'postGEN_Outputs'" >> TmpCrabConfig.py
+
+
     echo "config.Data.splitting = 'FileBased'" >> TmpCrabConfig.py
-    #echo "config.Data.unitsPerJob = 1" >> TmpCrabConfig.py # Number of output files   
-    echo "config.Data.unitsPerJob = $chosen_jobs" >> TmpCrabConfig.py # Number of output files (need to verify this for DR1)  
+    echo "config.Data.unitsPerJob = $chosen_job_size" >> TmpCrabConfig.py # Number of input files per job  
+    #echo "config.Data.unitsPerJob = $chosen_jobs" >> TmpCrabConfig.py # Number of output files (need to verify this for DR1)  
+
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
 
-    
-
-    #echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
-    #echo "config.Data.userInputFiles = ['$3'] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
-    echo "config.Data.userInputFiles = [$path_list] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # Could make this a list 
+    echo "config.Data.userInputFiles = [$path_list] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # input files 
     echo " " >> TmpCrabConfig.py
-    #echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # might need this 
+    echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # might need this..might not. I'm not sure. 
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     # Now using multiple cmssw version, so will have a crab_configs and cmssw_configs folder for each CMSSW 

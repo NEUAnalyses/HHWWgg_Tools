@@ -1,6 +1,7 @@
 #!/bin/bash
 
 # Create configurations
+# Can probably create these more easily with only input being 'FL', 'SL', 'FH'
 configs=( enuenu_wPU enuenu_woPU jjenu_wPU jjenu_woPU 
 jjenu_wPU_DR1 enuenu_woPU_DR1 enuenu_wPU_DR1 
 enuenu_wPU_DR2 enuenu_woPU_DR2 
@@ -19,7 +20,8 @@ qqqqgg_DR2_nopu
 qqenugg_GEN
 qqmunugg_GEN
 enuenugg_GEN
-munumunugg_GEN )
+munumunugg_GEN
+qqqqgg_MINIAOD_nopu )
 
 for config in "${configs[@]}"
 do
@@ -33,25 +35,32 @@ done
 # Config by fragment:
 # qqqqgg_nopu
 # GEN
-qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
-qqenugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqenugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
-qqmunugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqmunugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
-enuenugg_GEN=( ["filename"]=ggF_X1250_WWgg_enuenugg ["step"]=GEN ["events"]=1000 ["jobs"]=1 )
-munumunugg_GEN=( ["filename"]=ggF_X1250_WWgg_munumunugg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
+qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
+qqenugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqenugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
+qqmunugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqmunugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
+enuenugg_GEN=( ["filename"]=ggF_X1250_WWgg_enuenugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
+munumunugg_GEN=( ["filename"]=ggF_X1250_WWgg_munumunugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
 
 # DR1
 # for now DRInput should be directory path ending in '*'
-qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobs"]=10 )
+# jobsize = number of input files to use per job 
+# ex: if you have 10 input GEN files in the DRInput directory, and you set jobsize = 2, you will get 5 output DR1 files 
+qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobsize"]=1 )
+#qqenugg_GEN=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobsize"]=1 )
 
 # DR2 
-qqqqgg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR1/190212_132101/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=1000 ["jobs"]=1 )
+qqqqgg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR1_2/190214_172114/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=1000 ["jobsize"]=1 )
+
+# MINIAOD
+# Don't need to specify pileup 
+qqqqgg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR2_4/190214_213232/0000/* ["step"]=MINIAOD ["events"]=1000 ["jobsize"]=1 )
 
 # ---
 
 # Gen configs 
 # filename is pythia fragment in path: 
 #   /afs/cern.ch/work/a/atishelm/private/HH_WWgg/CMSSW_X_X_X/src/Configuration/GenProduction/python/<filename>.py 
-qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
+#qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=1000 ["jobs"]=10 )
 
 enuenuwPU=( ["filename"]=ggF_X1000_WWgg_enuenugg ["step"]=GEN ["events"]=1000)
 jjenu=( ["filename"]=ggF_X1000_WWgg_jjenugg ["step"]=GEN ["events"]=1000)

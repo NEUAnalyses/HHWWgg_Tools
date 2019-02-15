@@ -90,7 +90,7 @@ then
     scram b
     cd ../../
 
-    crab_input=''
+    #crab_input=''
     #crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
     #echo "Crab Input = $crab_input"
 
@@ -109,6 +109,7 @@ then
 
     #DR1Output=$EndofPath 
     DR1Output=$EndofSinglePath 
+    DR2Output=$EndofSinglePath 
 
     DR1Config=$cmssw_v/src/cmssw_configs/
     DR2Config=$cmssw_v/src/cmssw_configs/
@@ -116,7 +117,8 @@ then
     DR1Config+=$EndofSinglePath 
     #DR2Config+=$EndofPath 
     DR2Config+=$EndofSinglePath 
-    DR2Output=$EndofPath 
+
+    #DR2Output=$EndofPath 
 
     # Remove previous step from name 
 
@@ -126,6 +128,7 @@ then
     DR2Config=${DR2Config%_DR1*}
 
     # Add PU info to file names 
+    # Should carry through to MINIAOD and MICROAOD names 
     if [ $chosen_pileup == wPU ]
         then
         DR1Output+="_wPU"
@@ -170,7 +173,7 @@ then
 
             #echo "DR1Config = $DR1Config"
 
-            submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
+            #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
  
@@ -186,7 +189,7 @@ then
 
             #cmsRun $DR2Config 
 
-            submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
+            #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
 
             end_script 
 
@@ -223,7 +226,8 @@ then
             #echo "DR1Config = $DR1Config"
 
             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
-            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_jobs "${f_paths[@]}"
+            #submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_events "${f_paths[@]}"
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
             end_script 
 
@@ -257,7 +261,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_jobs "${f_paths[@]}"
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
             end_script 
         
@@ -274,28 +278,31 @@ then
 
     cmssw_v=CMSSW_9_4_7
 
-    crab_input=${PrevStepOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
-    echo "Crab Input = $crab_input"
+    #crab_input=${PrevStepOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    #echo "Crab Input = $crab_input"
 
     PathNoRoot=${PrevStepOutput%?????} # remove .root
     EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
     # Should be ID of specific decay channel/PUconfig/events 
 
+    SinglePathNoRoot=${SinglePath%?????} # remove .root
+    EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+
+    echo "EndofSinglePath = $EndofSinglePath"
+
     MINIAODInput=$PrevStepOutput
 
     # Remove previous step from name 
-    MINIAODOutput=$EndofPath 
+    #MINIAODOutput=$EndofPath 
+    MINIAODOutput=$EndofSinglePath 
     MINIAODOutput=${MINIAODOutput%_DR2*}
     MINIAODOutput+=_MINIAOD.root
 
     MINIAODConfig=$cmssw_v/src/cmssw_configs/
-    MINIAODConfig+=$EndofPath
+    #MINIAODConfig+=$EndofPath
+    MINIAODConfig+=$EndofSinglePath
     MINIAODConfig=${MINIAODConfig%_DR2*}
     MINIAODConfig+=_MINIAOD.py
-
-    DR1Config=$EndofPath 
-    DR2Config=$EndofPath 
-
 
     #!/bin/bash
     source /cvmfs/cms.cern.ch/cmsset_default.sh
@@ -317,11 +324,11 @@ then
 
     scram b
     cd ../../
-    cmsDriver.py step1 --filein file:$MINIAODInput --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
     #cmsRun $AODConfig
 
-    submit_crab_postGEN $MINIAODConfig $cmssw_v $crab_input $chosen_threads
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
     end_script 
 
@@ -332,6 +339,10 @@ fi
 # https://github.com/atishelmanch/H4G/tree/master/Gen/microAOD
 # ^^ Follow this for how to do flashgg crab submissions 
 # For now will just make one file at a time w/o crab 
+
+
+
+# *** Microaod step should be done with a flashgg crab submission. No need to perform the step here. 
 
 if [ $chosen_step == MICROAOD ]
 then
