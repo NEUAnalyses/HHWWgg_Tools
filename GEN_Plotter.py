@@ -27,7 +27,7 @@ gROOT.SetBatch(True)
 #PyConfig.IgnoreCommandLineOptions = True
 from DataFormats.FWLite import Handle, Runs, Lumis, Events  #, ChainEvent 
 import sys
-import os 
+#import os 
 from os import listdir
 
 print
@@ -221,18 +221,22 @@ for iv,v in enumerate(vs):
                 hist.GetYaxis().SetTitle('Events')
                 hist.GetXaxis().SetTitle( v[0] + '_{' + plabel + '}')
                 hist.Draw()
-                file_path1 = outputLoc + label + '.png'
-                file_path2 = outputLoc + label + '.root'
+                file_path1 = output_Loc + label + '.png'
+                file_path2 = output_Loc + label + '.root'
                 file_exists1 = False 
                 file_exists2 = False 
-                file_exists1 = os.path.isfile(file_path1)
-                file_exists2 = os.path.isfile(file_path2)
+                file_exists1 = path_exists(file_path1)
+                file_exists2 = path_exists(file_path2)
+                #file_exists1 = os.path.isfile(file_path1)
+                #file_exists2 = os.path.isfile(file_path2)
                 if file_exists1:
                     #print 'file_path = ',file_path 
-                    os.system("rm " + file_path1)
+                    rm_path(file_path1)
+                    #os.system("rm " + file_path1)
                 if file_exists2:
                     #print 'file_path = ',file_path2 
-                    os.system("rm " + file_path2)
+                    #os.system("rm " + file_path2)
+                    rm_path(file_path2)
                     #subprocess.Popen("rm " + file_path) # if file already exists, remove it before saving 
                 hist.SaveAs(file_path2)
                 c1.SaveAs(file_path1)
@@ -241,12 +245,40 @@ for iv,v in enumerate(vs):
                 # Should have function for plotting GEN with RECO. Input arguments are the histos or histo information
                 reco_path = '/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/abetest.root'
                 vbtp = 'elec1_pt'
-                reco_h = import_reco(reco_path,vbtp)
-                c2 = TCanvas('c2', 'c2', 800, 600)
-                reco_h.Draw()
-                reco_save_title = outputLoc + 'RECO'
-                reco_h.SaveAs(reco_save_title + '.root')
-                c2.SaveAs(reco_save_title + '.png')
+                reco_hist = import_reco(reco_path,vbtp)
+                #a = import_reco(reco_path,vbtp)
+                #print 'a = ',a
+                #print 'a.GetEntries() = ',a.GetEntries()
+                #reco_h.SetDirectory(0)
+                reco_save_title = output_Loc + 'RECO'
+                #print'reco_h = ',reco_h
+                #custom_draw(a,reco_save_title)
+                custom_draw(reco_hist,reco_save_title)
+
+                #print 'reco_h = ',reco_h 
+                #reco_h.SetDirectory(0)
+                #print 'reco_h = ',reco_h 
+                reco_label = 'reco_label'
+                reco_plabel = 'reco_plabel'
+               # print 'reco_h = ',reco_h 
+                #c2 = TCanvas('c2', 'c2', 800, 600)
+                #c2.SetDirectory(0)
+                #print 'reco_h = ',reco_h 
+                #reco_h.Draw()
+                
+                #reco_h.SaveAs(reco_save_title + '.root')
+                #c1.SaveAs(reco_save_title + '.png')
+                #c2.SaveAs(reco_save_title + '.png')
+
+                input_histos_info = []
+                input_histos_info.append([hist,label,plabel])
+                input_histos_info.append([reco_hist,reco_label,reco_plabel])
+
+                var_copy = v[0][:]
+                combine_histos(input_histos_info,eval(lc),eval(fc),var_copy) # Saves combined GEN/RECO canvas 
+                #combined_title = output_Loc + 'Combined.png'
+                #combined_canvas.SaveAs(combined_title)
+
                 
             elif len(hinfo) == 2:
                 #print 'hinfo = ',hinfo 
@@ -285,18 +317,22 @@ for iv,v in enumerate(vs):
                     plabels.append(plabel)
 
                     hist.Draw()
-                    file_path1 = outputLoc + label + '.png'
-                    file_path2 = outputLoc + label + '.root'
+                    file_path1 = output_Loc + label + '.png'
+                    file_path2 = output_Loc + label + '.root'
                     file_exists1 = False 
                     file_exists2 = False 
-                    file_exists1 = os.path.isfile(file_path1)
-                    file_exists2 = os.path.isfile(file_path2)
+                    file_exists1 = path_exists(file_path1)
+                    file_exists2 = path_exists(file_path2)
+                    #file_exists1 = os.path.isfile(file_path1)
+                    #file_exists2 = os.path.isfile(file_path2)
                     if file_exists1:
                         #print 'file_path = ',file_path 
-                        os.system("rm " + file_path1)
+                        rm_path(file_path1)
+                        #os.system("rm " + file_path1)
                     if file_exists2:
                         #print 'file_path = ',file_path2 
-                        os.system("rm " + file_path2)
+                        rm_path(file_path2)
+                        #os.system("rm " + file_path2)
                         #subprocess.Popen("rm " + file_path) # if file already exists, remove it before saving 
                     hist.SaveAs(file_path2)
                     c1.SaveAs(file_path1)
@@ -329,11 +365,13 @@ for iv,v in enumerate(vs):
                 #leg.SetTextSize(0.02)
                 leg.Draw('same')
 
-                file_path1 = outputLoc + 'GEN_' + plabels[0] + '_' + v[0] + '_combined' + '.png' # first plabel should be leading 
+                file_path1 = output_Loc + 'GEN_' + plabels[0] + '_' + v[0] + '_combined' + '.png' # first plabel should be leading 
                 file_exists1 = False 
-                file_exists1 = os.path.isfile(file_path1)
+                file_exists1 = path_exists(file_path1)
+                #file_exists1 = os.path.isfile(file_path1)
                 if file_exists1:
-                    os.system("rm " + file_path1)
+                    rm_file(file_path1)
+                    #os.system("rm " + file_path1)
                 c0.SaveAs(file_path1)
                 #leg.~TLegend()
 
@@ -419,8 +457,8 @@ for iv,v in enumerate(vs):
     #     #gStyle.SetOptStat(0) # No Stats Box
     #     leg.Draw('same')
 
-    #     file_path1 = outputLoc + 'GEN_' + hinfo[2] + '_' + v[0] + '_combined' + '.png'
-    #     #file_path2 = outputLoc + h[1] + '.root'
+    #     file_path1 = output_Loc + 'GEN_' + hinfo[2] + '_' + v[0] + '_combined' + '.png'
+    #     #file_path2 = output_Loc + h[1] + '.root'
     #     file_exists1 = False 
     #     #file_exists2 = False 
     #     file_exists1 = os.path.isfile(file_path1)
@@ -463,8 +501,8 @@ print 'All variables plotted. My work here is done'
             
             # h[0].Draw()
             # #c1.Update()
-            # file_path1 = outputLoc + h[1] + '.png'
-            # file_path2 = outputLoc + h[1] + '.root'
+            # file_path1 = output_Loc + h[1] + '.png'
+            # file_path2 = output_Loc + h[1] + '.root'
             # file_exists1 = False 
             # file_exists2 = False 
             # file_exists1 = os.path.isfile(file_path1)
@@ -529,8 +567,8 @@ print 'All variables plotted. My work here is done'
                 
             #     this_histo.Draw()
             #     #c1.Update()
-            #     file_path1 = outputLoc + h[4] + '.png'
-            #     file_path2 = outputLoc + h[4] + '.root'
+            #     file_path1 = output_Loc + h[4] + '.png'
+            #     file_path2 = output_Loc + h[4] + '.root'
             #     file_exists1 = False 
             #     file_exists2 = False 
             #     file_exists1 = os.path.isfile(file_path1)

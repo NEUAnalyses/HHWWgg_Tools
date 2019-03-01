@@ -4,12 +4,14 @@
 # Abe Tishelman-Charny 
 
 # Configuration for GEN_Plotter.py 
-from ROOT import TChain, TH1F, TCut
+from ROOT import TChain, TH1F, TCut, TCanvas, TLegend #, Rtypes #, TColor 
 from DataFormats.FWLite import Handle, Runs, Lumis, Events
+import os 
 
 #genHandle = Handle('vector<reco::GenParticle>')
 genHandle = Handle('vector<reco::GenParticle>')
-outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
+output_Loc = '/eos/user/a/atishelm/www/analysis_plots/'
+#print 'in config outputLoc = ',outputLoc 
 
 #chosen_particles
 
@@ -211,15 +213,117 @@ def p_back(tmp_ps_,rs_):
 # Get RECO histograms from flashgg dumper to plot with GEN histograms 
 # Tell it which 
 def import_reco(reco_path_,var_):
-    # f[] 
-    #Files.append(['/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/abetest.root','qqenu_woPU_micro',kBlue,kWhite, 0, 1])
-    #ch = ROOT.TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic')
+    #print 'reco_path = ',reco_path_
+    #print 'var_ = ',var_
+
     ch = TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic')
     ch.Add(reco_path_)
     #hname1_ = v[1]+'_'+f[1]
-    hname1_ = 'histo_name'
-    reco_h_ = TH1F(hname1_, 'test_histo', 100, 0, 1000)
-    Cut = ''
-    ch.Draw(var_+'>>'+hname1_,TCut(Cut))
-    #ch.Draw(v[0]+'>>'+hname1,TCut( str(v[0]) + gtz_Cut))
-    return reco_h_
+    hname1 = 'test_histo_name'
+    h1 = TH1F(hname1, 'testing', 100, 0, 1000)
+    ch.Draw(var_+'>>'+hname1,TCut(''))
+    return h1
+
+# Draw and save canvas/histogram for input histogram 
+def custom_draw(input_histo_,save_path_):
+    c0_ = TCanvas('c0_', 'c0_', 800, 600)
+    input_histo_.Draw()
+    c0_.SaveAs(save_path_ + '.png')
+    return 0
+
+# Plot histograms on same canvas 
+# Input: list of histograms (or hinfo)
+# Output: canvas
+def combine_histos(input_histo_infos_,lc_,fc_,var_copy_):
+    c0_ = TCanvas('c0', 'c0', 800, 600)
+    #leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
+
+    hists_ = []
+    labels_ = []
+    plabels_ = []
+
+    for i in range(len(input_histo_infos_)):
+        # for single plot 
+        hist_ = input_histo_infos_[i][0]
+        label_ = input_histo_infos_[i][1]
+        plabel_ = input_histo_infos_[i][2]  
+
+        #c1_ = TCanvas('c1', 'c1', 800, 600) 
+        hist_.SetDirectory(0)
+        #hist.SetLineColor(eval(lc + '+' + str(i*10) ) ) # eval because they are strings, need to recognize as root objects 
+        #hist.SetFillColor(eval(fc + '+' + str(i*10) ) )
+        hist_.SetLineColor(eval(str(lc_) + '-' + str(i*2) ) ) # eval because they are strings, need to recognize as root objects 
+        hist_.SetFillColor(eval(str(fc_) + '-' + str(i*2) ) )
+        #test_object = eval('kWhite') 
+        hist_.GetYaxis().SetTitle('Events')
+        hist_.GetXaxis().SetTitle( var_copy_ + '_{' + plabel_ + '}')
+
+        # for combining 
+        hists_.append(hist_)    
+        labels_.append(label_)   
+        plabels_.append(plabel_)
+
+        # For plotting single histos 
+
+        # hist_.Draw()
+        # file_path1_ = outputLoc + label + '.png'
+        # file_path2_ = outputLoc + label + '.root'
+        # file_exists1_ = False 
+        # file_exists2_ = False 
+        # file_exists1_ = os.path.isfile(file_path1)
+        # file_exists2_ = os.path.isfile(file_path2)
+        # if file_exists1_:
+        #     #print 'file_path = ',file_path 
+        #     os.system("rm " + file_path1_)
+        # if file_exists2_:
+        #     #print 'file_path = ',file_path2 
+        #     os.system("rm " + file_path2_)
+        #     #subprocess.Popen("rm " + file_path) # if file already exists, remove it before saving 
+        # hist.SaveAs(file_path2_)
+        # c1.SaveAs(file_path1_)
+
+    #hists_copy = hists[:]
+    #labels_copy = labels[:]
+    #plabels_copy = plabels[:]
+    #hists_copy.reverse() # want to plot from lowest pt to fit all entries
+    #labels_copy.reverse() # want to plot from lowest pt to fit all entries
+    #plabels_copy.reverse() # want to plot from lowest pt to fit all entries
+
+    for hi_,h_ in enumerate(hists_):
+        #h_.SetDirectory(0)
+        #h_.SetFillColor(eval(str(clr)))
+        h_.SetFillColor(0) # kWhite 
+        h_.SetLineWidth(3)
+
+        if hi_ == 0:
+            h_.SetStats(0)
+            h_.GetXaxis().SetTitle( var_copy_ + '_{all_' + plabel_ + '}') # Make combined histo have proper x axis 
+            h_.Draw('h')
+        
+        if hi_ > 0:
+            h_.SetStats(0)
+            #h_.GetXaxis().SetTitle( var_copy_ + '_{all_' + plabel_ + '}') # Make combined histo have proper x axis 
+            h_.Draw('h same')
+
+    leg_ = TLegend(0.6, 0.7, 0.89, 0.89)
+    for hi_,h_ in enumerate(hists_):
+        leg_.AddEntry(h_,labels_[hi_],'lf') # histo object, ID 
+    #leg.SetTextSize(0.02)
+    leg_.Draw('same')
+
+    #file_path1_ = outputLoc + 'GEN_' + plabels[0] + '_' + v[0] + '_combined' + '.png' # first plabel should be leading 
+    file_path1_ = output_Loc + 'GEN_RECO_Combined.png'
+    #file_path1_ = 'test_path.png'
+    file_exists1_ = False 
+    file_exists1_ = path_exists(file_path1_)
+    if file_exists1_:
+        rm_path(file_path1_)
+    c0_.SaveAs(file_path1_)
+
+
+def rm_path(path_to_delete):
+    os.system("rm " + path_to_delete)
+    return 0 
+
+def path_exists(path_to_check):
+    return os.path.isfile(path_to_check)

@@ -34,6 +34,7 @@ for v in Vars:
       h1 = TH1F(hname1, v[2] + '_' + f[1], v[3], v[4], v[5])
       #ch.Draw(v[0]+'>>'+hname1,TCut(Cut))
       ch.Draw(v[0]+'>>'+hname1,TCut( str(v[0]) + gtz_Cut))
+      print 'h1.entries = ',h1.GetEntries()
       total1 = h1.Integral()
       h1.SetLineColor(f[2])
       h1.SetFillColor(f[3])
