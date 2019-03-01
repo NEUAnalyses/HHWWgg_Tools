@@ -1,4 +1,4 @@
-from ROOT import *
+from ROOT import * # importing root twice can lead to problems 
 
 ## Cuts to selection
 gtz_Cut = ' > 0' # greater than zero cut
@@ -31,8 +31,9 @@ Vars = []
 
 # HHWWggCandidateDumper file variables 
 
-Vars.append(['n_ps_dipho','n_ps_dipho','n_ps_dipho',10,0,10,'n_ps_dipho'])
-Vars.append(['ps_dipho_mass','ps_dipho_mass','ps_dipho_mass',50,0,200,'ps_dipho_mass'])
+Vars.append(['elec1_pt','elec1_pt','elec1_pt',100,0,1000,'elec1_pt'])
+#Vars.append(['n_ps_dipho','n_ps_dipho','n_ps_dipho',10,0,10,'n_ps_dipho'])
+#Vars.append(['ps_dipho_mass','ps_dipho_mass','ps_dipho_mass',50,0,200,'ps_dipho_mass'])
 
 # Maybe add directories here that are searched, where histograms are added together so no need for large hadd 
 
@@ -55,7 +56,7 @@ Files = []
 #Files.append(['/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X250_WWgg_jjenugg_1000events_MINIAOD/190202_205801/0000/ggF_X250_WWgg_jjenugg_1000events_MINIAOD_1.root','jjincenugg_woPU_miniaod',kGreen,kGreen-9, 0, 1])
 #Files.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD/190119_131750/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1_DR1_1_DR2_1_MINIAOD_1.root','enuenugg_woPU',kBlue,kCyan-9, 0, 1])
 
-Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/Abe.root ','qqenugg_woPU',kBlue,kCyan-9, 0, 1])
+#Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/Abe.root ','qqenugg_woPU',kBlue,kCyan-9, 0, 1])
 
 #/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/Abe.root 
 
@@ -70,6 +71,10 @@ Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src
 #Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/myTagOutputFile.root','csenu_woPU_micro',kRed,kWhite, 0, 1])
 #Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/myTagOutputFile2.root','enuenu_woPU_micro',kBlue,kWhite, 0, 1])
 #Files.append(['/afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg/myTagOutputFile3.root','munumunu_woPU_micro',kGreen+1,kWhite, 0, 1])
+
+# HHWWggCandidateDumper files 
+Files.append(['/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/abetest.root','qqenu_woPU_micro',kBlue,kWhite, 0, 1])
+
 
 #Directories = []
 # [ directory path, legend, line color, fill color, normalization ]

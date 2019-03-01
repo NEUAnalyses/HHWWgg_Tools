@@ -18,6 +18,8 @@
 from ROOT import * 
 import array as arr 
 import numpy as np
+#ROOT.gROOT.LoadMacro("GEN_Plotter_Config.py")
+#gROOT.LoadMacro("./GEN_Plotter_Config.py")
 from GEN_Plotter_Config import * 
 import subprocess
 #import ROOT
@@ -69,7 +71,7 @@ for iv,v in enumerate(vs):
         # Get chosen particles to plot and number of them 
         pparams = []
         pparams = get_pparams(ch,ptp) #particle parameters 
-        print 'pparams = ',pparams 
+        #print 'pparams = ',pparams 
 
         # Create histrograms to be filled in event loop 
         histos = []
@@ -93,29 +95,24 @@ for iv,v in enumerate(vs):
             elif nump == 2:
                 LID = 'GEN_' + pstring + '_' + 'leading-' + v[0] + '_' + DID # unique histo ID 
                 h1 = TH1F(LID,LID,v[1],v[2],v[3])
-                #histos.append([h,LID,pstring])
 
                 SLID = 'GEN_' + pstring + '_' + 'subleading-' + v[0] + '_' + DID # unique histo ID 
                 h2 = TH1F(SLID,SLID,v[1],v[2],v[3])
-                histos.append([[h1,LID,pstring],[h2,SLID,'sl'+pstring]])
+                histos.append([[h1,LID, pstring],[h2,SLID,'sl'+pstring]])
             
             elif nump == 4:
                 LID = 'GEN_' + pstring + '_' + 'leading-' + v[0] + '_' + DID # unique histo ID 
                 h1 = TH1F(LID,LID,v[1],v[2],v[3])
 
-                #histos.append([h,LID,pstring])
-
                 SLID = 'GEN_' + pstring + '_' + 'subleading-' + v[0] + '_' + DID # unique histo ID 
                 h2 = TH1F(SLID,SLID,v[1],v[2],v[3])
-                #histos.append([h,SLID,pstring])
 
                 SSLID = 'GEN_' + pstring + '_' + 'subsubleading-' + v[0] + '_' + DID # unique histo ID 
                 h3 = TH1F(SSLID,SSLID,v[1],v[2],v[3])
-                #histos.append([h,SSLID,pstring])
 
                 SSSLID = 'GEN_' + pstring + '_' + 'subsubsubleading-' + v[0] + '_' + DID # unique histo ID 
                 h4 = TH1F(SSSLID,SSSLID,v[1],v[2],v[3])
-                histos.append([h4,SSSLID,pstring])
+                #histos.append([h4,SSSLID,pstring])
                 histos.append([[h1,LID,pstring],[h2,SLID,'sl'+pstring],[h3,SSLID,'ssl'+pstring],[h4,SSSLID,'sssl'+pstring]])
 
             else:
@@ -123,12 +120,12 @@ for iv,v in enumerate(vs):
                 print 'Exiting'
                 sys.exit()
 
-        print 'histos = ',histos 
+        #print 'histos = ',histos 
 
         # Might want to look into eventchain  
 
         # For each file in directory
-        print 'paths = ',paths 
+        #print 'paths = ',paths 
         for ip,path in enumerate(paths):
             print '    Processing file ', ip, ': ',path 
             events = Events(path) # needs to be file with root prefix 
@@ -136,8 +133,9 @@ for iv,v in enumerate(vs):
             # Loop events
             for iev, event in enumerate(events):
                 if iev == me: break # Max events 
+                event.getByLabel('flashggPrunedGenParticles', genHandle)
                 #event.getByLabel('prunedGenParticles', genHandle)
-                events.getByLabel('genParticles', genHandle)
+                #events.getByLabel('genParticles', genHandle)
                 genParticles = genHandle.product()
 
                 # Fill histograms with current variable 
@@ -196,22 +194,22 @@ for iv,v in enumerate(vs):
                
         # Finished going through all events in directory
         # Save single file histos 
-        print 'Finished going through all files in directory: ',direc
+        print 'Finished going through all (or desired number of) files in directory: ',direc
         print '   Saving ', DID, ' histos'
 
         # Plot each histogram separately 
         for hi,hinfo in enumerate(histos):
 
             print '      Saving histo ',hi 
-            print '      hinfo = ',hinfo 
-            print '      len(hinfo) = ',len(hinfo)
+            #print '      hinfo = ',hinfo 
+            #print '      len(hinfo) = ',len(hinfo)
 
             # For each hinfo, I want to plot histograms separately. 
             # If there is more than one particle, I want to plot them together 
 
             # function probably 
             if len(hinfo) == 1:
-                print 'Only a leading pt particle'
+                print '      Only a leading pt particle'
                 # maybe make function for this 
                 hist = hinfo[0][0]
                 label = hinfo[0][1]
@@ -238,12 +236,23 @@ for iv,v in enumerate(vs):
                     #subprocess.Popen("rm " + file_path) # if file already exists, remove it before saving 
                 hist.SaveAs(file_path2)
                 c1.SaveAs(file_path1)
+
+                # If you want to plot this with a reco file, can do it here
+                # Should have function for plotting GEN with RECO. Input arguments are the histos or histo information
+                reco_path = '/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/abetest.root'
+                vbtp = 'elec1_pt'
+                reco_h = import_reco(reco_path,vbtp)
+                c2 = TCanvas('c2', 'c2', 800, 600)
+                reco_h.Draw()
+                reco_save_title = outputLoc + 'RECO'
+                reco_h.SaveAs(reco_save_title + '.root')
+                c2.SaveAs(reco_save_title + '.png')
                 
             elif len(hinfo) == 2:
                 #print 'hinfo = ',hinfo 
                 num = len(hinfo)
                 # plot separately and together
-                print 'There is a leading and subleading pt particle'
+                print '      There is a leading and subleading pt particle'
                 #print 'hinfo = ',hinfo 
                 hists = []
                 labels = []
@@ -254,18 +263,26 @@ for iv,v in enumerate(vs):
                     label = hinfo[i][1]
                     plabel = hinfo[i][2]  
 
-                    c1 = TCanvas('c1', 'c1', 800, 600)
+                    c1 = TCanvas('c1', 'c1', 800, 600) 
                     hist.SetDirectory(0)
-                    hist.SetLineColor(eval(lc + '+' + str(i*10) ) ) # eval because they are strings, need to recognize as root objects 
-                    hist.SetFillColor(eval(fc + '+' + str(i*10) ) )
+                    #hist.SetLineColor(eval(lc + '+' + str(i*10) ) ) # eval because they are strings, need to recognize as root objects 
+                    #hist.SetFillColor(eval(fc + '+' + str(i*10) ) )
+                    hist.SetLineColor(eval(lc + '-' + str(i*2) ) ) # eval because they are strings, need to recognize as root objects 
+                    hist.SetFillColor(eval(fc + '-' + str(i*2) ) )
                     hist.GetYaxis().SetTitle('Events')
                     hist.GetXaxis().SetTitle( v[0] + '_{' + plabel + '}')
+
+
+
+                    # This is where you should import RECO histograms 
+                    # Append them 
+
+
 
                     # for combining 
                     hists.append(hist)    
                     labels.append(label)   
                     plabels.append(plabel)
-                    print 'plables = ',plabels
 
                     hist.Draw()
                     file_path1 = outputLoc + label + '.png'
@@ -287,15 +304,12 @@ for iv,v in enumerate(vs):
                 # Combine 
                 c0 = TCanvas('c0', 'c0', 800, 600)
                 #leg = TLegend(0.6, 0.7, 0.89, 0.89) # might want destructors later to be more memory efficient 
-                print 'plables = ',plabels
                 hists_copy = hists[:]
                 labels_copy = labels[:]
                 plabels_copy = plabels[:]
                 hists_copy.reverse() # want to plot from lowest pt to fit all entries
                 labels_copy.reverse() # want to plot from lowest pt to fit all entries
                 plabels_copy.reverse() # want to plot from lowest pt to fit all entries
-                print 'lables = ',labels
-                print 'plables = ',plabels
 
                 for hi,h in enumerate(hists_copy):
                     h.SetFillColor(kWhite)
@@ -306,6 +320,7 @@ for iv,v in enumerate(vs):
                     
                     if hi > 0:
                         h.SetStats(0)
+                        h.GetXaxis().SetTitle( v[0] + '_{all_' + plabel + '}') # Make combined histo have proper x axis 
                         h.Draw('h same')
 
                 leg = TLegend(0.6, 0.7, 0.89, 0.89)
@@ -314,7 +329,6 @@ for iv,v in enumerate(vs):
                 #leg.SetTextSize(0.02)
                 leg.Draw('same')
 
-                print 'plabels = ',plabels
                 file_path1 = outputLoc + 'GEN_' + plabels[0] + '_' + v[0] + '_combined' + '.png' # first plabel should be leading 
                 file_exists1 = False 
                 file_exists1 = os.path.isfile(file_path1)

@@ -111,7 +111,7 @@ then
     echo "  input file(s) directory: $chosen_genoutput"
     echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
-    echo "  job size: $chosen_job_size"
+    echo "  job size: $chosen_job_size"  # Number of input files per job  
 
 elif [ $chosen_step == MINIAOD ]
 then

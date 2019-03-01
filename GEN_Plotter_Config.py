@@ -4,9 +4,10 @@
 # Abe Tishelman-Charny 
 
 # Configuration for GEN_Plotter.py 
-#from ROOT import * 
+from ROOT import TChain, TH1F, TCut
 from DataFormats.FWLite import Handle, Runs, Lumis, Events
 
+#genHandle = Handle('vector<reco::GenParticle>')
 genHandle = Handle('vector<reco::GenParticle>')
 outputLoc = '/eos/user/a/atishelm/www/analysis_plots/'
 
@@ -33,17 +34,18 @@ d = []
 
 #   munumunu 
 #d.append(['FL','X1250_munumunugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_munumunugg_1000events_GEN_1/190212_184207/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_munumunugg_1000events_GEN_1/190212_184207/0000/'],kGreen,kGreen-10])
-
+ 
 # Semi Leptonic
 #   qqenu
-d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_1000events_GEN_1/190212_180745/0000/'],'kMagenta','kMagenta-10'])
+#d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_1/190214_151938/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_1/190214_151938/0000/'],'kMagenta','kMagenta-10'])
+d.append(['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/RECO','root://cmsxrootd.fnal.gov//store/user/atishelm/RECO/'],'kMagenta','kMagenta-10'])
 
 #   qqmunu
 #fi.append(['X1250_qqmunugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqmunugg_1000events_GEN/190212_183122/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqmunugg_1000events_GEN/190212_183122/0000/'],kGreen,kGreen-10])
 
 # Fully hadronic
 
-#fi.append(['X1250_qqqqgg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_2/190211_134802/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_2/190211_134802/0000/'],kBlue,kCyan-10])
+#d.append(['FH','X1250_qqenugg',['/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_10000events_GEN_1/190214_151733/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_10000events_GEN_1/190214_151733/0000/'],'kGreen','kGreen-10'])
 
 # --------------
 
@@ -53,7 +55,8 @@ ptp = []
 
 #ptp.append('H')
 #ptp.append('l')
-ptp.append('q')
+#ptp.append('q')
+ptp.append('l')
 
 # Variables 
 # need to be methods of reco::GenParticle or pruned genparticle depending on what gen file has (can use minaod as well)
@@ -89,9 +92,9 @@ nfi = len(d)
 
 colors=['kGreen','kGreen+2']
 
-# Max events 
-me = -1 # per file 
-max_files=1
+# Maximums 
+me = -1 # max events per file 
+max_files= 1 # max files per directory 
 
 def get_pparams(ch_,ptp_):
 
@@ -204,3 +207,19 @@ def p_back(tmp_ps_,rs_):
             #print'eli = ',eli 
             tmp_ps_[eli_] = tmp_ps_[eli_-1]
     return tmp_ps_
+
+# Get RECO histograms from flashgg dumper to plot with GEN histograms 
+# Tell it which 
+def import_reco(reco_path_,var_):
+    # f[] 
+    #Files.append(['/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/abetest.root','qqenu_woPU_micro',kBlue,kWhite, 0, 1])
+    #ch = ROOT.TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic')
+    ch = TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic')
+    ch.Add(reco_path_)
+    #hname1_ = v[1]+'_'+f[1]
+    hname1_ = 'histo_name'
+    reco_h_ = TH1F(hname1_, 'test_histo', 100, 0, 1000)
+    Cut = ''
+    ch.Draw(var_+'>>'+hname1_,TCut(Cut))
+    #ch.Draw(v[0]+'>>'+hname1,TCut( str(v[0]) + gtz_Cut))
+    return reco_h_

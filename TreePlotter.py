@@ -1,5 +1,5 @@
 from PlotterTools import *
-from ROOT import *
+from ROOT import * # Importing root twice can lead to problems 
 gROOT.SetBatch(1) # Don't display canvas when drawing 
 
 # GEN
@@ -27,7 +27,8 @@ for v in Vars:
       #print'file: ',f
       
       #ch = TChain('Events')
-      ch = TChain('HHWWggCandidateDumper/trees/_13TeV_All')
+      #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_All')
+      ch = TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic')
       ch.Add(f[0])
       hname1 = v[1]+'_'+f[1]
       h1 = TH1F(hname1, v[2] + '_' + f[1], v[3], v[4], v[5])
