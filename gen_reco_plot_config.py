@@ -62,7 +62,7 @@ ds = []
 
 ds.append(
         #['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','root://cmsxrootd.fnal.gov//store/user/atishelm/Plot/EventDumper/test/'],'600','600-10']
-        ['SL','X1250_qqenugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','600','600-10']
+        ['SL','X1250_qqmunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','600','600-10']
 )
 
 gen_colors = [416,416-10]
@@ -86,13 +86,16 @@ ptp = []
 
 #ptp.append('H')
 ptp.append('l')
-#ptp.append('nu')
+#ptp.append('e')
+#ptp.append('mu')
+ptp.append('nu')
 #ptp.append('q')
 
 # Variables 
 # need to be methods of reco::GenParticle or pruned genparticle depending on what gen file has (can use minaod as well)
 # need to do something different if it requires full vectors like angle between or invariant mass 
 vs = []
+# [<'variable name'>,<bins>,<min>,<max>]
 #vs.append(['px',100,-1000,1000]) 
 #vs.append(['py',100,-1000,1000])
 #vs.append(['pz',100,-1000,1000])
@@ -125,7 +128,7 @@ colors=['kGreen','kGreen+2']
 
 # Maximums 
 me = -1 # max events per file 
-max_files= 1 # max files per directory 
+max_files= -1 # max files per directory 
 
 def get_pparams(ch_,ptp_):
 
@@ -262,6 +265,8 @@ def import_ED(reco_path_,var_,hid_,xbins_,xmin_,xmax_):
 #def custom_draw(input_histo_,save_path_):
 def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
 
+    #tmp_hist = hist_.Clone("tmp_hist") 
+
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     hist_.SetDirectory(0)
     hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
@@ -269,7 +274,8 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     hist_.GetYaxis().SetTitle('Events')
     hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
     hist_.Draw()
-    file_path1_ = output_Loc + label_ + '.png'
+    file_path3_ = output_Loc + label_ + '.png'
+    file_path1_ = output_Loc + label_ + '.pdf'
     file_path2_ = output_Loc + label_ + '.root'
     file_exists1_ = False 
     file_exists2_ = False 
@@ -279,6 +285,7 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     if file_exists2_:   rm_path(file_path2_)
     hist_.SaveAs(file_path2_)
     c0_.SaveAs(file_path1_)
+    c0_.SaveAs(file_path3_)
     #return 0
     return hist_  
 
@@ -347,18 +354,23 @@ def combine_histos(input_histo_infos_,var_copy_):
     #leg.SetTextSize(0.02)
     leg_.Draw('same')
 
-    #file_path1_ = outputLoc + 'GEN_' + plabels[0] + '_' + v[0] + '_combined' + '.png' # first plabel should be leading 
     file_path1_ = output_Loc + 'GEN_RECO_Combined_' + plabels_[0] + '_' + var_copy_ + '.png'
+    file_path2_ = output_Loc + 'GEN_RECO_Combined_' + plabels_[0] + '_' + var_copy_ + '.pdf'
     #file_path1_ = 'test_path.png'
-    file_exists1_ = False 
+    file_exists1_ = False
+    file_exists2_ = False 
     file_exists1_ = path_exists(file_path1_)
+    #file_exists2_ = path_exists(file_path2_)
     if file_exists1_:
         rm_path(file_path1_)
+    if file_exists2_:
+        rm_path(file_path2_)
     c0_.SaveAs(file_path1_)
+    c0_.SaveAs(file_path2_)
 
     return mval
 
-def plot_ratio(ih_,max_val_,xbins__):
+def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
 
 #    // Define two gaussian histograms. Note the X and Y title are defined
 #    // at booking time using the convention "Hist_title ; X_title ; Y_title"
@@ -375,6 +387,11 @@ def plot_ratio(ih_,max_val_,xbins__):
     h1 = ih_[0][0]
     h2 = ih_[1][0]
 
+    #print 'h1 = ',h1
+    #print 'h2 = ',h2 
+
+    #print'h1.GetMaximum() = ' ,h1.GetMaximum() 
+
     #// Upper plot will be in pad1
     pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0)
     pad1.SetBottomMargin(0) # Upper and lower plot are joined
@@ -383,6 +400,7 @@ def plot_ratio(ih_,max_val_,xbins__):
     pad1.Draw()            #Draw the upper pad: pad1
     pad1.cd()               # pad1 becomes the current pad
     h1.SetStats(0)          # No statistics on upper plot
+    h1.GetXaxis().SetNdivisions(xbins__)
     h1.Draw()               # Draw h1
 
     # pad1.Update()
@@ -417,13 +435,13 @@ def plot_ratio(ih_,max_val_,xbins__):
 
     # Define the ratio plot
     #TH1F *h3 = (TH1F*)h1.Clone("h3");
-    h3 = h1.Clone("h3")
+    h3 = h2.Clone("h3")
     h3.SetLineColor(1)
     h3.SetMinimum(0.5)  # Define Y ..
     h3.SetMaximum(1.5) # .. range
     h3.Sumw2()
     h3.SetStats(0)     # No statistics on lower plot
-    h3.Divide(h2)
+    h3.Divide(h1)
     h3.SetMarkerStyle(21)
 
     #gPad.Modified()
@@ -447,7 +465,9 @@ def plot_ratio(ih_,max_val_,xbins__):
     h1.GetYaxis().SetTitleFont(43)
     h1.GetYaxis().SetTitleOffset(1.55)
 
-    h1.GetXaxis().SetNdivisions(xbins__)
+    #print 'xbins__ = ',xbins__ 
+    
+    #h1.GetXaxis().SetNdivisions(xbins__)
 
     #// h2 settings
     h2.SetLineColor(632)
@@ -457,7 +477,7 @@ def plot_ratio(ih_,max_val_,xbins__):
     h3.SetTitle("") # Remove the ratio title
 
     #// Y axis ratio plot settings
-    h3.GetYaxis().SetTitle("Gen/Reco")
+    h3.GetYaxis().SetTitle("Reco/Gen")
     h3.GetYaxis().SetNdivisions(505)
     h3.GetYaxis().SetTitleSize(20)
     h3.GetYaxis().SetTitleFont(43)
@@ -491,8 +511,9 @@ def plot_ratio(ih_,max_val_,xbins__):
     #leg.SetTextSize(0.02)
     leg_.Draw('same')
     
-
-    cc.SaveAs(output_Loc + "gen_reco_ratio.png")
+    #cc.SaveAs(output_Loc + "Gen_Reco_" + comb_ID_ + ".png")
+    cc.SaveAs(output_Loc + "Gen_Reco_" + comb_ID_ + ".pdf")
+    cc.SaveAs(output_Loc + "Gen_Reco_" + comb_ID_ + ".png")
 
     return 0 
 
@@ -502,9 +523,12 @@ def var_map(v0_,plab_,G_):
     #G_ = boolean of GEN. If gen, = 1. if reco, = 0 
     var_conv = {
     # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
-    "pt_gen_part": ['pt','l',1], # for now, pt lepton will just be elec lepton
-    "elec1_pt": ['pt','l',0], # for now, pt lepton will just be elec lepton
-    "MET": ['pt','nu',0] 
+    "gen_lepton_pt": ['pt','l',1], # for now, pt lepton will just be elec lepton
+    #"elec1_pt": ['pt','l',0], # for now, pt lepton will just be elec lepton
+    "muon1_pt": ['pt','l',0], 
+    "gen_neutrino_pt": ['pt','nu',1],
+    "MET": ['pt','nu',0], 
+
     }
 
     reco_var = ''

@@ -48,10 +48,14 @@ for dn,dinfo in enumerate(ds):
         xbins = v[1]
         xmin = v[2]
         xmax = v[3]
-        print 'Plotting variable ', iv, ': ',variable
+        #print 'Plotting variable ', iv, ': ',variable
 
         # For each particle
         for p in ptp:
+            print
+            print 'Plotting particle', p, ': ',variable
+            print
+            gen_reco_ID = p + '_' + variable + '_' + DID 
             # Make GEN Plot
             g_variable = var_map(variable,p,1)
             gen_ID = 'GEN_' + p + '_' + variable + '_' + DID
@@ -62,9 +66,12 @@ for dn,dinfo in enumerate(ds):
             # Make RECO Plot 
             r_variable = var_map(variable,p,0)
             reco_ID = 'RECO_' + p + '_' + variable + '_' + DID
-            reco_hist = import_ED(paths[0],r_variable,gen_ID,xbins,xmin,xmax) 
+            reco_hist = import_ED(paths[0],r_variable,reco_ID,xbins,xmin,xmax) 
             #reco_colors = [600,600-10]
             dec_reco_hist = save_histo(reco_hist,reco_ID,p,variable,reco_colors[0],reco_colors[1]) # 600 is kBlue 
+
+            print 'dec_gen_hist = ', dec_gen_hist 
+            print 'dec_reco_hist = ', dec_reco_hist 
 
             # Make RECO/GEN plot 
             input_histos_info = []
@@ -75,4 +82,5 @@ for dn,dinfo in enumerate(ds):
             var_copy = variable[:]
             #combine_histos(input_histos_info,eval(lc),eval(fc),var_copy) # Saves combined /RECO canvas 
             max_val = combine_histos(input_histos_info,var_copy) # Saves combined GEN/RECO canvas 
-            plot_ratio(input_histos_info,max_val,xbins)
+            print 'max_val = ',max_val 
+            plot_ratio(input_histos_info,max_val,xbins,gen_reco_ID)

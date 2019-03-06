@@ -24,6 +24,18 @@ qqenugg_MINIAOD_nopu
 qqmunugg_GEN
 enuenugg_GEN 
 munumunugg_GEN
+qqqqgg_MINIAOD_nopu # 
+qqmunugg_DR1_nopu
+munumunugg_DR1_nopu
+enuenugg_DR1_nopu
+qqqqgg_DR1_nopu
+qqmunugg_DR2_nopu
+munumunugg_DR2_nopu
+enuenugg_DR2_nopu
+qqqqgg_DR2_nopu
+qqmunugg_MINIAOD_nopu
+enuenugg_MINIAOD_nopu
+munumunugg_MINIAOD_nopu
 qqqqgg_MINIAOD_nopu )
 
 for config in "${configs[@]}"
@@ -34,6 +46,8 @@ do
 done
 
 # Number of events should be a multiple of number of jobs 
+
+# Should make a json file or something for input of desired jobs 
 
 # Config by fragment:
 # qqqqgg_nopu
@@ -52,13 +66,29 @@ munumunugg_GEN=( ["filename"]=ggF_X1250_WWgg_munumunugg ["step"]=GEN ["events"]=
 qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_GEN_8/190212_095439/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=1000 ["jobsize"]=1 )
 qqenugg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_1/190214_151938/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=10000 ["jobsize"]=1 )
 
+qqmunugg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_GEN/190214_152058/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=10000 ["jobsize"]=1 )
+munumunugg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_munumunugg_10000events_GEN/190214_152500/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=10000 ["jobsize"]=1 )
+enuenugg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_enuenugg_10000events_GEN/190214_152338/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=10000 ["jobsize"]=1 )
+qqqqgg_DR1_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqqqgg_10000events_GEN/190214_151733/0000/* ["pileup"]=woPU ["step"]=DR1 ["events"]=10000 ["jobsize"]=1 )
+
 # DR2 
 qqqqgg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR1_2/190214_172114/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=1000 ["jobsize"]=1 )
 qqenugg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_DR1/190215_145524/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=10000 ["jobsize"]=1 )
+
+qqmunugg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_woPU_DR1/190305_115433/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=10000 ["jobsize"]=1 )
+munumunugg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_munumunugg_10000events_woPU_DR1/190305_115657/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=10000 ["jobsize"]=1 )
+enuenugg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_enuenugg_10000events_woPU_DR1/190305_120115/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=9000 ["jobsize"]=1 )
+qqqqgg_DR2_nopu=( ["DRInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_10000events_woPU_DR1/190305_120444/0000/* ["pileup"]=woPU ["step"]=DR2 ["events"]=10000 ["jobsize"]=1 )
+
 # MINIAOD
 # Don't need to specify pileup 
 qqqqgg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_1000events_woPU_DR2_4/190214_213232/0000/* ["step"]=MINIAOD ["events"]=1000 ["jobsize"]=1 )
 qqenugg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_woPU_DR2/190225_123824/0000/* ["step"]=MINIAOD ["events"]=10000 ["jobsize"]=1 )
+
+qqmunugg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqmunugg_10000events_woPU_DR2/190305_134809/0000/* ["step"]=MINIAOD ["events"]=10000 ["jobsize"]=1 )
+munumunugg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_munumunugg_10000events_woPU_DR2/190305_135355/0000/* ["step"]=MINIAOD ["events"]=10000 ["jobsize"]=1 )
+enuenugg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_enuenugg_10000events_woPU_DR2/190305_135715/0000/* ["step"]=MINIAOD ["events"]=9000 ["jobsize"]=1 )
+qqqqgg_MINIAOD_nopu=( ["MINIAODInput"]=/eos/cms/store/user/atishelm/postGEN_Outputs/ggF_X1250_WWgg_qqqqgg_10000events_woPU_DR2/190305_140444/0000/* ["step"]=MINIAOD ["events"]=10000 ["jobsize"]=1 )
 # ---
 
 # Gen configs 
