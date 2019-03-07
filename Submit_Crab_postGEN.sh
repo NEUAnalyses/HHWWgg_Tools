@@ -20,11 +20,11 @@ submit_crab_postGEN(){
     unset file_paths # Make sure array name is free in memory 
     declare -a file_paths # unassociative array 
     
-    echo "0 = $0"
-    echo "1 = $1"
-    echo "2 = $2"
-    echo "3 = $3"
-    echo "4 = $4"
+    # echo "0 = $0"
+    # echo "1 = $1"
+    # echo "2 = $2"
+    # echo "3 = $3"
+    # echo "4 = $4"
 
     cmssw_v=$2
     chosen_threads=$3 

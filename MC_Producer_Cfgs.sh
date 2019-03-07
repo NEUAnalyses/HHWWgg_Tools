@@ -1,48 +1,46 @@
 #!/bin/bash
 
 # Create configurations
-# Can probably create these more easily with only input being 'FL', 'SL', 'FH'
-configs=( enuenu_wPU enuenu_woPU jjenu_wPU jjenu_woPU 
-jjenu_wPU_DR1 enuenu_woPU_DR1 enuenu_wPU_DR1 
-enuenu_wPU_DR2 enuenu_woPU_DR2 
-enuenu_woPU_MINIAOD jjenu_noPU_DR1 jjenu_ePU_DR2 jjenu_wPU_MINIAOD 
-jjenu_wPU_DR2 jjenu_woPU_DR2
-jjenu_woPU_MINIAOD enuenu_woPU_MICROAOD jjenu_woPU_MICROAOD enuenu_wPU_MINIAOD
-munumunu 
-jjenu_allj jjenu_allj_noeq 
-munumunu_DR1 munumunu_DR2 munumunu_MINIAOD munumunu_MICROAOD
-jjenu_939 jjenu_939_DR1_woPU jjenu_939_DR1_wPU jjenu_939_DR2_woPU 
-direc_test 
-jjenu_939_MINIAOD_woPU
-qqqqgg_GEN
-qqqqgg_DR1_nopu
-qqqqgg_DR2_nopu
-qqenugg_GEN
-qqenugg_DR1_nopu
-qqenugg_DR2_nopu
-qqenugg_MINIAOD_nopu
-qqmunugg_GEN
-enuenugg_GEN 
-munumunugg_GEN
-qqqqgg_MINIAOD_nopu # 
-qqmunugg_DR1_nopu
-munumunugg_DR1_nopu
-enuenugg_DR1_nopu
-qqqqgg_DR1_nopu
-qqmunugg_DR2_nopu
-munumunugg_DR2_nopu
-enuenugg_DR2_nopu
-qqqqgg_DR2_nopu
-qqmunugg_MINIAOD_nopu
-enuenugg_MINIAOD_nopu
-munumunugg_MINIAOD_nopu
-qqqqgg_MINIAOD_nopu )
+# Your desired configuration has to be on this list to work 
+
+# Get configurations from crab_jobs.json 
+
+jq '.' MC_Configs.json 
+
+# Get names from json then create config arrays here 
+
+# array
+# configs=( 
+# jjenu_939_MINIAOD_woPU
+# qqqqgg_GEN
+# qqqqgg_DR1_nopu
+# qqqqgg_DR2_nopu
+# qqenugg_GEN
+# qqenugg_DR1_nopu
+# qqenugg_DR2_nopu
+# qqenugg_MINIAOD_nopu
+# qqmunugg_GEN
+# enuenugg_GEN 
+# munumunugg_GEN
+# qqqqgg_MINIAOD_nopu 
+# qqmunugg_DR1_nopu
+# munumunugg_DR1_nopu
+# enuenugg_DR1_nopu
+# qqqqgg_DR1_nopu
+# qqmunugg_DR2_nopu
+# munumunugg_DR2_nopu
+# enuenugg_DR2_nopu
+# qqqqgg_DR2_nopu
+# qqmunugg_MINIAOD_nopu
+# enuenugg_MINIAOD_nopu
+# munumunugg_MINIAOD_nopu
+# qqqqgg_MINIAOD_nopu )
 
 for config in "${configs[@]}"
 do
     :
     unset $config # Make sure array name is free in memory 
-    declare -A $config 
+    declare -A $config # associative array 
 done
 
 # Number of events should be a multiple of number of jobs 
@@ -56,7 +54,6 @@ qqqqgg_GEN=( ["filename"]=ggF_X1250_WWgg_qqqqgg ["step"]=GEN ["events"]=10000 ["
 qqenugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqenugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
 qqmunugg_GEN=( ["filename"]=ggF_X1250_WWgg_qqmunugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
 enuenugg_GEN=( ["filename"]=ggF_X1250_WWgg_enuenugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
-
 munumunugg_GEN=( ["filename"]=ggF_X1250_WWgg_munumunugg ["step"]=GEN ["events"]=10000 ["jobs"]=10 )
 
 # DR1

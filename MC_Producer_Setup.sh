@@ -1,16 +1,28 @@
 #!/bin/bash
 
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Cfgs.sh
+#source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Cfgs.sh
 
 # Idea: Read crab status message to see if job is finished, and if it is, obtain the path to the files and run the next step? 
 # Make folder for pythia configuration files that end up in HH_WWgg/. Bin? Py_cfgs? 
 
-chosen_config=$1
+#chosen_config=$1
 
-echo "Chosen configuration: $chosen_config"
+#step events jobs_jobsize fragment_directory pileup
 
-chosen_step_=${chosen_config}[step]
-chosen_step=${!chosen_step_}
+chosen_step=$1
+chosen_events=$2
+chosen_jobs=$3
+chosen_filename=$4
+#chosen_pileup=$5 
+
+#echo "all variables: $@"
+
+#echo "Chosen configuration: $chosen_config"
+
+# need an associative array as input 
+
+#chosen_step_=${chosen_config}[step]
+#chosen_step=${!chosen_step_}
 
 echo "chosen_step = $chosen_step"
 
@@ -19,13 +31,13 @@ then
 
     # Params: filename, step, events 
 
-    chosen_filename_=${chosen_config}[filename]
-    chosen_events_=${chosen_config}[events]
-    chosen_jobs_=${chosen_config}[jobs]
+    # chosen_filename_=${chosen_config}[filename]
+    # chosen_events_=${chosen_config}[events]
+    # chosen_jobs_=${chosen_config}[jobs]
 
-    chosen_filename=${!chosen_filename_}
-    chosen_events=${!chosen_events_}
-    chosen_jobs=${!chosen_jobs_}
+    # chosen_filename=${!chosen_filename_}
+    # chosen_events=${!chosen_events_}
+    # chosen_jobs=${!chosen_jobs_}
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
@@ -60,9 +72,14 @@ elif [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
 then
     # Params: DRInput, pileup, step, events 
 
-    chosen_genoutput_=${chosen_config}[DRInput]
-    chosen_genoutput=${!chosen_genoutput_}
-    GenSimOutput=$chosen_genoutput # Should be a directory ending in '*'
+    #echo "Setting up $chosen_step"
+
+    #chosen_genoutput_=${chosen_config}[DRInput]
+    #chosen_genoutput=${!chosen_genoutput_}
+    chosen_genoutput=$4 
+    GenSimOutput=$chosen_genoutput # Should be a directory ending in '/'
+    GenSimOutput+="*"
+
     
     # Turn directory into comma separated files for DR steps
     # If DR1 step, want to ignore LHE files created by GEN step
@@ -97,14 +114,20 @@ then
 
     #echo "paths_string = $paths_string"
 
-    chosen_pileup_=${chosen_config}[pileup]
-    chosen_pileup=${!chosen_pileup_}
 
-    chosen_events_=${chosen_config}[events]
-    chosen_events=${!chosen_events_}
 
-    chosen_job_size_=${chosen_config}[jobsize]
-    chosen_job_size=${!chosen_job_size_}
+    # chosen_pileup_=${chosen_config}[pileup]
+    # chosen_pileup=${!chosen_pileup_}
+
+    # chosen_events_=${chosen_config}[events]
+    # chosen_events=${!chosen_events_}
+
+    # chosen_job_size_=${chosen_config}[jobsize]
+    # chosen_job_size=${!chosen_job_size_}
+
+    chosen_events=$2
+    chosen_job_size=$3
+    chosen_pileup=$5 
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
@@ -116,10 +139,11 @@ then
 elif [ $chosen_step == MINIAOD ]
 then
 
-    chosen_genoutput_=${chosen_config}[MINIAODInput]
-    chosen_genoutput=${!chosen_genoutput_}
-    PrevStepOutput=$chosen_genoutput # directory ending in '*'
-
+    # chosen_genoutput_=${chosen_config}[MINIAODInput]
+    # chosen_genoutput=${!chosen_genoutput_}
+    chosen_genoutput=$4 
+    PrevStepOutput=$chosen_genoutput # directory ending in '/'
+    PrevStepOutput+="*"
 
     unset f_paths # Make sure array name is free in memory 
     declare -a f_paths # unassociative array 
@@ -147,19 +171,23 @@ then
 
     #echo "paths_string = $paths_string"
 
-    chosen_pileup_=${chosen_config}[pileup]
-    chosen_pileup=${!chosen_pileup_}
+    # chosen_pileup_=${chosen_config}[pileup]
+    # chosen_pileup=${!chosen_pileup_}
 
-    chosen_events_=${chosen_config}[events]
-    chosen_events=${!chosen_events_}
+    # chosen_events_=${chosen_config}[events]
+    # chosen_events=${!chosen_events_}
 
-    chosen_job_size_=${chosen_config}[jobsize]
-    chosen_job_size=${!chosen_job_size_}
+    # chosen_job_size_=${chosen_config}[jobsize]
+    # chosen_job_size=${!chosen_job_size_}
+
+    chosen_events=$2
+    chosen_job_size=$3
+    #chosen_pileup=$5 
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
     echo "  input file(s) directory: $PrevStepOutput"
-    echo "  pileup: $chosen_pileup"
+    #echo "  pileup: $chosen_pileup"
     echo "  events: $chosen_events"
     echo "  job size: $chosen_job_size"
 
@@ -221,9 +249,12 @@ check_proxy(){
 # Exit script
 end_script(){
 
-    echo "Finished desired step: $chosen_step "
+    #echo "Finished desired step: $chosen_step "
     echo "Exiting"
     cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg
     return;
     #exit 1;
 }
+
+# Currently assuming MCM chain of commands for fragment created with CMSSW_9_3_9_patch1 
+source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_939.sh 

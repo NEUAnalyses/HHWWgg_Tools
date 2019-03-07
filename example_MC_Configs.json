@@ -1,0 +1,49 @@
+// Abe Tishelman-Charny
+// 7 March 2019 
+
+// For display only
+// This is how the step configs should look 
+
+// jobs_jobsize = number of jobs for GEN step 
+//              = number of input files for DR1, DR2, MINIAOD steps 
+// fragment_directory = pythia fragment name (without .py and CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python/) for GEN step
+//                    = directory to look for input files for DR1, DR2, MINIAOD steps
+// pileup = woPU or wPU. Only used in DR1 and DR2 steps
+
+[
+    // GEN 
+    {
+        "step"      : "GEN",
+        "events"    : 10000,
+        "jobs_jobsize"      : 10 ,
+        "fragment_directory"  : "ggF_X1250_WWgg_qqqqgg",
+        "pileup"              : "ignore" // not used for GEN. Give entry anyway to keep configs same size 
+    },
+
+    // DR1
+    {
+        "step"      : "DR1",
+        "events"    : 10000,
+        "jobs_jobsize"      : 10 ,
+        "fragment_directory"  : "/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_2/190307_150207/0000/",
+        "pileup"              : "woPU" 
+    },
+
+    // DR2
+    {
+        "step"      : "DR2",
+        "events"    : 10000,
+        "jobs_jobsize"      : 10 ,
+        "fragment_directory"  : "/DR1outputdirectory/",
+        "pileup"              : "woPU" 
+    },
+
+    // MINIAOD
+    {
+        "step"      : "MINIAOD",
+        "events"    : 10000,
+        "jobs_jobsize"      : 10 ,
+        "fragment_directory"  : "/DR2outputdirectory/",
+        "pileup"              : "ignore" // not used for MINIAOD. Give entry anyway to keep configs same size 
+    }
+]

@@ -13,7 +13,7 @@
 # This version will include the MCM commands obtained from:
 # https://cms-pdmv.cern.ch/mcm/chained_requests?prepid=HIG-chain_RunIIFall17wmLHEGS_flowRunIIFall17DRPremixPU2017_flowRunIIFall17MiniAODv2_flowRunIIFall17NanoAOD-01374&page=0&shown=15
 
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
+#source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/make_microAOD.sh
@@ -58,7 +58,7 @@ then
     #cmsRun $ConfigFileName # Replace this with crab command 
     submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs 
 
-    end_script 
+    #end_script 
 
 fi 
 
@@ -129,14 +129,14 @@ then
 
     # Add PU info to file names 
     # Should carry through to MINIAOD and MICROAOD names 
-    if [ $chosen_pileup == wPU ]
+    if [ $chosen_pileup == "wPU" ]
         then
         DR1Output+="_wPU"
         DR1Config+="_wPU"
 
     fi 
 
-    if [ $chosen_pileup == woPU ]
+    if [ $chosen_pileup == "woPU" ]
         then
         DR1Output+="_woPU"
         DR1Config+="_woPU"
@@ -152,7 +152,7 @@ then
 
     # With Pileup
 
-    if [ $chosen_pileup == wPU ]
+    if [ $chosen_pileup == "wPU" ]
     then
 
         if [ $chosen_step == DR1 ]
@@ -175,7 +175,7 @@ then
 
             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
 
-            end_script 
+            #end_script 
  
 
         elif [ $chosen_step == DR2 ]
@@ -191,11 +191,11 @@ then
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
 
-            end_script 
+            #end_script 
 
         fi # if wPU and (if DR1 elif DR2) 
 
-    elif [ $chosen_pileup == woPU ]
+    elif [ $chosen_pileup == "woPU" ]
     then
         
         # Without Pileup (need to test)
@@ -229,7 +229,7 @@ then
             #submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_events "${f_paths[@]}"
             submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
-            end_script 
+            #end_script 
 
         elif [ $chosen_step == DR2 ]
         then
@@ -263,7 +263,7 @@ then
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
             submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
-            end_script 
+            #end_script 
         
         fi # if woPU and (if DR1 elif DR2) 
 
@@ -330,7 +330,7 @@ then
 
     submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
-    end_script 
+    #end_script 
 
 fi 
 
@@ -355,7 +355,7 @@ then
 
       mini_aod_path=${chosen_miniaodoutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
       make_microAOD $mini_aod_path $chosen_events
-      end_script
+      #end_script
 
 #     Then should run tagger step 
 

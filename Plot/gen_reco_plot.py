@@ -70,8 +70,8 @@ for dn,dinfo in enumerate(ds):
             #reco_colors = [600,600-10]
             dec_reco_hist = save_histo(reco_hist,reco_ID,p,variable,reco_colors[0],reco_colors[1]) # 600 is kBlue 
 
-            print 'dec_gen_hist = ', dec_gen_hist 
-            print 'dec_reco_hist = ', dec_reco_hist 
+            #print 'dec_gen_hist = ', dec_gen_hist 
+            #print 'dec_reco_hist = ', dec_reco_hist 
 
             # Make RECO/GEN plot 
             input_histos_info = []
@@ -82,5 +82,5 @@ for dn,dinfo in enumerate(ds):
             var_copy = variable[:]
             #combine_histos(input_histos_info,eval(lc),eval(fc),var_copy) # Saves combined /RECO canvas 
             max_val = combine_histos(input_histos_info,var_copy) # Saves combined GEN/RECO canvas 
-            print 'max_val = ',max_val 
+            #print 'max_val = ',max_val 
             plot_ratio(input_histos_info,max_val,xbins,gen_reco_ID)

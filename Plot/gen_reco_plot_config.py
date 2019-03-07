@@ -62,7 +62,7 @@ ds = []
 
 ds.append(
         #['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','root://cmsxrootd.fnal.gov//store/user/atishelm/Plot/EventDumper/test/'],'600','600-10']
-        ['SL','X1250_qqmunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','600','600-10']
+        ['SL','X1250_qqmunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test2/','600','600-10']
 )
 
 gen_colors = [416,416-10]
@@ -524,8 +524,8 @@ def var_map(v0_,plab_,G_):
     var_conv = {
     # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
     "gen_lepton_pt": ['pt','l',1], # for now, pt lepton will just be elec lepton
-    #"elec1_pt": ['pt','l',0], # for now, pt lepton will just be elec lepton
-    "muon1_pt": ['pt','l',0], 
+    "elec1_pt": ['pt','l',0], # for now, pt lepton will just be elec lepton
+    #"muon1_pt": ['pt','l',0], 
     "gen_neutrino_pt": ['pt','nu',1],
     "MET": ['pt','nu',0], 
 
