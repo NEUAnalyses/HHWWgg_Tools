@@ -62,7 +62,7 @@ ds = []
 
 ds.append(
         #['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','root://cmsxrootd.fnal.gov//store/user/atishelm/Plot/EventDumper/test/'],'600','600-10']
-        ['SL','X1250_qqmunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test2/','600','600-10']
+        ['SL','X1250_munumunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test3/','600','600-10']
 )
 
 gen_colors = [416,416-10]
@@ -80,16 +80,17 @@ reco_colors = [600,600-10]
 
 # --------------
 
-# Particles to Plot
-# Need to set here for now 
-ptp = []
+# # Particles to Plot
+# # Need to set here for now 
 
-#ptp.append('H')
-ptp.append('l')
-#ptp.append('e')
-#ptp.append('mu')
-ptp.append('nu')
-#ptp.append('q')
+# ptp = []
+
+# #ptp.append('H')
+# #ptp.append('l')
+# ptp.append('le') # leading electron 
+# #ptp.append('mu')
+# #ptp.append('nu')
+# #ptp.append('q')
 
 # Variables 
 # need to be methods of reco::GenParticle or pruned genparticle depending on what gen file has (can use minaod as well)
@@ -99,7 +100,10 @@ vs = []
 #vs.append(['px',100,-1000,1000]) 
 #vs.append(['py',100,-1000,1000])
 #vs.append(['pz',100,-1000,1000])
+#vs.append(['pt',10,0,10])
 vs.append(['pt',20,0,1000])
+#vs.append(['pt',50,-1000,1000])
+
 #vs.append(['pt',100,0,1000,'ls']) #ls = plot leading and subleading. l = leading. s = subleading 
 #vs.append(['invm',170,0,160]) # Invariant mass
 #vs.append(['invm',200,1200,1300]) # Invariant mass 
@@ -121,7 +125,7 @@ vs.append(['pt',20,0,1000])
 # Can implement two vector dependent variables like dphi in any part where length of particle vector is two. 
 
 # number of particles, files 
-nps = len(ptp)
+#nps = len(ptp)
 nfi = len(ds)
 
 colors=['kGreen','kGreen+2']
@@ -246,13 +250,23 @@ def p_back(tmp_ps_,rs_):
 # Tell it which 
 def import_ED(reco_path_,var_,hid_,xbins_,xmin_,xmax_):
     #print 'reco_path = ',reco_path_
-    #print 'var_ = ',var_
+    print 'var_ = ',var_
     # input files in directory. 
     # draw all onto same histogram to combine stats 
 
+    # I would like a plot for each one... 
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_FullyLeptonic') 
-    ch = TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic') 
-    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_All_Events')
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_SemiLeptonic') 
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_All_Events') 
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_Dipho_PS')
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneElec')  
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneMuon')
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPS') 
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPSandTwoElec')  
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPSandgteTwoElec') 
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneMuon')
+    ch = TChain('HHWWggCandidateDumper/trees/_13TeV_1a3_1')
+    
     ch.Add(reco_path_)
     hname1 = hid_
     h1 = TH1F(hname1, hid_, xbins_, xmin_, xmax_)
@@ -272,7 +286,9 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
     hist_.SetFillColor(eval(str(fc__)))
     hist_.GetYaxis().SetTitle('Events')
-    hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
+    if variable_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
+    else: hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
+    #hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
     hist_.Draw()
     file_path3_ = output_Loc + label_ + '.png'
     file_path1_ = output_Loc + label_ + '.pdf'
@@ -284,7 +300,7 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     if file_exists1_:   rm_path(file_path1_)
     if file_exists2_:   rm_path(file_path2_)
     hist_.SaveAs(file_path2_)
-    c0_.SaveAs(file_path1_)
+    c0_.SaveAs(file_path1_) #pdf 
     c0_.SaveAs(file_path3_)
     #return 0
     return hist_  
@@ -313,7 +329,8 @@ def combine_histos(input_histo_infos_,var_copy_):
         #hist_.SetLineColor(eval(str(lc_) + '-' + str(i*2) ) ) # eval because they are strings, need to recognize as root objects 
         #hist_.SetFillColor(eval(str(fc_) + '-' + str(i*2) ) )
         hist_.GetYaxis().SetTitle('Events')
-        hist_.GetXaxis().SetTitle( var_copy_ + '_{' + plabel_ + '}')
+        if var_copy_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
+        else: hist_.GetXaxis().SetTitle( var_copy_ + '_{' + plabel_ + '}')
 
         # for combining 
         hists_.append(hist_)    
@@ -366,7 +383,7 @@ def combine_histos(input_histo_infos_,var_copy_):
     if file_exists2_:
         rm_path(file_path2_)
     c0_.SaveAs(file_path1_)
-    c0_.SaveAs(file_path2_)
+    c0_.SaveAs(file_path2_) #pdf 
 
     return mval
 
@@ -395,7 +412,7 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
     #// Upper plot will be in pad1
     pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0)
     pad1.SetBottomMargin(0) # Upper and lower plot are joined
-    pad1.SetGridx()         #Vertical grid
+    #pad1.SetGridx()         #Vertical grid, dashed lines 
 
     pad1.Draw()            #Draw the upper pad: pad1
     pad1.cd()               # pad1 becomes the current pad
@@ -428,7 +445,7 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
     pad2.SetTopMargin(0) # can change to separate top and bottom 
     #pad2.SetBottomMargin(0.2)
     #pad2.SetBottomMargin(0)
-    pad2.SetGridx() # vertical grid
+    #pad2.SetGridx() # vertical grid, dashed lines 
     
     pad2.Draw()
     pad2.cd()      # pad2 becomes the current pad
@@ -467,7 +484,8 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
 
     #print 'xbins__ = ',xbins__ 
     
-    #h1.GetXaxis().SetNdivisions(xbins__)
+    h1.GetXaxis().SetNdivisions(xbins__)
+    #h1.GetXaxis().SetNdivisions(0)
 
     #// h2 settings
     h2.SetLineColor(632)
@@ -488,6 +506,7 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
   #  // X axis ratio plot settings
     #h3.GetXaxis().SetNdivisions(xbins__)
     h3.GetXaxis().SetNdivisions(xbins__)
+    #h3.GetXaxis().SetNdivisions(0)
     h3.GetXaxis().SetTitleSize(20)
     h3.GetXaxis().SetTitleFont(43)
     h3.GetXaxis().SetTitleOffset(4.)
@@ -522,12 +541,32 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
 def var_map(v0_,plab_,G_):
     #G_ = boolean of GEN. If gen, = 1. if reco, = 0 
     var_conv = {
+
     # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
-    "gen_lepton_pt": ['pt','l',1], # for now, pt lepton will just be elec lepton
-    "elec1_pt": ['pt','l',0], # for now, pt lepton will just be elec lepton
-    #"muon1_pt": ['pt','l',0], 
-    "gen_neutrino_pt": ['pt','nu',1],
-    "MET": ['pt','nu',0], 
+
+    ## RECO
+
+    # Electrons
+    "leading_elec_pt": ['pt','le',0],
+    "subleading_elec_pt": ['pt','sle',0],
+
+    # Muons
+    "leading_muon_pt": ['pt','lm',0],
+    "subleading_muon_pt": ['pt','slm',0],
+    
+    # Met
+
+    # GEN
+
+    # Electrons
+    "gen_leading_elec_pt": ['pt','le',1],
+    "gen_subleading_elec_pt": ['pt','sle',1],
+
+    # Muons 
+    "gen_leading_muon_pt": ['pt','lm',1],
+    "gen_subleading_muon_pt": ['pt','slm',1], 
+
+    # Met 
 
     }
 

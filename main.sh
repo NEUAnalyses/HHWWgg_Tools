@@ -27,8 +27,10 @@ do
     name=''
     name+=saved_array
     name+=_$i
-    eval `unset $name`
-    eval `declare -a $name`
+    unset $name 
+    declare -a $name 
+    #eval `unset $name`
+    #eval `declare -a $name`
 
     j=$((0)) #keyitem 
     for el in "${thisconfigname[@]}"

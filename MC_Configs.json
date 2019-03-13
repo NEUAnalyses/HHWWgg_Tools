@@ -1,17 +1,11 @@
 [
-    {
-        "step"      : "DR1",
-        "events"    : 10000,
-        "jobs_jobsize"      : 1 ,
-        "fragment_directory"  : "/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_2/190307_150207/0000/",
-        "pileup"              : "woPU" 
-    },
 
     {
-        "step"      : "DR1",
+        "step"      : "MINIAOD",
         "events"    : 10000,
         "jobs_jobsize"      : 10 ,
-        "fragment_directory"  : "/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_2/190307_150207/0000/",
-        "pileup"              : "woPU" 
+        "fragment_directory"  : "/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_DR2/190311_130934/0000/",
+        "pileup"              : "ignore" 
     }
+
 ]

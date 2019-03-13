@@ -86,6 +86,15 @@ submit_crab_postGEN(){
 
     echo "IDName = $IDName"
 
+    # This naming convention assumes IDName of the form:
+    # <ProductionProcess>_<ResonantParticle>_<ResonantDecay>_<Channel>_<numEvents>_<pileupOption>_<Step>
+    # ex: ggF_X1250_WWgg_enuenugg_10000events_woPU_DR1
+    primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
+    snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
+
+    echo "primary dataset name = $primdset"
+    echo "secondary dataset name = $snddset"
+
     ccname=$IDName
     ccname+="_CrabConfig.py" # Crab Configuration file name 
 
@@ -96,6 +105,7 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
 
     # if crab working area already exists, increment to unique name 
+    #working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
     working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
 
     # Do until unused working area name is found 
@@ -139,7 +149,8 @@ submit_crab_postGEN(){
 
     done
 
-    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py
+    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py # leave this name the same since it's just the crab working area name
+    #echo "config.General.requestName = '$snddset'" >> TmpCrabConfig.py
 
     echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py
     echo "config.General.transferOutputs = True" >> TmpCrabConfig.py
@@ -158,7 +169,9 @@ submit_crab_postGEN(){
     fi 
 
     echo " " >> TmpCrabConfig.py
-    echo "config.Data.outputPrimaryDataset = 'postGEN_Outputs'" >> TmpCrabConfig.py
+
+    #echo "config.Data.outputPrimaryDataset = 'postGEN_Outputs'" >> TmpCrabConfig.py
+    echo "config.Data.outputPrimaryDataset = '$primdset'" >> TmpCrabConfig.py    
 
 
     echo "config.Data.splitting = 'FileBased'" >> TmpCrabConfig.py
@@ -169,7 +182,8 @@ submit_crab_postGEN(){
     #echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
-    echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
+    #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
+    echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
 
     echo "config.Data.userInputFiles = [$path_list] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # input files 
     echo " " >> TmpCrabConfig.py

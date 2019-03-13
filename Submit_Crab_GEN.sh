@@ -33,8 +33,19 @@ submit_crab_GEN(){
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
     IDName=${IDName#"cmssw_configs/"} # Remove cmssw folder part from eventual crab config path
-    echo "IDName = $IDName"
+    #echo "IDName = $IDName"
     IDName=${IDName%???} # Remove .py 
+
+    echo "IDName = $IDName"
+
+    # This naming convention assumes IDName of the form:
+    # <ProductionProcess>_<ResonantParticle>_<ResonantDecay>_<Channel>_<numEvents>_<Step>
+    # ex: ggF_X1250_WWgg_enuenugg_10000events_GEN
+    primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
+    snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
+
+    echo "primary dataset name = $primdset"
+    echo "secondary dataset name = $snddset"
 
     ccname=$IDName
     ccname+="_CrabConfig.py" # Crab Configuration file name 
@@ -118,8 +129,13 @@ submit_crab_GEN(){
     fi 
 
     echo " " >> TmpCrabConfig.py
-    echo "config.Data.outputPrimaryDataset = 'GEN_Outputs'" >> TmpCrabConfig.py
+    #echo "config.Data.outputPrimaryDataset = 'GEN_Outputs'" >> TmpCrabConfig.py # primdset
+    echo "config.Data.outputPrimaryDataset = '$primdset'" >> TmpCrabConfig.py # primdset
     echo "config.Data.splitting = 'EventBased'" >> TmpCrabConfig.py
+
+    #echo "number of events per job = $((EvtsPerJob))"
+    #echo "config.Data.unitsPerJob = 100" >> TmpCrabConfig.py # Hardcoding to test cause of missing events 
+
     echo "config.Data.unitsPerJob = $((EvtsPerJob))" >> TmpCrabConfig.py # number of events per job for MC 
     echo "NJOBS = $njobs  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
     #echo "NJOBS = 1  # This is not a configuration parameter, but an auxiliary variable that we use in the next line." >> TmpCrabConfig.py
@@ -127,10 +143,11 @@ submit_crab_GEN(){
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
-    echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
+    #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
+    echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
     #echo "config.Data.userInputFiles = ['/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root'] # If DR1 step, this should be GEN file " >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
-    #echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
+    echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     cp TmpCrabConfig.py $ccname

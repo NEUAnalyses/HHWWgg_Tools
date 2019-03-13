@@ -19,6 +19,21 @@ gROOT.SetBatch(True)
 import sys
 from os import listdir
 
+# Particles to Plot
+# Need to set here for now 
+
+ptp = []
+
+#ptp.append('H')
+#ptp.append('l')
+#ptp.append('le') # leading electron 
+#ptp.append('sle') # subleading electron 
+#ptp.append('lm') # leading muon 
+ptp.append('slm') # subleading muon 
+#ptp.append('nu')
+#ptp.append('q')
+nps = len(ptp)
+
 print
 print 'It\'s time to plot some fun MC variables'
 print
@@ -52,6 +67,8 @@ for dn,dinfo in enumerate(ds):
 
         # For each particle
         for p in ptp:
+            # For each set of cuts
+            #for 
             print
             print 'Plotting particle', p, ': ',variable
             print
