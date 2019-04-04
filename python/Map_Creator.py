@@ -27,7 +27,7 @@ with open(fname,'r') as tsv:
         #for item in line:
             #print 'item = ',item 
         i += 1
-        if i == 10: break 
+        #if i == 10: break 
         
 print "ID_DOF_Map = ",ID_DOF_Map
 
