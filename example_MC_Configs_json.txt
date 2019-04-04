@@ -4,20 +4,20 @@
 // For display only
 // This is how the step configs should look 
 
-// jobs_jobsize = number of jobs for GEN step 
+// jobs_jobsize = number of jobs for GEN-SIM step 
 //              = number of input files for DR1, DR2, MINIAOD steps 
 // fragment_directory = pythia fragment name (without .py and CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python/) for GEN step
 //                    = directory to look for input files for DR1, DR2, MINIAOD steps
 // pileup = woPU or wPU. Only used in DR1 and DR2 steps
 
 [
-    // GEN 
+    // GEN-SIM
     {
-        "step"      : "GEN",
+        "step"      : "GEN-SIM",
         "events"    : 10000,
         "jobs_jobsize"      : 10 ,
         "fragment_directory"  : "ggF_X1250_WWgg_qqqqgg",
-        "pileup"              : "ignore" // not used for GEN. Give entry anyway to keep configs same size 
+        "pileup"              : "ignore" // not used for GEN-SIM. Give entry anyway to keep configs same size 
     },
 
     // DR1
@@ -34,7 +34,7 @@
         "step"      : "DR2",
         "events"    : 10000,
         "jobs_jobsize"      : 10 ,
-        "fragment_directory"  : "/DR1outputdirectory/",
+        "fragment_directory"  : "/DR1outputdirectory/", // Use DR1 files as input for DR2 step 
         "pileup"              : "woPU" 
     },
 
@@ -43,7 +43,7 @@
         "step"      : "MINIAOD",
         "events"    : 10000,
         "jobs_jobsize"      : 10 ,
-        "fragment_directory"  : "/DR2outputdirectory/",
+        "fragment_directory"  : "/DR2outputdirectory/", // Use DR2 files as input for MINIAOD step 
         "pileup"              : "ignore" // not used for MINIAOD. Give entry anyway to keep configs same size 
     }
 ]

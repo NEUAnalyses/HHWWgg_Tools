@@ -62,7 +62,7 @@ ds = []
 
 ds.append(
         #['SL','X1250_qqenugg',['/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','root://cmsxrootd.fnal.gov//store/user/atishelm/Plot/EventDumper/test/'],'600','600-10']
-        ['SL','X1250_munumunugg','/eos/cms/store/user/atishelm/Plot/EventDumper/test3/','600','600-10']
+        ['SL','testing','/eos/cms/store/user/atishelm/Plot/EventDumper/test_change/','600','600-10']
 )
 
 gen_colors = [416,416-10]
@@ -101,7 +101,9 @@ vs = []
 #vs.append(['py',100,-1000,1000])
 #vs.append(['pz',100,-1000,1000])
 #vs.append(['pt',10,0,10])
-vs.append(['pt',20,0,1000])
+#vs.append(['pt',20,0,1000])
+#vs.append(['n_jets',20,0,20])
+vs.append(['invmass',50,0,400])
 #vs.append(['pt',50,-1000,1000])
 
 #vs.append(['pt',100,0,1000,'ls']) #ls = plot leading and subleading. l = leading. s = subleading 
@@ -261,11 +263,12 @@ def import_ED(reco_path_,var_,hid_,xbins_,xmin_,xmax_):
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_Dipho_PS')
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneElec')  
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneMuon')
-    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPS') 
+    ch = TChain('HHWWggCandidateDumper/trees/_13TeV_Dipho_PS') 
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPSandTwoElec')  
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_DiphoPSandgteTwoElec') 
     #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_AtleastOneMuon')
-    ch = TChain('HHWWggCandidateDumper/trees/_13TeV_1a3_1')
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_1a3_1')
+    #ch = TChain('HHWWggCandidateDumper/trees/_13TeV_1a3_1')
     
     ch.Add(reco_path_)
     hname1 = hid_
@@ -556,6 +559,10 @@ def var_map(v0_,plab_,G_):
     
     # Met
 
+    # Jets
+    "mdj_invmass": ['invmass','mjj',0],
+    "nmdj_invmass": ['invmass','nmjj',0],
+
     # GEN
 
     # Electrons
@@ -567,6 +574,10 @@ def var_map(v0_,plab_,G_):
     "gen_subleading_muon_pt": ['pt','slm',1], 
 
     # Met 
+
+    # Quarks 
+    "mdq_invmass": ['invmass','mjj',1],
+    "nmdq_invmass": ['invmass','nmjj',1],
 
     }
 

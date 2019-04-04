@@ -29,9 +29,13 @@ ptp = []
 #ptp.append('le') # leading electron 
 #ptp.append('sle') # subleading electron 
 #ptp.append('lm') # leading muon 
-ptp.append('slm') # subleading muon 
+#ptp.append('slm') # subleading muon 
 #ptp.append('nu')
 #ptp.append('q')
+#ptp.append('j')
+#ptp.append('mjj') # Matching jj pair (qq for gen)
+ptp.append('nmjj') # Non-Matching jj pair (qq for gen)
+
 nps = len(ptp)
 
 print

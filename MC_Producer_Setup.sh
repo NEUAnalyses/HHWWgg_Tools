@@ -26,7 +26,7 @@ chosen_filename=$4
 
 echo "chosen_step = $chosen_step"
 
-if [ $chosen_step == GEN ]
+if [ $chosen_step == GEN-SIM ]
 then
 
     # Params: filename, step, events 
@@ -72,7 +72,7 @@ elif [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
 then
     # Params: DRInput, pileup, step, events 
 
-    #echo "Setting up $chosen_step"
+    echo "Setting up $chosen_step"
 
     #chosen_genoutput_=${chosen_config}[DRInput]
     #chosen_genoutput=${!chosen_genoutput_}
@@ -92,9 +92,23 @@ then
     declare -a f_paths # unassociative array 
 
     f_paths=() 
-    for path in `grep -L "inLHE" $GenSimOutput`; # ignore files containing 'inLHE'
-        do f_paths+=("file:$path");
-        done  
+    #echo "gensimoutput = $GenSimOutput"
+    # First performs the grep command, then adds files. This takes a while for 100 files
+    for path in $GenSimOutput; do
+        #echo "path = $path"
+        if [[ $path != *"inLHE"* ]]; then # double brackets allows you to use * outside quotes 
+            #echo "path = $path"
+            f_paths+=("file:$path"); 
+        fi 
+        done 
+
+    # for path in `grep -L "inLHE" $GenSimOutput`; # ignore files containing 'inLHE'
+    #     #echo "path = $path"
+    #     do 
+    #     echo "path = $path"
+    #     f_paths+=("file:$path");
+    #     #echo "checked path"
+    #     done  
 
     # Then want single string whith comma separated names for cmsDriver command 
 
@@ -149,9 +163,20 @@ then
     declare -a f_paths # unassociative array 
 
     f_paths=() 
-    for path in `grep -L "inLHE" $PrevStepOutput`; # ignore files containing 'inLHE'
-        do f_paths+=("file:$path");
-        done  
+    #echo "gensimoutput = $GenSimOutput"
+    # First performs the grep command, then adds files. This takes a while for 100 files
+    for path in $PrevStepOutput; do
+        #echo "path = $path"
+        if [[ $path != *"inLHE"* ]]; then # double brackets allows you to use * outside quotes 
+            #echo "path = $path"
+            f_paths+=("file:$path"); 
+        fi 
+        done 
+
+    # f_paths=() 
+    # for path in `grep -L "inLHE" $PrevStepOutput`; # ignore files containing 'inLHE'
+    #     do f_paths+=("file:$path");
+    #     done  
 
     # Then want single string whith comma separated names for cmsDriver command 
 
@@ -214,7 +239,7 @@ else
     
     echo 'Did not find desired step'
     echo 'Please enter an argument whose array has one of the following for "step":'
-    echo '  GEN'
+    echo '  GEN-SIM'
     echo '  DR1'
     echo '  DR2'
     echo '  MINIAOD'
@@ -256,5 +281,14 @@ end_script(){
     #exit 1;
 }
 
-# Currently assuming MCM chain of commands for fragment created with CMSSW_9_3_9_patch1 
+# Edit a CMSSW configuration file to include a seed for shuffling a list of pileup files
+shuffle_PU(){
+
+    echo "adding PU shuffling to cmssw config file"
+    # open config file
+    # add lines 
+    
+}
+
+# Currently assuming MCM chain of commands for fragments created with CMSSW_9_3_9_patch1 
 source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_939.sh 

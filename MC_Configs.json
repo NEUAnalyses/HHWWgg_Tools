@@ -1,10 +1,9 @@
 [
-
     {
         "step"      : "MINIAOD",
-        "events"    : 10000,
-        "jobs_jobsize"      : 10 ,
-        "fragment_directory"  : "/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqmunugg/10000events_woPU_DR2/190311_130934/0000/",
+        "events"    : 99000,
+        "jobs_jobsize"      : 1,
+        "fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1250_WWgg_qqqqgg/100000events_wPU_DR2/190403_194030/0000/",
         "pileup"              : "ignore" 
     }
 

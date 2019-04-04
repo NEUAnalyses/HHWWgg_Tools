@@ -159,6 +159,10 @@ submit_crab_postGEN(){
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
     #echo "arg = $1"
     echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    #s_str='SEED=$CRAB_Id'
+    #echo "config.JobType.pyCfgParams = [$s_str]" >> TmpCrabConfig.py
+
+
 
     if [ $chosen_threads != noval ]
     then
@@ -179,8 +183,8 @@ submit_crab_postGEN(){
     #echo "config.Data.unitsPerJob = $chosen_jobs" >> TmpCrabConfig.py # Number of output files (need to verify this for DR1)  
 
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
-    #echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
-    echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
+    echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
+    #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
@@ -201,6 +205,8 @@ submit_crab_postGEN(){
     rm TmpCrabConfig.py 
 
     #crab submit -c ../../crab_configs/$ccname 
+
+    # Just need last two 
     crab submit -c crab_configs/$ccname 
     crab status 
 

@@ -23,7 +23,7 @@ version=939
 chosen_threads=unset 
 #LHE,GEN,SIM
 
-if [ $chosen_step == GEN ]
+if [ $chosen_step == GEN-SIM ]
 then
 
     # MCM Steps 
@@ -122,9 +122,11 @@ then
 
     # Remove previous step from name 
 
-    DR1Output=${DR1Output%_GEN*}
+    DR1Output=${DR1Output%_GEN-SIM*}
+    #DR1Output=${DR1Output%_GEN*}
     DR2Output=${DR2Output%_DR1*}
-    DR1Config=${DR1Config%_GEN*}
+    DR1Config=${DR1Config%_GEN-SIM*}
+    #DR1Config=${DR1Config%_GEN*}
     DR2Config=${DR2Config%_DR1*}
 
     # Add PU info to file names 
@@ -169,14 +171,10 @@ then
 
             cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-            #cmsRun $DR1Config
+            # Need to edit cmssw config to shuffle pileup each time 
+            #shuffle_PU $DR1Config
 
-            #echo "DR1Config = $DR1Config"
-
-            #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads
-
-            #end_script 
- 
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
         elif [ $chosen_step == DR2 ]
         then 
@@ -190,6 +188,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
 
             #end_script 
 
