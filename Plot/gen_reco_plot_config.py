@@ -546,6 +546,8 @@ def var_map(v0_,plab_,G_):
     var_conv = {
 
     # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
+    # Configured for GEN/RECO. Should also have something for DATA/MC 
+    # Do 
 
     ## RECO
 
@@ -563,7 +565,7 @@ def var_map(v0_,plab_,G_):
     "mdj_invmass": ['invmass','mjj',0],
     "nmdj_invmass": ['invmass','nmjj',0],
 
-    # GEN
+    ## GEN
 
     # Electrons
     "gen_leading_elec_pt": ['pt','le',1],

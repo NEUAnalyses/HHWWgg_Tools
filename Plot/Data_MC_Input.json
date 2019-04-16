@@ -1,0 +1,22 @@
+{
+    "directories" : 
+    {
+        "Data_direc_info": ["/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/Data/","Data"],
+        "MC_direc_info": ["/afs/cern.ch/work/a/atishelm/2FebFlashgglxplus7/CMSSW_10_2_1/src/flashgg/MC/","GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCUETP8M1_13TeV_Pythia8"]
+    },
+
+    "variables":
+    {
+        "variable1": ["eta",50,-5,5]
+    },
+
+    "particles": ["le"],
+
+    "maximums":
+    {
+
+        "me" : -1,
+        "mf" : -1 
+    }
+    
+}
