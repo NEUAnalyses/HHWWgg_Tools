@@ -4,7 +4,7 @@
 # 16 April 2019 
 # Configuration for Data_MC_Plot.py
 
-from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy
+from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow 
 import os 
 #import rhinoscriptsyntax as rs
 import json
@@ -218,21 +218,68 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
         # Get tree_ somehow. Should be possible from file name 
         # For each file, get tree_ and draw to histogram
         # After done with all files, stack into new histogram 
-        stk = THStack("stk","")
+        stk = THStack("stk","stacked_histo")
+        histos = []
+
+        # testing 
+        #hid_ = 'test'
+        #xbins_ = 10
+        #xmin_ = 0
+        #xmax_ = 10
 
         for i, path_ in enumerate(paths_):
-            # get tree_
-            # tree_ = 
-            ch = TChain('HHWWggCandidateDumper/trees/' + tree_ + '_13TeV_All_Events')
-            ch.Add(path_)
-            hname_tmp = hid_
-            h_tmp = TH1F(hname_tmp, hid_, xbins_, xmin_, xmax_)
-            ch.Draw(var_+'>>'+hname_tmp,TCut(''))
-            print 'h_tmp.GetEntries() = ',h_tmp.GetEntries() # Tells you if the histogram was actually filled 
-            #h_tmp.SetFillColor(1 + i) # custom color for each background 
-            stk.Add(h_tmp)
+            tree_name = get_tree(path_)
 
-        #print 'stk.GetEntries() = ',stk.GetEntries() # Tells you if the histogram was actually filled 
+            # bck_f = TFile(path_) # background file
+            # d = TDirectory()
+            # d = bck_f.Get('HHWWggCandidateDumper/trees')
+            # a = TList()
+            # a = d.GetListOfKeys()
+            # tree_name = ''
+            # for thing in a:
+            #     #print'thing.GetName() = ',thing.GetName()
+            #     tree_name = thing.GetName()
+
+            ch = TChain('HHWWggCandidateDumper/trees/' + tree_name ) # All_Events is a category 
+            ch.Add(path_)
+            hid_tmp = hid_ + str(i)
+            hname_tmp = hid_ + '_' + str(i)
+            h_tmp = TH1F(hname_tmp, hid_tmp, xbins_, xmin_, xmax_)
+            #h3 = h1.Clone("h3")
+            #h_tmp.Fill(2)
+            #h_tmp.Fill(3)
+            #h_tmp.SetFillColor(4 + i)
+            #exec('h_tmp' + str(i) + '= TH1F(hname_tmp, hid_tmp, xbins_, xmin_, xmax_)')
+            ch.Draw(var_+'>>'+hname_tmp,TCut(''))
+            #print 'h_tmp.GetEntries() = ', h_tmp.GetEntries() # Tells you if the histogram was actually filled 
+            #h_tmp.SetDirectory(0)
+            h_tmp.SetFillColor(3 + i)
+            stk.Add(h_tmp)
+            #h_tmp.SetFillColor(1 + i)
+            #print 'h_tmp.GetEntries() = ', eval('h_tmp' + str(i) + '.GetEntries()') # Tells you if the histogram was actually filled 
+            #eval('h_tmp' + str(i)).SetFillColor(1 + i) # custom color for each background 
+            #h_tmp.SaveAs('h_tmp_' + str(i) + '.root')
+            #print'h_tmp = ',h_tmp 
+            #if eval('h_tmp' + str(i)).GetEntries() != 0: 
+            # if h_tmp.GetEntries() != 0:
+            #     print'adding histo'
+            #     histos.append(h_tmp)
+                #print'h_tmp = ',eval('h_tmp' + str(i)) 
+                #histos.append(eval('h_tmp' + str(i)))
+                #stk.Add(h_tmp)
+            #if i == 5: break 
+        #for h__ in histos:
+            #print h__ 
+            #stk.Add(h__)
+        # ccc = TCanvas()
+        # stk.Draw()
+        # ccc.SaveAs('/eos/user/a/atishelm/www/analysis_plots/stk.png')
+
+        #stk_last = stk.GetStack().Last() 
+        #stk_last.SaveAs('/eos/user/a/atishelm/www/analysis_plots/stk_last.png')
+        # stk.SaveAs('stk.root')
+        #print'stk.GetStack().Last() = ',stk.GetStack().Last() 
+        #stk.GetStack().Last().SetDirectory(0) # so you can access it later 
         return stk
 
     # Data. Just TChain files then draw  
@@ -304,8 +351,11 @@ def save_histo_stack(hist_,label_,plabel_,variable_,lc__,fc__):
         hist_.SetMarkerStyle(kFullDotLarge)
         hist_.Draw("P0")
     else:
-        gStyle.SetPalette(kCandy) # automatic color setting
-        hist_.Draw('pfc')
+        gStyle.SetPalette(kRainBow) # automatic color setting
+        #print'hist_ = ',hist_ 
+        #print'hist_.GetStack() = ',hist_.GetStack()
+        #hist_.Draw()
+        hist_.Draw()
     file_path3_ = output_Loc + label_ + '.png'
     file_path1_ = output_Loc + label_ + '.pdf'
     file_path2_ = output_Loc + label_ + '.root'
@@ -332,7 +382,7 @@ def combine_histos(input_histo_infos_,var_copy_):
     plabels_ = []
     colors_ = [] 
 
-    # turn THStack entry into all its histo entries 
+    # turn THStack entry into sum of its histo entries 
     input_histo_infos_cpy = list(input_histo_infos_)
 
     for i in range(len(input_histo_infos_cpy)):
@@ -340,10 +390,14 @@ def combine_histos(input_histo_infos_,var_copy_):
         ID_start = ID_.split('_')[0] # this multistep process to get data/mc identifier could cause problems if things change 
         if (ID_start == 'MC'):
             hstack = input_histo_infos_cpy[i][0]
+            #print'hstack = ',hstack 
+            #print'hstack.GetStack() = ',hstack.GetStack()
+            #print'hstack.GetStack().Last() = ',hstack.GetStack().Last() 
             del input_histo_infos_cpy[i] # remove hstack from histos 
-            for bi, block in enumerate(hstack):
+            input_histo_infos_cpy.append([hstack.GetStack().Last(),'summed_h','test_p',[1,1]]) # append summed stack histogram to get maximum between that and data 
+            #for bi, block in enumerate(hstack):
                 #print'hstack thing = ',block
-                input_histo_infos_cpy.append([block,'block_' + str(bi),'test_p',[1,1]]) # append each histogram making up hstack 
+                #input_histo_infos_cpy.append([block,'block_' + str(bi),'test_p',[1,1]]) # append each histogram making up hstack 
 
     # input_histo_infos_ format 
     # input_histos_info.append([dec_Data_hist,Data_ID,p,[Data_colors[0],Data_colors[1]]])
@@ -356,7 +410,7 @@ def combine_histos(input_histo_infos_,var_copy_):
         h_lc = input_histo_infos_cpy[i][3][0]
         h_fc = input_histo_infos_cpy[i][3][0]
 
-        hist_.SetDirectory(0)
+        #hist_.SetDirectory(0)
         hist_.SetLineColor(eval(str(h_lc)))
         #hist_.SetLineColor(eval(str(lc_) + '-' + str(i*2) ) ) # eval because they are strings, need to recognize as root objects 
         #hist_.SetFillColor(eval(str(fc_) + '-' + str(i*2) ) )
@@ -416,82 +470,73 @@ def combine_histos(input_histo_infos_,var_copy_):
         rm_path(file_path2_)
     #c0_.SaveAs(file_path1_)
     #c0_.SaveAs(file_path2_) #pdf 
-
     return mval
 
-def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
+def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
 
-#    // Define two gaussian histograms. Note the X and Y title are defined
-#    // at booking time using the convention "Hist_title ; X_title ; Y_title"
-#    TH1F *h1 = new TH1F("h1", "Two gaussian plots and their ratio;x title; h1 and h2 gaussian histograms", 100, -5, 5);
-#    TH1F *h2 = new TH1F("h2", "h2", 100, -5, 5);
-#    h1.FillRandom("gaus");
-#    h2.FillRandom("gaus");
-
-#    // Define the Canvas
-    #TCanvas *c = new TCanvas("c", "canvas", 800, 800);
-
+    print'max_val_ = ',max_val_ 
+    print'max_val_*1.1 = ',max_val_*1.1
+    # Canvas for upper and lower plots 
     cc = TCanvas("cc", "canvas", 800, 800)
 
-    # In data/mc, one of these is the stacked mc. 
-    # in ratio, need to divide data value by stacked mc value. 
-    # on upper plot, will plot hstack. 
-    h1 = ih_[0][0]
-    h2 = ih_[1][0]
+    # Get Data and MC histos 
+    h_data = ih_[0][0] # Data (TH1F) 
+    h_MC = ih_[1][0] # MC (THStack) 
 
-    hists_ = []
-    hists_.append(h1)
-    hists_.append(h2)
+    # Set range of MC y axis range to contain both data and MC when combined 
+    h_MC.SetMinimum(0)
+    h_MC.SetMaximum(max_val_*1.05)
+    h_MC.GetYaxis().SetLabelOffset(999) # will create separate axis later 
 
-    for this_hist_i_, histo_ in enumerate(hists_):
-        this_ID = ih_[this_hist_i_][1]
-        this_ID_start = this_ID.split('_')[0] 
-        if this_ID_start == 'MC':
-            stack_sum_h = histo_.GetStack().Last()
+    # h_data.SetMinimum(0)
+    # h_data.SetMaximum(max_val_*1.1)
 
-    #ID_ = input_histo_infos_[i][1] 
-    #ID_start = ID_.split('_')[0] # this multistep process to get data/mc identifier could cause problems if things change 
+    # Sum of MC stack. Will divide Data by this to get proper ratio 
+    stack_sum_h = h_MC.GetStack().Last()
 
-    #print 'h1 = ',h1
-    #print 'h2 = ',h2 
-
-    #print'h1.GetMaximum() = ' ,h1.GetMaximum() 
-
-    #// Upper plot will be in pad1
+    # Upper plot will be in pad1
     pad1 = TPad("pad1", "pad1", 0, 0.3, 1, 1.0)
     pad1.SetBottomMargin(0) # Upper and lower plot are joined
     #pad1.SetGridx()         #Vertical grid, dashed lines 
 
     pad1.Draw()            #Draw the upper pad: pad1
     pad1.cd()               # pad1 becomes the current pad
-    h1.SetStats(0)          # No statistics on upper plot
+    h_data.SetStats(0)          # No statistics on upper plot
     #h1.GetXaxis().SetNdivisions(xbins__)
-    h1.SetMarkerStyle(kFullDotLarge)
-    h1.GetYaxis().SetRangeUser(0,max_val_*1.1)
-    h1.Draw("P0")               # Draw h1
+    h_data.SetMarkerStyle(kFullDotLarge)
+    h_data.SetMinimum(0)
+    h_data.SetMaximum(max_val_*1.1)
 
-    # pad1.Update()
-    # lline = TLine(pad1.GetUxmin(),20,pad1.GetUxmax(),20)
-    # #lline.SetNDC(1)
-    # lline.SetLineStyle(3)
-    # lline.Draw('same')
-    h2.GetYaxis().SetRangeUser(0,max_val_*1.1)
-    gStyle.SetPalette(kCandy) # automatic color setting
-    h2.Draw("same pfc")         # Draw h2 on top of h1
+    #h_data.Draw("P0")
+    #gStyle.SetPalette(kRainBow) # automatic color setting
+    #h_MC.Draw("same pfc")   # pfc = pad fill color
+    
+    gStyle.SetPalette(kRainBow) # automatic color setting
+    h_MC.Draw("pfc")
+    h_data.Draw("same P0")
 
     #    // Do not draw the Y axis label on the upper plot and redraw a small
     #    // axis instead, in order to avoid the first label (0) to be clipped.
-    h1.GetYaxis().SetLabelSize(0.)
+    #h1.GetYaxis().SetLabelSize(0.)
+    #h2.GetYaxis().SetLabelSize(0.)
+    #h2.GetYaxis().SetNdivisions(0)
+    #h2.GetYaxis().SetRangeUser(0.,0.)
+    #h1.GetYaxis().SetNdivisions(0)
     #TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
     #axis = TGaxis( -5, 20, -5, 220, 20,220,510,"") #xmin ymin xmax ymax 
-    axis = TGaxis( 0, 0, 0, max_val_, 0.001,max_val_,510,"")
+    #axis = TGaxis( -5, 20, 0, max_val_*1.1, 0.001,max_val_*1.1,510,"")
+    print'max_val_ = ',max_val_
+    print'max_val_*1.05 = ',max_val_*1.05
+    axis = TGaxis(xmin_, 0, xmin_, max_val_*1.05, 0.001,max_val_*1.05,510,"") # xmin ymin xmax ymax wmin wmax (lowest and higest tick mark values), ndiv    
+    #axis = TGaxis( -5, 0, -5, max_val_*1.1, 0.001,max_val_*1.1,510,"") # xmin ymin xmax ymax wmin wmax (lowest and higest tick mark values), ndiv
     axis.SetLabelFont(43) #Absolute font size in pixel (precision 3)
     axis.SetLabelSize(15)
-    axis.Draw()
+    #print'axis.GetLabelOffset() = ', axis.GetLabelOffset()
+    #axis.Draw()
+    axis.Draw("same")
 
     #lower plot will be in pad
     cc.cd()           # Go back to the main canvas before defining pad2
-    #TPad *pad2 = new TPad("pad2", "pad2", 0, 0.05, 1, 0.3)
     pad2 = TPad("pad2", "pad2", 0, 0.05, 1, 0.3)
     pad2.SetTopMargin(0) # can change to separate top and bottom 
     #pad2.SetBottomMargin(0.2)
@@ -504,22 +549,25 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
     # Define the ratio plot
     #TH1F *h3 = (TH1F*)h1.Clone("h3");
     #h3 = h2.Clone("h3")
-    h3 = h1.Clone("h3")
-    h3.SetLineColor(1)
-    h3.SetMinimum(0.5)  # Define Y ..
-    h3.SetMaximum(1.5) # .. range
-    h3.Sumw2()
-    h3.SetStats(0)     # No statistics on lower plot
+    
+    h_ratio = h_data.Clone("h_ratio") # copy of data 
+    h_ratio.GetYaxis().SetLabelOffset(0.005)
+    h_ratio.GetYaxis().SetLabelSize(15)
+    h_ratio.SetLineColor(1)
+    h_ratio.SetMinimum(0.5)  # Define Y ..
+    h_ratio.SetMaximum(1.5) # .. range
+    h_ratio.Sumw2()
+    h_ratio.SetStats(0)     # No statistics on lower plot
     #print'h1 = ',h1
     #print'h2 = ',h2
     #print'h3 = ',h3
-    h3.Divide(stack_sum_h)
-    h3.SetMarkerStyle(21)
+    h_ratio.Divide(stack_sum_h) # Here is where h_ratio actually becomes a ratio 
+    h_ratio.SetMarkerStyle(21)
 
     #gPad.Modified()
     #gPad.Update()
 
-    h3.Draw("ep")     # Draw the ratio plot
+    h_ratio.Draw("ep")     # Draw the ratio plot
 
     pad2.Update()
     lline = TLine(pad2.GetUxmin(),1,pad2.GetUxmax(),1)
@@ -529,13 +577,18 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
 
 
     #// h1 settings
-    h1.SetLineColor(600+1)
-    h1.SetLineWidth(2)
+    # h1.SetLineColor(600+1)
+    # h1.SetLineWidth(2)
 
     #// Y axis h1 plot settings
-    h1.GetYaxis().SetTitleSize(20)
-    h1.GetYaxis().SetTitleFont(43)
-    h1.GetYaxis().SetTitleOffset(1.55)
+    # h1.GetYaxis().SetTitleSize(20)
+    # h1.GetYaxis().SetTitleFont(43)
+    # h1.GetYaxis().SetTitleOffset(1.55)
+
+    #h_MC.SetTitle('')
+    #h_MC.GetYaxis().SetRangeUser(0,max_val_*1.1)
+    #h_MC.GetYaxis().SetLabelOffset(999)
+    #h_MC.GetYaxis().SetLabelSize(0)
 
     #print 'xbins__ = ',xbins__ 
     
@@ -547,26 +600,26 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_):
     #h2.SetLineWidth(2)
 
    # // Ratio plot (h3) settings
-    h3.SetTitle("") # Remove the ratio title
+    h_ratio.SetTitle("") # Remove the ratio title
 
     #// Y axis ratio plot settings
-    h3.GetYaxis().SetTitle("Data/MC")
-    h3.GetYaxis().SetNdivisions(505) # with 0.5-1.5 ratio range, keeps y axis labels unobstructed 
-    h3.GetYaxis().SetTitleSize(20)
-    h3.GetYaxis().SetTitleFont(43)
-    h3.GetYaxis().SetTitleOffset(1.55)
-    h3.GetYaxis().SetLabelFont(43) #Absolute font size in pixel (precision 3)
-    h3.GetYaxis().SetLabelSize(15)
+    h_ratio.GetYaxis().SetTitle("Data/MC")
+    h_ratio.GetYaxis().SetNdivisions(505) # with 0.5-1.5 ratio range, keeps y axis labels unobstructed 
+    h_ratio.GetYaxis().SetTitleSize(20)
+    h_ratio.GetYaxis().SetTitleFont(43)
+    h_ratio.GetYaxis().SetTitleOffset(1.55)
+    h_ratio.GetYaxis().SetLabelFont(43) #Absolute font size in pixel (precision 3)
+    h_ratio.GetYaxis().SetLabelSize(15)
 
   #  // X axis ratio plot settings
     #h3.GetXaxis().SetNdivisions(xbins__)
     #h3.GetXaxis().SetNdivisions(xbins__)
     #h3.GetXaxis().SetNdivisions(0)
-    h3.GetXaxis().SetTitleSize(20)
-    h3.GetXaxis().SetTitleFont(43)
-    h3.GetXaxis().SetTitleOffset(4.)
-    h3.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
-    h3.GetXaxis().SetLabelSize(15)
+    h_ratio.GetXaxis().SetTitleSize(20)
+    h_ratio.GetXaxis().SetTitleFont(43)
+    h_ratio.GetXaxis().SetTitleOffset(4.)
+    h_ratio.GetXaxis().SetLabelFont(43) # Absolute font size in pixel (precision 3)
+    h_ratio.GetXaxis().SetLabelSize(15)
 
     pad1.cd()
 
@@ -655,3 +708,17 @@ def rm_path(path_to_delete):
 
 def path_exists(path_to_check):
     return os.path.isfile(path_to_check)
+
+# Made this because I think it was messing up adding histograms to the THStack in the loop. Not fully understood,
+# but I'm guessing it was changing the current directory or something 
+def get_tree(fp): # file path 
+    bck_f = TFile(fp) # background file
+    d = TDirectory()
+    d = bck_f.Get('HHWWggCandidateDumper/trees')
+    a = TList()
+    a = d.GetListOfKeys()
+    tree_name__ = ''
+    for thing in a:
+        #print'thing.GetName() = ',thing.GetName()
+        tree_name__ = thing.GetName()
+    return tree_name__

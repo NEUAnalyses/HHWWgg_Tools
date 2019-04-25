@@ -77,12 +77,12 @@ for dn,dinfo in enumerate(ds):
 
             # Make Data/MC plot 
             input_histos_info = []
-            input_histos_info.append([dec_Data_hist,Data_ID,p,[Data_colors[0],Data_colors[1]]])
+            input_histos_info.append([dec_Data_hist,Data_ID,p,[Data_colors[0],Data_colors[1]]]) # Data 
             input_histos_info.append([dec_MC_hist,MC_ID,p,[MC_colors[0],MC_colors[1]]]) # Beware, the MC variable label used is the Data variable. This assumes you're plotting the same variable. 
 
-            #var_copy = v[0][:]
+            # Make Ratio Plot 
             var_copy = variable[:]
-            #combine_histos(input_histos_info,eval(lc),eval(fc),var_copy) # Saves combined /MC canvas 
-            max_val = combine_histos(input_histos_info,var_copy) # Saves combined Data/MC canvas 
+            max_val = combine_histos(input_histos_info,var_copy) # Saves combined Data/MC canvas and gets max_value for y axis 
             #print 'max_val = ',max_val 
-            plot_ratio(input_histos_info,max_val,xbins,Data_MC_ID)
+            #max_val = 11000
+            plot_ratio(input_histos_info,max_val,xbins,Data_MC_ID,xmin)
