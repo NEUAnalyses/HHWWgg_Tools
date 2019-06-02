@@ -1,288 +1,81 @@
 #!/usr/bin/env python
-
 # Abe Tishelman-Charny 
 # 16 April 2019 
 # Configuration for Data_MC_Plot.py
 
-from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow 
+from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow, kBlue, kGreen 
+from MC_Categorize import MC_Cat
 import os 
-#import rhinoscriptsyntax as rs
 import json
 
 # Read from json file 
-
 with open('Data_MC_Input.json','r') as f:
     info = f.read()
-
 obj = json.loads(info)
-
 # directories containing all files to process
 Data_direc = obj["directories"]["Data_direc_info"][0]
 MC_direc = obj["directories"]["MC_direc_info"][0]
-
 Data_tree_prefix = obj["directories"]["Data_direc_info"][1]
 MC_tree_prefix = obj["directories"]["MC_direc_info"][1]
-
 output_Loc = '/eos/user/a/atishelm/www/analysis_plots/'
-
 # Directories 
 ds = []
-
-# kWhite  = 0,   kBlack  = 1,   kGray    = 920,  kRed    = 632,  kGreen  = 416,
-# kBlue   = 600, kYellow = 400, kMagenta = 616,  kCyan   = 432,  kOrange = 800,
-# kSpring = 820, kTeal   = 840, kAzure   =  860, kViolet = 880,  kPink   = 900
-
-# [DirecID, path, linecolor, fillcolor]
 ds.append([[Data_direc,MC_direc],[Data_tree_prefix,MC_tree_prefix],'416','416-10'])
-#ds.append(['MC',MC_direc,'600','600-10'])
-
 Data_colors = [416,416-10]
 MC_colors = [600,600-10]
-
 # Variables 
 vs = []
 # [<'variable name'>,<bins>,<min>,<max>]
-
 for v in obj["variables"]:
     v_params = obj["variables"][str(v)]
     vs.append(v_params)
-
 # Particles 
 ptp = []
 for p in obj["particles"]:
     ptp.append(p)
-
-# ptp = []
-
-#ptp.append('H')
-#ptp.append('l')
-#ptp.append('le') # leading electron 
-#ptp.append('sle') # subleading electron 
-#ptp.append('lm') # leading muon 
-#ptp.append('slm') # subleading muon 
-#ptp.append('nu')
-#ptp.append('q')
-#ptp.append('j')
-#ptp.append('mjj') # Matching jj pair (qq for Data)
-# ptp.append('nmjj') # Non-Matching jj pair (qq for Data)
-
-#vs.append(['px',100,-1000,1000]) 
-#vs.append(['py',100,-1000,1000])
-#vs.append(['pz',100,-1000,1000])
-#vs.append(['pt',10,0,10])
-#vs.append(['pt',20,0,1000])
-#vs.append(['n_jets',20,0,20])
-#vs.append(['invmass',50,0,400])
-#vs.append(['pt',50,-1000,1000])
-
-#vs.append(['pt',100,0,1000,'ls']) #ls = plot leading and subleading. l = leading. s = subleading 
-#vs.append(['invm',170,0,160]) # Invariant mass
-#vs.append(['invm',200,1200,1300]) # Invariant mass 
-#vs.append(['invm',100,120,160]) # Invariant mass 
-#vs.append(['invm',100,115,135]) # Invariant mass 
-#vs.append(['Tmass',100,0,500]) # Transverse mass
-#vs.append(['dphi',100,-5,5]) # difference in phi 
-
-# number of particles, files 
-#nps = len(ptp)
 nfi = len(ds)
-
 me = obj["maximums"]["me"] # max events per file 
 mf = obj["maximums"]["mf"] # max files per directory 
 
-# def get_pparams(ch_,ptp_):
-
-#     # All possible particles
-#     all_particles = {
-#     # "particle": ['<particle>',<number per event>,[<pdgID1>,<pdgID2>,...]]
-#     "H": ['H',2,[25]], # Higgs boson
-#     "W": ['W',2,[24]], # W boson
-#     "g": ['g',2,[22]], # photon
-#     "q": ['q',0,[1,2,3,4,5]], # quark   # can make flavor subcategories
-#     "l": ['l',0,[11,13]], # lepton
-#     "nu": ['nu',0,[12,14]] # neutrino 
-#     }
-
-#     # Can make subcategories of Same Flavor, Different Flavors 
-#     if ch_ == 'FL':
-#         all_particles["q"][1] = 0
-#         all_particles["l"][1] = 2
-#         all_particles["nu"][1] = 2
-
-#     elif ch_ == 'SL':
-#         all_particles["q"][1] = 2
-#         all_particles["l"][1] = 1
-#         all_particles["nu"][1] = 1
-
-#     elif ch_ == 'FH':
-#         all_particles["q"][1] = 4
-#         all_particles["l"][1] = 0
-#         all_particles["nu"][1] = 0
-
-#     else:
-#         print 'Cannot find particle configuration for channel: ', ch
-#         print 'Exiting'
-#         sys.exit()
-
-#     pparams_ = []
-    
-#     for p_ in ptp_: 
-#         for key in all_particles:
-#             if p_ == key:
-#                 # append ID number to match histos with particle filling 
-#                 nparams_ = len(pparams_)
-#                 all_particles[key].append(nparams_)
-
-#                 pparams_.append(all_particles[key])
-                
-#     return pparams_ 
-
-# # order particles 
-# def ordptcls(ps_):
-#     lead_pt = -1
-#     nparts = len(ps_)
-#     tmp_ps = []
-
-#     for i in range(len(ps_)):
-#         tmp_ps.append([])
-        
-#     # Get leading pt value 
-#     for p in ps_:
-#         fourvec = p.p4()
-#         pt = fourvec.pt()
-#         #print 'pt = ',pt 
-#         #print 'lead_pt = ',lead_pt 
-#         # if new leading pt, push other elements back and set 0th to leading pt particle 
-#         if pt > lead_pt: 
-#             # Push all elements back one 
-#             rs = 0
-#             tmp_ps = p_back(tmp_ps,rs)
-
-#             # Set leading element to lead pt particle 
-#             lead_pt = pt 
-#             tmp_ps[0] = [p,lead_pt]
-
-#         # if the current pt is not leading, need to figure out where to place it 
-#         # Is it subleading? 
-#         # If there are only two particles, it's subleading 
-#         elif nparts == 2:
-#             tmp_ps[1] = [p,pt]
-#         elif nparts == 4:
-#             # If there are four particles
-#             # If particle is greater than current subleading, it's the new subleading. 
-#             if pt > tmp_ps[1][1]:
-#                 rs = 1 # rs = replacement spot  
-#                 tmp_ps = p_back(tmp_ps,rs)
-#                 tmp_ps[rs] = [p,pt] 
-#             # If particle is greater than current subsubleading, it's the new subsubleading. 
-#             elif pt > tmp_ps[2][1]:
-#                 rs = 2
-#                 tmp_ps = p_back(tmp_ps,rs)
-#                 tmp_ps[rs] = [p,pt]
-#             # If it's less than subsubleading, it's the subsubsubleading particle
-#             else: 
-#                 tmp_ps[3] = [p,pt]
-
-#         else:
-#             print 'I don\'t know what to do with ', nparts, ' particles'
-#             print 'exiting'
-#             sys.exit()
-
-#     return tmp_ps
-
-# def p_back(tmp_ps_,rs_):
-
-#     nparts_ = len(tmp_ps_)
-#     for i in range(nparts_):
-#         eli_ = nparts_ - (i+1) #element index to change  
-#         #print'eli = ',eli 
-#         if eli_ == rs_: continue # is about to replace element we want to replace ourselves. 
-#         else: 
-#             #print'eli = ',eli 
-#             tmp_ps_[eli_] = tmp_ps_[eli_-1]
-#     return tmp_ps_
-
 # Get histograms from flashgg event dumper 
 def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
-
-    # draw all onto same histogram to combine stats 
-    # want to combine all paths 
-    # for now just use first path
-
     pa_ = paths_[0]
     E = '13TeV' # Energy 
-    Cat = 'All_Events' # category
+    Cat = 'All_PS_Events' # category
 
-    # Backgrounds. Stack files  
+    # Backgrounds 
     if tree_ != 'Data':
-        # Get tree_ somehow. Should be possible from file name 
-        # For each file, get tree_ and draw to histogram
         # After done with all files, stack into new histogram 
         stk = THStack("stk","stacked_histo")
         histos = []
-
-        # testing 
-        #hid_ = 'test'
-        #xbins_ = 10
-        #xmin_ = 0
-        #xmax_ = 10
-
+        all_bkg_cats = []
+        bkg_cat_1 = []
+        bkg_cat_2 = []
         for i, path_ in enumerate(paths_):
             tree_name = get_tree(path_)
+            tree_label = tree_name.split('_')[0]
+            if tree_label == 'DiPhotonJetsBox':
+                bkg_cat_1.append(path_)
+            elif tree_label == 'GJet':
+                bkg_cat_2.append(path_)
+        all_bkg_cats.append(bkg_cat_1)
+        all_bkg_cats.append(bkg_cat_2)
+        for cat in all_bkg_cats:
+            tree_name = get_tree(cat[0])
+            tree_label = tree_name.split('_')[0]
+            ch = TChain('HHWWggCandidateDumper/trees/' + tree_name ) 
+            for icf,f_path in enumerate(cat):
+                ch.Add(cat[icf])
+            hname1 = hid_ + '_' + tree_label 
+            bkg_hist = TH1F(hname1, tree_label, xbins_, xmin_, xmax_)
+            bkg_color = ''
+            bkg_color = MC_Cat(tree_label)
+            bkg_hist.SetFillColor(eval(bkg_color))
+            ch.Draw(var_ + '*weight >>' + hname1 , TCut('') ) # MC weight 
+            stk.Add(bkg_hist)
+        return stk 
 
-            # bck_f = TFile(path_) # background file
-            # d = TDirectory()
-            # d = bck_f.Get('HHWWggCandidateDumper/trees')
-            # a = TList()
-            # a = d.GetListOfKeys()
-            # tree_name = ''
-            # for thing in a:
-            #     #print'thing.GetName() = ',thing.GetName()
-            #     tree_name = thing.GetName()
-
-            ch = TChain('HHWWggCandidateDumper/trees/' + tree_name ) # All_Events is a category 
-            ch.Add(path_)
-            hid_tmp = hid_ + str(i)
-            hname_tmp = hid_ + '_' + str(i)
-            h_tmp = TH1F(hname_tmp, hid_tmp, xbins_, xmin_, xmax_)
-            #h3 = h1.Clone("h3")
-            #h_tmp.Fill(2)
-            #h_tmp.Fill(3)
-            #h_tmp.SetFillColor(4 + i)
-            #exec('h_tmp' + str(i) + '= TH1F(hname_tmp, hid_tmp, xbins_, xmin_, xmax_)')
-            ch.Draw(var_+'>>'+hname_tmp,TCut(''))
-            #print 'h_tmp.GetEntries() = ', h_tmp.GetEntries() # Tells you if the histogram was actually filled 
-            #h_tmp.SetDirectory(0)
-            h_tmp.SetFillColor(3 + i)
-            stk.Add(h_tmp)
-            #h_tmp.SetFillColor(1 + i)
-            #print 'h_tmp.GetEntries() = ', eval('h_tmp' + str(i) + '.GetEntries()') # Tells you if the histogram was actually filled 
-            #eval('h_tmp' + str(i)).SetFillColor(1 + i) # custom color for each background 
-            #h_tmp.SaveAs('h_tmp_' + str(i) + '.root')
-            #print'h_tmp = ',h_tmp 
-            #if eval('h_tmp' + str(i)).GetEntries() != 0: 
-            # if h_tmp.GetEntries() != 0:
-            #     print'adding histo'
-            #     histos.append(h_tmp)
-                #print'h_tmp = ',eval('h_tmp' + str(i)) 
-                #histos.append(eval('h_tmp' + str(i)))
-                #stk.Add(h_tmp)
-            #if i == 5: break 
-        #for h__ in histos:
-            #print h__ 
-            #stk.Add(h__)
-        # ccc = TCanvas()
-        # stk.Draw()
-        # ccc.SaveAs('/eos/user/a/atishelm/www/analysis_plots/stk.png')
-
-        #stk_last = stk.GetStack().Last() 
-        #stk_last.SaveAs('/eos/user/a/atishelm/www/analysis_plots/stk_last.png')
-        # stk.SaveAs('stk.root')
-        #print'stk.GetStack().Last() = ',stk.GetStack().Last() 
-        #stk.GetStack().Last().SetDirectory(0) # so you can access it later 
-        return stk
-
-    # Data. Just TChain files then draw  
+    # Data 
     else:
         ch = TChain('HHWWggCandidateDumper/trees/' + tree_ + '_' + E + '_' + Cat )
         for path_ in paths_:
@@ -290,16 +83,11 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
         hname1 = hid_
         h1 = TH1F(hname1, hid_, xbins_, xmin_, xmax_)
         ch.Draw(var_+'>>'+hname1,TCut(''))
-
-        print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
+        #print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
         return h1
 
-# Draw and save canvas/histogram for input histogram 
-#def custom_draw(input_histo_,save_path_):
 def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
-
     #tmp_hist = hist_.Clone("tmp_hist") 
-
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     hist_.SetDirectory(0)
     hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
@@ -308,9 +96,7 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     if variable_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
     else: hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
     #hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
-
     file_type = label_.split('_')[0]
-
     if file_type == 'Data':
         hist_.SetMarkerStyle(kFullDotLarge)
         hist_.Draw("P0")
@@ -331,31 +117,18 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     #return 0
     return hist_  
 
-
 def save_histo_stack(hist_,label_,plabel_,variable_,lc__,fc__):
 
-    #tmp_hist = hist_.Clone("tmp_hist") 
-
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
-    #hist_.SetDirectory(0)
-    #hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
-    #hist_.SetFillColor(eval(str(fc__)))
-    #hist_.GetYaxis().SetTitle('Events')
-    #if variable_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
-    #else: hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
-    #hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
-
     file_type = label_.split('_')[0]
-
-    if file_type == 'Data':
-        hist_.SetMarkerStyle(kFullDotLarge)
-        hist_.Draw("P0")
-    else:
-        gStyle.SetPalette(kRainBow) # automatic color setting
-        #print'hist_ = ',hist_ 
-        #print'hist_.GetStack() = ',hist_.GetStack()
-        #hist_.Draw()
-        hist_.Draw()
+    hist_.SetTitle('Backgrounds')
+    hist_.Draw()
+    c0_.Modified()
+    #gPad.BuildLegend(0.75,0.75,0.95,0.95,"")
+    l1 = TLegend(0.75,0.75,0.95,0.95)
+    for h in hist_.GetStack():
+        l1.AddEntry(h,h.GetTitle().split('_')[-1],'f')
+    l1.Draw('same')
     file_path3_ = output_Loc + label_ + '.png'
     file_path1_ = output_Loc + label_ + '.pdf'
     file_path2_ = output_Loc + label_ + '.root'
@@ -432,11 +205,11 @@ def combine_histos(input_histo_infos_,var_copy_):
             mval = hist_max
 
 
-    for hi_,h_ in enumerate(hists_):
+    #for hi_,h_ in enumerate(hists_):
         #h_.SetDirectory(0)
         #h_.SetFillColor(eval(str(clr)))
-        h_.SetFillColor(0) # kWhite 
-        h_.SetLineWidth(3)
+        #h_.SetFillColor(0) # kWhite 
+        #h_.SetLineWidth(3)
 
         if hi_ == 0:
             h_.SetStats(0)
@@ -472,10 +245,8 @@ def combine_histos(input_histo_infos_,var_copy_):
     #c0_.SaveAs(file_path2_) #pdf 
     return mval
 
-def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
+def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_,variable_,p_):
 
-    print'max_val_ = ',max_val_ 
-    print'max_val_*1.1 = ',max_val_*1.1
     # Canvas for upper and lower plots 
     cc = TCanvas("cc", "canvas", 800, 800)
 
@@ -487,6 +258,7 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
     h_MC.SetMinimum(0)
     h_MC.SetMaximum(max_val_*1.05)
     h_MC.GetYaxis().SetLabelOffset(999) # will create separate axis later 
+    h_MC.SetTitle('Data/MC, ' + p_ + ', ' + variable_) # particle, variable
 
     # h_data.SetMinimum(0)
     # h_data.SetMaximum(max_val_*1.1)
@@ -511,8 +283,9 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
     #gStyle.SetPalette(kRainBow) # automatic color setting
     #h_MC.Draw("same pfc")   # pfc = pad fill color
     
-    gStyle.SetPalette(kRainBow) # automatic color setting
-    h_MC.Draw("pfc")
+    #gStyle.SetPalette(kRainBow) # automatic color setting
+    #h_MC.Draw("pfc")
+    h_MC.Draw()
     h_data.Draw("same P0")
 
     #    // Do not draw the Y axis label on the upper plot and redraw a small
@@ -525,8 +298,8 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
     #TGaxis *axis = new TGaxis( -5, 20, -5, 220, 20,220,510,"");
     #axis = TGaxis( -5, 20, -5, 220, 20,220,510,"") #xmin ymin xmax ymax 
     #axis = TGaxis( -5, 20, 0, max_val_*1.1, 0.001,max_val_*1.1,510,"")
-    print'max_val_ = ',max_val_
-    print'max_val_*1.05 = ',max_val_*1.05
+    # print'max_val_ = ',max_val_
+    # print'max_val_*1.05 = ',max_val_*1.05
     axis = TGaxis(xmin_, 0, xmin_, max_val_*1.05, 0.001,max_val_*1.05,510,"") # xmin ymin xmax ymax wmin wmax (lowest and higest tick mark values), ndiv    
     #axis = TGaxis( -5, 0, -5, max_val_*1.1, 0.001,max_val_*1.1,510,"") # xmin ymin xmax ymax wmin wmax (lowest and higest tick mark values), ndiv
     axis.SetLabelFont(43) #Absolute font size in pixel (precision 3)
@@ -623,24 +396,32 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
 
     pad1.cd()
 
-    leg_ = TLegend(0.6, 0.75, 0.89, 0.89)
-    #for hi_,h_ in enumerate(hists_):
-    a = ih_[:]
-    #print'a = ',a
-    #for i,hist_info_ in enumerate(a):
+    #### old legend 
+    # leg_ = TLegend(0.6, 0.75, 0.89, 0.89)
+    # #for hi_,h_ in enumerate(hists_):
+    # a = ih_[:]
+    # #print'a = ',a
+    # #for i,hist_info_ in enumerate(a):
 
-    for i, hist_info_ in enumerate(a):
-        this_h = hist_info_[0]
-        this_label = hist_info_[1]
+    # for i, hist_info_ in enumerate(a):
+    #     this_h = hist_info_[0]
+    #     this_label = hist_info_[1]
         
-        if (i == 0): # data 
-            leg_.AddEntry(this_h,this_label,'p')
-        else:
-            leg_.AddEntry(this_h,this_label,'lf') # histo object, ID 
+    #     if (i == 0): # data 
+    #         leg_.AddEntry(this_h,this_label,'p')
+    #     else:
+    #         leg_.AddEntry(this_h,this_label,'lf') # histo object, ID 
 
-    #leg.SetTextSize(0.02)
-    leg_.Draw('same')
+    # #leg.SetTextSize(0.02)
+    # leg_.Draw('same')
+    ####
     
+    leg_ = TLegend(0.75,0.75,0.95,0.95)
+    for h in h_MC.GetStack(): # bkg 
+        leg_.AddEntry(h,h.GetTitle().split('_')[-1],'f')
+    leg_.AddEntry(h_data,'Data','p')
+    leg_.Draw('same')
+
     #cc.SaveAs(output_Loc + "Gen_Reco_" + comb_ID_ + ".png")
     #cc.SaveAs(output_Loc + "Gen_Reco_" + comb_ID_ + ".pdf")
     #print'comb_ID_ = ',comb_ID_
@@ -650,57 +431,6 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_):
 
 # Variable Map
 # Maps (v[0],plabel) . HHWWggTagVariables string 
-def var_map(v0_,plab_,G_):
-    #G_ = boolean of GEN. If gen, = 1. if reco, = 0 
-    var_conv = {
-
-    # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
-    # Configured for GEN/RECO. Should also have something for DATA/MC 
-    # Do 
-
-    ## RECO
-
-    # Electrons
-    "leading_elec_pt": ['pt','le',0],
-    "leading_elec_eta": ['eta','le',0],
-    "subleading_elec_pt": ['pt','sle',0],
-
-    # Muons
-    "leading_muon_pt": ['pt','lm',0],
-    "subleading_muon_pt": ['pt','slm',0],
-    
-    # Met
-
-    # Jets
-    "mdj_invmass": ['invmass','mjj',0],
-    "nmdj_invmass": ['invmass','nmjj',0],
-
-    ## GEN
-
-    # Electrons
-    "gen_leading_elec_pt": ['pt','le',1],
-    "gen_subleading_elec_pt": ['pt','sle',1],
-
-    # Muons 
-    "gen_leading_muon_pt": ['pt','lm',1],
-    "gen_subleading_muon_pt": ['pt','slm',1], 
-
-    # Met 
-
-    # Quarks 
-    "mdq_invmass": ['invmass','mjj',1],
-    "nmdq_invmass": ['invmass','nmjj',1],
-
-    }
-
-    reco_var = ''
-    for key in var_conv:    
-        if (var_conv[key][0] == v0_) and (var_conv[key][1] == plab_) and (var_conv[key][2] == G_):
-            reco_var = key
-            break 
-
-    return reco_var
-
 
 def rm_path(path_to_delete):
     os.system("rm " + path_to_delete)
@@ -719,6 +449,6 @@ def get_tree(fp): # file path
     a = d.GetListOfKeys()
     tree_name__ = ''
     for thing in a:
-        #print'thing.GetName() = ',thing.GetName()
+        # print'thing.GetName() = ',thing.GetName()
         tree_name__ = thing.GetName()
     return tree_name__
