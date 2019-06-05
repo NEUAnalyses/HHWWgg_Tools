@@ -3,7 +3,7 @@
 # 16 April 2019 
 # Configuration for Data_MC_Plot.py
 
-from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow, kBlue, kGreen 
+from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow, kRed, kOrange, kYellow, kSpring, kGreen, kTeal, kCyan, kAzure, kBlue, kViolet, kMagenta
 from MC_Categorize import MC_Cat
 import os 
 import json
@@ -33,6 +33,14 @@ for v in obj["variables"]:
 ptp = []
 for p in obj["particles"]:
     ptp.append(p)
+# Cut
+cut = ''
+num_cuts = len(obj["cuts"])
+for ic,c in enumerate(obj["cuts"]):
+    cut += c 
+    cut += ' == 1.0'
+    if ( (ic + 1) != num_cuts): cut += ' && ' 
+print'cut = ',cut 
 nfi = len(ds)
 me = obj["maximums"]["me"] # max events per file 
 mf = obj["maximums"]["mf"] # max files per directory 
@@ -41,38 +49,78 @@ mf = obj["maximums"]["mf"] # max files per directory
 def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
     pa_ = paths_[0]
     E = '13TeV' # Energy 
-    Cat = 'All_PS_Events' # category
+    Cat = 'All_HLT_Events' # category
 
     # Backgrounds 
     if tree_ != 'Data':
-        # After done with all files, stack into new histogram 
+        num_cats = 12
         stk = THStack("stk","stacked_histo")
         histos = []
         all_bkg_cats = []
-        bkg_cat_1 = []
-        bkg_cat_2 = []
-        for i, path_ in enumerate(paths_):
+        for i in range(0,num_cats):
+            exec('bkg_cat_' + str(i) + ' = []')
+        for i, path_ in enumerate(paths_): # all background paths 
             tree_name = get_tree(path_)
-            tree_label = tree_name.split('_')[0]
-            if tree_label == 'DiPhotonJetsBox':
-                bkg_cat_1.append(path_)
-            elif tree_label == 'GJet':
-                bkg_cat_2.append(path_)
-        all_bkg_cats.append(bkg_cat_1)
-        all_bkg_cats.append(bkg_cat_2)
-        for cat in all_bkg_cats:
-            tree_name = get_tree(cat[0])
-            tree_label = tree_name.split('_')[0]
-            ch = TChain('HHWWggCandidateDumper/trees/' + tree_name ) 
-            for icf,f_path in enumerate(cat):
-                ch.Add(cat[icf])
-            hname1 = hid_ + '_' + tree_label 
-            bkg_hist = TH1F(hname1, tree_label, xbins_, xmin_, xmax_)
+            icategory, color = '' , ''
+            icategory, color = MC_Cat(tree_name)
+            eval('bkg_cat_' + icategory + '.append("' + path_ + '")')
+        for i in range(0,num_cats):
+            if len(eval('bkg_cat_' + str(i))) > 0: 
+                eval('all_bkg_cats.append(bkg_cat_' + str(i) + ')')
+        for icat,cat in enumerate(all_bkg_cats):
+            cat_name = cat[0].split('/')[-1].split('_')[1]
+            #cat_name = cat[0].split('_')[0] # all paths in cat should have same first title (ex: DiPhotonJetsBox), so just take it from first one 
+            h_cat_name = hid_ + '_' + cat_name 
+            print'cat_name = ',cat_name 
+            h_cat = TH1F(h_cat_name,cat_name,xbins_,xmin_,xmax_)
+            db = (xmax_ - xmin_) / xbins_ 
             bkg_color = ''
-            bkg_color = MC_Cat(tree_label)
-            bkg_hist.SetFillColor(eval(bkg_color))
-            ch.Draw(var_ + '*weight >>' + hname1 , TCut('') ) # MC weight 
-            stk.Add(bkg_hist)
+            p_tree = get_tree(cat[0])
+            bkg_color = MC_Cat(p_tree)[1] # this might give you the color 
+            h_cat.SetFillColor(eval(bkg_color))            
+            for ibp,bkg_path in enumerate(cat):
+                h_tmp_name = hid_ + '_' + str(ibp) 
+                h_tmp = TH1F(h_tmp_name, h_tmp_name, xbins_, xmin_, xmax_)
+                tree_name = get_tree(bkg_path)
+                icategory, color = '' , ''
+                icategory, color = MC_Cat(tree_name)
+                ch = TChain('HHWWggCandidateDumper/trees/' + tree_name )
+                ch.Add(bkg_path)
+                ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
+                #ch.Draw(var_ + ' >>' + h_tmp_name , TCut(cut))
+                nbins = h_tmp.GetNbinsX()
+                for ib,bv in enumerate(h_tmp): # bv = bin value 
+                    if (ib == 0): 
+                        #print'underflow bin'
+                        continue 
+                    elif (ib == nbins + 1): 
+                        #print'overflow bin'
+                        continue 
+                    else:
+                        # print xmin_ + (ib - 1)*db # x value 
+                        # print bv # y value 
+                        h_cat.Fill(xmin_ + (ib - 1)*db, bv)
+                    #print'b = ',b 
+                # fill h_cat 
+            print'bkg_color = ',bkg_color 
+            # h_cat.SetFillColor(eval(bkg_color))            
+            stk.Add(h_cat)
+                
+
+            #bkg_path = cat[0] 
+            #tree_label = tree_name.split('_')[0]
+            #print'tree_name = ',tree_name 
+            #ch = TChain('HHWWggCandidateDumper/trees/' + tree_name ) 
+            #for icf,f_path in enumerate(cat):
+            #    ch.Add(cat[icf])
+            #hname1 = hid_ + '_' + tree_label 
+            #bkg_hist = TH1F(hname1, tree_label, xbins_, xmin_, xmax_)
+            #bkg_color = ''
+            #bkg_color = MC_Cat(tree_label)
+            #bkg_hist.SetFillColor(eval(bkg_color))
+            #ch.Draw(var_ + '*weight >>' + hname1 , TCut('') ) # MC weight 
+            #ch.Draw(var_ + '*weight >>' + hname1 , TCut('Cut_6 == 1.0') ) # MC weight 
+            #stk.Add(bkg_hist)
         return stk 
 
     # Data 
@@ -82,7 +130,8 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
             ch.Add(path_) # combine files here 
         hname1 = hid_
         h1 = TH1F(hname1, hid_, xbins_, xmin_, xmax_)
-        ch.Draw(var_+'>>'+hname1,TCut(''))
+        ch.Draw(var_+'>>'+hname1,TCut(cut))
+        #ch.Draw(var_+'>>'+hname1,TCut('Cut_6 == 1.0'))
         #print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
         return h1
 
