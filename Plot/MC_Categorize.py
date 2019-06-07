@@ -1,8 +1,31 @@
 def MC_Cat(bkg): 
-    # print'bkg = ',bkg
     bkg_cat_ = ''
-    #bkg_cat_ = bkg.split('/')[-1].split('_')[1] # background label 
     bkg_cat_ = bkg.split('_')[0] # background label 
+
+    bkg_categories = { 
+    # "<category name>" : [ '<category_index>','<category_color>','<Bkg_1>','<Bkg_2>', ... '<Bkg_N>']   
+        "reds": ['0','kRed','DiPhotonJetsBox','GJet','QCD','DYToLL','DYJetsToLL'],
+        "blues": ['1','kBlue','GluGluHToGG','VBFHToGG','VHToGG','TTGG'],
+        "greens": ['2','kGreen','TTGJets','TGJets','TTJets','ttHJetToGG']
+        }
+
+    icat, cat, color = '', '', '' 
+    for ik,key in enumerate(bkg_categories):
+        for ibk,bk in enumerate(bkg_categories[key]):
+            if ibk == 0: continue # color 
+            if ibk == 1: continue # category index 
+            if bk == bkg_cat_:
+                cat = key 
+                icat = bkg_categories[key][0]
+                color = bkg_categories[key][1] 
+
+    if icat == '':
+        print'I couldn\'t find the background category:',bkg_cat_
+        print'Exiting'
+        exit(0)
+
+    return cat, icat, color
+
 # Before '-' to '_' conversion:
 #
 # DiPhotonJetsBox_M40_80-Sherpa
@@ -42,27 +65,3 @@ def MC_Cat(bkg):
     #     "":['TTJets_TuneCUETP8M1_13TeV_madgraphMLM_pythia8'], 
     #     "":['ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_v2'], 
     # }
-
-    # "<category name>" : [ '<category_index>','<category_color>','<Bkg_1>','<Bkg_2>', ... '<Bkg_N>']   
-    bkg_categories = { 
-        "reds": ['0','kRed','DiPhotonJetsBox','GJet','QCD','DYToLL','DYJetsToLL'],
-        "blues": ['1','kBlue','GluGluHToGG','VBFHToGG','VHToGG','TTGG'],
-        "greens": ['2','kGreen','TTGJets','TGJets','TTJets','ttHJetToGG']
-        }
-
-    icat, cat, color = '', '', '' 
-    for ik,key in enumerate(bkg_categories):
-        for ibk,bk in enumerate(bkg_categories[key]):
-            if ibk == 0: continue # color 
-            if ibk == 1: continue # category index 
-            if bk == bkg_cat_:
-                cat = key 
-                icat = bkg_categories[key][0]
-                color = bkg_categories[key][1] 
-
-    if icat == '':
-        print'I couldn\'t find the background category:',bkg_cat_
-        print'Exiting'
-        exit(0)
-
-    return cat, icat, color

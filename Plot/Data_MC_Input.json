@@ -7,12 +7,11 @@
 
     "variables":
     {
-        "p_{t}": ["pt",10,0,250],
-        "eta":["eta",10,-4,4],
-        "phi":["phi",63,-3.15,3.15]
+        "p_{t}": ["pt",10,0,250]
+        
     },
 
-    "particles": ["le","lm","lp"],
+    "particles": ["le"],
 
     "maximums":
     {
@@ -20,7 +19,7 @@
         "mf" : -1 
     },
 
-    "cuts": []
+    "cuts": ["Cut_7"]
  
     
 

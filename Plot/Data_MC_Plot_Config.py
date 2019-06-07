@@ -33,20 +33,25 @@ for v in obj["variables"]:
 ptp = []
 for p in obj["particles"]:
     ptp.append(p)
-# Cut
-cut = ''
-num_cuts = len(obj["cuts"])
-for ic,c in enumerate(obj["cuts"]):
-    cut += c 
-    cut += ' == 1.0'
-    if ( (ic + 1) != num_cuts): cut += ' && ' 
-print'cut = ',cut 
+# Cuts
+cuts = []
+for cut in obj["cuts"]:
+    cuts.append(cut)
+
+# cut = ''
+# num_cuts = len(obj["cuts"])
+# for ic,c in enumerate(obj["cuts"]):
+#     cut += c 
+#     cut += ' == 1.0'
+#     if ( (ic + 1) != num_cuts): cut += ' && ' 
+# print'cut = ',cut 
+
 nfi = len(ds)
 me = obj["maximums"]["me"] # max events per file 
 mf = obj["maximums"]["mf"] # max files per directory 
 
 # Get histograms from flashgg event dumper 
-def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
+def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_,c_):
     pa_ = paths_[0]
     E = '13TeV' # Energy 
     Cat = 'All_HLT_Events' # category
@@ -87,7 +92,7 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
                 ch = TChain('HHWWggCandidateDumper/trees/' + tree_name )
                 ch.Add(bkg_path)
                 #ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
-                ch.Draw(var_ + ' >>' + h_tmp_name , TCut(cut))
+                ch.Draw(var_ + ' >>' + h_tmp_name , TCut(c_ + ' == 1 '))
                 nbins = h_tmp.GetNbinsX()
                 
                 for ib,bv in enumerate(h_tmp): # bv = bin value 
