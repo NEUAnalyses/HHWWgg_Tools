@@ -33,17 +33,26 @@ def var_map(v0_,plab_,G_):
     # Electrons
     "leading_elec_pt": ['pt','le',0],
     "leading_elec_eta": ['eta','le',0],
+    "leading_elec_phi": ['phi','le',0],
     "subleading_elec_pt": ['pt','sle',0],
+    "subleading_elec_eta": ['eta','sle',0],
+    "subleading_elec_phi": ['phi','sle',0],
 
     # Muons
     "leading_muon_pt": ['pt','lm',0],
+    "leading_muon_eta": ['eta','lm',0],
+    "leading_muon_phi": ['phi','lm',0],
     "subleading_muon_pt": ['pt','slm',0],
+    "subleading_muon_eta": ['eta','slm',0],
+    "subleading_muon_phi": ['phi','slm',0],
     
     # Met
 
     # Jets
     "mdj_invmass": ['invmass','mjj',0],
     "nmdj_invmass": ['invmass','nmjj',0],
+
+#############################################
 
     ## GEN
 

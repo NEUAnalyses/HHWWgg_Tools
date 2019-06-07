@@ -3,7 +3,7 @@
 # 16 April 2019 
 # Configuration for Data_MC_Plot.py
 
-from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow, kRed, kOrange, kYellow, kSpring, kGreen, kTeal, kCyan, kAzure, kBlue, kViolet, kMagenta
+from ROOT import TChain, TH1F, TCut, TCanvas, TLegend, TPad, TGaxis, TLine, gPad, kFullDotLarge, THStack, gStyle, kCandy, TFile, TTree, TList, TDirectory, kRainBow, kRed, kOrange, kYellow, kSpring, kGreen, kTeal, kCyan, kAzure, kBlue, kViolet, kMagenta, kWhite 
 from MC_Categorize import MC_Cat
 import os 
 import json
@@ -53,7 +53,7 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
 
     # Backgrounds 
     if tree_ != 'Data':
-        num_cats = 12
+        num_cats = 3
         stk = THStack("stk","stacked_histo")
         histos = []
         all_bkg_cats = []
@@ -61,34 +61,35 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
             exec('bkg_cat_' + str(i) + ' = []')
         for i, path_ in enumerate(paths_): # all background paths 
             tree_name = get_tree(path_)
-            icategory, color = '' , ''
-            icategory, color = MC_Cat(tree_name)
+            icategory = ''
+            icategory = MC_Cat(tree_name)[1] 
             eval('bkg_cat_' + icategory + '.append("' + path_ + '")')
         for i in range(0,num_cats):
             if len(eval('bkg_cat_' + str(i))) > 0: 
                 eval('all_bkg_cats.append(bkg_cat_' + str(i) + ')')
         for icat,cat in enumerate(all_bkg_cats):
-            cat_name = cat[0].split('/')[-1].split('_')[1]
-            #cat_name = cat[0].split('_')[0] # all paths in cat should have same first title (ex: DiPhotonJetsBox), so just take it from first one 
-            h_cat_name = hid_ + '_' + cat_name 
-            print'cat_name = ',cat_name 
-            h_cat = TH1F(h_cat_name,cat_name,xbins_,xmin_,xmax_)
-            db = (xmax_ - xmin_) / xbins_ 
+            bkg_name = cat[0].split('/')[-1].split('_')[1]
+            cat_name = MC_Cat(bkg_name)[0]
+            h_bkg_name = hid_ + '_' + cat_name 
+            h_cat = TH1F(h_bkg_name,cat_name,xbins_,xmin_,xmax_)
+            db = (float(xmax_) - float(xmin_)) / float(xbins_) 
             bkg_color = ''
             p_tree = get_tree(cat[0])
-            bkg_color = MC_Cat(p_tree)[1] # this might give you the color 
-            h_cat.SetFillColor(eval(bkg_color))            
+            bkg_color = MC_Cat(p_tree)[2] 
+            # h_cat.SetFillColor(eval(bkg_color))            
             for ibp,bkg_path in enumerate(cat):
                 h_tmp_name = hid_ + '_' + str(ibp) 
                 h_tmp = TH1F(h_tmp_name, h_tmp_name, xbins_, xmin_, xmax_)
                 tree_name = get_tree(bkg_path)
                 icategory, color = '' , ''
-                icategory, color = MC_Cat(tree_name)
+                icategory = MC_Cat(tree_name)[1]
+                color = MC_Cat(tree_name)[2]
                 ch = TChain('HHWWggCandidateDumper/trees/' + tree_name )
                 ch.Add(bkg_path)
-                ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
-                #ch.Draw(var_ + ' >>' + h_tmp_name , TCut(cut))
+                #ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
+                ch.Draw(var_ + ' >>' + h_tmp_name , TCut(cut))
                 nbins = h_tmp.GetNbinsX()
+                
                 for ib,bv in enumerate(h_tmp): # bv = bin value 
                     if (ib == 0): 
                         #print'underflow bin'
@@ -97,16 +98,19 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_):
                         #print'overflow bin'
                         continue 
                     else:
+                        # print'(x,y) =', xmin_ + (ib - 1)*db,',',bv
                         # print xmin_ + (ib - 1)*db # x value 
                         # print bv # y value 
-                        h_cat.Fill(xmin_ + (ib - 1)*db, bv)
+                        # h_cat.Fill(-999,1)
+                        h_cat.Fill(float(xmin_ + (ib - 1)*db), float(bv))
                     #print'b = ',b 
                 # fill h_cat 
-            print'bkg_color = ',bkg_color 
-            # h_cat.SetFillColor(eval(bkg_color))            
-            stk.Add(h_cat)
+            # print'bkg_color = ',bkg_color 
+            # h_cat.SetFillColor(eval(bkg_color))  
+            # h_cat.SetDirectory(0)  
+            h_cat.SetFillColor(eval(bkg_color))              
+            stk.Add(h_cat,'hist') # Thank you so much: https://root-forum.cern.ch/t/th1f-fillcolor-not-working/27922/6
                 
-
             #bkg_path = cat[0] 
             #tree_label = tree_name.split('_')[0]
             #print'tree_name = ',tree_name 
@@ -140,7 +144,7 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     hist_.SetDirectory(0)
     hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
-    hist_.SetFillColor(eval(str(fc__)))
+    #hist_.SetFillColor(eval(str(fc__)))
     hist_.GetYaxis().SetTitle('Events')
     if variable_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
     else: hist_.GetXaxis().SetTitle( variable_ + '_{' + plabel_ + '}')
@@ -170,13 +174,24 @@ def save_histo_stack(hist_,label_,plabel_,variable_,lc__,fc__):
 
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     file_type = label_.split('_')[0]
-    hist_.SetTitle('Backgrounds')
+    #hist_.GetXaxis().SetTitle(plabel_ + ' ' + variable_)
+    hist_.SetTitle('Backgrounds ' + plabel_ + ' ' + variable_)
+    # bkg_path = ''
+    # bkg_path += hist_.GetTitle()
+    # f_clr = MC_Cat(bkg_path)[1]
+    # hist_.SetFillColor(eval(bkg_color))   
+    # redo_stack = THStack("stk_2","stacked_histo_2")         
     hist_.Draw()
     c0_.Modified()
     #gPad.BuildLegend(0.75,0.75,0.95,0.95,"")
     l1 = TLegend(0.75,0.75,0.95,0.95)
     for h in hist_.GetStack():
+        # print'h.GetFillColor() = ',h.GetFillColor() 
+        # h.Draw()
+        # h_c = h.Clone("h_c")
+        # redo_stack.Add(h_c)
         l1.AddEntry(h,h.GetTitle().split('_')[-1],'f')
+    #redo_stack.Draw('same')
     l1.Draw('same')
     file_path3_ = output_Loc + label_ + '.png'
     file_path1_ = output_Loc + label_ + '.pdf'
@@ -191,7 +206,8 @@ def save_histo_stack(hist_,label_,plabel_,variable_,lc__,fc__):
     #c0_.SaveAs(file_path1_) #pdf 
     c0_.SaveAs(file_path3_)
     #return 0
-    return hist_  
+    return hist_  # it seems you need to draw a thstack before returning it. probably because it switches to its directory 
+    # return redo_stack  # it seems you need to draw a thstack before returning it 
 
 # Plot histograms on same canvas 
 # Input: list of histograms (or hinfo)
@@ -233,7 +249,7 @@ def combine_histos(input_histo_infos_,var_copy_):
         h_fc = input_histo_infos_cpy[i][3][0]
 
         #hist_.SetDirectory(0)
-        hist_.SetLineColor(eval(str(h_lc)))
+        #hist_.SetLineColor(eval(str(h_lc)))
         #hist_.SetLineColor(eval(str(lc_) + '-' + str(i*2) ) ) # eval because they are strings, need to recognize as root objects 
         #hist_.SetFillColor(eval(str(fc_) + '-' + str(i*2) ) )
         hist_.GetYaxis().SetTitle('Events')

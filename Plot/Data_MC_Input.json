@@ -1,22 +1,27 @@
 {
     "directories" : 
     {
-        "Data_direc_info": ["/eos/cms/store/user/atishelm/testplotter_data/","Data"],
-        "MC_direc_info": ["/eos/cms/store/user/atishelm/testplotter_bkg/","Dummy"]
+        "Data_direc_info": ["/eos/user/a/atishelm/5JuneOvernightLeaveLXpluson_10kmaxevents_Data/","Data"],
+        "MC_direc_info": ["/eos/user/a/atishelm/5JuneOvernightLeaveLXpluson_10kmaxevents_Bkg/","Dummy"]
     },
 
     "variables":
     {
-        "p_{t}": ["pt",15,0,250]
+        "p_{t}": ["pt",10,0,250],
+        "eta":["eta",10,-4,4],
+        "phi":["phi",63,-3.15,3.15]
     },
 
-    "particles": ["le","lm"],
+    "particles": ["le","lm","lp"],
 
     "maximums":
     {
-
         "me" : -1,
         "mf" : -1 
-    }
+    },
+
+    "cuts": []
+ 
     
+
 }
