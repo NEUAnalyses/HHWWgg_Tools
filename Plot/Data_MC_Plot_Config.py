@@ -20,9 +20,7 @@ MC_tree_prefix = obj["directories"]["MC_direc_info"][1]
 output_Loc = '/eos/user/a/atishelm/www/analysis_plots/'
 # Directories 
 ds = []
-ds.append([[Data_direc,MC_direc],[Data_tree_prefix,MC_tree_prefix],'416','416-10'])
-Data_colors = [416,416-10]
-MC_colors = [600,600-10]
+ds.append([[Data_direc,MC_direc],[Data_tree_prefix,MC_tree_prefix]])
 # Variables 
 vs = []
 # [<'variable name'>,<bins>,<min>,<max>]
@@ -65,6 +63,10 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_,c_):
         for i in range(0,num_cats):
             exec('bkg_cat_' + str(i) + ' = []')
         for i, path_ in enumerate(paths_): # all background paths 
+            if i%100 == 0: print'on path',i 
+            if i == mf: 
+                print'Reached max desired files:',mf
+                break 
             tree_name = get_tree(path_)
             icategory = ''
             icategory = MC_Cat(tree_name)[1] 
@@ -91,8 +93,8 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_,c_):
                 color = MC_Cat(tree_name)[2]
                 ch = TChain('HHWWggCandidateDumper/trees/' + tree_name )
                 ch.Add(bkg_path)
-                #ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
-                ch.Draw(var_ + ' >>' + h_tmp_name , TCut(c_ + ' == 1 '))
+                ch.Draw(var_ + '*weight >>' + h_tmp_name , TCut(cut))
+                #ch.Draw(var_ + ' >>' + h_tmp_name , TCut(c_ + ' == 1 '))
                 nbins = h_tmp.GetNbinsX()
                 
                 for ib,bv in enumerate(h_tmp): # bv = bin value 
@@ -135,8 +137,15 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_,c_):
     # Data 
     else:
         ch = TChain('HHWWggCandidateDumper/trees/' + tree_ + '_' + E + '_' + Cat )
-        for path_ in paths_:
+        for i,path_ in enumerate(paths_):
+            if i%100 == 0: print'on path',i 
+            if i == mf: 
+                print'Reached max desired files:',mf
+                break 
             ch.Add(path_) # combine files here 
+        # Need a histogram for each variable 
+        data_histos = []
+
         hname1 = hid_
         h1 = TH1F(hname1, hid_, xbins_, xmin_, xmax_)
         ch.Draw(var_+'>>'+hname1,TCut(cut))
@@ -144,11 +153,11 @@ def import_ED(paths_,var_,hid_,xbins_,xmin_,xmax_,tree_,c_):
         #print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
         return h1
 
-def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
+def save_histo(hist_,label_,plabel_,variable_): #lc__,fc__):
     #tmp_hist = hist_.Clone("tmp_hist") 
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     hist_.SetDirectory(0)
-    hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
+    #hist_.SetLineColor(eval(str(lc__))) # eval because they are strings, need to recognize as root objects 
     #hist_.SetFillColor(eval(str(fc__)))
     hist_.GetYaxis().SetTitle('Events')
     if variable_ == 'pt': hist_.GetXaxis().SetTitle( plabel_ + ' ' + 'p_{T}')
@@ -175,7 +184,7 @@ def save_histo(hist_,label_,plabel_,variable_,lc__,fc__):
     #return 0
     return hist_  
 
-def save_histo_stack(hist_,label_,plabel_,variable_,lc__,fc__):
+def save_histo_stack(hist_,label_,plabel_,variable_):
 
     c0_ = TCanvas('c0_', 'c0_', 800, 600)
     file_type = label_.split('_')[0]
@@ -250,8 +259,6 @@ def combine_histos(input_histo_infos_,var_copy_):
         hist_ = input_histo_infos_cpy[i][0]
         label_ = input_histo_infos_cpy[i][1]
         plabel_ = input_histo_infos_cpy[i][2]  
-        h_lc = input_histo_infos_cpy[i][3][0]
-        h_fc = input_histo_infos_cpy[i][3][0]
 
         #hist_.SetDirectory(0)
         #hist_.SetLineColor(eval(str(h_lc)))
@@ -315,7 +322,7 @@ def combine_histos(input_histo_infos_,var_copy_):
     #c0_.SaveAs(file_path2_) #pdf 
     return mval
 
-def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_,variable_,p_):
+def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_,variable_,p_,c_):
 
     # Canvas for upper and lower plots 
     cc = TCanvas("cc", "canvas", 800, 800)
@@ -328,7 +335,7 @@ def plot_ratio(ih_,max_val_,xbins__,comb_ID_,xmin_,variable_,p_):
     h_MC.SetMinimum(0)
     h_MC.SetMaximum(max_val_*1.05)
     h_MC.GetYaxis().SetLabelOffset(999) # will create separate axis later 
-    h_MC.SetTitle('Data/MC, ' + p_ + ', ' + variable_) # particle, variable
+    h_MC.SetTitle('Data/MC, ' + p_ + ', ' + variable_ + ', ' + c_) # particle, variable, cut 
 
     # h_data.SetMinimum(0)
     # h_data.SetMaximum(max_val_*1.1)

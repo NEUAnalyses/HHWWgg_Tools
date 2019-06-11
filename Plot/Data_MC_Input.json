@@ -1,25 +1,26 @@
 {
     "directories" : 
     {
-        "Data_direc_info": ["/eos/user/a/atishelm/5JuneOvernightLeaveLXpluson_10kmaxevents_Data/","Data"],
-        "MC_direc_info": ["/eos/user/a/atishelm/5JuneOvernightLeaveLXpluson_10kmaxevents_Bkg/","Dummy"]
+        "Data_direc_info": ["/eos/user/a/atishelm/2016_Data/","Data"],
+        "MC_direc_info": ["/eos/user/a/atishelm/2016_Bkg/","Dummy"]
     },
 
     "variables":
     {
-        "p_{t}": ["pt",10,0,250]
+        "p_{t}": ["pt",10,0,250],
+        "eta": ["eta",32,-4,4]
         
     },
 
-    "particles": ["le"],
+    "particles": ["le","lm"],
 
     "maximums":
     {
-        "me" : -1,
-        "mf" : -1 
+        "me" : 1000,
+        "mf" : 10 
     },
 
-    "cuts": ["Cut_7"]
+    "cuts": ["Cut_5"]
  
     
 
