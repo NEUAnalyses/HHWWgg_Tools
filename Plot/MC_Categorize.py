@@ -1,13 +1,30 @@
 def MC_Cat(bkg): 
     bkg_cat_ = ''
     bkg_cat_ = bkg.split('_')[0] # background label 
+    #print'bkg_cat = ',bkg
+
+    # bkg_categories = { 
+    # # "<category name>" : [ '<category_index>','<category_color>','<Bkg_1>','<Bkg_2>', ... '<Bkg_N>']   
+    #     "reds": ['0','kRed','DiPhotonJetsBox','GJet','QCD','DYToLL','DYJetsToLL'],
+    #     "blues": ['1','kBlue','GluGluHToGG','VBFHToGG','VHToGG','TTGG'],
+    #     "greens": ['2','kGreen','TTGJets','TGJets','TTJets','ttHJetToGG']
+    #     }
 
     bkg_categories = { 
     # "<category name>" : [ '<category_index>','<category_color>','<Bkg_1>','<Bkg_2>', ... '<Bkg_N>']   
-        "reds": ['0','kRed','DiPhotonJetsBox','GJet','QCD','DYToLL','DYJetsToLL'],
-        "blues": ['1','kBlue','GluGluHToGG','VBFHToGG','VHToGG','TTGG'],
-        "greens": ['2','kGreen','TTGJets','TGJets','TTJets','ttHJetToGG']
+        "SM_H#gamma#gamma": ['0','kRed','GluGluHToGG','VBFHToGG','VHToGG'],
+        "QCD": ['1','kBlue','QCD'],
+        "DY": ['2','kGreen','DYToLL','DYJetsToLL'],
+        "g+j": ['3','kYellow','GJet','TTGJets','TGJets'],
+        "gg+j": ['4','kViolet','ttHJetToGG','DiPhotonJetsBox'],
+        "other": ['5','kCyan','TTGG','TTJets']
+
         }
+
+    
+
+    # 'DiPhotonJetsBox','GJet','QCD','DYToLL','DYJetsToLL','GluGluHToGG','VBFHToGG','VHToGG','TTGG', 
+    # 'TTGJets','TGJets','TTJets','ttHJetToGG'
 
     icat, cat, color = '', '', '' 
     for ik,key in enumerate(bkg_categories):
@@ -28,7 +45,7 @@ def MC_Cat(bkg):
 
 # Before '-' to '_' conversion:
 #
-# DiPhotonJetsBox_M40_80-Sherpa
+# DiPhotonJetsBox_M40_8 0-Sherpa
 # DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa
 # GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCUETP8M1_13TeV_Pythia8
 # GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCUETP8M1_13TeV_Pythia8

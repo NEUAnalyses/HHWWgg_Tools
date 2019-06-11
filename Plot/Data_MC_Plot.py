@@ -1,12 +1,11 @@
 #!/usr/bin/env python
 # Abe Tishelman-Charny 
-# 16 April 2019
 # The purpose of this plotter is to compare Data/MC
 
 from ROOT import * 
 import array as arr 
 import numpy as np
-from Data_MC_Plot_Config import ds, vs, import_ED, ptp, save_histo, save_histo_stack, combine_histos, plot_ratio, cuts 
+from Data_MC_Plot_Config import ds, vs, import_ED, ptp, Save_Data_Histos, Save_Stack_Histos, combine_histos, plot_ratio, cuts 
 from Variable_Map import var_map 
 import subprocess
 gROOT.SetBatch(True)
@@ -19,74 +18,55 @@ print 'It\'s time to plot some fun Data/MC variables'
 print '...'
 
 def main():
-    # For each EventDumper directory
-    for dn,dinfo in enumerate(ds):
+    # Get Data, MC Ntuple paths 
+    Data_direc = ds[0][0] # full path of directory (ex: /eos/user/a/atishelm/2016_Data/)
+    MC_direc = ds[0][1] # full path of directory (ex: /eos/user/a/atishelm/2016_Bkg/)
+    Data_tree_prefix = ds[1][0] # 'Data'
+    MC_tree_prefix = ds[1][1] # 'Dummy' 
 
-        # Get necessary info 
-        Data_direc = dinfo[0][0] # full path of directory (ex: /eos/user/a/atishelm/2016_Data/)
-        MC_direc = dinfo[0][1] # full path of directory (ex: /eos/user/a/atishelm/2016_Bkg/)
-        Data_tree_prefix = dinfo[1][0] # Data
-        MC_tree_prefix = dinfo[1][1] # Dummy 
+    # Save file paths 
+    #path_ends = [fp for fp in listdir(direc) if 'inLHE' not in fp] # to exclude certain paths 
+    # Data 
+    Data_path_ends = [fp for fp in listdir(Data_direc)] 
+    Data_paths = []
+    for pa in Data_path_ends:
+        tmp_path = Data_direc + pa
+        Data_paths.append(tmp_path)
 
-        # Save file paths 
-        #path_ends = [fp for fp in listdir(direc) if 'inLHE' not in fp] 
-        # Data 
-        Data_path_ends = [fp for fp in listdir(Data_direc)] 
-        Data_paths = []
-        for pa in Data_path_ends:
-            tmp_path = Data_direc + pa
-            Data_paths.append(tmp_path)
+    # MC 
+    MC_path_ends = [fp for fp in listdir(MC_direc)] 
+    MC_paths = []
+    for pa in MC_path_ends:
+        tmp_path = MC_direc + pa
+        MC_paths.append(tmp_path)
 
-        # MC 
-        MC_path_ends = [fp for fp in listdir(MC_direc)] 
-        MC_paths = []
-        for pa in MC_path_ends:
-            tmp_path = MC_direc + pa
-            MC_paths.append(tmp_path)
+    # Need list of : variable, particle, cut  
+    plotting_info = []
+    for v in vs:
+        for p in ptp:
+            for c in cuts:
+                tmp_entry = []
+                tmp_entry.append(v)
+                tmp_entry.append(p)
+                tmp_entry.append(c)
+                plotting_info.append(tmp_entry)
 
+    # Make Data Plots
+    # Data_hists = import_ED(Data_paths, plotting_info,"Data",vs,ptp,cuts)
+    # dec_Data_hists = Save_Data_Histos(Data_hists) 
+    # Make MC Plots
+    MC_hists = import_ED(MC_paths, plotting_info, "MC",vs,ptp,cuts) # MC label is a dummy  
+    dec_MC_hists = Save_Stack_Histos(MC_hists) 
+    exit(0)
 
-        # Take list of variable, particle pairs 
-        print'vs = ',vs 
-
-
-        # For each variable
-        for iv,v in enumerate(vs):
-            variable = v[0] 
-            xbins = v[1]
-            xmin = v[2]
-            xmax = v[3]
-
-            # For each particle
-            for p in ptp:
-                # For each set of cuts
-                for c in cuts:
-
-                    print
-                    print 'Plotting particle\'',p, '\' :',variable
-                    print 'With cut:',c 
-                    print
-                    ED_variable = var_map(variable,p,0) # Variable as called by the event dumper. Call it a non-gen variable to keep map consistent 
-                    Data_MC_ID = p + '_' + variable + '_' + c # + '_' #+ DID 
-
-                    # Make Data Plot
-                    Data_ID = 'Data_' + p + '_' + variable + '_' + c  # + '_' #+ DID
-                    Data_hist = import_ED(Data_paths,ED_variable,Data_ID,xbins,xmin,xmax,Data_tree_prefix,c) 
-                    dec_Data_hist = save_histo(Data_hist,Data_ID,p,variable) 
-
-                    # Make MC THStack Plot 
-                    MC_ID = 'MC_' + p + '_' + variable + '_' + c # + '_' #+ DID
-                    MC_hist = import_ED(MC_paths,ED_variable,MC_ID,xbins,xmin,xmax,MC_tree_prefix,c) 
-                    dec_MC_hist = save_histo_stack(MC_hist,MC_ID,p,variable) 
-
-                    # Make Data/MC plot 
-                    input_histos_info = []
-                    input_histos_info.append([dec_Data_hist,Data_ID,p]) # Data 
-                    input_histos_info.append([dec_MC_hist,MC_ID,p]) # Beware, the MC variable label used is the Data variable. This assumes you're plotting the same variable. 
-
-                    # Make Ratio Plot 
-                    var_copy = variable[:]
-                    max_val = combine_histos(input_histos_info,var_copy) # Saves combined Data/MC canvas and gets max_value for y axis 
-                    plot_ratio(input_histos_info,max_val,xbins,Data_MC_ID,xmin,variable,p,c)
+    # Gather Histograms
+    input_histos_info = []
+    input_histos_info.append(dec_Data_hists) # Data 
+    input_histos_info.append(dec_MC_hists) # Beware, the MC variable label used is the Data variable. This assumes you're plotting the same variable. 
+ 
+    # Make Ratio Plots
+    max_vals = combine_histos(input_histos_info, plotting_info) # Saves combined Data/MC canvas and gets max_value for y axis 
+    plot_ratio(input_histos_info, max_vals, plotting_info)
 
 if __name__ == "__main__":
     main()

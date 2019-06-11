@@ -4,22 +4,16 @@ def var_map(v0_,plab_,G_):
     # "TagVarString": ['<v[0]>','<plabel>',GEN=1 RECO=0]
 
     # Cuts
-    # "Cut_0": ['Cut_0','le',0],
-    # "Cut_0                      := Cut_Results[0]", 
-    # "Cut_1                      := Cut_Results[1]",
-    # "Cut_2                      := Cut_Results[2]",
-    # "Cut_3                      := Cut_Results[3]",
-    # "Cut_4                      := Cut_Results[4]",
-    # "Cut_5                      := Cut_Results[5]",
-    # "Cut_6                      := Cut_Results[6]",
-    # "Cut_7                      := Cut_Results[7]",
-        # if (n_photons >= 2) Cut_Results[1] = 1.0; # cut 1 
-        # if (n_electrons >= 1) Cut_Results[2] = 1.0; # cut 2 
-        # if (n_muons >= 1) Cut_Results[3] = 1.0;
-        # if (n_jets >= 1) Cut_Results[4] = 1.0;
-        # if (one_ps_dp) Cut_Results[5] = 1.0;
-        # if (one_slw_tag) Cut_Results[6] = 1.0;
-        # if ( (one_ps_dp) and (one_slw_tag) ) Cut_Results[7] = 1.0;
+    "HLT": ['Cut_0','Data',0],
+    "No-Cut": ['Cut_0','MC',0],
+    "geq2gamma": ['Cut_1','Dummy',0],
+    "geq1e": ['Cut_2','Dummy',0],
+    "geq1mu": ['Cut_3','Dummy',0],
+    "geq1j": ['Cut_4','Dummy',0],
+    "geq1PS-Digamma": ['Cut_5','Dummy',0],
+    "geq1-Tagged-WBoson": ['Cut_6','Dummy',0],
+    "PS-and-Tagged-WBoson": ['Cut_7','Dummy',0],
+
     ## RECO
 
     # Photons 
