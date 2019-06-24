@@ -23,6 +23,45 @@ version=939
 chosen_threads=unset 
 #LHE,GEN,SIM
 
+if [ $chosen_step == GEN ]
+then
+
+    # MCM Steps 
+
+    cmssw_v=CMSSW_9_3_9_patch1
+
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+    export SCRAM_ARCH=slc6_amd64_gcc630
+    if [ -r CMSSW_9_3_9_patch1/src ] ; then 
+    echo release CMSSW_9_3_9_patch1 already exists
+    else
+    scram p CMSSW CMSSW_9_3_9_patch1
+    fi
+    cd CMSSW_9_3_9_patch1/src
+    eval `scram runtime -sh`
+
+    echo "Looking for pythia fragment at $PythiaFragPath"
+
+    # curl -s --insecure https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_fragment/HIG-RunIIFall17wmLHEGS-02565 --retry 2 --create-dirs -o Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-02565-fragment.py 
+    # [ -s Configuration/GenProduction/python/HIG-RunIIFall17wmLHEGS-02565-fragment.py ] || exit $?;
+
+    chosen_threads=8
+
+    scram b
+    cd ../../
+    seed=$(date +%s)
+    cmsDriver.py $PythiaFragPath --fileout file:$GenOutput --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
+
+    # Without LHE. Not sure if this works. I think it fails. 
+    #cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN,SIM --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
+
+    #cmsRun $ConfigFileName # Replace this with crab command 
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs 
+
+    #end_script 
+
+fi 
+
 if [ $chosen_step == GEN-SIM ]
 then
 

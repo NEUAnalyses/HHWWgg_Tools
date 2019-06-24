@@ -15,7 +15,7 @@
     {
         "step"      : "GEN-SIM",
         "events"    : 10000,
-        "jobs_jobsize"      : 10 ,
+        "jobs_jobsize"      : 200 ,
         "fragment_directory"  : "ggF_X1250_WWgg_qqqqgg",
         "pileup"              : "ignore" // not used for GEN-SIM. Give entry anyway to keep configs same size 
     },
@@ -24,25 +24,25 @@
     {
         "step"      : "DR1",
         "events"    : 10000,
-        "jobs_jobsize"      : 10 ,
+        "jobs_jobsize"      : 1 ,
         "fragment_directory"  : "/eos/cms/store/user/atishelm/GEN_Outputs/ggF_X1250_WWgg_qqenugg_10000events_GEN_2/190307_150207/0000/",
-        "pileup"              : "woPU" 
+        "pileup"              : "wPU" 
     },
 
     // DR2
     {
         "step"      : "DR2",
         "events"    : 10000,
-        "jobs_jobsize"      : 10 ,
+        "jobs_jobsize"      : 1 ,
         "fragment_directory"  : "/DR1outputdirectory/", // Use DR1 files as input for DR2 step 
-        "pileup"              : "woPU" 
+        "pileup"              : "wPU" 
     },
 
     // MINIAOD
     {
         "step"      : "MINIAOD",
         "events"    : 10000,
-        "jobs_jobsize"      : 10 ,
+        "jobs_jobsize"      : 1 ,
         "fragment_directory"  : "/DR2outputdirectory/", // Use DR2 files as input for MINIAOD step 
         "pileup"              : "ignore" // not used for MINIAOD. Give entry anyway to keep configs same size 
     }

@@ -68,6 +68,48 @@ then
     echo 'Input File Name:' $PythiaFragPath
     echo 'Output File Name:' $GenSimOutput
 
+elif [ $chosen_step == GEN ]
+then
+
+    # Params: filename, step, events 
+
+    # chosen_filename_=${chosen_config}[filename]
+    # chosen_events_=${chosen_config}[events]
+    # chosen_jobs_=${chosen_config}[jobs]
+
+    # chosen_filename=${!chosen_filename_}
+    # chosen_events=${!chosen_events_}
+    # chosen_jobs=${!chosen_jobs_}
+
+    echo "Chosen setup parameters:"
+    echo "  step: $chosen_step"
+    echo "  filename: $chosen_filename"
+    echo "  events: $chosen_events"
+    echo "  jobs: $chosen_jobs"
+
+    # Define Pythia fragment path relative to CMSSW release src 
+    PythiaFragPath=Configuration/GenProduction/python/
+    PythiaFragPath+=$chosen_filename
+    PythiaFragPath+=.py
+
+    # Define output file name 
+    GenOutput=$chosen_filename
+
+    GenOutput+='_'
+    GenOutput+=$chosen_events
+    GenOutput+=events
+    GenOutput+='_'
+    GenOutput+=$chosen_step 
+    GenOutput+=.root
+
+    # Config File Name
+    ConfigFileName="cmssw_configs/"
+    ConfigFileName+=${GenOutput%????} # Remove 'root' # Gensimoutput is a bad name 
+    ConfigFileName+=py 
+
+    echo 'Input File Name:' $PythiaFragPath
+    echo 'Output File Name:' $GenOutput
+
 elif [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
 then
     # Params: DRInput, pileup, step, events 

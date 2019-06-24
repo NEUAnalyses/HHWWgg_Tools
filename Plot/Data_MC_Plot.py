@@ -52,12 +52,12 @@ def main():
                 plotting_info.append(tmp_entry)
 
     # Make Data Plots
-    # Data_hists = import_ED(Data_paths, plotting_info,"Data",vs,ptp,cuts)
-    # dec_Data_hists = Save_Data_Histos(Data_hists) 
+    Data_hists = import_ED(Data_paths, plotting_info,"Data",vs,ptp,cuts)
+    dec_Data_hists = Save_Data_Histos(Data_hists) 
+    exit(0)
     # Make MC Plots
     MC_hists = import_ED(MC_paths, plotting_info, "MC",vs,ptp,cuts) # MC label is a dummy  
     dec_MC_hists = Save_Stack_Histos(MC_hists) 
-    exit(0)
 
     # Gather Histograms
     input_histos_info = []

@@ -143,6 +143,7 @@ submit_crab_GEN(){
     #echo "#config.Data.outLFNDirBase = '/store/user/%s/' % (getUsernameFromSiteDB()) " >> TmpCrabConfig.py
     echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
+    #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = True" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py

@@ -88,7 +88,6 @@ def import_ED(paths_,plotting_info_,tree_,vs_,ptp_,cuts_):
             variable, xbins, xmin, xmax = v_info[0], v_info[1], v_info[2], v_info[3]
             particle = pi[1]
             cut = pi[2]
-            print'cut = ',cut
             cut_number = cut.split('_')[1]
 
             if cut_number == '0': cut_name = var_map(cut,'Data',0)
@@ -104,7 +103,7 @@ def import_ED(paths_,plotting_info_,tree_,vs_,ptp_,cuts_):
             Data_hists_.append(h1)
             print'  Finished variable',vi+1,'/',len(plotting_info_)
             #ch.Draw(var_+'>>'+hname1,TCut('Cut_6 == 1.0'))
-            print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
+            #print 'h1.GetEntries() = ',h1.GetEntries() # Tells you if the histogram was actually filled 
         return Data_hists_
 
     # Backgrounds 
@@ -131,7 +130,7 @@ def import_ED(paths_,plotting_info_,tree_,vs_,ptp_,cuts_):
             tree_name = get_tree(path_)
             icategory = ''
             icategory = MC_Cat(tree_name)[1] 
-            isubcategory = MC_Sub_Cat(tree_name)
+            #isubcategory = MC_Sub_Cat(tree_name)
             eval('bkg_cat_' + icategory + '.append("' + path_ + '")')
             #eval('bkg_sub_cat_' + isubcategory + '.append("' + path_ + '")')
         # for i in range(0,num_sub_cats):
