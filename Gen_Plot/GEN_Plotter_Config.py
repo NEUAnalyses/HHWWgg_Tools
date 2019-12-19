@@ -8,7 +8,7 @@ from DataFormats.FWLite import Handle, Runs, Lumis, Events
 
 genHandle = Handle('vector<reco::GenParticle>')
 summary = Handle('LumiSummary')
-outputLoc = '/eos/user/a/atishelm/www/HH_MC' 
+outputLoc = '/eos/user/a/atishelm/www/HHWWgg_Analysis/GEN' 
 
 # Particles 
 ptp = []
@@ -26,23 +26,29 @@ d = []
 # hadded files 
 fs = []
 
-# 250 GeV
-#d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','X250','SL','ROOT.kRed'])
-d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_lnulnugg/100000events_GEN-SIM/190618_093802/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_lnulnugg/100000events_GEN-SIM/190618_093802/0000/','X250','FL','ROOT.kRed'])
+
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','SM','SL','ROOT.kRed'])
+d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','X400','SL','ROOT.kRed'])
+d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','X450','SL','ROOT.kRed'])
+d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','SM','SL','ROOT.kRed'])
+
+# 250 GeVggs/resonant_HH/RunII/MicroAOD/HHWWggSign
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','X250','SL','ROOT.kRed'])
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_lnulnugg/100000events_GEN-SIM/190618_093802/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_lnulnugg/100000events_GEN-SIM/190618_093802/0000/','X250','FL','ROOT.kRed'])
 # d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqqqgg/100000events_GEN-SIM/190618_093433/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqqqgg/100000events_GEN-SIM/190618_093433/0000/','X250','FH','ROOT.kRed'])
 
 # # 750 GeV
 #d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_qqlnugg/100000events_GEN-SIM/190624_230014/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_qqlnugg/100000events_GEN-SIM/190624_230014/0000/','X750','SL','ROOT.kGreen'])
-d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_lnulnugg/100000events_GEN-SIM/190624_230034/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_lnulnugg/100000events_GEN-SIM/190624_230034/0000/','X750','FL','ROOT.kGreen'])
+#d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_lnulnugg/100000events_GEN-SIM/190624_230034/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_lnulnugg/100000events_GEN-SIM/190624_230034/0000/','X750','FL','ROOT.kGreen'])
 # d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_qqqqgg/100000events_GEN-SIM/190624_230054/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X750_WWgg_qqqqgg/100000events_GEN-SIM/190624_230054/0000/','X750','FH','ROOT.kGreen'])
 
 # # 1250 GeV
 #d.append(['/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqlnugg/100000events_GEN/190328_155257/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/ggF_X1250_WWgg_qqlnugg/100000events_GEN/190328_155257/0000/','X1250','SL','ROOT.kBlue'])
-d.append(['/eos/cms/store/user/atishelm/ggF_X1250_WWgg_lnulnugg/100000events_GEN/190328_155527/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/ggF_X1250_WWgg_lnulnugg/100000events_GEN/190328_155527/0000/','X1250','FL','ROOT.kBlue'])
+#d.append(['/eos/cms/store/user/atishelm/ggF_X1250_WWgg_lnulnugg/100000events_GEN/190328_155527/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/ggF_X1250_WWgg_lnulnugg/100000events_GEN/190328_155527/0000/','X1250','FL','ROOT.kBlue'])
 # d.append(['/eos/cms/store/user/atishelm/ggF_X1250_WWgg_qqqqgg/100000events_GEN/190328_160120/0000/','root://cmsxrootd.fnal.gov//store/user/atishelm/ggF_X1250_WWgg_qqqqgg/100000events_GEN/190328_160120/0000/','X1250','FH','ROOT.kBlue'])
 
 # Variables 
-# https://root.cern.ch/doc/v612/namespaceROOT_1_1Math_1_1VectorUtil.html
+# https://root.cern.ch/doc/v612/namespaceROOT_1_1Math_1_1VectorUtil.htmlC
 
 dphi = ROOT.Math.VectorUtil.DeltaPhi
 #deltaR = ROOT.Math.VectorUtil.DeltaR
@@ -55,10 +61,14 @@ vs = []
 # vs.append(['px',100,-1000,1000]) 
 # vs.append(['py',100,-1000,1000])
 # vs.append(['pz',100,-1000,1000])
+# eta
+# phi 
+# E 
 #vs.append(['pt',100,0,1000])
 # vs.append(['pt',100,0,1000,'ls']) #ls = plot leading and subleading. l = leading. s = subleading 
 # vs.append(['invm',75,250,1000]) # Invariant mass
-vs.append(['invm',14,0,1400]) # Invariant mass
+vs.append(['invm',100,0,1000]) # Invariant mass
+# vs.append(['invm',10,120,130]) # Invariant mass
 
 # number of particles, files 
 nps = len(ptp)

@@ -144,7 +144,7 @@ submit_crab_GEN(){
     echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
-    echo "config.Data.publication = True" >> TmpCrabConfig.py
+    echo "config.Data.publication = False" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
     #echo "config.Data.userInputFiles = ['/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root'] # If DR1 step, this should be GEN file " >> TmpCrabConfig.py
