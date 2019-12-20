@@ -213,7 +213,7 @@ then
             # Need to edit cmssw config to shuffle pileup each time 
             #shuffle_PU $DR1Config
 
-            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
 
         elif [ $chosen_step == DR2 ]
         then 
@@ -227,7 +227,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
 
             #end_script 
 
@@ -265,7 +265,7 @@ then
 
             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
             #submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_events "${f_paths[@]}"
-            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
 
             #end_script 
 
@@ -299,7 +299,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
 
             #end_script 
         
@@ -366,35 +366,8 @@ then
 
     #cmsRun $AODConfig
 
-    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size "${f_paths[@]}"
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}"
 
     #end_script 
-
-fi 
-
-# # MicroAOD
-
-# https://github.com/atishelmanch/H4G/tree/master/Gen/microAOD
-# ^^ Follow this for how to do flashgg crab submissions 
-# For now will just make one file at a time w/o crab 
-
-
-
-# *** Microaod step should be done with a flashgg crab submission. No need to perform the step here. 
-
-if [ $chosen_step == MICROAOD ]
-then
-
-#     move to flashgg 
-#     cd /afs/cern.ch/work/a/atishelm/15JanFlashgg/CMSSW_8_0_26_patch1/src/flashgg
-#     cmsenv
-
-#     make microAODstd.py file which takes desired MINIAOD as input 
-
-      mini_aod_path=${chosen_miniaodoutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
-      make_microAOD $mini_aod_path $chosen_events
-      #end_script
-
-#     Then should run tagger step 
 
 fi 

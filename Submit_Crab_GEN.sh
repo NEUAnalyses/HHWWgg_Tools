@@ -19,7 +19,10 @@ submit_crab_GEN(){
     chosen_threads=$4 
     num_jobs=$5
     echo "chosen threads: $chosen_threads "
-    cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
+
+    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HH_WWgg/"
+
+    cd $localWorkingArea$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"
     #cmsenv
 
@@ -68,7 +71,8 @@ submit_crab_GEN(){
     #echo "IDName = $IDName"
 
     # if crab working area already exists, increment to unique name 
-    working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
+    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$IDName
+    # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
 
     # Do until unused working area name is found 
     # Make into some unique name function? Don't need to yet I guess 
@@ -90,7 +94,8 @@ submit_crab_GEN(){
         
             tmp_IDName=$IDName
             tmp_IDName+=_$i 
-            working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
+            working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$tmp_IDName 
+            # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             if [ ! -d $working_area ]; then
 
                 echo "Creating crab working area: '$working_area' for this crab request"
@@ -117,7 +122,9 @@ submit_crab_GEN(){
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
-    echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
+     
+    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on where config file was created  
+    # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
     #if [ $version == 939 ]
     if [ $chosen_threads != noval ]

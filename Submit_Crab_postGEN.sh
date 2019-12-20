@@ -17,6 +17,8 @@ submit_crab_postGEN(){
 
     #!/bin/bash
 
+    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HH_WWgg/"
+
     unset file_paths # Make sure array name is free in memory 
     declare -a file_paths # unassociative array 
     
@@ -29,13 +31,17 @@ submit_crab_postGEN(){
     cmssw_v=$2
     chosen_threads=$3 
     chosen_job_size=$4
+    chosen_step=$5
     #chosen_events=$5
     file_paths=("$@") # saves all inputs to array. Could be convinient for cleaning up later.
+    # chosen_step=$5
+
+    echo "chosen_step = " $chosen_step 
 
     echo "chosen_job_size = $chosen_job_size" # Number of input files per job 
     # Remove first four arguments 
 
-    file_paths=("${file_paths[@]:4}") 
+    file_paths=("${file_paths[@]:5}") 
 
     # EvtsPerJob=$((totevts/chosen_jobs))
     # echo "EvtsPerJob = $EvtsPerJob"
@@ -68,7 +74,8 @@ submit_crab_postGEN(){
     echo "path list = $path_list"
 
     echo "chosen threads: $chosen_threads "
-    cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
+    cd $localWorkingArea$cmssw_v/src/
+    # cd /afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     cmsenv
 
     # Check if there is a VOMS proxy for using CRAB 
@@ -106,7 +113,8 @@ submit_crab_postGEN(){
 
     # if crab working area already exists, increment to unique name 
     #working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
-    working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
+    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$IDName
+    # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
 
     # Do until unused working area name is found 
     # Make into some unique name function? Don't need to yet I guess 
@@ -128,7 +136,8 @@ submit_crab_postGEN(){
         
             tmp_IDName=$IDName
             tmp_IDName+=_$i 
-            working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
+            working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$tmp_IDName 
+            # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             if [ ! -d $working_area ]; then
 
                 echo "Creating crab working area: '$working_area' for this crab request"
@@ -158,7 +167,8 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
     #echo "arg = $1"
-    echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
     #s_str='SEED=$CRAB_Id'
     #echo "config.JobType.pyCfgParams = [$s_str]" >> TmpCrabConfig.py
 
@@ -186,7 +196,19 @@ submit_crab_postGEN(){
     echo "config.Data.outLFNDirBase = '/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/'" >> TmpCrabConfig.py
     #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     # publish if MINIAOD step only 
-    echo "config.Data.publication = True" >> TmpCrabConfig.py
+
+
+    if [ $chosen_step == "MINIAOD" ]
+    then
+        echo "PUBLISHING"
+        echo "config.Data.publication = True" >> TmpCrabConfig.py
+
+    else
+        echo "NOT PUBLISHING"
+        echo "config.Data.publication = False" >> TmpCrabConfig.py
+    fi 
+
+    # echo "config.Data.publication = True" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
 
