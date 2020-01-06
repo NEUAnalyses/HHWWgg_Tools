@@ -28,7 +28,8 @@ MC_Configs = '['
 # finalStates = ["lnulnugg"]
 
 ## DR1, DR2 and MINIAOD setup example
-step = "DR1" # can also put "DR2" or "MINIAOD" here 
+step = "MINIAOD" # can also put "DR2" or "MINIAOD" here 
+prevStep_prefix = "wPU_DR2" # if step == DR1: this = GEN-SIM. if step == DR2 with pileup: this = wPU_DR1 
 nEvents = 100000 
 jobs_jobsize = 1 
 directory_prefix = "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/" # location of GEN-SIM, DR1 or DR2 output files 
@@ -66,8 +67,9 @@ for dir in dir_list:
 		direc = directory_prefix 
 		direc += dir 
 		for sndDirec in os.listdir(direc):
-			# print 'sndDirec = ',sndDirec
-			if str(sndDirec) == str(nEvents) + 'events_GEN-SIM': 
+			# print 'sndDirec = ',sndDireci
+			#print'prevStep_prefix = ',prevStep_prefix
+			if str(sndDirec) == str(nEvents) + 'events_' + prevStep_prefix: 
 				direc += '/'
 				direc += (sndDirec)
 				# print'direc = ',direc 
@@ -77,10 +79,10 @@ for dir in dir_list:
 				direc += '/'
 				direc += '0000/'
 				print'Found direc: ',direc 
-				# cmd = 'ls -1 '
-				# cmd += direc
-				# cmd += ' | wc -l'
-				# print 'Number of files in direc: ',os.system(cmd) 
+				cmd = 'ls -1 '
+				cmd += direc
+				cmd += ' | wc -l'
+				print 'Number of files in direc: ',os.system(cmd) 
 				directories.append(direc)
 
 ## Create json objects 

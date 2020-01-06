@@ -147,6 +147,7 @@ To run the DR1 step on the output from GEN-SIM, you need to input the files that
 directory_prefix variable to be equal to the directory containing a directory for each amss point from the GEN-SIM step. After setting this and the proper mass points, you can run python Make_MC_Configs.py with the params set like so inside the file:
 
     step = "DR1"
+    prevStep_prefix = "GEN-SIM"
     nEvents = 100000 
     jobs_jobsize = 1 
     directory_prefix = "/path/to/GEN-SIM/output/" # location of GEN-SIM, DR1 or DR2 output files. Should contain directories with names like ggF_X260_WWgg_lnulnugg, ggF_X280_WWgg_lnulnugg, etc. 
@@ -167,3 +168,11 @@ After running the command python Make_MC_Configs.py, you should check the output
 In this example entry, the DR1 step will be run on 100000 events using output GEN-SIM files in the directory /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X270_WWgg_qqlnugg/100000events_GEN-SIM/191205_151224/0000/. This directory contains 400 files: 200 GEN-SIM output files containing 500 events each, and 200 LHE files. The DR1 step will take the GEN-SIM output files as intput. Because jobsize is set to 1, there will be a job submitted for each GEN-SIM output file, meaning 200 total DR1 jobs will be submitted. Because pileup is set to "wPU" as opposed to "woPU", pileup files will be searched for in order to add to the digis from the GEN-SIM output. **note** searching for pileup files takes a LONG time because there are many of them and they are all printed. There may be a way to speed this up, but for the moment you should expect it to take quite some time for each MC Config job set to be submitted. It's recommended that this is run on a screen so it doesn't get interrupted. 
 
 If everything works properly, this should submit 200 jobs for each mass point, and should produce 200 output files for each. 
+
+### DR2
+
+To run the DR2 step you need to change the directory_prefix variable to the directory containing the output directories for the mass points of the DR1 step, and then simply need to change the "step" variable to "DR2", and the prevStep_prefix variable to "wPU_DR1" if pileup was set to "wPU" in the DR1 step.
+
+### MINIAOD 
+
+The MINIAOD step is the same as the DR2 step, except changing the directory_prefix variable once again, this time to the output from the DR2 step, changing the "step" variable to "MINIAOD" and the prevStep_prefix variable to "wPU_DR2" if pileup was used in the DR2 step. 
