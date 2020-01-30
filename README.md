@@ -13,7 +13,7 @@ Repositories:
 - [HHWWgg Development](https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev)
 - [HHWWgg MicroAOD Production](https://github.com/atishelmanch/flashgg/tree/HHWWgg_Crab)
 
-The purpose of this repository is to create private monte carlo samples for the HH->WWgg analysis. There are current two main features of this repository:
+The purpose of this repository is to create private monte carlo samples for the HH->WWgg analysis. There are currently two main features of this repository:
 
 1) Private MC production with centralled produced gridpacks 
 2) Creation of NMSSM gridpacks for HH analyses
