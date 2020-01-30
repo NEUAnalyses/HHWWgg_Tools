@@ -1,4 +1,4 @@
-# HHWWgg Private MC 
+# HHWWgg Tools
 
 Contacts: 
 - Abraham Tishelman-Charny - abraham.tishelman.charny@cern.ch 
@@ -13,19 +13,28 @@ Repositories:
 - [HHWWgg Development](https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev)
 - [HHWWgg MicroAOD Production](https://github.com/atishelmanch/flashgg/tree/HHWWgg_Crab)
 
-The purpose of this repository is to create private monte carlo samples for the HH->WWgg analysis. 
+The purpose of this repository is to create private monte carlo samples for the HH->WWgg analysis. There are current two main features of this repository:
 
-## Cloning the Repository
+1) Private MC production with centralled produced gridpacks 
+2) Creation of NMSSM gridpacks for HH analyses
+
+# Cloning the Repository
 
 After moving to your desired working directory, the cloning should be done with:
 
 Via HTTPS:
 
-    git clone -b HHWWgg_PrivateMC https://github.com/NEUAnalyses/HH_WWgg.git 
+    git clone https://github.com/NEUAnalyses/HH_WWgg.git 
 
 or via SSH:
 
-    git clone -b HHWWgg_PrivateMC git@github.com:NEUAnalyses/HH_WWgg.git
+    git clone git@github.com:NEUAnalyses/HH_WWgg.git
+
+# NMSSM Gridpacks
+
+In order to create NMSSM gridpacks for HH analysis interpretations, see the README in the directory HHWWgg_NMSSM.
+
+# Private MC Production
 
 ## Getting an Example Madgraph / Pythia Config File
 
