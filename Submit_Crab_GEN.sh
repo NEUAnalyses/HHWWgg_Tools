@@ -20,7 +20,7 @@ submit_crab_GEN(){
     num_jobs=$5
     echo "chosen threads: $chosen_threads "
 
-    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HH_WWgg/"
+    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/"
 
     cd $localWorkingArea$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"

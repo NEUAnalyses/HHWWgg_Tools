@@ -14,9 +14,9 @@
 # https://cms-pdmv.cern.ch/mcm/chained_requests?prepid=HIG-chain_RunIIFall17wmLHEGS_flowRunIIFall17DRPremixPU2017_flowRunIIFall17MiniAODv2_flowRunIIFall17NanoAOD-01374&page=0&shown=15
 
 #source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/make_microAOD.sh
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Submit_Crab_GEN.sh
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Submit_Crab_postGEN.sh
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/make_microAOD.sh
 
 # CMSSW version of gen step 
 version=939

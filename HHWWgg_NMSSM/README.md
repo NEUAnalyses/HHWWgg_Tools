@@ -4,21 +4,21 @@ The purpose of this directory is to produce HHWWgg NMSSM signal samples.
 
 ## Cloning the Repositories 
 
-### HH_WWgg
+### HHWWgg_Tools
 
-After moving to your desired working directory, the cloning should be done with:
+After moving to your desired working directory, if you have not already cloned this repository, the cloning should be done with:
 
 Via HTTPS:
 
-    git clone -b HHWWgg_NMSSM https://github.com/NEUAnalyses/HH_WWgg.git 
+    git clone https://github.com/NEUAnalyses/HHWWgg_Tools.git 
 
 or via SSH:
 
-    git clone -b HHWWgg_NMSSM git@github.com:NEUAnalyses/HH_WWgg.git
+    git clone HHWWgg_NMSSM git@github.com:NEUAnalyses/HHWWgg_Tools.git
 
 you can then enter the working area:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
 
 ### cms-sw/genproductions
 
@@ -28,12 +28,12 @@ You'll now need to clone the cms genproductions repository in order to produce g
 
 Via HTTPS:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     git clone -b mg242legacy https://github.com/cms-sw/genproductions.git
 
 or via SSH:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     git clone -b mg242legacy git@github.com:cms-sw/genproductions.git
 
 
@@ -41,12 +41,12 @@ or via SSH:
 
 Via HTTPS:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     git clone -b mg260legacy https://github.com/cms-sw/genproductions.git
 
 or via SSH:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     git clone -b mg260legacy git@github.com:cms-sw/genproductions.git
 
 **N.B.**: I've found that cloning via SSH leads to no requirement to enter my git username and password everytime I push to the remote repository.
@@ -57,12 +57,12 @@ or via SSH:
 
 You will find in this repository the folder "NMSSM_XYH_WWgg" containing the Template folder and generate_grid.py pythod module. The first thing you should do is change the name of this folder to match your signal process name. This should be changed to your di-Higgs final state. All that needs to be changed is "WWgg" as this is the di-Higgs final state of the HH->WWgg analysis. For example, for the bbbb final state, you would change this name to: 
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     mv NMSSM_XYH_WWgg NMSSM_XYH_bbbb
 
 more generally for your final state:
 
-    HH_WWgg/HHWWgg_NMSSM
+    HHWWgg_Tools/HHWWgg_NMSSM
     mv NMSSM_XYH_WWgg NMSSM_XYH_<diHiggsFinalState>
 
 **N.B.**: Try to create a <diHiggsFinalState> name without special characters, underscores or spaces as this could potentially cause problems later when accessing this directory. 
@@ -121,7 +121,7 @@ this will create the folders necessary to create MadGraph gridpacks for two pair
 
 When running the gridpack generation executable, the folder with the MadGraph dat files will be searched for and needs to be located in genproductions. It's therefore recommended you copy your Template folder to genproductions like so:
 
-    cd HH_WWgg/HHWWgg_NMSSM
+    cd HHWWgg_Tools/HHWWgg_NMSSM
     cp -r NMSSM_XYH_<diHiggsFinalState> genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/
 
 ### Produce MadGraph .dat Cards
@@ -183,17 +183,17 @@ and finally:
 
 ## Creating Pythia Fragments
 
-Now that you have a gridpack, you have the step simulating the physics process gg -> h03 -> h02 h01. You can now create a Pythia configuration file that will decay the h02 h01 particles into your desired final state. This can be done in HH_WWgg/HHWWgg_NMSSM/MakeFragments. The python module used for pythia fragment production is HH_WWgg/HHWWgg_NMSSM/MakeFragments/Make_Fragments.py:
+Now that you have a gridpack, you have the step simulating the physics process gg -> h03 -> h02 h01. You can now create a Pythia configuration file that will decay the h02 h01 particles into your desired final state. This can be done in HHWWgg_Tools/HHWWgg_NMSSM/MakeFragments. The python module used for pythia fragment production is HHWWgg_Tools/HHWWgg_NMSSM/MakeFragments/Make_Fragments.py:
 
-    cd HH_WWgg/HHWWgg_NMSSM/MakeFragments
+    cd HHWWgg_Tools/HHWWgg_NMSSM/MakeFragments
 
 In order to create a Madgraph / pythia fragment, you need to have a template in MakeFragments/Templates. This should have a spot for the gridpack path: '{gridpack}', and the decays for the Higgs (pdgid 25) and intermediate scalar (pdgid 35). You can find some examples in the Templates folder. At the moment, the gridpacks you would like to match with pythia fragments need to be specified in Make_Fragments.py, the main python module of the folder. You also need to specify the mass pairs, which should correspond to the gridpacks in order. As long as these are set and your template is available in the Templates directory, you can run following this example:
 
-    cd HH_WWgg/HHWWgg_NMSSM/MakeFragments
+    cd HHWWgg_Tools/HHWWgg_NMSSM/MakeFragments
     python Make_Fragments.py --template Templates/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu
 
 if it works properly, this will produce two madgraph/pythia configuration files, output to MakeFragments/Fragments. 
 
 ## Submitting Jobs to CRAB for Production  
 
-With your pythia fragments in hand, you can create cmssw and crab configuration files that will simulate events of your process to be further analyzed. The instructions for this can be found in the README on the homepage of this repository: [HH_WWgg](https://github.com/NEUAnalyses/HH_WWgg/tree/master), where the input madgraph/pythia configuration(s) for the GEN-SIM or GEN step should be the configuration(s) created in the previous steps above. 
+With your pythia fragments in hand, you can create cmssw and crab configuration files that will simulate events of your process to be further analyzed. The instructions for this can be found in the README on the homepage of this repository: [HHWWgg_Tools](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master), where the input madgraph/pythia configuration(s) for the GEN-SIM or GEN step should be the configuration(s) created in the previous steps above. 
