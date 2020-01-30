@@ -6,8 +6,8 @@ Contacts:
 - Toyoko Orimoto - Toyoko.Orimoto@cern.ch 
 
 Presentations: 
-- [21 October 2019 Analysis Status](https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf)
 - [11 November 2019 Analysis Update](https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf)
+- [21 October 2019 Analysis Status](https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf)
 
 Repositories:
 - [HHWWgg Development](https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev)
@@ -24,15 +24,15 @@ After moving to your desired working directory, the cloning should be done with:
 
 Via HTTPS:
 
-    git clone https://github.com/NEUAnalyses/HH_WWgg.git 
+    git clone https://github.com/NEUAnalyses/HHWWgg_Tools.git 
 
 or via SSH:
 
-    git clone git@github.com:NEUAnalyses/HH_WWgg.git
+    git clone git@github.com:NEUAnalyses/HHWWgg_Tools.git
 
 # NMSSM Gridpacks
 
-In order to create NMSSM gridpacks for HH analysis interpretations, see the README in the directory HHWWgg_NMSSM.
+In order to create NMSSM gridpacks for HH analysis interpretations, see the README in the [HHWWgg_NMSSM directory](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/HHWWgg_NMSSM#hhwwgg-nmssm)
 
 # Private MC Production
 
@@ -115,7 +115,7 @@ This script will look for the local file MC_Configs.json and submit crab jobs fo
 
 Note that when running this, the output directory of the CRAB jobs is currently hardcoded. You may wish to change this to your desired output location. This is specified for GEN and GEN-SIM jobs in with the variable outLFNDirBase in Submit_Crab_GEN.sh and in Submit_Crab_postGEN.sh for the other steps. 
 
-You will also need to change the value of the variable localWorkingArea in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh. This should be set to the working directory containing the HH_WWgg repository. 
+You will also need to change the value of the variable localWorkingArea in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh. This should be set to the working directory containing the HHWWgg_Tools repository. 
 
 It's also useful to manually set your VOMS proxy incase the script doesn't catch that you don't have one set. This can be done with the command:
 
@@ -144,7 +144,7 @@ The next step is to run Make_MC_Configs.py with the params set like so in the fi
     masses = [260, 270, 280, 300, 320, 350, 400, 500, 550, 600, 650, 700, 800, 850, 900, 1000]
     finalStates = ["lnulnugg"]
 
-Then before running the scripts, make sure to change outLFNDirBase in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh, and localWorkingArea in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh to the desired values. outLFNDirBase should be set to the desired output location, and localWorkingArea should be set to the working directory containing the HH_WWgg repository. After setting these and setting up your grid proxy, you can run with:
+Then before running the scripts, make sure to change outLFNDirBase in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh, and localWorkingArea in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh to the desired values. outLFNDirBase should be set to the desired output location, and localWorkingArea should be set to the working directory containing the HHWWgg_Tools repository. After setting these and setting up your grid proxy, you can run with:
 
     . main.sh
 
