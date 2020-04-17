@@ -61,6 +61,7 @@ then
     GenSimOutput+=.root
 
     # Config File Name
+    mkdir -p cmssw_configs # create directory if it does not already exist
     ConfigFileName="cmssw_configs/"
     ConfigFileName+=${GenSimOutput%????} # Remove 'root' # Gensimoutput is a bad name 
     ConfigFileName+=py 
@@ -103,6 +104,7 @@ then
     GenOutput+=.root
 
     # Config File Name
+    mkdir -p cmssw_configs # create directory if it does not already exist
     ConfigFileName="cmssw_configs/"
     ConfigFileName+=${GenOutput%????} # Remove 'root' # Gensimoutput is a bad name 
     ConfigFileName+=py 
@@ -318,7 +320,7 @@ end_script(){
 
     #echo "Finished desired step: $chosen_step "
     echo "Exiting"
-    cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools
+    cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production
     return;
     #exit 1;
 }
@@ -333,4 +335,4 @@ shuffle_PU(){
 }
 
 # Currently assuming MCM chain of commands for fragments created with CMSSW_9_3_9_patch1 
-source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/MC_Producer_939.sh 
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_939.sh 

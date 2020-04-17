@@ -1,0 +1,9 @@
+[
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100,
+						"jobs_jobsize"      : 1,
+						"fragment_directory"  : "GluGluToHHTo_WWgg_qqlnu_node_1",
+						"pileup"              : "wPU" 
+				}
+]

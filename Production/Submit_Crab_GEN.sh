@@ -20,7 +20,7 @@ submit_crab_GEN(){
     num_jobs=$5
     echo "chosen threads: $chosen_threads "
 
-    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/"
+    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
 
     cd $localWorkingArea$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"
@@ -160,6 +160,7 @@ submit_crab_GEN(){
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
     cp TmpCrabConfig.py $ccname
+    mkdir -p ../../crab_configs/ # make directory if it doesn't already exist 
     mv $ccname ../../crab_configs/$ccname  # Will this work? 
     rm TmpCrabConfig.py 
 

@@ -1,39 +1,3 @@
-# HHWWgg Tools
-
-Contacts: 
-- Abraham Tishelman-Charny - abraham.tishelman.charny@cern.ch 
-- Badder Marzocchi - badder.marzocchi@cern.ch
-- Toyoko Orimoto - Toyoko.Orimoto@cern.ch 
-
-Presentations: 
-- [11 November 2019 Analysis Update](https://indico.cern.ch/event/847923/contributions/3632148/attachments/1942588/3221820/HH_WWgg_Analysis_Update_11_November_2019_2.pdf)
-- [21 October 2019 Analysis Status](https://indico.cern.ch/event/847927/contributions/3606888/attachments/1930081/3196452/HH_WWgg_Analysis_Status_21_October_2019.pdf)
-
-Repositories:
-- [HHWWgg Development](https://github.com/atishelmanch/flashgg/tree/HHWWgg_dev)
-- [HHWWgg MicroAOD Production](https://github.com/atishelmanch/flashgg/tree/HHWWgg_Crab)
-
-The purpose of this repository is to create private monte carlo samples for the HH->WWgg analysis. There are currently two main features of this repository:
-
-1) Private MC production with centralled produced gridpacks 
-2) Creation of NMSSM gridpacks for HH analyses
-
-# Cloning the Repository
-
-After moving to your desired working directory, the cloning should be done with:
-
-Via HTTPS:
-
-    git clone https://github.com/NEUAnalyses/HHWWgg_Tools.git 
-
-or via SSH:
-
-    git clone git@github.com:NEUAnalyses/HHWWgg_Tools.git
-
-# NMSSM Gridpacks
-
-In order to create NMSSM gridpacks for HH analysis interpretations, see the README in the [HHWWgg_NMSSM directory](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/HHWWgg_NMSSM#hhwwgg-nmssm)
-
 # Private MC Production
 
 ## Getting an Example Madgraph / Pythia Config File
@@ -44,8 +8,9 @@ Based on how the repository is currently set up, the madgraph / pythia conigurat
 
 (just change the extension from .py.txt to .py before use). Note the madgraph gridpack included in the preamble. This will create a 250 GeV Radion in MadGraph, and pythia will decay it into two SM Higgs Bosons, where one Higgs decays into two photons and the other Higgs decays into two W bosons. One of the W bosons will then decay into two quarks (which can be u, d, s or c) which will hadronize, and the other W boson will decay into a lepton and neutrino (of the electron or muon flavor).
 
-This can be done with the steps: 
+This can be done with the steps from an lxplus7 machine: 
 
+    export SCRAM_ARCH=slc6_amd64_gcc630 
     cmsrel CMSSW_9_3_9_patch1
     cd CMSSW_9_3_9_patch1/src
     cmsenv

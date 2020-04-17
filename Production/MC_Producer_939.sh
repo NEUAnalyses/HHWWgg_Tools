@@ -14,9 +14,9 @@
 # https://cms-pdmv.cern.ch/mcm/chained_requests?prepid=HIG-chain_RunIIFall17wmLHEGS_flowRunIIFall17DRPremixPU2017_flowRunIIFall17MiniAODv2_flowRunIIFall17NanoAOD-01374&page=0&shown=15
 
 #source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
-source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Submit_Crab_GEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Submit_Crab_postGEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/make_microAOD.sh
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/Submit_Crab_GEN.sh
+source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/Submit_Crab_postGEN.sh
+# source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/make_microAOD.sh
 
 # CMSSW version of gen step 
 version=939
@@ -149,6 +149,8 @@ then
     #DR1Output=$EndofPath 
     DR1Output=$EndofSinglePath 
     DR2Output=$EndofSinglePath 
+
+    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
     DR1Config=$cmssw_v/src/cmssw_configs/
     DR2Config=$cmssw_v/src/cmssw_configs/
@@ -335,6 +337,8 @@ then
     MINIAODOutput=$EndofSinglePath 
     MINIAODOutput=${MINIAODOutput%_DR2*}
     MINIAODOutput+=_MINIAOD.root
+
+    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
     MINIAODConfig=$cmssw_v/src/cmssw_configs/
     #MINIAODConfig+=$EndofPath
