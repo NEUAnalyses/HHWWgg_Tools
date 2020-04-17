@@ -7,3 +7,4 @@ cmssw_configs/*
 testing_python.py
 NN/*
 Madgraph/*
+crab.log

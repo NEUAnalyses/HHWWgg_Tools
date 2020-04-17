@@ -1,9 +1,0 @@
-[
-    { 
-        "step"      : "MINIAOD",
-        "events"    : 100,
-        "jobs_jobsize"      : 1,
-        "fragment_directory"  : "/eos/user/a/atishelm/ntuples/HHWWgg/HHWWgg_v2-2_X250_qqlnu_Tagger/",
-        "pileup"              : "wPU" 
-    }
-]
