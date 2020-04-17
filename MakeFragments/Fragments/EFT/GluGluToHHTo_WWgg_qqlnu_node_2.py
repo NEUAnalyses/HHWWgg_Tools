@@ -1,8 +1,7 @@
 import FWCore.ParameterSet.Config as cms
 
 externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
-    #args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/GluGluToRadionToHH_M1250/v1/GluGluToRadionToHH_M1250_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'),
-    args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/GluGluToRadionToHH_M750/v1/GluGluToRadionToHH_M750_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'),
+    args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/GF_HH_3/v1/GF_HH_3_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'),
     nEvents = cms.untracked.uint32(5000),
     numberOfParameters = cms.uint32(1),
     outputFile = cms.string('cmsgrid_final.lhe'),
@@ -32,13 +31,14 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
             '25:m0 = 125.09', # Higgs mass 
             '25:onMode = off', # Turn off all H decays 
             '25:onIfMatch = 22 22', # Add H->gg decay
-            '25:onIfMatch = 24 -24', # Add H->WW decay 
+            '35:onMode = off', # Turn off all intermediate scalar particle decays
+            '35:onIfMatch = 24 -24', # Add intermediate scalar particle -> WW decay  
             'ResonanceDecayFilter:filter = on',
             'ResonanceDecayFilter:exclusive = on', #off: require at least the specified number of daughters, on: require exactly the specified number of daughters
             'ResonanceDecayFilter:eMuAsEquivalent = on', #on: treat electrons and muons as equivalent
             'ResonanceDecayFilter:allNuAsEquivalent  = on', #on: treat all three neutrino flavours as equivalent
             'ResonanceDecayFilter:udscAsEquivalent   = on', #on: treat udsc quarks as equivalent
-            'ResonanceDecayFilter:mothers = 25,24', #list of mothers not specified -> count all particles in hard process+resonance decays (better to avoid specifying mothers when including leptons from the lhe in counting, since intermediate resonances are not gauranteed to appear in general
+            'ResonanceDecayFilter:mothers = 35,25,24', #list of mothers not specified -> count all particles in hard process+resonance decays (better to avoid specifying mothers when including leptons from the lhe in counting, since intermediate resonances are not gauranteed to appear in general
             'ResonanceDecayFilter:daughters = 1,1,11,12,22,22', # qq,lnu,gg. Technically tau neutrinos are allowed in the final state, but there is no way to produce them here
           ),
         parameterSets = cms.vstring('pythia8CommonSettings',
@@ -50,3 +50,4 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
 
 
 ProductionFilterSequence = cms.Sequence(generator)
+
