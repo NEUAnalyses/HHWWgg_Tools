@@ -79,7 +79,7 @@ if(args.Resonant):
     for m in masses: resMasses.append(m) 
 
 # Create output directory if it doesn't exist 
-outDirFull = os.getcwd() + "/OutputFragments/" + outFolder
+outDirFull = os.getcwd() + "/Outputs/" + outFolder
 if not os.path.exists(outDirFull):
     os.mkdir(outDirFull)
 
@@ -102,18 +102,18 @@ for it, template in enumerate(templates):
                 print'Masses:',massHS,',',massIS
                 print 
                 print'[Make_Fragments.py: VERBOSE]'
-            outputName = "OutputFragments/{0}/NMSSM_XYH_{1}_{2}_MX_{3}_MY_{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
+            outputName = "Outputs/{0}/NMSSM_XYH_{1}_{2}_MX_{3}_MY_{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
 
         elif(args.EFT):
             BMnum = str(igp)
             if(igp==12): BMnum = "SM"
-            outputName = "OutputFragments/{0}/GluGluToHHTo_{1}_{2}_node_{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
+            outputName = "Outputs/{0}/GluGluToHHTo_{1}_{2}_node_{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
 
         elif(args.Resonant):
             bsmMass = resMasses[igp]
             print'res mass:',bsmMass
             print'res gridpack:',gp 
-            outputName = "OutputFragments/{0}/ggF_X{1}_HH{2}_{3}.py".format(outFolder,bsmMass,diHiggsDecay,finalState)
+            outputName = "Outputs/{0}/ggF_X{1}_HH{2}_{3}.py".format(outFolder,bsmMass,diHiggsDecay,finalState)
 
         fragmentFile = fragmentFile.replace("{gridpack}",str(gp))
         fragmentFile += '\n' 
