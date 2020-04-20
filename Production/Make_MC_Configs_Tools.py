@@ -51,7 +51,7 @@ def ArgChecks(args):
 def GetMassPairs(massPairs,massPairsString):
     onFirst, onSecond = 0, 0
     massPair = []
-    for im,mass in enumerate(massPairsString.split(',')):
+    for im,mass in enumerate(massPairsString):
         if(im == 0 or im%2==0): 
             onFirst, onSecond = 1, 0
         else: 

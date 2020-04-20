@@ -4,7 +4,29 @@
 
     ssh <lxplusUser>@lxplus6.cern.ch
 
-## Getting an Example Madgraph / Pythia Config File
+## Quick Start
+
+Example usage for the main module Make_MC_Configs.py:
+
+Resonant Points:
+
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750
+
+EFT benchmarks:
+
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --EFT --EFT_BMs 1 --finalStates qqlnu
+
+NMSSM Points:
+
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --NMSSM --finalStates qqlnu --masses 500,300
+
+Then, as long as fragments are in proper location in CMSSW, run:
+
+    . SubmitMCJobs.sh 
+
+## Walkthrough 
+
+### Getting an Example Madgraph / Pythia Config File
 
 Based on how the repository is currently set up, the madgraph / pythia coniguration file you use must be compatible with CMSSW_9_3_9_patch1. To begin, you should clone CMSSW_9_3_9_patch1, and then you should place your madgraph / pythia configuration file in CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python/. An example configuration file can be found here:
 
@@ -24,13 +46,13 @@ This can be done with the steps from an lxplus7 machine:
     mkdir Configuration/GenProduction/python
     mv ggF_X250_WWgg_qqlnugg.py.txt Configuration/GenProduction/python/ggF_X250_WWgg_qqlnugg.py
 
-## Create MC_Configs JSON
+### Create MC_Configs JSON
 
-### Example with GEN-SIM ggF_X250_WWgg_qqlnugg
+#### Example with GEN-SIM ggF_X250_WWgg_qqlnugg
 
-The first step in this repository's workflow is the creation of an MC_Configs JSON file specifying which MC steps to run and which files to run them on. In order to create the default output, you simply run: 
+The first step in this repository's workflow is the creation of an MC_Configs JSON file specifying which MC steps to run and which files to run them on. You can create one for your newly acquired fragment with:
 
-    python Make_MC_Configs.py
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250
 
 this will create an output file called MC_Configs.json. By default, MC_Configs.json will have one object [[1]](https://developers.squarespace.com/what-is-json) in it consisting of five keys, each consisting of one string or value. It should look like this:
 
@@ -44,7 +66,7 @@ this will create an output file called MC_Configs.json. By default, MC_Configs.j
         }
     ]
 
-This corresponds to producing 100 events of the process: gluon gluon fusion -> 250 GeV Radion -> HH -> WWgg -> qqlnugg, the semileptonic radion decay. This will be split into 1 job containing 100 events (possibly minus a few for decays with quarks in the final state, I don't fully understand this but I think it has something to do with jet / quark matching). For the GEN-SIM step, the pileup key isn't read, but a default string of wPU is stored there to keep the object sizes consistent between MC steps. 
+This corresponds to a production of 100 events of the process: gluon gluon fusion -> 250 GeV Radion -> HH -> WWgg -> qqlnugg, the semileptonic radion decay. This will be split into 1 job containing 100 events (possibly minus a few for decays with quarks in the final state, I don't fully understand this but I think it has something to do with jet / quark matching). For the GEN-SIM step, the pileup key isn't read, but a default string of wPU is stored there to keep the object sizes consistent between MC steps. 
 
 When running jobs for the GEN or GEN-SIM step, the scripts will look for the configuration file: 
 
@@ -56,7 +78,7 @@ in this case:
 
 so when specifying the fragment for a GEN or GEN-SIM config, you must make sure the fragment is available at this relative path. 
 
-### Other Possibilities
+#### Other Possibilities
 
 The list of possible "step" values that can be set in MC_Configs.json objects are:
 
@@ -74,11 +96,11 @@ The current convention used for producing an HHWWgg signal sample is running:
 - DR2 with 100000 events, pileup = "wPU", with a jobsize of 1 
 - MINIAOD with 100000 events, pileup = "wPU", with a jobsize of 1 # Note that publish must be set to on when running this step 
 
-## Submit CRAB Jobs 
+### Submit CRAB Jobs 
 
 After creating MC_Configs.json, you can submit crab jobs to run the desired configs. This is simply done with:
 
-    . main.sh 
+    . SubmitMCJobs.sh 
 
 This script will look for the local file MC_Configs.json and submit crab jobs for each object in the json file. 
 
@@ -94,37 +116,32 @@ as long as you have the certificate setup properly.
 
 The CMS driver commands used to create the cmssw configs are located in MC_Producer_939.sh. 
 
-## EFT Benchmark Production
+### Example: Fully Leptonic Production
 
-## Fully Leptonic Production
-
-### GEN-SIM
+#### GEN-SIM
 
 After cloning the repository and CMSSW_9_3_9_patch1 with the above instructions, you can put the fully leptonic madgraph/pythia configs into the proper location with the commands:
 
     cd HHWWgg_Tools
-    cp fragments/FullyLeptonic/*.py CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python
+    cp Fragments/Outputs/FullyLeptonic/*.py CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python
 
 If done properly, this should place all of the configs in their proper spot.
 
-The next step is to run Make_MC_Configs.py with the params set like so in the file:
+The next step is to run Make_MC_Configs.py with the following flags:
 
-    step = "GEN-SIM"
-    nEvents = 100000
-    jobs_jobsize = 200
-    masses = [260, 270, 280, 300, 320, 350, 400, 500, 550, 600, 650, 700, 800, 850, 900, 1000]
-    finalStates = ["lnulnugg"]
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 200 --finalStates lnulnugg --Resonant --masses 260, 270, 280, 300, 320, 350, 400, 500, 550, 600, 650, 700, 800, 850, 900, 1000
 
 Then before running the scripts, make sure to change outLFNDirBase in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh, and localWorkingArea in Submit_Crab_GEN.sh and Submit_Crab_postGEN.sh to the desired values. outLFNDirBase should be set to the desired output location, and localWorkingArea should be set to the working directory containing the HHWWgg_Tools repository. After setting these and setting up your grid proxy, you can run with:
 
-    . main.sh
+    . SubmitMCJobs.sh 
 
 If everything works properly, this will submit 200 CRAB jobs for each mass point. 
 
-### DR1 
+#### DR1 
 
-To run the DR1 step on the output from GEN-SIM, you need to input the files that were output from the GEN-SIM step. In Make_MC_Configs.py, you need to edit the 
-directory_prefix variable to be equal to the directory containing a directory for each amss point from the GEN-SIM step. After setting this and the proper mass points, you can run python Make_MC_Configs.py with the params set like so inside the file:
+To run the DR1 step on the output from GEN-SIM, you need to input the files that were output from the GEN-SIM step. To do this, you can 
+
+    python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 200 --finalStates lnulnugg --Resonant --masses 260, 270, 280, 300, 320, 350, 400, 500, 550, 600, 650, 700, 800, 850, 900, 1000
 
     step = "DR1"
     prevStep_prefix = "GEN-SIM"
@@ -149,10 +166,10 @@ In this example entry, the DR1 step will be run on 100000 events using output GE
 
 If everything works properly, this should submit 200 jobs for each mass point, and should produce 200 output files for each. 
 
-### DR2
+#### DR2
 
 To run the DR2 step you need to change the directory_prefix variable to the directory containing the output directories for the mass points of the DR1 step, and then simply need to change the "step" variable to "DR2", and the prevStep_prefix variable to "wPU_DR1" if pileup was set to "wPU" in the DR1 step.
 
-### MINIAOD 
+#### MINIAOD 
 
 The MINIAOD step is the same as the DR2 step, except changing the directory_prefix variable once again, this time to the output from the DR2 step, changing the "step" variable to "MINIAOD" and the prevStep_prefix variable to "wPU_DR2" if pileup was used in the DR2 step. 

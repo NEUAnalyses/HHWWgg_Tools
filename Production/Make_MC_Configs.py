@@ -6,9 +6,15 @@
 #
 # Example Usage:
 #
-# <command 1>
-# <command 2> 
-# <command 3>
+# Resonant Points:
+# python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750
+#
+# EFT benchmarks:
+# python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --EFT --EFT_BMs 1 --finalStates qqlnu
+#
+# NMSSM Points:
+# python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --NMSSM --finalStates qqlnu --masses 500,300
+#
 ########################################################################################################################
 
 import argparse
@@ -17,7 +23,7 @@ from Make_MC_Configs_Tools import *
 parser = argparse.ArgumentParser(description='MC_Configs.json creator')
 parser.add_argument('--step', type=str, default="", help="Step to run. Options: GEN, GEN-SIM, DR1, DR2, MINIAOD", required=True)
 parser.add_argument('--nEvents', type=int, default=1000, help="Number of events to produce", required=True)
-parser.add_argument('--jobs_jobsize', type=int, default=1, help="GEN/GEN-SIM: Number of jobs to spread events over. Other steps: Number of input files", required=True)
+parser.add_argument('--jobs_jobsize', type=int, default=1, help="GEN/GEN-SIM: Number of jobs to spread events over. Other steps: Number of input files per job", required=True)
 parser.add_argument('--masses', type=str, default="", help="Comma separated list of masses to run", required=False) # for res case or NMSSM 
 parser.add_argument('--finalStates', type=str, default="", help="Comma separated list of final states to run", required=True) 
 parser.add_argument("--Resonant", action="store_true", default=False, help="Resonant case", required=False)
@@ -34,9 +40,9 @@ ArgChecks(args)
 
 # Set arguments 
 step, nEvents, jobs_jobsize = args.step, args.nEvents, args.jobs_jobsize 
-# masses = args.masses.split(',')
+masses = args.masses.split(',')
 finalStates = args.finalStates.split(',')
-# EFT_BMs = args.EFT_BMs.split(',')
+EFT_BMs = args.EFT_BMs.split(',')
 
 # exit(1)
 
@@ -95,7 +101,7 @@ if step == "GEN-SIM":
 	
 	# If EFT, go through benchmarks and final states 
 	if(args.EFT):
-		EFT_BMs = args.EFT_BMs.split(',')		
+		# EFT_BMs = args.EFT_BMs.split(',')		
 		for ibm,bm in enumerate(EFT_BMs):
 			for finalState in finalStates:
 				# Indentation of text chosen for visual output
@@ -120,47 +126,61 @@ if step == "GEN-SIM":
 
 	# If resonant or NMSSM, go through masses (pair or non-pairs) and final states 
 	elif(args.Resonant):
-		masses = args.masses 
-		for mass in masses:
-			print 
+		for im,mass in enumerate(masses):
+			for ifs,finalState in enumerate(finalStates):
+
+				# Indentation of text chosen for visual output
+				MC_Configs_Entry = '''
+				{ 
+						"step"      : "{step}",
+						"events"    : {events},
+						"jobs_jobsize"      : {jobs_jobsize},
+						"fragment_directory"  : "ggF_X{mass}_WWgg_{finalState}",
+						"pileup"              : "wPU" 
+				}'''
+
+				MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{finalState}",str(finalState))
+				MC_Configs += MC_Configs_Entry
+
+				if im is not len(masses)-1: MC_Configs += ',' # need comma separation 
+				else: continue # no comma at end of last object 
 
 	elif(args.NMSSM):
-		massPairs = GetMassPairs(massPairs, args.massPairs)
-		for massPair in massPairs:
-			print 
+		massPairs = [] 
+		massPairs = GetMassPairs(massPairs, masses)
+		for imp,massPair in enumerate(massPairs):
+			massHS = massPair[0]
+			massIS = massPair[1]
+			for ifs,finalState in enumerate(finalStates):
 
+				# Indentation of text chosen for visual output
+				MC_Configs_Entry = '''
+				{ 
+						"step"      : "{step}",
+						"events"    : {events},
+						"jobs_jobsize"      : {jobs_jobsize},
+						"fragment_directory"  : "NMSSM_XYH_WWgg_{finalState}_MX_{massHS}_MY_{massIS}", 
+						"pileup"              : "wPU" 
+				}'''
+				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{finalState}",str(finalState))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{massHS}",str(massHS)) # mass of heavy scalar 
+				MC_Configs_Entry = MC_Configs_Entry.replace("{massIS}",str(massIS)) # mass of intermediate scalar 				
+				MC_Configs += MC_Configs_Entry
 
-
-
-	# for im,mass in enumerate(masses):
-	# 	for ifs,finalState in enumerate(finalStates):
-
-	# 		# Indentation of text chosen for visual output
-	# 		MC_Configs_Entry = '''
-	# 		{ 
-	# 				"step"      : "{step}",
-	# 				"events"    : {events},
-	# 				"jobs_jobsize"      : {jobs_jobsize},
-	# 				"fragment_directory"  : "ggF_X{mass}_WWgg_{finalState}",
-	# 				"pileup"              : "wPU" 
-	# 		}'''
-
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{finalState}",str(finalState))
-	# 		MC_Configs += MC_Configs_Entry
-
-	# 		if im is not len(masses)-1: MC_Configs += ',' # need comma separation 
-	# 		else: continue # no comma at end of last object 
+				if imp is not len(massPairs)-1: MC_Configs += ',' # need comma separation 
+				else: continue # no comma at end of last object 
 
 	MC_Configs += '\n]\n' # finish json 
 
 	with open(outputName, "w") as output:
 			output.write(MC_Configs) # write json file 
-
-
 
 
 ## if the step is DR1, DR2 or MINIAOD, you need a different config type 
@@ -193,6 +213,7 @@ else:
 print 
 print'[Make_MC_Configs] - MC_Configs.json created'
 print'[Make_MC_Configs] - Make sure MC_Configs.json looks good before submitting with . main.sh !' 
+print'[Make_MC_Configs] - **IMPORTANT**: Make sure fragment_directory values in json exist in CMSSW_X_Y_Z/src/Configuration/GenProduction/python' # should just have code check this 
 print 
 
 ###########################

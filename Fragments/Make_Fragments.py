@@ -70,7 +70,7 @@ if(args.verbose):
 
 massPairs = []
 if(args.NMSSM): 
-    GetMassPairs(massPairs, masses)
+    massPairs = GetMassPairs(massPairs, masses)
     assert len(gridpacks) == len(massPairs) # number of gridpacks must equal number of mass pairs
     print'Note for NMSSM: Make sure your mass pairs and gridpacks are in the order you want'
 
