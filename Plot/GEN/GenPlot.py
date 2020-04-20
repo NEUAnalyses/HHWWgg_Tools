@@ -20,6 +20,7 @@ from GenPlotTools import *
 parser = argparse.ArgumentParser(description='Madgraph/pythia configuration creator')
 parser.add_argument('-i', type=str, default="", help="Input GEN file, format: 'store/.../.root", required=True)
 parser.add_argument('-v', type=str, default="", help="Comma separated list of variables to plot", required=True)
+parser.add_argument('-sp', type=str, default="", help="Single particles to plot variables of", required=False)
 
 # parser.add_argument("-pt", action="store_true", default=False, help="Plot invariant masses of NMSSM particles", required=False)
 
@@ -30,6 +31,7 @@ args = parser.parse_args()
 print"Plotting HH variables"
 
 variables = args.v.split(',')
+singleParticles = args.sp.split(',')
 
 gROOT.SetBatch(True)
 genHandle = Handle('vector<reco::GenParticle>')

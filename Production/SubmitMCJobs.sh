@@ -4,7 +4,7 @@
 # This is currently only configured for fragments created in CMSSW_9_3_9_patch1 
 
 #unset jsonkeys 
-jsonkeys=(step events jobs_jobsize fragment_directory pileup)
+jsonkeys=(step events jobs_jobsize fragment_directory pileup localGridpack)
  
 i=$((0)) # jsonkey 
 for jsonkey in "${jsonkeys[@]}" 
@@ -18,7 +18,7 @@ do
     for keyitem in `jq ".[] | .$jsonkey" MC_Configs.json `
     do
         :
-        #echo "key item = $keyitem" 
+        # echo "key item = $keyitem" 
         keyitem=$keyitem
         eval thisconfigname+=($keyitem)
         #echo "this config elements = ${thisconfigname[@]}"
@@ -53,21 +53,7 @@ echo "  Events: ${saved_array_1[@]}" # events
 echo "  Jobs_jobsize= ${saved_array_2[@]}" # jobs_jobsize 
 echo "  Fragment_Directory = ${saved_array_3[@]}" # fragment_directory
 echo "  Pileup = ${saved_array_4[@]}" # pileup 
-
-# i=$((0)) # config number  
-# for config in "${saved_array_0[@]}"
-# do
-#     :
-#     unset $config # Make sure array name is free in memory 
-#     declare -A $config # associative array
-#     #echo "config = $config"
-#     eval $config["filename"]=${saved_array_1[$i]}
-#     eval $config["step"]=${saved_array_2[$i]}
-#     eval $config["events"]=${saved_array_3[$i]}
-#     eval $config["jobs"]=${saved_array_4[$i]}
-#     #eval `$config+=(["filename"]=saved_array_1[$i] ["step"]=saved_array_2[$i] ["events"]=saved_array_3[$i] ["jobs"]=saved_array_4[$i] )`
-#     i=$((i+1))
-# done
+echo "  LocalGridpack  = ${saved_array_5[@]}" # 0) Don't need to add gridpack to sandbox. 1) Need to add to sandbox and change path to /srv/<gridpack> in pythia fragment
 
 # Number of crab configurations
 num_configs=${#saved_array_0[@]}
@@ -79,7 +65,7 @@ do
     :
     echo "Submitting crab job $i"
     cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]}
+    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]} ${saved_array_5[$i]}
 
 done 
 

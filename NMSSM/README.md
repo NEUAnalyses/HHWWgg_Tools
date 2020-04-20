@@ -37,7 +37,7 @@ or via SSH:
 
 ### Updating the Directory Name
 
-You will find in this repository the folder "NMSSM_XYH_WWgg" containing the Template folder and generate_grid.py pythod module. The first thing you should do is change the name of this folder to match your signal process name. This should be changed to your di-Higgs final state. All that needs to be changed is "WWgg" as this is the di-Higgs final state of the HH->WWgg analysis. For example, for the bbbb final state, you would change this name to: 
+You will find in this repository the folder "NMSSM_XYH_WWgg" containing the Template folder and generate_grid.py python module. The first thing you should do is change the name of this folder to match your signal process name. This should be changed to your di-Higgs final state. All that needs to be changed is "WWgg" as this is the di-Higgs final state of the HH->WWgg analysis. For example, for the bbbb final state, you would change this name to: 
 
     cd HHWWgg_Tools/NMSSM
     mv NMSSM_XYH_WWgg NMSSM_XYH_bbbb
@@ -61,9 +61,15 @@ h01 , pdgID 25 —> the Higgs boson (125 GeV)
 
 You can see this process in Template/proc_card.dat
 
-    generate g g > h03 , (h03 > h02 h01) 
+    generate g g > h03 , (h03 > h02 h01, h02 > w+ w-)
 
-this tells MadGraph to produce h03, a heavy scalar, via gluon gluon fusion. It's then told to decay it into h03 and h01, corresponding to an intermediate scalar and the 125 GeV higgs boson. While it is possible to further decay the h02 and h01 in MadGraph, in these instructions the procedure is to produce gg -> h03 -> h02 h01 in MadGraph and then have Pythia decay the h02 h01 into your di-Higgs final state. 
+this tells MadGraph to produce h03, a heavy scalar, via gluon gluon fusion. It's then told to decay it into h03 and h01, corresponding to an intermediate scalar and the 125 GeV higgs boson. The intermediate scalar is then decaying into two W bosons, done for the HHWWgg analysis. You should change this, the h01 decay or both into your final states of choice. You can also assign decays in pythia, but for the HHWWgg signal it was found that there were problems decaying the intermediate scalar particle in pythia, where the following error was received: 
+
+    PYTHIA Error in ResonanceDecays::next: no open decay channel for id = 35
+
+therefore it's recommended for the moment with no solution to this problem, that the h02 decay be set in MadGraph. Note some of the usual MadGraph codes for particles:
+
+a b b1 b1~ b2 b2~ b~ c cl cl~ cr cr~ c~ d dl dl~ dr dr~ d~ e+ e- el+ el- er+ er- g go h+ h- h1 h2 h3 met mht mu+ mu- mul+ mul- mur+ mur- n1 n2 n3 n4 s sl sl~ sr sr~ sve sve~ svm svm~ svt svt~ s~ t t1 t1~ t2 t2~ ta+ ta- ta1+ ta1- ta2+ ta2- t~ u ul ul~ ur ur~ u~ ve ve~ vm vm~ vt vt~ w+ w- x1+ x1- x2+ x2- z
 
 In the final line of Template/proc_card.dat, you will see the output name:
 
@@ -94,10 +100,12 @@ using the same <diHiggsFinalState> name as in proc_card.dat. For an inital test,
     ## mX, mY
     points = [
         (500, 300),
-        (700, 400),
+        (700, 400)
     ]
 
-this will create the folders necessary to create MadGraph gridpacks for two pairs of mass points. 
+Note: you may want to make sure your decay products are on shell given your chosen masses.
+
+This will create the folders necessary to create MadGraph gridpacks for two pairs of mass points. 
 
 ### Copy Template to genproductions
 
@@ -113,7 +121,7 @@ After setting the mass points in generate_grid.py do the desired pairs, you can 
     cd genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/NMSSM_XYH_<diHiggsFinalState>
     python generate_grid.py 
 
-If this worked properly, you should have two folders added:
+If this worked properly, you should have two folders added to the current directory:
 
     genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/NMSSM_XYH_<diHiggsFinalState>/NMSSM_XYH_WWgg_MX_700_MY_400
     genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/NMSSM_XYH_<diHiggsFinalState>/NMSSM_XYH_WWgg_MX_500_MY_300
@@ -165,12 +173,11 @@ and finally:
 
 ## Creating Pythia Fragments
 
-Now that you have a gridpack, you have the step simulating the physics process gg -> h03 -> h02 h01. You can now create a Pythia configuration file that will decay the h02 h01 particles into your desired final state. This can be done in HHWWgg_Tools/Fragments, following the instructions for [NMSSM](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/Fragments#nmssm)
-
+Now that you have a gridpack, you have the step simulating the physics process gg -> h03 -> h02 h01, and if you set the h02 decay, you have this as well. You can now create a Pythia configuration file that will decay the h02 decay products and h01 particle into your desired final state. This can be done in HHWWgg_Tools/Fragments, following the example command for NMSSM or the instructions for [NMSSM](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/Fragments#nmssm)
 
 ## Submitting Jobs to CRAB for Production  
 
-With your pythia fragments in hand, you can create cmssw and crab configuration files that will simulate events of your process to be further analyzed. This is done in HHWWgg_Tools/Production, following [these](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/Production#private-mc-production) instructions, where the input madgraph/pythia configuration(s) for the GEN-SIM or GEN step should be the configuration(s) created in the steps above. 
+With your pythia fragments in hand, you can create cmssw and crab configuration files that will simulate events of your process to be further processed and analyzed. This is done in HHWWgg_Tools/Production, following [these](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/Production#private-mc-production) instructions, where the input madgraph/pythia configuration(s) for the GEN-SIM or GEN step should be the configuration(s) created in the steps above. 
 
 # Local Testing 
 

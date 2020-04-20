@@ -19,6 +19,7 @@ submit_crab_GEN(){
     chosen_threads=$4 
     num_jobs=$5
     echo "chosen threads: $chosen_threads "
+    LocalGridpackPath=$6
 
     localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
 
@@ -121,8 +122,28 @@ submit_crab_GEN(){
     echo "config.General.transferOutputs = True" >> TmpCrabConfig.py
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
+    
     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
-     
+
+    # If the input gridpack is a local path (non-cvmfs), need to place it in the crab sandbox
+    # if [ $LocalGridpackPath != "" ]
+    # then 
+    #     echo "Using local gridpack, so setting crab project type to Analysis"
+    #     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
+
+    # else 
+    #     echo "Not using local gridpack, so setting crab project tpye to PrivateMC"
+    #     echo "config.JobType.pluginName = 'PrivateMC'" >> TmpCrabConfig.py
+
+    # fi 
+
+    # If the input gridpack is a local path (non-cvmfs), need to place it in the crab sandbox
+    if [ $LocalGridpackPath != "" ]
+    then 
+        echo "Adding gridpack: $LocalGridpackPath to crab sandbox"
+        echo "config.JobType.inputFiles = [$LocalGridpackPath]" >> TmpCrabConfig.py  
+    fi 
+
     echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on where config file was created  
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
@@ -154,6 +175,9 @@ submit_crab_GEN(){
     echo "config.Data.publication = False" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
     echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
+
+    # config.JobType.inputFiles = ['/uscms_data/d3/fravera/NMSSM_XYH_bbbb_MCproduction_Run2016/CMSSW_7_1_19/src/GridPacks/NMSSM_XYH_bbbb_MX_300_MY_60_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz']
+
     #echo "config.Data.userInputFiles = ['/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/MinBias/ggF_X1000_WWgg_enuenugg_woPU_10000events_woPU/190116_184220/0000/ggF_X1000_WWgg_enuenugg_woPU_10000events_1.root'] # If DR1 step, this should be GEN file " >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
     echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   

@@ -14,6 +14,7 @@ chosen_events=$2
 chosen_jobs=$3
 chosen_filename=$4
 #chosen_pileup=$5 
+LocalGridpack=$6
 
 #echo "all variables: $@"
 
@@ -25,6 +26,7 @@ chosen_filename=$4
 #chosen_step=${!chosen_step_}
 
 echo "chosen_step = $chosen_step"
+echo "LocalGridpack: $LocalGridpack "
 
 if [ $chosen_step == GEN-SIM ]
 then
@@ -44,6 +46,7 @@ then
     echo "  filename: $chosen_filename"
     echo "  events: $chosen_events"
     echo "  jobs: $chosen_jobs"
+    echo "  LocalGridpack: $LocalGridpack"
 
     # Define Pythia fragment path relative to CMSSW release src 
     PythiaFragPath=Configuration/GenProduction/python/
@@ -69,6 +72,59 @@ then
     echo 'Input File Name:' $PythiaFragPath
     echo 'Output File Name:' $GenSimOutput
 
+    # if using localgridpack, need to change pythia fragment path to gridpack, and add to sandbox in crab. Do pythia part here since cmsDriver step using pythia fragment is before crab 
+    LocalGridpackPath=""
+    if [ $LocalGridpack == "1" ]
+    then 
+        echo "Using a local gridpack. Need to change pythia fragment path and save full path to later add to crab sandbox"
+        # go to file PythiaFragPath, grab 
+        # args = cms.vstring('/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_300_MY_170_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz'),
+        line=`grep -F "args" CMSSW_9_3_9_patch1/src/$PythiaFragPath`
+        # echo "line:$line"
+        # $line >> testoutput.txt
+        # LocalGridpackPath=`sed -n -e '/(/,/)/ p' $line` 
+        # echo grep -oP '(().*?(?=))' <<< "$line"
+        LocalGridpackPath=$(sed 's/.*(\(.*\)).*/\1/' <<< "$line") # save text between two parentheses 
+        # echo "LocalGridpackPath: $LocalGridpackPath"
+        # change line 
+        endofGridpackPath="${LocalGridpackPath##*/}" # trim everything up to last "/"
+        # endofGridpackPath2="${endofGridpackPath%-1}" # remove last " ' "
+        # echo "endofGridpackPath:$endofGridpackPath"
+        newGridpackPath="'/srv/${endofGridpackPath}"
+        # newGridpackPath=${newGridpackPath%1}
+        # echo "newGridpackPath:$newGridpackPath"
+        echo "Replacing ${LocalGridpackPath} with ${newGridpackPath}"
+        # newLine=${line/$LocalGridpackPath/$newGridpackPath}
+
+        # echo "COMMAND"
+        filePath="CMSSW_9_3_9_patch1/src/${PythiaFragPath}"
+        # echo sed -i "s/$LocalGridpackPath/$newGridpackPath/g" "$filePath"
+        sed -i "s~$LocalGridpackPath~$newGridpackPath~g" "$filePath" # lesson: if you want to use sed to replace a variable containing slashes, use ~ instead of slashes in sed command for deliminator
+        
+        # many failed attempts below 
+        
+        # sed "s/${LocalGridpackPath//\//\\/}/replace/g" $file
+        # sed -i  ‘s|addons_path = *|addons_path = /home/netjunky/projects/odoo-dev/odoo/custom/addons,|’ "./CMSSW_9_3_9_patch1/src/$PythiaFragPath"    
+        # newLine=$(sed 's/${LocalGridpackPath}/${newGridpackPath}/' <<< "$line" )
+        # echo "newLine:$newLine"
+        # echo "newLine:$newLine"
+
+
+        
+        # sed -i 's/.*$LocalGridpackPath.*/$newGridpackPath/g' "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+       
+        # awk '{gsub("$LocalGridpackPath", "$newGridpackPath", $0); print}' "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+
+        # sed -e "/.*${LocalGridpackPath}.*/${newGridpackPath}/" "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+        # sed -e "/.*$line.*/$newGridpackPath/" "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+        # awk '/$LocalGridpackPath/{ num=substr($2,4)+1;$2="web"num };1' "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+        # sed "s/*$line*/$newLine/" < "CMSSW_9_3_9_patch1/src/$PythiaFragPath" > "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+        # sed "s/*$line*/$newLine/" < "CMSSW_9_3_9_patch1/src/$PythiaFragPath" > "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+        # sed 's/$line/$newLine/' "CMSSW_9_3_9_patch1/src/$PythiaFragPath"
+    fi 
+    # end_script
+
+
 elif [ $chosen_step == GEN ]
 then
 
@@ -87,6 +143,7 @@ then
     echo "  filename: $chosen_filename"
     echo "  events: $chosen_events"
     echo "  jobs: $chosen_jobs"
+    echo "  LocalGridpack: $LocalGridpack"
 
     # Define Pythia fragment path relative to CMSSW release src 
     PythiaFragPath=Configuration/GenProduction/python/

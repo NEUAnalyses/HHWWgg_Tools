@@ -5,6 +5,9 @@
 # Definitions to be used by Make_MC_Configs.py 
 ########################################################################################################################
 
+import os 
+from os import path 
+
 # Check arguments for inconsistencies 
 def ArgChecks(args):
     steps = ["GEN", "GEN-SIM", "DR1", "DR2", "MINIAOD"]
@@ -64,3 +67,22 @@ def GetMassPairs(massPairs,massPairsString):
             massPairs.append(massPair) 
     print'NMSSM massPairs:',massPairs            
     return massPairs 
+
+# Make sure pythia fragment exists and is in proper place before making MC_Configs entry 
+# first check CMSSW 
+# then check Fragments/Outputs 
+def ManageFragment(expectedFragmentEnd_,fragOutDir_,ultimateFragDirec_):
+    ultimateFragLoc_ = "%s/%s"%(ultimateFragDirec_,expectedFragmentEnd_)
+    firstFragLoc_ = "../Fragments/Outputs/%s/%s"%(fragOutDir_,expectedFragmentEnd_)    
+    if(not path.exists(ultimateFragLoc_)): 
+        if(not path.exists(firstFragLoc_)):
+            print'Neither fragment path exists:'
+            print ultimateFragLoc_
+            print firstFragLoc_
+            print 'Skipping this configuration...'
+            return 1 # skip 
+        else: 
+            os.system('cp %s %s'%(firstFragLoc_,ultimateFragLoc_)) 
+            print'Copied fragment from %s to %s'%(firstFragLoc_,ultimateFragLoc_)
+            return 0 # don't skip 
+    else: return 0 # don't skip 

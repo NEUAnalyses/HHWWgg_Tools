@@ -8,13 +8,13 @@
 # Example Usage:
 #
 # Resonant Points:
-# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --Resonant --outFolder TestResonant --masses 260,750
+# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder TestResonant --masses 260,750
 #
 # EFT benchmarks:
-# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --EFT --outFolder Test_EFT
+# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --EFT --outFolder Test_EFT
 #
 # NMSSM Points:
-# python Make_Fragments.py --template Templates/NMSSM/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
+# python Make_Fragments.py --template Templates/NMSSM/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
 #
 ########################################################################################################################
 
@@ -24,7 +24,7 @@ from Make_Fragments_Tools import *
 parser = argparse.ArgumentParser(description='Madgraph/pythia configuration creator')
 parser.add_argument('--templates', type=str, default="", help="Comma separated list of templates to use for pythia fragments", required=True)
 parser.add_argument('--outFolder', type=str, default="none", help="Name of output folder for fragments", required=True)
-parser.add_argument('--Decay', type=str, default="", help="HH decay", required=True)
+parser.add_argument('--diHiggsDecay', type=str, default="", help="HH decay", required=True)
 parser.add_argument('--fs', type=str, default="", help="Final state", required=True)
 parser.add_argument('--gridpacks', type=str, default="", help="Comma separated string of gridpacks to use", required=False)
 parser.add_argument("--Resonant", action="store_true", default=False, help="Create Radion/Graviton model", required=False)
@@ -43,7 +43,7 @@ templates = args.templates.split(',')
 masses = args.masses.split(',')
 
 # Titles for output file names
-diHiggsDecay, finalState, outFolder = args.Decay, args.fs, args.outFolder 
+diHiggsDecay, finalState, outFolder = args.diHiggsDecay, args.fs, args.outFolder 
 
 # list of gridpacks 
 gridpacks = []
@@ -56,7 +56,11 @@ if(args.EFT):
     gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/GF_HH_%s/v1/GF_HH_%s_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'%("SM","SM")
     gridpacks.append(gridpack)
 
-elif(args.NMSSM): gridpacks = args.gridpacks.split(',')
+elif(args.NMSSM): 
+    gridpacks = args.gridpacks.split(',')
+    # for igp,gridpack in enumerate(gridpacks): 
+        # shortGridpack = gridpack.split('/')[-1]
+        # gridpacks[igp] = shortGridpack
 
 elif(args.Resonant):
     # get gluon gluon fusion Radion gridpack for mass point 
@@ -102,7 +106,7 @@ for it, template in enumerate(templates):
                 print'Masses:',massHS,',',massIS
                 print 
                 print'[Make_Fragments.py: VERBOSE]'
-            outputName = "Outputs/{0}/NMSSM_XYH_{1}_{2}_MX_{3}_MY_{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
+            outputName = "Outputs/{0}/NMSSM_XYH{1}{2}_MX{3}_MY{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
 
         elif(args.EFT):
             BMnum = str(igp)
