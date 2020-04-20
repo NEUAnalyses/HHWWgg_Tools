@@ -107,7 +107,7 @@ for it, template in enumerate(templates):
         elif(args.EFT):
             BMnum = str(igp)
             if(igp==12): BMnum = "SM"
-            outputName = "Outputs/{0}/GluGluToHHTo_{1}_{2}_node_{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
+            outputName = "Outputs/{0}/GluGluToHHTo_{1}_{2}_node{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
 
         elif(args.Resonant):
             bsmMass = resMasses[igp]

@@ -171,3 +171,17 @@ Now that you have a gridpack, you have the step simulating the physics process g
 ## Submitting Jobs to CRAB for Production  
 
 With your pythia fragments in hand, you can create cmssw and crab configuration files that will simulate events of your process to be further analyzed. This is done in HHWWgg_Tools/Production, following [these](https://github.com/NEUAnalyses/HHWWgg_Tools/tree/master/Production#private-mc-production) instructions, where the input madgraph/pythia configuration(s) for the GEN-SIM or GEN step should be the configuration(s) created in the steps above. 
+
+# Local Testing 
+
+    cmsDriver.py NMSSM_XYH_WWgg_qqlnu_MX_500_MY_300 --fileout file:NMSSM_XYH_WWgg_MX_500_MY_300_output.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN --nThreads 8 --geometry DB:Extended --era Run2_2017 --python_filename NMSSM_cmsswConfig.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(123456%100)" -n 10
+
+    Begin processing the 8th record. Run 1, Event 8, LumiSection 1 at 20-Apr-2020 10:47:30.906 CEST
+    PYTHIA Error in ResonanceDecays::next: no open decay channel for id = 35
+    PYTHIA Abort from Pythia::next: reached end of Les Houches Events File  
+    Begin processing the 9th record. Run 1, Event 9, LumiSection 1 at 20-Apr-2020 10:47:30.931 CEST    
+
+    From MadAnalysis, 25 and 35 higgs have save pT spectrums...
+
+    Running into problems decaying 35 in Pythia, so may have to set 25 and 35 decays in MadGraph
+    Or maybe just set 35 decay...

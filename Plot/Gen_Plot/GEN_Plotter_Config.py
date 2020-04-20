@@ -15,9 +15,10 @@ ptp = []
 
 #ptp.append('R')
 # ptp.append('b')
-# ptp.append('g')
+ptp.append('g')
 ptp.append('H')
 # ptp.append('W')
+# ptp.append('')
 #ptp.append(all_particles["H"]) 
 #ptp.append(all_particles["W"]) 
 
@@ -26,11 +27,13 @@ d = []
 # hadded files 
 fs = []
 
+d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','test','testtest','ROOT.kRed'])
+# d.append(['/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/CMSSW_9_3_9_patch1/src/test/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/GluGluToHHTo_WWgg_qqlnu_node/1_1000events_GEN-SIM/200420_065712/0000/','test','testtest','ROOT.kRed'])
 
 # d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/','SM','SL','ROOT.kRed'])
-d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','X400','SL','ROOT.kRed'])
-d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','X450','SL','ROOT.kRed'])
-d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','SM','SL','ROOT.kRed'])
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X400_WWgg_qqlnugg/100000events_GEN-SIM/191128_153853/0000/','X400','SL','ROOT.kRed'])
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X450_WWgg_qqlnugg/100000events_GEN-SIM/191128_153916/0000/','X450','SL','ROOT.kRed'])
+# d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_SM_WWgg_qqlnugg/100000events_GEN-SIM/191128_153938/0000/','SM','SL','ROOT.kRed'])
 
 # 250 GeVggs/resonant_HH/RunII/MicroAOD/HHWWggSign
 # d.append(['/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','root://cmsxrootd.fnal.gov//store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X250_WWgg_qqlnugg/100000events_GEN-SIM/190618_093349/0000/','X250','SL','ROOT.kRed'])
@@ -64,7 +67,7 @@ vs = []
 # eta
 # phi 
 # E 
-#vs.append(['pt',100,0,1000])
+vs.append(['pt',100,0,1000])
 # vs.append(['pt',100,0,1000,'ls']) #ls = plot leading and subleading. l = leading. s = subleading 
 # vs.append(['invm',75,250,1000]) # Invariant mass
 vs.append(['invm',100,0,1000]) # Invariant mass
@@ -82,11 +85,11 @@ def get_pparams(ptp_):
     # All possible particles
     all_particles = {
     # "particle": ['<particle>',number per event,pdgID's]
-    "H": ['H',2,[25]], # Higgs boson
+    "H": ['H',2,[25,35]], # Higgs boson
     "b": ['b',0,[5]],
     "W": ['W',2,[24]], # W boson
     "g": ['g',2,[22]], # photon
-    "R": ['R',1,[]], # radion 
+    # "R": ['R',1,[]], # radion 
     # "q": ['q',0,[1,2,3,4,5]], # quark   # later make flavor subcategories
 
     # "l": ['l',0,[11,13]], # lepton

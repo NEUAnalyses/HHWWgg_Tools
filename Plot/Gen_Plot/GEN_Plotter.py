@@ -17,14 +17,14 @@ from os import listdir
 print '.'
 print 'Plotting HH Variables'
 print '.'
-ol = '/eos/user/a/atishelm/www/HHWWgg_Analysis/GEN/'
+ol = '/eos/user/a/atishelm/www/HHWWgg_Analysis/GEN2/'
 # me, genHandle = -1, Handle('vector<reco::GenParticle>')
 # summary = Handle('<LumiSummary>')
 # For each variable
 for iv,v in enumerate(vs):
     variable = v[0]
     print 'Plotting variable ', iv, ': ',v[0]
-    # For each directory 
+    # For each directory cd ..  
     histos = [] 
     # mg_title = v[0]
     # mg = ROOT.TMultiGraph('mg',mg_title)
@@ -71,29 +71,37 @@ for iv,v in enumerate(vs):
                     pdgIDs = params[2]
                     # ps = [p for p in genParticles if p.isHardProcess() and abs(p.daughter(0).pdgId() == 25)]
                     ps = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in pdgIDs]
+                    # print'len(ps):',len(ps) 
 
                     # ps = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in pdgIDs and abs(p.daughter(0).pdgId() == 25)]   
                     # ps = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in pdgIDs and abs(p.daughter(0).pdgId() == 22)]   
                     # ps = [p for p in genParticles if p.isHardProcess() and abs(p.pdgId()) in pdgIDs]   
                     # for p in ps:
                     #     print'p = ',p.p4()
-                    if v[0] == 'pt':
-                        val = ps[0].p4().pt() 
+                    # if v[0] == 'pt':
+                        # val = ps[0].p4().pt() 
+                        # h1.Fill(val)
 
                     if nparticles == 2:
 
-
                         if v[0] == 'invm':
                             val = invmass(ps[0].p4(),ps[1].p4())
+                            print'val:',val
                             # val = ps[0].p4().pt()
 
                             # if particle == 'R':
                                 # avoid double count 
                             h1.Fill(val)
                             # get invmass 
+
+                        else: 
+                            for p in ps:
+                                val = eval("p.p4()." + v[0] + "()")
+                                h1.Fill(val)                            
+                        
                     else: 
                         for p in ps:
-                            val = eval("p." + v[0] + "()")
+                            val = eval("p.p4()." + v[0] + "()")
                             h1.Fill(val)
         output_path = ol + mass + '_' + channel + '_' + particle + '_' + variable 
         c1 = ROOT.TCanvas()
