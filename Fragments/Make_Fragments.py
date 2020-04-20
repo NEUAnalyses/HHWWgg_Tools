@@ -2,16 +2,19 @@
 # Abe Tishelman-Charny
 # 17 April 2020
 #
-# The purpose of this python module is to create madgraph/pythia config files for different NMSSM mass points,
-# Radion/Graviton mass points, and BSM benchmark models.  
+# The purpose of this python module is to create madgraph/pythia config files for Radion/Graviton mass points, 
+# NMSSM mass points, and EFT benchmark models.  
 #
 # Example Usage:
 #
+# Resonant Points:
+# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --Resonant --outFolder TestResonant --masses 260,750
+#
 # EFT benchmarks:
-# python Make_Fragments.py --template Templates/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --EFT --outFolder EFT
+# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --EFT --outFolder Test_EFT
 #
 # NMSSM Points:
-# python Make_Fragments.py --template Templates/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --massPairs 500,300
+# python Make_Fragments.py --template Templates/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
 #
 ########################################################################################################################
 
@@ -24,9 +27,10 @@ parser.add_argument('--outFolder', type=str, default="none", help="Name of outpu
 parser.add_argument('--Decay', type=str, default="", help="HH decay", required=True)
 parser.add_argument('--fs', type=str, default="", help="Final state", required=True)
 parser.add_argument('--gridpacks', type=str, default="", help="Comma separated string of gridpacks to use", required=False)
+parser.add_argument("--Resonant", action="store_true", default=False, help="Create Radion/Graviton model", required=False)
 parser.add_argument("--NMSSM", action="store_true", default=False, help="Create Y->XH model(s)", required=False)
-parser.add_argument('--massPairs', type=str, default="", help="NMSSM: Comma separated string of mass pairs to use", required=False)
 parser.add_argument("--EFT", action="store_true", default=False, help="Create EFT Benchmark models", required=False)
+parser.add_argument('--masses', type=str, default="", help="Resonant or NMSSM: Comma separated string of mass pairs to use.", required=False)
 parser.add_argument("--verbose", action="store_true", default=False, help="Extra printout statements", required=False)
 
 args = parser.parse_args()
@@ -36,6 +40,7 @@ ArgChecks(args)
 
 # pythia fragment template 
 templates = args.templates.split(',')
+masses = args.masses.split(',')
 
 # Titles for output file names
 diHiggsDecay, finalState, outFolder = args.Decay, args.fs, args.outFolder 
@@ -53,18 +58,28 @@ if(args.EFT):
 
 elif(args.NMSSM): gridpacks = args.gridpacks.split(',')
 
+elif(args.Resonant):
+    # get gluon gluon fusion Radion gridpack for mass point 
+    for resMass in masses:
+        gridpack = GetResGridpack(resMass) 
+        gridpacks.append(gridpack)
+
 if(args.verbose):
-    print'Gridpacks to use:',gridpacks 
-    print 'Number of gridpacks:',len(gridpacks)
+    print'[Make_Fragments.py: VERBOSE] - Gridpacks to use:',gridpacks 
+    print'[Make_Fragments.py: VERBOSE] - Number of gridpacks:',len(gridpacks)
 
 massPairs = []
 if(args.NMSSM): 
-    GetMassPairs(massPairs, args.massPairs)
+    GetMassPairs(massPairs, masses)
     assert len(gridpacks) == len(massPairs) # number of gridpacks must equal number of mass pairs
     print'Note for NMSSM: Make sure your mass pairs and gridpacks are in the order you want'
 
+resMasses = []
+if(args.Resonant): 
+    for m in masses: resMasses.append(m) 
+
 # Create output directory if it doesn't exist 
-outDirFull = os.getcwd() + "/Fragments/" + outFolder
+outDirFull = os.getcwd() + "/OutputFragments/" + outFolder
 if not os.path.exists(outDirFull):
     os.mkdir(outDirFull)
 
@@ -73,24 +88,32 @@ for it, template in enumerate(templates):
         outputName, fragmentFile = '','' 
         with open(template) as file: fragmentFile = file.read() # get template 
 
-        # Choose output name based on choice to produce NMSSM or EFT 
+        # Define output name based on choice to produce NMSSM or EFT 
         if(args.NMSSM):
             massHS = str(massPairs[igp][0]) # mass of heavy scalar
             massIS = str(massPairs[igp][1]) # mass of intermediate scalar
 
             if(args.verbose):
+                print'[Make_Fragments.py: VERBOSE]'
                 print 
                 print'Make sure this is the correct gridpack / mass pair combination:'
                 print 
                 print'Gridpack:',gp 
                 print'Masses:',massHS,',',massIS
                 print 
-            outputName = "Fragments/{0}/NMSSM_XYH_{1}_{2}_MX_{3}_MY_{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
+                print'[Make_Fragments.py: VERBOSE]'
+            outputName = "OutputFragments/{0}/NMSSM_XYH_{1}_{2}_MX_{3}_MY_{4}.py".format(outFolder,diHiggsDecay,finalState,massHS,massIS) # output file name 
 
         elif(args.EFT):
             BMnum = str(igp)
             if(igp==12): BMnum = "SM"
-            outputName = "Fragments/{0}/GluGluToHHTo_{1}_{2}_node_{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
+            outputName = "OutputFragments/{0}/GluGluToHHTo_{1}_{2}_node_{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
+
+        elif(args.Resonant):
+            bsmMass = resMasses[igp]
+            print'res mass:',bsmMass
+            print'res gridpack:',gp 
+            outputName = "OutputFragments/{0}/ggF_X{1}_HH{2}_{3}.py".format(outFolder,bsmMass,diHiggsDecay,finalState)
 
         fragmentFile = fragmentFile.replace("{gridpack}",str(gp))
         fragmentFile += '\n' 

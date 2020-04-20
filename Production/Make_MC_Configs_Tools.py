@@ -25,7 +25,6 @@ def ArgChecks(args):
         print"[Make_MC_Configs - ERROR]: Exiting"
         exit(1)
 
-
     if(args.Resonant or args.NMSSM) and args.masses == "":
         print"[Make_MC_Configs - ERROR]: If you are running resonant or NMSSM, you need to provide a comma separated list of mass points"
         print"[Make_MC_Configs - ERROR]: Exiting"
@@ -36,17 +35,17 @@ def ArgChecks(args):
         print"[Make_MC_Configs - ERROR]: Exiting"
         exit(1)         
 
-    # if(args.NMSSM and args.massPairs==""):
-    #     print"[Make_Fragments - ERROR]: If you want to produce NMSSM fragments, you need to provide a comma separated list of mass points"
-    #     print"[Make_Fragments - ERROR]: Exiting"
-    #     exit(1) 
+    if(args.NMSSM and args.masses==""):
+        print"[Make_Fragments - ERROR]: If you want to produce NMSSM fragments, you need to provide a comma separated list of mass points"
+        print"[Make_Fragments - ERROR]: Exiting"
+        exit(1) 
 
-    # if(args.NMSSM) and len(args.massPairs.split(','))%2 != 0:
-    #     print"[Make_Fragments - ERROR]: If you want to produce NMSSM fragments, your mass points must be a multiple of 2 as they are used as pairs"
-    #     print"[Make_Fragments - ERROR]: length of mass pairs:",len(args.massPairs.split(','))
-    #     print"[Make_Fragments - ERROR]: length of mass pairs mod 2:",len(args.massPairs.split(','))%2
-    #     print"[Make_Fragments - ERROR]: Exiting"
-    #     exit(1)         
+    if(args.NMSSM) and len(args.masses.split(','))%2 != 0:
+        print"[Make_Fragments - ERROR]: If you want to produce NMSSM fragments, your mass points must be a multiple of 2 as they are used as pairs"
+        print"[Make_Fragments - ERROR]: length of mass pairs:",len(args.masses.split(','))
+        print"[Make_Fragments - ERROR]: length of mass pairs mod 2:",len(args.masses.split(','))%2
+        print"[Make_Fragments - ERROR]: Exiting"
+        exit(1)         
 
 # Get NMSSM mass pairs from single string of masses 
 def GetMassPairs(massPairs,massPairsString):

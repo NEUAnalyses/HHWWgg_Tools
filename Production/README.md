@@ -1,5 +1,9 @@
 # Private MC Production
 
+**N.B.**: I've found that testing locally only works if you run from an lxplus 6 machine:
+
+    ssh <lxplusUser>@lxplus6.cern.ch
+
 ## Getting an Example Madgraph / Pythia Config File
 
 Based on how the repository is currently set up, the madgraph / pythia coniguration file you use must be compatible with CMSSW_9_3_9_patch1. To begin, you should clone CMSSW_9_3_9_patch1, and then you should place your madgraph / pythia configuration file in CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python/. An example configuration file can be found here:
