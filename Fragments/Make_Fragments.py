@@ -14,7 +14,7 @@
 # python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --EFT --outFolder Test_EFT
 #
 # NMSSM Points:
-# python Make_Fragments.py --template Templates/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
+# python Make_Fragments.py --template Templates/NMSSM/TEMPLATE_HHWWgg_qqlnu.txt --Decay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
 #
 ########################################################################################################################
 
