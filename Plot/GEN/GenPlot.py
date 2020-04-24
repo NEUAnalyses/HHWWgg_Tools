@@ -6,78 +6,124 @@
 #
 # Example Usage:
 #
-# python GenPlot.py -i store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/test/NMSSM_XYH_WWgg_MX_500_MY_300_output.root -v M,pt
-# <command2>
-# <command3>
-#
+# python GenPlot.py --genType NMSSM_300_170 -i /store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/NMSSM_XYHWWggqqlnu_MX300_MY170/10000events_GEN/200422_070152/0000/hadded.root -v pdgId,px,py,pz,pt,eta,phi,M --nEvents 10000
+### python GenPlot.py -i /store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/GluGluToHHTo_WWgg_qqlnu_node/1_1000events_GEN-SIM//200420_065712/0000/GluGluToHHTo_WWgg_qqlnu_node_1_1000events_GEN-SIM_1.root -v M,pt,eta,phi
 ########################################################################################################################
 
 import argparse
 import os 
+from os import path 
 from DataFormats.FWLite import Handle, Runs, Lumis, Events
-from ROOT import gROOT  
+from ROOT import gROOT, Math, TTree, TFile 
 from GenPlotTools import *
+from array import array 
+
 parser = argparse.ArgumentParser(description='Madgraph/pythia configuration creator')
 parser.add_argument('-i', type=str, default="", help="Input GEN file, format: 'store/.../.root", required=True)
 parser.add_argument('-v', type=str, default="", help="Comma separated list of variables to plot", required=True)
 parser.add_argument('-sp', type=str, default="", help="Single particles to plot variables of", required=False)
-
-# parser.add_argument("-pt", action="store_true", default=False, help="Plot invariant masses of NMSSM particles", required=False)
-
-# parser.add_argument("--Resonant", action="store_true", default=False, help="Create Radion/Graviton model", required=False)
+parser.add_argument('--genType', type=str, default="GEN", help="Gen type. Used to create output folder", required=False)
+parser.add_argument('--nEvents', type=float, default=-1, help="Max number of events to run on", required=False)
 
 args = parser.parse_args()
 
-print"Plotting HH variables"
-
+DeltaR = Math.VectorUtil.DeltaR 
+DeltaPhi = Math.VectorUtil.DeltaPhi 
+genType = args.genType
 variables = args.v.split(',')
 singleParticles = args.sp.split(',')
 
+NMSSM, EFT = 0, 0
+if("NMSSM" in genType and "EFT" in genType):
+    print("ERROR - genType cannot contain both NMSSM and EFT")
+    print("Exiting")
+    exit(1)
+if("NMSSM" in genType): NMSSM = 1 
+elif("EFT" in genType): EFT = 1 
+
 gROOT.SetBatch(True)
 genHandle = Handle('vector<reco::GenParticle>')
-ol = '/eos/user/a/atishelm/www/HHWWgg_Analysis/GEN/'
+ol = '/eos/user/a/atishelm/www/HHWWgg_Analysis/GEN/%s'%(genType)
 inputFile = args.i 
 fnalPath = "root://cmsxrootd.fnal.gov//%s"%(inputFile)
-
+outFilePath = '%s/GEN_%s.root'%(ol,genType)
+# outFilePath = 'GEN_%s.root'%(genType) # local 
 events = Events(fnalPath) # needs to be file with root prefix
-pdgIds = TH1F('pdgIds','pdgIds',100,-50,50)
+outFile = TFile(outFilePath, 'recreate')
+outTree = TTree('GEN','GEN variables')
+branches = []
+extraBranches = []
+particleNames = []
+if(NMSSM): 
+    particleNames = ['X','Y','H']
+    extraVars = ['DR_YH','DPhi_YH','DEta_YH'] #,'DEta_YH']
 
-# histos = []
-# histos = MakeVarHistos(variables) # make variable histograms 
-# for h in histos:
-    # print'h:',h
-    # h.SetDirectory(0)
+maxpdgIds = 100
 
+if('pdgId' in variables): # Can make this nonp4vars if you want 
+    pdgId = array('d', maxpdgIds*[-99]) #
+    outTree.Branch('pdgId',pdgId,'pdgId[50]/D')
+    branches.append("pdgId")
+    variables.remove('pdgId') # remove because it's not a p4 variable 
 for v in variables:
-    Make_X_h = "X_%s_h = TH1F('X_%s_h','X_%s_h',%d,%d,%d)"%(v,v,v,1000,0,1000)
-    Make_Y_h = "Y_%s_h = TH1F('Y_%s_h','Y_%s_h',%d,%d,%d)"%(v,v,v,1000,0,1000)
-    exec(Make_X_h)
-    exec(Make_Y_h)
+    exec("%s_arr = array('d', 50*[-99])"%(v))
+    eval("outTree.Branch('%s', %s_arr, '%s_arr[50]/D')"%(v,v,v))  
+    branches.append(v)
+
+for eV in extraVars:
+    exec("%s = array('d', [0.])"%(eV))
+    eval("outTree.Branch('%s',%s,'%s[1]/D')"%(eV,eV,eV))
+    extraBranches.append(eV)
 
 print'Looping events ...'
 for iev, event in enumerate(events):
     if(iev%100==0): print'On event:',iev 
+    if(iev == int(args.nEvents)): 
+        print("Reached max desired events")
+        break 
     events.getByLabel('genParticles', genHandle)
     genParticles = genHandle.product()  
     ps = [p for p in genParticles if p.isHardProcess()]
-    for particle in ps:
-        pdgId = particle.pdgId() 
-        for v in variables: exec("%s = particle.p4().%s()"%(v,v))
-        pdgIds.Fill(pdgId)
-        if(pdgId == 45): 
-            for v in variables:
-                eval("X_%s_h.Fill(%s)"%(v,v))
-        elif(pdgId == 35): 
-            for v in variables:
-                eval("Y_%s_h.Fill(%s)"%(v,v))
 
-outName = "%s/pdgIds.png"%(ol)
-DrawSave(pdgIds,"",outName)
+    for ip,particle in enumerate(ps):
+        pdgId_val = particle.pdgId() 
+        pdgId[ip] = pdgId_val
+        if(NMSSM):
+            if(pdgId_val == 25): Higgs = particle.p4()
+            elif(pdgId_val == 35): IRP = particle.p4() 
+        for v in variables: 
+            exec("%s_val = particle.p4().%s()"%(v,v))
+            exec("%s_arr[%s] = %s_val"%(v,ip,v))
 
-for v in variables:
-    X_histogram = eval("X_%s_h"%(v))
-    Y_histogram = eval("Y_%s_h"%(v))
-    DrawSave(X_histogram,"","%s/%s.png"%(ol,X_histogram.GetTitle()))
-    DrawSave(Y_histogram,"","%s/%s.png"%(ol,Y_histogram.GetTitle()))
+    if(NMSSM):
+        H_eta, Y_eta = Higgs.eta(), IRP.eta()  
+        DR_YH_val = DeltaR(Higgs,IRP)
+        DPhi_YH_val = DeltaPhi(Higgs,IRP)
+        DEta_YH_val = float(H_eta - Y_eta)        
+        for eV in extraVars:
+            exec("%s[0] = %s_val"%(eV,eV))
 
-# SaveVarPlots(variables) # save variables plots 
+    outTree.Fill() # fill tree once per event 
+
+# Draw all branches in tree 
+for branch in branches:
+    if(branch == "pdgId"): 
+        outName = "%s/pdgId.png"%(ol)
+        cut = "pdgId != -99"
+        DrawSaveBranch(outTree,branch,outName,cut)
+    else: 
+        for pN in particleNames:
+            pId = GetPdgId(pN)
+            cut = "pdgId == %s"%(pId)
+            outName = "%s/%s_%s.png"%(ol,pN,branch)
+            DrawSaveBranch(outTree,branch,outName,cut)        
+
+for eB in extraBranches:
+    outName = "%s/%s.png"%(ol,eB)
+    cut = ""
+    DrawSaveBranch(outTree,eB,outName,cut)
+
+outFile.Write()
+outFile.Close()
+print("nTuple saved to: ",outFilePath)
+print("DONE")
