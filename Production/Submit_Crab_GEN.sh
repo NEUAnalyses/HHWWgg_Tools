@@ -65,7 +65,8 @@ submit_crab_GEN(){
     EvtsPerJob=$((totevts/njobs))
     echo "EvtsPerJob = $EvtsPerJob"
 
-    echo "from CRABClient.UserUtilities import config, getUsernameFromSiteDB" >> TmpCrabConfig.py
+    #echo "from CRABClient.UserUtilities import config, getUsernameFromSiteDB" >> TmpCrabConfig.py
+    echo "from CRABClient.UserUtilities import config" >> TmpCrabConfig.py
     echo "config = config()" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
 
@@ -183,13 +184,26 @@ submit_crab_GEN(){
     echo "config.Site.whitelist = ['T2_CH_CERN']" >> TmpCrabConfig.py # 939   
     echo "config.Site.storageSite = 'T2_CH_CERN'" >> TmpCrabConfig.py
 
-    cp TmpCrabConfig.py $ccname
-    mkdir -p ../../crab_configs/ # make directory if it doesn't already exist 
-    mv $ccname ../../crab_configs/$ccname  # Will this work? 
-    rm TmpCrabConfig.py 
+    # cp TmpCrabConfig.py $ccname
+    # mkdir -p ../../crab_configs/ # make directory if it doesn't already exist 
+    # mv $ccname ../../crab_configs/$ccname  # Will this work? 
+    # rm TmpCrabConfig.py 
 
     #crab submit -c $ccname 
-    crab submit -c ../../crab_configs/$ccname
+    # crab submit -c ../../crab_configs/$ccname
+    # crab status 
+#####################################################################
+    echo "ccname: $ccname"
+    cp TmpCrabConfig.py $ccname
+    mkdir -p crab_configs 
+    #mv $ccname ../../crab_configs/$ccname  
+    mv $ccname crab_configs/$ccname  
+    rm TmpCrabConfig.py 
+
+    #crab submit -c ../../crab_configs/$ccname 
+
+    # Just need last two 
+    crab submit -c crab_configs/$ccname 
     crab status 
 
     }
