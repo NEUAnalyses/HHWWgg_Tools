@@ -1,9 +1,26 @@
 [
 				{ 
 						"step"      : "GEN-SIM",
-						"events"    : 100,
-						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "GluGluToHHTo_WWgg_qqlnu_node_1",
-						"pileup"              : "wPU" 
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X260_HHWWgg_qqlnu",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X600_HHWWgg_qqlnu",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X1000_HHWWgg_qqlnu",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0"
 				}
 ]

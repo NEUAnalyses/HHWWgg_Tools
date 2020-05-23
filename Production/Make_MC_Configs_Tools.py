@@ -48,7 +48,33 @@ def ArgChecks(args):
         print"[Make_Fragments - ERROR]: length of mass pairs:",len(args.masses.split(','))
         print"[Make_Fragments - ERROR]: length of mass pairs mod 2:",len(args.masses.split(','))%2
         print"[Make_Fragments - ERROR]: Exiting"
-        exit(1)         
+        exit(1)       
+
+    prevOutSteps = ["DR1","DR2","MINIAOD"]
+    if( (args.step in prevOutSteps) and args.prevOutDir == ""):
+        print"[Make_Fragments - ERROR]: When running the DR1 step, you need to include the output directory containing the ntuples of the previous step" 
+        print"[Make_Fragments - ERROR]: flag: prevOutDir <dir>"
+        print"[Make_Fragments - ERROR]: Exiting"
+        exit(1)
+
+    if( (args.step == "GEN" or args.step == "GEN-SIM" ) and (args.NMSSM) and (args.fragOutDir == "") ):
+        print"[Make_Fragments - ERROR]: If you are running GEN or GEN-SIM NMSSM, you need to provide the local gridpack output directory in Fragments" 
+        print"[Make_Fragments - ERROR]: using the flag --fragOutDir"
+        print"[Make_Fragments - ERROR]: Exiting"
+        exit(1)
+
+    if(args.PU != "wPU" and args.PU != "woPU"):
+        print"[Make_Fragments - ERROR]: args.PU option must be wPU or woPU" 
+        print"[Make_Fragments - ERROR]: Exiting"
+        exit(1)        
+
+def GetPrevStep(step_):
+    PrevStepDict = {
+    "DR1": "GEN-SIM",
+    "DR2": "DR1",
+    "MINIAOD": "DR2"
+    }
+    return PrevStepDict[step_]
 
 # Get NMSSM mass pairs from single string of masses 
 def GetMassPairs(massPairs,massPairsString):
@@ -71,18 +97,31 @@ def GetMassPairs(massPairs,massPairsString):
 # Make sure pythia fragment exists and is in proper place before making MC_Configs entry 
 # first check CMSSW 
 # then check Fragments/Outputs 
-def ManageFragment(expectedFragmentEnd_,fragOutDir_,ultimateFragDirec_):
+def ManageFragment(expectedFragmentEnd_,fragOutDir_,ultimateFragDirec_,isNMSSM):
     ultimateFragLoc_ = "%s/%s"%(ultimateFragDirec_,expectedFragmentEnd_)
-    firstFragLoc_ = "../Fragments/Outputs/%s/%s"%(fragOutDir_,expectedFragmentEnd_)    
-    if(not path.exists(ultimateFragLoc_)): 
-        if(not path.exists(firstFragLoc_)):
-            print'Neither fragment path exists:'
-            print ultimateFragLoc_
-            print firstFragLoc_
-            print 'Skipping this configuration...'
-            return 1 # skip 
-        else: 
+    firstFragLoc_ = "../Fragments/Outputs/%s/%s"%(fragOutDir_,expectedFragmentEnd_)   
+    # If NMSSM, should copy the fragment if it's in CMSSW anyway, because want the local gridpack path for the sandbox  
+    if(isNMSSM):
+        if(path.exists(firstFragLoc_)):
             os.system('cp %s %s'%(firstFragLoc_,ultimateFragLoc_)) 
             print'Copied fragment from %s to %s'%(firstFragLoc_,ultimateFragLoc_)
-            return 0 # don't skip 
-    else: return 0 # don't skip 
+            return 0 # don't skip       
+        else:
+            print 'Fragment path does not exist:'
+            print firstFragLoc_
+            print 'Skipping this configuration...'
+            return 1 
+
+    else:
+        if(not path.exists(ultimateFragLoc_)): 
+            if(not path.exists(firstFragLoc_)):
+                print 'Neither fragment path exists:'
+                print ultimateFragLoc_
+                print firstFragLoc_
+                print 'Skipping this configuration...'
+                return 1 # skip 
+            else: 
+                os.system('cp %s %s'%(firstFragLoc_,ultimateFragLoc_)) 
+                print'Copied fragment from %s to %s'%(firstFragLoc_,ultimateFragLoc_)
+                return 0 # don't skip 
+        else: return 0 # don't skip 

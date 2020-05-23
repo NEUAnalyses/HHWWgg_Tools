@@ -67,8 +67,9 @@ def do_point(mx, my):
 
 ## mX, mY
 points = [
-    (500, 300),
-    (700, 400),
+    (300,170),
+    (1000,85),
+    (1000,850)
 ]
 
 for p in points:

@@ -6,12 +6,24 @@
 ########################################################################################################################
 
 from ROOT import TCanvas, TH1F  
+from array import array 
+
+def DefineBranch(branchName_,outTree,branches):
+    # isHardProcess = array('d', 10000*[-99]) #
+    exec("%s = array('d', 10000*[-99])"%(branchName_))
+    eval("outTree.Branch('%s',%s,'%s[10000]/D')"%(branchName_,branchName_,branchName_))
+    branches.append(branchName_)
+    print("%s = array('d', 10000*[-99])"%(branchName_))
+    print("outTree.Branch('%s',%s,'%s[10000]/D')"%(branchName_,branchName_,branchName_))
+    return outTree, branches
 
 def GetPdgId(pName_):
     PdgIdDictionary = {
         "H": 25,
         "Y": 35,
-        "X": 45
+        "X": 45,
+        "tau": 15,
+        "b" : 5
     }
     return PdgIdDictionary[pName_]
 

@@ -181,7 +181,7 @@ With your pythia fragments in hand, you can create cmssw and crab configuration 
 
 # Local Testing 
 
-    cmsDriver.py NMSSM_XYH_WWgg_qqlnu_MX_500_MY_300 --fileout file:NMSSM_XYH_WWgg_MX_500_MY_300_output.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN --nThreads 8 --geometry DB:Extended --era Run2_2017 --python_filename NMSSM_cmsswConfig.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(123456%100)" -n 10
+    cmsDriver.py Configuration/GenProductions/python/NMSSM_XYH_WWgg_qqlnu_MX_500_MY_300.py --fileout file:NMSSM_XYH_WWgg_MX_500_MY_300_output.root --mc --eventcontent RAWSIM,LHE --datatier GEN-SIM,LHE --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step LHE,GEN --nThreads 8 --geometry DB:Extended --era Run2_2017 --python_filename NMSSM_cmsswConfig.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(123456%100)" -n 10
 
     Begin processing the 8th record. Run 1, Event 8, LumiSection 1 at 20-Apr-2020 10:47:30.906 CEST
     PYTHIA Error in ResonanceDecays::next: no open decay channel for id = 35

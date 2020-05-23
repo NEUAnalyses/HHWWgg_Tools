@@ -17,7 +17,7 @@ submit_crab_postGEN(){
 
     #!/bin/bash
 
-    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HH_WWgg/"
+    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
 
     unset file_paths # Make sure array name is free in memory 
     declare -a file_paths # unassociative array 
@@ -223,6 +223,7 @@ submit_crab_postGEN(){
     #echo "ccname = $ccname"
 
     cp TmpCrabConfig.py $ccname
+    mkdir -p crab_configs 
     #mv $ccname ../../crab_configs/$ccname  
     mv $ccname crab_configs/$ccname  
     rm TmpCrabConfig.py 

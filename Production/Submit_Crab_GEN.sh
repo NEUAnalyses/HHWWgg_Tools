@@ -31,7 +31,9 @@ submit_crab_GEN(){
     check_proxy 
 
     # Source CRAB 
-    source /cvmfs/cms.cern.ch/crab3/crab.sh
+    echo "Sourcing crab"
+    #source /cvmfs/cms.cern.ch/crab3/crab.sh
+    echo "Just sourced crab"
     cmsenv
 
     # Create CRAB Config file 
@@ -139,7 +141,7 @@ submit_crab_GEN(){
     # fi 
 
     # If the input gridpack is a local path (non-cvmfs), need to place it in the crab sandbox
-    if [ $LocalGridpackPath != "" ]
+    if [ ! -z $LocalGridpackPath ]
     then 
         echo "Adding gridpack: $LocalGridpackPath to crab sandbox"
         echo "config.JobType.inputFiles = [$LocalGridpackPath]" >> TmpCrabConfig.py  
