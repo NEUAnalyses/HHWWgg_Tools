@@ -10,6 +10,7 @@
 # python Make_MC_Configs.py --step GEN --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750 --diHiggsDecay HHWWgg --fragOutDir HHWWgg
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
 #
 # ##-- EFT benchmarks:
 # GEN-SIM: python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --EFT --EFT_BMs 1 --finalStates qqlnu --diHiggsDecay WWgg --fragOutDir EFT
@@ -139,6 +140,31 @@ if(postGEN):
 							os.system(cmd)
 							prevStepDirectories.append(fullDirec)
 
+	elif(args.Resonant): 
+		# assuming directory form: "ggF_X<ResMass>_HH<diHiggsDecay>_<finalState>"
+		# for example "ggF_X260_HHWWgg_qqlnu"
+		for mass in masses:
+			for finalState in finalStates:
+				for dir in dir_list:
+					if dir.split('_')[0] != "ggF": continue
+					desiredName = "ggF_X%s_HH%s_%s"%(mass,diHiggsDecay,finalState)
+					if(dir != desiredName): continue 
+					else:
+						for sndDirec in os.listdir("%s%s/"%(prevOutDir,dir)):
+							if(prevStep == "GEN-SIM"):
+								if(sndDirec != "%sevents_%s"%(nEvents,prevStep)): continue 
+							else:
+								if(sndDirec != "%sevents_%s_%s"%(nEvents,PU,prevStep)): continue							
+							newestDir = sorted(os.listdir("%s/%s/%s"%(prevOutDir,dir,sndDirec)))[-1]
+							print(newestDir)
+							print("Found full previous step directory:")
+							fullDirec = "%s%s/%s/%s/0000/"%(prevOutDir,dir,sndDirec,newestDir) # assuming crab folder 0000....may not also be correct
+							print fullDirec
+							cmd = "ls -1 %s | wc -l"%(fullDirec)
+							print'Number of file in previous step directory:'
+							os.system(cmd)
+							prevStepDirectories.append(fullDirec)							
+
 ## Create json objects 
 
 # GEN or GEN-SIM step  
@@ -253,9 +279,6 @@ if step == "GEN-SIM" or step == "GEN":
 			output.write(MC_Configs) # write json file 
 
 
-
-##### need to configure .... 
-
 ## if the step is DR1, DR2 or MINIAOD, you need a different config type 
 ## DR1, DR2, or MINIAOD step 
 else:
@@ -318,29 +341,41 @@ else:
 				if ibm is not len(EFT_BMs)-1: MC_Configs += ',' # need comma separation 
 				else: continue # no comma at end of last object 	
 
+	elif(args.Resonant):
+		for im,mass in enumerate(masses):
+			for ifs,finalState in enumerate(finalStates):
+
+				# expectedFragmentEnd = "ggF_X%s_HH%s_%s.py"%(mass,diHiggsDecay,finalState)
+				# skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
+				# if(skip): continue 		
+
+				prevDirec = prevStepDirectories[im+ifs] # assuming prestepdirectories appended for mass, for final state and found one for each 
+
+				# Indentation of text chosen for visual output
+				MC_Configs_Entry = '''
+				{ 
+						"step"      : "{step}",
+						"events"    : {events},
+						"jobs_jobsize"      : {jobs_jobsize},
+						"fragment_directory"  : "{prevDirec}",
+						"pileup"              : "{PU}",
+						"localGridpack"                : "0"
+				}'''
+
+				# MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+
+
+				MC_Configs += MC_Configs_Entry
+
+				if im is not len(masses)-1: MC_Configs += ',' # need comma separation 
+				else: continue # no comma at end of last object 
+
 	MC_Configs += '\n]\n' # finish json 
-
-
-	# for id,directory in enumerate(directories):
-	# 		MC_Configs_Entry = '''
-	# 		{ 
-	# 				"step"      : "{step}",
-	# 				"events"    : {events},
-	# 				"jobs_jobsize"      : {jobs_jobsize},
-	# 				"fragment_directory"  : "{directory}",
-	# 				"pileup"              : "wPU" 
-	# 		}'''
-
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
-	# 		MC_Configs_Entry = MC_Configs_Entry.replace("{directory}",str(directory))
-	# 		MC_Configs += MC_Configs_Entry
-
-	# 		if id is not len(directories)-1: MC_Configs += ',' # need comma separation 
-	# 		else: continue # no comma at end of last object 
-
-	# MC_Configs += '\n]\n' # finish json 
 
 	with open(outputName, "w") as output:
 			output.write(MC_Configs) # write json file 
@@ -349,25 +384,3 @@ print
 print'[Make_MC_Configs] - MC_Configs.json created'
 print'[Make_MC_Configs] - Make sure MC_Configs.json looks good before submitting with . SubmitMCJobs.sh !' 
 print 
-
-###########################
-
-	## DR1, DR2 and MINIAOD setup example
-	# step = "MINIAOD" # can also put "DR2" or "MINIAOD" here 
-	# prevStep_prefix = "wPU_DR2" # if step == DR1: this = GEN-SIM. if step == DR2 with pileup: this = wPU_DR1 
-	# nEvents = 100000 
-	# jobs_jobsize = 1 
-	# directory_prefix = "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/" # location of GEN-SIM, DR1 or DR2 output files 
-	# pileup = "wPU"
-	# masses = ['X260', 'X270', 'X280', 'X300', 'X320', 'X350', 'X400', 'X500', 'X550', 'X600', 'X650', 'X700', 'X800', 'X850', 'X900', 'X1000']
-	# finalStates = ["qqlnugg"]
-
-	## Fully leptonic DR1 production example
-	## DR1, DR2 and MINIAOD setup example
-	# step = "DR1" # can also put "DR2" or "MINIAOD" here 
-	# nEvents = 100000 
-	# jobs_jobsize = 1 
-	# directory_prefix = "/path/to/GEN-SIM/output" # location of GEN-SIM, DR1 or DR2 output files. Should contain directories with names like ggF_X260_WWgg_lnulnugg, ggF_X280_WWgg_lnulnugg, etc. 
-	# pileup = "wPU"
-	# masses = ['X260', 'X270', 'X280', 'X300', 'X320', 'X350', 'X400', 'X500', 'X550', 'X600', 'X650', 'X700', 'X800', 'X850', 'X900', 'X1000']
-	# finalStates = ["lnulnugg"]

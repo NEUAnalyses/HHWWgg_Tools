@@ -82,7 +82,7 @@ submit_crab_postGEN(){
     check_proxy 
 
     # Source CRAB 
-    source /cvmfs/cms.cern.ch/crab3/crab.sh
+    #source /cvmfs/cms.cern.ch/crab3/crab.sh
 
     # Create CRAB Config file 
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
@@ -107,7 +107,7 @@ submit_crab_postGEN(){
 
     totfiles=1 # (I think) this is the number of files to spread the crab output across. It may also be the number of files to use as input 
 
-    echo "from CRABClient.UserUtilities import config, getUsernameFromSiteDB" >> TmpCrabConfig.py
+    echo "from CRABClient.UserUtilities import config" >> TmpCrabConfig.py
     echo "config = config()" >> TmpCrabConfig.py
     echo " " >> TmpCrabConfig.py
 
