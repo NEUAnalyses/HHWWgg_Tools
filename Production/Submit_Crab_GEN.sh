@@ -20,6 +20,8 @@ submit_crab_GEN(){
     num_jobs=$5
     echo "chosen threads: $chosen_threads "
     LocalGridpackPath=$6
+    Campaign=$7
+    dryRun=$8
 
     localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
 
@@ -50,10 +52,16 @@ submit_crab_GEN(){
     primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
     snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
 
-    echo "primary dataset name = $primdset"
-    echo "secondary dataset name = $snddset"
+    # fullsnddset # $Campaign
+    fullSndDset="${Campaign}_${snddset}" # add campaign name 
+    fullIDName="${Campaign}_${IDName}"
 
-    ccname=$IDName
+    echo "fullIDName: $fullIDName"
+
+    echo "primary dataset name = $primdset"
+    echo "secondary dataset name = $fullSndDset"
+
+    ccname=$fullIDName
     ccname+="_CrabConfig.py" # Crab Configuration file name 
 
     #echo "Total events = $2"
@@ -75,7 +83,7 @@ submit_crab_GEN(){
     #echo "IDName = $IDName"
 
     # if crab working area already exists, increment to unique name 
-    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$IDName
+    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$fullIDName
     # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
 
     # Do until unused working area name is found 
@@ -96,14 +104,14 @@ submit_crab_GEN(){
 
         else 
         
-            tmp_IDName=$IDName
+            tmp_IDName=$fullIDName
             tmp_IDName+=_$i 
             working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             if [ ! -d $working_area ]; then
 
                 echo "Creating crab working area: '$working_area' for this crab request"
-                IDName=$tmp_IDName 
+                fullIDName=$tmp_IDName 
                 # Use incremented IDName 
                 break 
 
@@ -120,7 +128,7 @@ submit_crab_GEN(){
 
     done
 
-    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py # If workArea/requestName exists already, this will not go through 
+    echo "config.General.requestName = '$fullIDName'" >> TmpCrabConfig.py # If workArea/requestName exists already, this will not go through 
     echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py  
     echo "config.General.transferOutputs = True" >> TmpCrabConfig.py
     echo "config.General.transferLogs = False" >> TmpCrabConfig.py
@@ -147,7 +155,7 @@ submit_crab_GEN(){
         echo "config.JobType.inputFiles = [$LocalGridpackPath]" >> TmpCrabConfig.py  
     fi 
 
-    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on where config file was created  
+    echo "config.JobType.psetName = '$localWorkingArea${Campaign}_$1'" >> TmpCrabConfig.py # Depends on where config file was created  
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
     #if [ $version == 939 ]
@@ -177,7 +185,7 @@ submit_crab_GEN(){
     #echo "config.Data.outLFNDirBase = '/store/user/atishelm/'" >> TmpCrabConfig.py
     echo "config.Data.publication = False" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
-    echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
+    echo "config.Data.outputDatasetTag = '$fullSndDset'" >> TmpCrabConfig.py
 
     # config.JobType.inputFiles = ['/uscms_data/d3/fravera/NMSSM_XYH_bbbb_MCproduction_Run2016/CMSSW_7_1_19/src/GridPacks/NMSSM_XYH_bbbb_MX_300_MY_60_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz']
 
@@ -205,7 +213,15 @@ submit_crab_GEN(){
     #crab submit -c ../../crab_configs/$ccname 
 
     # Just need last two 
-    crab submit -c crab_configs/$ccname 
-    crab status 
 
+    if [ $dryRun == "1" ]; then 
+        echo "DRY RUN: Not submitting"
+        echo "Was going to submit: crab_configs/$ccname "
+    else 
+
+        crab submit -c crab_configs/$ccname 
+        crab status
+
+    fi 
+ 
     }

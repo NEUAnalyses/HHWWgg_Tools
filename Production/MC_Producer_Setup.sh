@@ -2,9 +2,6 @@
 
 #source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Cfgs.sh
 
-# Idea: Read crab status message to see if job is finished, and if it is, obtain the path to the files and run the next step? 
-# Make folder for pythia configuration files that end up in HH_WWgg/. Bin? Py_cfgs? 
-
 #chosen_config=$1
 
 #step events jobs_jobsize fragment_directory pileup
@@ -15,6 +12,8 @@ chosen_jobs=$3
 chosen_filename=$4
 #chosen_pileup=$5 
 LocalGridpack=$6
+Campaign=$7
+dryRun=$8
 
 #echo "all variables: $@"
 
@@ -27,6 +26,7 @@ LocalGridpack=$6
 
 echo "chosen_step = $chosen_step"
 echo "LocalGridpack: $LocalGridpack "
+echo "Campaign: $Campaign"
 
 if [ $chosen_step == GEN-SIM ]
 then
@@ -65,7 +65,7 @@ then
 
     # Config File Name
     mkdir -p cmssw_configs # create directory if it does not already exist
-    ConfigFileName="cmssw_configs/"
+    ConfigFileName="cmssw_configs/${Campaign}_"
     ConfigFileName+=${GenSimOutput%????} # Remove 'root' # Gensimoutput is a bad name 
     ConfigFileName+=py 
 
@@ -129,7 +129,7 @@ then
 
     # Config File Name
     mkdir -p cmssw_configs # create directory if it does not already exist
-    ConfigFileName="cmssw_configs/"
+    ConfigFileName="cmssw_configs/${Campaign}_"
     ConfigFileName+=${GenOutput%????} # Remove 'root' # Gensimoutput is a bad name 
     ConfigFileName+=py 
 

@@ -32,16 +32,20 @@ submit_crab_postGEN(){
     chosen_threads=$3 
     chosen_job_size=$4
     chosen_step=$5
+    Campaign=$6
+    dryRun=$7
     #chosen_events=$5
     file_paths=("$@") # saves all inputs to array. Could be convinient for cleaning up later.
     # chosen_step=$5
 
     echo "chosen_step = " $chosen_step 
-
     echo "chosen_job_size = $chosen_job_size" # Number of input files per job 
-    # Remove first four arguments 
 
-    file_paths=("${file_paths[@]:5}") 
+    echo "dryRun: $dryRun"
+    echo "Campaign: $Campaign"
+    # Remove first six arguments 
+
+    file_paths=("${file_paths[@]:7}") 
 
     # EvtsPerJob=$((totevts/chosen_jobs))
     # echo "EvtsPerJob = $EvtsPerJob"
@@ -99,10 +103,18 @@ submit_crab_postGEN(){
     primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
     snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
 
-    echo "primary dataset name = $primdset"
-    echo "secondary dataset name = $snddset"
+    fullSndDset="${Campaign}_${snddset}" # add campaign name 
 
-    ccname=$IDName
+    echo "primary dataset name = $primdset"
+    echo "secondary dataset name = $fullSndDset"
+
+    fullIDName="${Campaign}_${IDName}"
+
+    echo "fullIDName: $fullIDName"
+
+    ccname="${Campaign}_${IDName}"
+    # ccname=$IDName
+    # ccname+=
     ccname+="_CrabConfig.py" # Crab Configuration file name 
 
     totfiles=1 # (I think) this is the number of files to spread the crab output across. It may also be the number of files to use as input 
@@ -113,7 +125,7 @@ submit_crab_postGEN(){
 
     # if crab working area already exists, increment to unique name 
     #working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
-    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$IDName
+    working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_${fullIDName}
     # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$IDName
 
     # Do until unused working area name is found 
@@ -134,14 +146,14 @@ submit_crab_postGEN(){
 
         else 
         
-            tmp_IDName=$IDName
+            tmp_IDName=${fullIDName}
             tmp_IDName+=_$i 
             working_area=$localWorkingArea$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             # working_area=/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$cmssw_v/src/crab_projects/crab_$tmp_IDName 
             if [ ! -d $working_area ]; then
 
                 echo "Creating crab working area: '$working_area' for this crab request"
-                IDName=$tmp_IDName 
+                fullIDName=$tmp_IDName 
                 # Use incremented IDName 
                 break 
 
@@ -158,7 +170,7 @@ submit_crab_postGEN(){
 
     done
 
-    echo "config.General.requestName = '$IDName'" >> TmpCrabConfig.py # leave this name the same since it's just the crab working area name
+    echo "config.General.requestName = '$fullIDName'" >> TmpCrabConfig.py # leave this name the same since it's just the crab working area name
     #echo "config.General.requestName = '$snddset'" >> TmpCrabConfig.py
 
     echo "config.General.workArea = 'crab_projects'" >> TmpCrabConfig.py
@@ -167,7 +179,7 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
     #echo "arg = $1"
-    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    echo "config.JobType.psetName = '$localWorkingArea${Campaign}_$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
     #s_str='SEED=$CRAB_Id'
     #echo "config.JobType.pyCfgParams = [$s_str]" >> TmpCrabConfig.py
@@ -210,7 +222,7 @@ submit_crab_postGEN(){
 
     # echo "config.Data.publication = True" >> TmpCrabConfig.py
     #echo "config.Data.outputDatasetTag = '$IDName'" >> TmpCrabConfig.py
-    echo "config.Data.outputDatasetTag = '$snddset'" >> TmpCrabConfig.py
+    echo "config.Data.outputDatasetTag = '$fullSndDset'" >> TmpCrabConfig.py
 
     echo "config.Data.userInputFiles = [$path_list] # If DR1 step, this should be GEN file(s) " >> TmpCrabConfig.py # input files 
     echo " " >> TmpCrabConfig.py
@@ -219,8 +231,8 @@ submit_crab_postGEN(){
 
     # Now using multiple cmssw version, so will have a crab_configs and cmssw_configs folder for each CMSSW 
     
-    #echo "pwd = $PWD" 
-    #echo "ccname = $ccname"
+    echo "pwd = $PWD" 
+    echo "ccname = $ccname"
 
     cp TmpCrabConfig.py $ccname
     mkdir -p crab_configs 
@@ -230,8 +242,18 @@ submit_crab_postGEN(){
 
     #crab submit -c ../../crab_configs/$ccname 
 
+    if [ $dryRun == "1" ]; then 
+        echo "DRY RUN: Not submitting"
+        echo "Was going to submit: crab_configs/$ccname "
+    else 
+
+        crab submit -c crab_configs/$ccname 
+        crab status
+
+    fi 
+
     # Just need last two 
-    crab submit -c crab_configs/$ccname 
-    crab status 
+    # crab submit -c crab_configs/$ccname 
+    # crab status 
 
     }

@@ -8,13 +8,13 @@
 # Check arguments for inconsistencies 
 def ArgChecks(args):
 
-    if(args.Resonant + args.NMSSM + args.EFT == 0):
-        print"[Make_Fragments - ERROR]: Need to create either Resonant, NMSSM or EFT fragments"
+    if(args.Resonant + args.NMSSM + args.EFT + args.SM == 0):
+        print"[Make_Fragments - ERROR]: Need to create either Resonant, NMSSM, SM or EFT fragments"
         print"[Make_Fragments - ERROR]: Exiting"
         exit(1)             
 
-    if(args.Resonant + args.NMSSM + args.EFT > 1):
-        print"[Make_Fragments - ERROR]: Need to choose only one of the following: Resonant, NMSSM or EFT fragments"
+    if(args.Resonant + args.NMSSM + args.EFT + args.SM > 1):
+        print"[Make_Fragments - ERROR]: Need to choose only one of the following: Resonant, NMSSM, SM or EFT fragments"
         print"[Make_Fragments - ERROR]: Exiting"
         exit(1)    
 

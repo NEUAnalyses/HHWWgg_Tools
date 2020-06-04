@@ -30,6 +30,7 @@ parser.add_argument('--gridpacks', type=str, default="", help="Comma separated s
 parser.add_argument("--Resonant", action="store_true", default=False, help="Create Radion/Graviton model", required=False)
 parser.add_argument("--NMSSM", action="store_true", default=False, help="Create Y->XH model(s)", required=False)
 parser.add_argument("--EFT", action="store_true", default=False, help="Create EFT Benchmark models", required=False)
+parser.add_argument("--SM", action="store_true", default=False, help="Create SM Benchmark models", required=False)
 parser.add_argument('--masses', type=str, default="", help="Resonant or NMSSM: Comma separated string of mass pairs to use.", required=False)
 parser.add_argument("--verbose", action="store_true", default=False, help="Extra printout statements", required=False)
 
@@ -52,9 +53,12 @@ if(args.EFT):
     for i in range(1,13):
         gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/GF_HH_%s/v1/GF_HH_%s_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'%(str(i),str(i))
         gridpacks.append(gridpack)
+
+if(args.SM):
     # SM point 
     gridpack = '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/GF_HH_%s/v1/GF_HH_%s_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'%("SM","SM")
     gridpacks.append(gridpack)
+
 
 elif(args.NMSSM): 
     gridpacks = args.gridpacks.split(',')
@@ -110,9 +114,13 @@ for it, template in enumerate(templates):
 
         elif(args.EFT):
             BMnum = str(igp)
-            if(igp==12): BMnum = "SM"
+            # if(igp==12): BMnum = "SM"
             outputName = "Outputs/{0}/GluGluToHHTo_{1}_{2}_node{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
 
+        elif(args.SM):
+            BMnum = "SM"
+            # if(igp==12): BMnum = "SM"
+            outputName = "Outputs/{0}/GluGluToHHTo_{1}_{2}_node{3}.py".format(outFolder,diHiggsDecay,finalState,BMnum) # output file name 
         elif(args.Resonant):
             bsmMass = resMasses[igp]
             print'res mass:',bsmMass

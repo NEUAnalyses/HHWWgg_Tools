@@ -4,7 +4,7 @@
 # This is currently only configured for fragments created in CMSSW_9_3_9_patch1 
 
 #unset jsonkeys 
-jsonkeys=(step events jobs_jobsize fragment_directory pileup localGridpack)
+jsonkeys=(step events jobs_jobsize fragment_directory pileup localGridpack Campaign dryRun)
  
 i=$((0)) # jsonkey 
 for jsonkey in "${jsonkeys[@]}" 
@@ -54,7 +54,8 @@ echo "  Jobs_jobsize= ${saved_array_2[@]}" # jobs_jobsize
 echo "  Fragment_Directory = ${saved_array_3[@]}" # fragment_directory
 echo "  Pileup = ${saved_array_4[@]}" # pileup 
 echo "  LocalGridpack  = ${saved_array_5[@]}" # 0) Don't need to add gridpack to sandbox. 1) Need to add to sandbox and change path to /srv/<gridpack> in pythia fragment
-
+echo "  Campaign = ${saved_array_6[@]}" # Campaign name 
+echo "  dryRun  = ${saved_array_7[@]}"
 # Number of crab configurations
 num_configs=${#saved_array_0[@]}
 max_el=$((num_configs - 1)) # because arrays are zero indexed 
@@ -65,7 +66,7 @@ do
     :
     echo "Submitting crab job $i"
     cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]} ${saved_array_5[$i]}
+    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]} ${saved_array_5[$i]} ${saved_array_6[$i]} ${saved_array_7[@]}
 
 done 
 

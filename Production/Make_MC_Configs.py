@@ -11,6 +11,7 @@
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750 --diHiggsDecay HHWWgg --fragOutDir HHWWgg
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
 # python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
+# python Make_MC_Configs.py --step MINIAOD --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-6 --dryRun
 #
 # ##-- EFT benchmarks:
 # GEN-SIM: python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --EFT --EFT_BMs 1 --finalStates qqlnu --diHiggsDecay WWgg --fragOutDir EFT
@@ -39,8 +40,10 @@ parser.add_argument('--diHiggsDecay', type=str, default="", help="Di-Higgs decay
 parser.add_argument('--fragOutDir', type=str, default="", help="Directory fragments are in. HHWWgg_Tools/Fragments/Outputs/<fragOutDir>", required=False) # Ex: HHWWgg_NMSSM
 parser.add_argument('--prevOutDir', type=str, default="", help="Comma separated list of directories that previous step output files are in", required=False) # Ex: /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
 parser.add_argument('--PU', type=str, default="wPU", help="Pileup. Options: wPU, woPU", required=False) 
+parser.add_argument('--Campaign', type=str, default="", help="Campaign for secondary dataset name", required=False) 
 
-# # masses = [260, 270, 280, 300, 320, 350, 400, 500, 550, 600, 650, 700, 800, 850, 900, 1000]
+##-- Misc 
+parser.add_argument("--dryRun", action="store_true", default=False, help="If true, do not submit crab jobs", required=False)
 
 args = parser.parse_args()
 
@@ -48,13 +51,16 @@ args = parser.parse_args()
 ArgChecks(args)
 
 # Set arguments 
-step, nEvents, jobs_jobsize, diHiggsDecay = args.step, args.nEvents, args.jobs_jobsize, args.diHiggsDecay
+step, nEvents, jobs_jobsize, diHiggsDecay, Campaign, dryRun = args.step, args.nEvents, args.jobs_jobsize, args.diHiggsDecay, args.Campaign, args.dryRun
 fragOutDir = args.fragOutDir
 masses = args.masses.split(',')
 finalStates = args.finalStates.split(',')
 EFT_BMs = args.EFT_BMs.split(',')
 prevOutDir = args.prevOutDir
 PU = args.PU 
+
+# if(args.dryRun): dryRun == "1"
+# else: dryRun == "0"
 
 # Begin writing file 
 outputName = 'MC_Configs.json' # output json file path 
@@ -78,6 +84,9 @@ if(not path.exists("CMSSW_9_3_9_patch1")):
 
 else:
 	print'All proper CMSSW paths exist. Continuting...'
+
+# add Campaign after HHWWgg_v2-6
+# https://help.github.com/en/actions/building-and-testing-code-with-continuous-integration/about-continuous-integration#in-this-article
 
 if(postGEN):
 	## Function: Get Prev Step Directories	
@@ -188,7 +197,9 @@ if step == "GEN-SIM" or step == "GEN":
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "GluGluToHHTo_{diHiggsDecay}_{finalState}_node{bm}",
 						"pileup"              : "{PU}",
-						"localGridpack"                : "0" 
+						"localGridpack"                : "0",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{bm}",str(bm))
@@ -198,6 +209,8 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{finalState}",str(finalState))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 				
 				MC_Configs += MC_Configs_Entry
 
@@ -221,7 +234,9 @@ if step == "GEN-SIM" or step == "GEN":
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "ggF_X{mass}_HH{diHiggsDecay}_{finalState}",
 						"pileup"              : "{PU}",
-						"localGridpack"                : "0"
+						"localGridpack"                : "0",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
@@ -231,6 +246,8 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{finalState}",str(finalState))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 
 				MC_Configs += MC_Configs_Entry
@@ -257,7 +274,10 @@ if step == "GEN-SIM" or step == "GEN":
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "NMSSM_XYH{diHiggsDecay}{finalState}_MX{massHS}_MY{massIS}", 
 						"pileup"              : "{PU}",
-						"localGridpack"                : "1"
+						"localGridpack"                : "1",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
+
 				}'''
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
@@ -267,6 +287,8 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{massIS}",str(massIS)) # mass of intermediate scalar 				
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay)) 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
 
@@ -299,13 +321,18 @@ else:
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "{prevDirec}", 
 						"pileup"              : "{PU}",
-						"localGridpack"                : "0" 
+						"localGridpack"                : "0",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
+
 				}'''
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
 
@@ -327,7 +354,10 @@ else:
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "{prevDirec}", 
 						"pileup"              : "{PU}",
-						"localGridpack"                : "0" 
+						"localGridpack"                : "0",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
+
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
@@ -335,6 +365,8 @@ else:
 				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 				
 				MC_Configs += MC_Configs_Entry
 
@@ -359,7 +391,10 @@ else:
 						"jobs_jobsize"      : {jobs_jobsize},
 						"fragment_directory"  : "{prevDirec}",
 						"pileup"              : "{PU}",
-						"localGridpack"                : "0"
+						"localGridpack"                : "0",
+						"Campaign"            : "{Campaign}",
+						"dryRun"              : "{dryRun}" 
+
 				}'''
 
 				# MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
@@ -368,7 +403,8 @@ else:
 				MC_Configs_Entry = MC_Configs_Entry.replace("{jobs_jobsize}",str(jobs_jobsize))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
-
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
 

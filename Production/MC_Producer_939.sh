@@ -59,7 +59,7 @@ then
     #cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN,SIM --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
 
     #cmsRun $ConfigFileName # Replace this with crab command 
-    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs $LocalGridpackPath 
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs $LocalGridpackPath $Campaign $dryRun
 
     #end_script 
 
@@ -102,7 +102,7 @@ then
     #cmsDriver.py $PythiaFragPath --fileout file:$GenSimOutput --mc --eventcontent RAWSIM --datatier GEN-SIM --conditions 93X_mc2017_realistic_v3 --beamspot Realistic25ns13TeVEarly2017Collision --step GEN,SIM --nThreads $chosen_threads --geometry DB:Extended --era Run2_2017 --python_filename $ConfigFileName --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring --customise_commands process.RandomNumberGeneratorService.externalLHEProducer.initialSeed="int(${seed}%100)" -n $chosen_events
 
     #cmsRun $ConfigFileName # Replace this with crab command 
-    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs $LocalGridpackPath 
+    submit_crab_GEN $ConfigFileName $chosen_events $cmssw_v $chosen_threads $chosen_jobs $LocalGridpackPath $Campaign $dryRun
 
     #end_script 
 
@@ -159,8 +159,8 @@ then
 
     mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
-    DR1Config=$cmssw_v/src/cmssw_configs/
-    DR2Config=$cmssw_v/src/cmssw_configs/
+    DR1Config=$cmssw_v/src/cmssw_configs/${Campaign}_
+    DR2Config=$cmssw_v/src/cmssw_configs/${Campaign}_
     #DR1Config+=$EndofPath 
     DR1Config+=$EndofSinglePath 
     #DR2Config+=$EndofPath 
@@ -226,7 +226,7 @@ then
             # Need to edit cmssw config to shuffle pileup each time 
             #shuffle_PU $DR1Config
 
-            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}"
 
         elif [ $chosen_step == DR2 ]
         then 
@@ -242,7 +242,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
             #end_script 
 
@@ -281,7 +281,7 @@ then
 
             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
             #submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_events "${f_paths[@]}"
-            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
             #end_script 
 
@@ -316,7 +316,7 @@ then
             #cmsRun $DR2Config 
 
             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}" 
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
             #end_script 
         
@@ -355,7 +355,7 @@ then
 
     mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
-    MINIAODConfig=$cmssw_v/src/cmssw_configs/
+    MINIAODConfig=$cmssw_v/src/cmssw_configs/${Campaign}_
     #MINIAODConfig+=$EndofPath
     MINIAODConfig+=$EndofSinglePath
     MINIAODConfig=${MINIAODConfig%_DR2*}
@@ -387,7 +387,7 @@ then
 
     #cmsRun $AODConfig
 
-    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size $chosen_step "${f_paths[@]}"
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
     #end_script 
 

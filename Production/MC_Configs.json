@@ -1,26 +1,35 @@
 [
 				{ 
-						"step"      : "GEN-SIM",
+						"step"      : "MINIAOD",
 						"events"    : 100000,
-						"jobs_jobsize"      : 40,
-						"fragment_directory"  : "ggF_X260_HHWWgg_qqlnu",
+						"jobs_jobsize"      : 1,
+						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X260_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095532/0000/",
 						"pileup"              : "wPU",
-						"localGridpack"                : "0"
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-6",
+						"dryRun"              : "0" 
+
 				},
 				{ 
-						"step"      : "GEN-SIM",
+						"step"      : "MINIAOD",
 						"events"    : 100000,
-						"jobs_jobsize"      : 40,
-						"fragment_directory"  : "ggF_X600_HHWWgg_qqlnu",
+						"jobs_jobsize"      : 1,
+						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X600_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095605/0000/",
 						"pileup"              : "wPU",
-						"localGridpack"                : "0"
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-6",
+						"dryRun"              : "0" 
+
 				},
 				{ 
-						"step"      : "GEN-SIM",
+						"step"      : "MINIAOD",
 						"events"    : 100000,
-						"jobs_jobsize"      : 40,
-						"fragment_directory"  : "ggF_X1000_HHWWgg_qqlnu",
+						"jobs_jobsize"      : 1,
+						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1000_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095657/0000/",
 						"pileup"              : "wPU",
-						"localGridpack"                : "0"
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-6",
+						"dryRun"              : "0" 
+
 				}
 ]
