@@ -66,6 +66,7 @@ then
     # Config File Name
     mkdir -p cmssw_configs # create directory if it does not already exist
     ConfigFileName="cmssw_configs/${Campaign}_"
+    # ConfigFileName="cmssw_configs/"
     ConfigFileName+=${GenSimOutput%????} # Remove 'root' # Gensimoutput is a bad name 
     ConfigFileName+=py 
 
@@ -73,7 +74,7 @@ then
     echo 'Output File Name:' $GenSimOutput
 
     # if using localgridpack, need to change pythia fragment path to gridpack, and add to sandbox in crab. Do pythia part here since cmsDriver step using pythia fragment is before crab 
-    LocalGridpackPath=""
+    LocalGridpackPath="none"
     if [ $LocalGridpack == "1" ]
     then 
         echo "Using a local gridpack. Need to change pythia fragment path and save full path to later add to crab sandbox"
@@ -137,7 +138,7 @@ then
     echo 'Output File Name:' $GenOutput
 
     # if using localgridpack, need to change pythia fragment path to gridpack, and add to sandbox in crab. Do pythia part here since cmsDriver step using pythia fragment is before crab 
-    LocalGridpackPath=""
+    LocalGridpackPath="none"
     if [ $LocalGridpack == "1" ]
     then 
         echo "Using a local gridpack. Need to change pythia fragment path and save full path to later add to crab sandbox"

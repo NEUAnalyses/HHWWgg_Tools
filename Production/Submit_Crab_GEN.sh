@@ -18,14 +18,21 @@ submit_crab_GEN(){
     cmssw_v=$3
     chosen_threads=$4 
     num_jobs=$5
-    echo "chosen threads: $chosen_threads "
     LocalGridpackPath=$6
     Campaign=$7
     dryRun=$8
 
+    echo "Submit_Crab_GEN variable check"
+    echo "cmssw_v: $cmssw_v"
+    echo "chosen threads: $chosen_threads "
+    echo "num_jobs: $num_jobs"
+    echo "LocalGridpackPath: $LocalGridpackPath"
+    echo "Campaign: $Campaign"
+    echo "dryRun: $dryRun"
+
     localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
 
-    cd $localWorkingArea$3/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
+    cd $localWorkingArea$cmssw_v/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"
     #cmsenv
 
@@ -33,12 +40,13 @@ submit_crab_GEN(){
     check_proxy 
 
     # Source CRAB 
-    echo "Sourcing crab"
+    # echo "Sourcing crab"
     #source /cvmfs/cms.cern.ch/crab3/crab.sh
-    echo "Just sourced crab"
+    # echo "Just sourced crab"
     cmsenv
 
     # Create CRAB Config file 
+    echo "1: $1"
     IDName=$1 # Decay identifying name. Anything unique about the process should be contained in the pythia fragment file name 
     IDName=${IDName#"cmssw_configs/"} # Remove cmssw folder part from eventual crab config path
     #echo "IDName = $IDName"
@@ -49,12 +57,13 @@ submit_crab_GEN(){
     # This naming convention assumes IDName of the form:
     # <ProductionProcess>_<ResonantParticle>_<ResonantDecay>_<Channel>_<numEvents>_<Step>
     # ex: ggF_X1250_WWgg_enuenugg_10000events_GEN
-    primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
-    snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
+    primdset=`echo $IDName | cut -d _ -f 3-6` # Primary dataset name  # assumes campaign of form <a>_<b>
+    snddset=`echo $IDName | cut -d _ -f 7-` # Secondary dataset name 
 
     # fullsnddset # $Campaign
     fullSndDset="${Campaign}_${snddset}" # add campaign name 
-    fullIDName="${Campaign}_${IDName}"
+    fullIDName=$IDName
+    # fullIDName="${Campaign}_${IDName}"
 
     echo "fullIDName: $fullIDName"
 
@@ -149,13 +158,13 @@ submit_crab_GEN(){
     # fi 
 
     # If the input gridpack is a local path (non-cvmfs), need to place it in the crab sandbox
-    if [ ! -z $LocalGridpackPath ]
+    if [ $LocalGridpackPath != "none" ]
     then 
         echo "Adding gridpack: $LocalGridpackPath to crab sandbox"
         echo "config.JobType.inputFiles = [$LocalGridpackPath]" >> TmpCrabConfig.py  
     fi 
 
-    echo "config.JobType.psetName = '$localWorkingArea${Campaign}_$1'" >> TmpCrabConfig.py # Depends on where config file was created  
+    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on where config file was created  
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
     #if [ $version == 939 ]

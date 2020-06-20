@@ -58,6 +58,7 @@ def GetResGridpack(resMass_):
 
     # resGridpacks and resMasses entries need to be in same order per mass point 
     resGridpacks = [
+    '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/GluGluToRadionToHH_M250/v1/GluGluToRadionToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
     '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/Radion_hh_narrow_M260/v1/Radion_hh_narrow_M260_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
     '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/Radion_hh_narrow_M270/v1/Radion_hh_narrow_M270_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
     '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/GluGluToRadionToHH_M280/v1/GluGluToRadionToHH_M280_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz',
@@ -78,7 +79,7 @@ def GetResGridpack(resMass_):
     '/cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/Radion_hh_narrow_M1000/v1/Radion_hh_narrow_M1000_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz'
     ]    
 
-    resMasses = ['260','270','280','300','320','350','400','450','500','550','600','650','700','750','800','850','900','1000']
+    resMasses = ['250','260','270','280','300','320','350','400','450','500','550','600','650','700','750','800','850','900','1000']
 
     for i,resMass in enumerate(resMasses):
         resGridpack = resGridpacks[i]

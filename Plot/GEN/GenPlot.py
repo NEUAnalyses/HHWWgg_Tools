@@ -67,7 +67,7 @@ if(args.CreateNtuple):
     elif("RES" in genType): RES = 1 
 
     gROOT.SetBatch(True)
-    genHandle = Handle('vector<reco::GenParticle>')
+    # genHandle = Handle('vector<reco::GenParticle>')
     beforeOl = "/eos/user/a/atishelm/www/HHWWgg/GEN/"
     ol = '/eos/user/a/atishelm/www/HHWWgg/GEN/%s'%(genType)
     if(args.i == ""):
@@ -132,6 +132,11 @@ if(args.CreateNtuple):
     outTree.Branch('isDirectHardProcessTauDecayProductFinalState',isDirectHardProcessTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
     branches.append("isDirectHardProcessTauDecayProductFinalState")
 
+    isDirectPromptTauDecayProductFinalState = array('d', 10000*[-99]) #
+    outTree.Branch('isDirectPromptTauDecayProductFinalState',isDirectPromptTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
+    branches.append("isDirectPromptTauDecayProductFinalState")
+
+
 
     # pdgId = array('d', 10000*[-99]) #
     # outTree.Branch('pdgId',pdgId,'pdgId[10000]/D')
@@ -173,9 +178,14 @@ if(args.CreateNtuple):
     # if(not requireHardProcess): events.getByLabel('genParticles', genHandle) # all particles 
     events = Events(fnalPath) # needs to be file with root prefix
     # events.getByLabel('genParticles', genHandle) # all particles 
+    genHandle = Handle('vector<reco::GenParticle>')
+
+    N_taus = 0 
+    N_leptonicTauDecays = 0 
+    tauDaughters_h = TH1F("tauDaughters_h","tau Daughters, pdgIds",1000,-500,500)
 
     for iev, event in enumerate(events):
-        # print'-------------------------------------------------------'
+        print'-------------------------------------------------------'
         if(iev%100==0): print'On event:',iev 
         if(iev == int(args.nEvents)): 
             print("Reached max desired events")
@@ -191,10 +201,10 @@ if(args.CreateNtuple):
 
         genParticles = genHandle.product()  
 
-        # if(requireHardProcess): ps = [p for p in genParticles if p.isHardProcess()]
-        # else: ps = [p for p in genParticles]
+        if(requireHardProcess): ps = [p for p in genParticles if p.isHardProcess()]
+        else: ps = [p for p in genParticles]
 
-        ps = [p for p in genParticles]
+        # ps = [p for p in genParticles]
         
         # ps = [p for p in genParticles]
 
@@ -254,7 +264,36 @@ if(args.CreateNtuple):
             isPromptFinalState[ip] = particle.isPromptFinalState()
             fromHardProcessFinalState[ip] = particle.fromHardProcessFinalState()
             isDirectHardProcessTauDecayProductFinalState[ip] = particle.isDirectHardProcessTauDecayProductFinalState()
+            isDirectPromptTauDecayProductFinalState[ip] = particle.isDirectPromptTauDecayProductFinalState()
 
+            if(abs(particle.pdgId())) == 15: 
+                tauMother = particle.mother(0).pdgId()
+                daughters = [] 
+                nDaughters = particle.numberOfDaughters()
+                for d in range(nDaughters):
+                    daughterID = particle.daughter(d).pdgId()
+                    daughters.append(daughterID)     
+                # do not want to look at intermediate taus 
+                if(15 in daughters or -15 in daughters): continue    
+                if(tauMother==431 or tauMother==-431): continue # don't want to look at a tau from a D meson        
+                # if(abs(tauMother)!=24): continue # only want to look at taus from W bosons 
+                if(tauMother==15 or tauMother==-15):
+                    tauGrandMother = particle.mother(0).mother(0).pdgId()
+                    # if(abs(tauGrandMother)!=24): continue                  
+                    if(abs(tauGrandMother)==431): continue                  
+                # if(abs(tauMother)) == 15: continue 
+                print"On tau"
+                print"tau mother:",tauMother
+                print"daughters:",daughters 
+
+                N_taus += 1 
+                for d in daughters:
+                    tauDaughters_h.Fill(d)
+                # leptons = [11,13]
+                if(11 in daughters or -11 in daughters or 13 in daughters or -13 in daughters):
+                    N_leptonicTauDecays += 1
+                
+            # isDirectPromptTauDecayProduct[ip] = particle.isDirectPromptTauDecayProduct
             # if(particle.numberOfDaughters() > 0):
             #     # print 'motherParticle:',particle.mother(0).pdgId()
             #     print 'pdgId:',particle.pdgId()
@@ -306,6 +345,13 @@ if(args.CreateNtuple):
                 exec("%s[0] = %s_val"%(eV,eV))
 
         outTree.Fill() # fill tree once per event 
+
+
+    # figuring out taus 
+    print"N_taus:",N_taus
+    print"N_leptonicTauDecays:",N_leptonicTauDecays
+
+    tauDaughters_h.SaveAs("tauDaughters_h.root")
 
     # Draw all branches in tree, place in output on website 
     if(args.outPlots):
