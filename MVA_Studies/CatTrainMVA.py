@@ -5,7 +5,7 @@
 #
 # ##-- Example Usage:
 #
-# python CatTrainMVA.py --mcFolder DataMC_2017_Short --sigFolder DataMC_2017_Signal --Tags combined
+# python CatTrainMVA.py --mcFolder DataMC_2017_Short --sigFolder DataMC_2017_Signal --Tags combined --outName test
 #
 # ##-- After running:
 # root -l 
@@ -22,6 +22,8 @@ parser.add_argument('--sigFolder', type=str, default="", help="Input folder with
 parser.add_argument('--outName', type=str, default="", help="Output file name", required=False)
 parser.add_argument('--Tags', type=str, default="", help="Comma separated list of tags to run. Ex: HHWWggTag_0,HHWWggTag_1,HHWWggTag_2 or HHWWggTag_2 or HHWWggTag_2,combined", required=False)
 args = parser.parse_args()
+
+ROOT.gROOT.SetBatch(1) # Do not output upon draw statement 
 
 def GetMCTreeName(fileName_):
     MCTreesDict = {
@@ -143,6 +145,9 @@ f_out = ROOT.TFile('%s.root'%(args.outName),'RECREATE')
 ROOT.TMVA.Tools.Instance()
 factory = ROOT.TMVA.Factory("TMVAClassification", f_out,"AnalysisType=Classification")
 
+dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
+
+
 ##-- Training Variables 
 mvaVars = [
 'MET_pt',
@@ -150,7 +155,10 @@ mvaVars = [
 'Subleading_Photon_MVA',
 'Leading_Photon_pt',
 'Subleading_Photon_pt',
-'goodJets_0_pt'
+'allJets_0_pt',
+'allJets_1_pt',
+dr_gg
+# 'goodJets_0_pt'
 ]
 
 dataloader = ROOT.TMVA.DataLoader("dataset")
@@ -186,7 +194,9 @@ dataloader.AddBackgroundTree(bkgChain)
 
 ##-- Signal + Background Selections 
 ##-- Maybe Start with pass photon selections 
-selection = "passPhotonSels == 1"
+# selection = "passPhotonSels == 1"
+# ( N_allElectrons == 1 || N_allMuons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)
+selection = "(N_allElectrons == 1 || N_allMuons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)"
     
 sigCut = ROOT.TCut(selection)
 bkgCut = ROOT.TCut(selection)
@@ -228,6 +238,7 @@ factory.EvaluateAllMethods()
 
 f_out.Close()
 
-# c1 = factory.GetROCCurve(dataloader)
+c1 = factory.GetROCCurve(dataloader)
+c1.SaveAs("/eos/user/a/atishelm/www/HHWWgg/MVA/ROC_%s.png"%(args.outName))
+c1.SaveAs("/eos/user/a/atishelm/www/HHWWgg/MVA/ROC_%s.pdf"%(args.outName))
 # c1.SaveAs('/eos/user/t/twamorka/Jan2020/2016Samples/BDTPairing/CatMVAWeights/ROC_'+str(mass)+'.pdf')
-# c1.SaveAs('/eos/user/t/twamorka/Jan2020/2016Samples/OldDiphoPairing/CatMVAWeights_20Jan2020/ROC_20Jan2020_'+str(mass)+'.pdf')

@@ -75,7 +75,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 DATA_CUT += "*(%s)"%(cut)      
                 SIGNAL_CUT += "*(%s)"%(cut) 
                 for v in finalStateVars: 
-                    print"Plotting variable:",v 
+                    varTitle = GetVarTitle(v)
+                    print"Plotting variable:",varTitle
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     SIGNAL_CUT = SIGNAL_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
@@ -86,16 +87,16 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     legend.SetTextSize(0.025)
                     legend.SetBorderSize(0)
                     legend.SetFillStyle(0)
-                    xbins, xmin, xmax = GetBins(v)
+                    xbins, xmin, xmax = GetBins(varTitle)
                     ##-- Get Data 
                     # print"xbins xmin xmax",xbins, xmin, xmax 
-                    Data_h_tmp = TH1F('Data_h_tmp',v,xbins,xmin,xmax)
-                    Data_h_tmp.SetTitle("%s"%(v))
+                    Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
+                    Data_h_tmp.SetTitle("%s"%(varTitle))
                     Data_h_tmp.SetMarkerStyle(8)
                     exec('ch.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
                     if(verbose_): 
                         print"tag:",HHWWggTag
-                        print"numEvents:",Data_h_tmp.GetEntries()                    
+                        # print"numEvents:",Data_h_tmp.GetEntries()                    
                     DataHist = Data_h_tmp.Clone("DataHist")
                     DataHist.SetDirectory(0)
                     legend.AddEntry(DataHist,"Data","P")
@@ -121,11 +122,11 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         else:
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
                             mc_ch.Add(mcPath)
-                        xbins, xmin, xmax = GetBins(v)
+                        xbins, xmin, xmax = GetBins(varTitle)
                         # print"tag:",HHWWggTag
                         # print"numEvents:",mc_ch.GetEvents()                        
                         # print"xbins xmin xmax",xbins, xmin, xmax 
-                        exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
+                        exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category)
                         # print"mcColor:",mcColor
@@ -182,7 +183,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         else:
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
                             mc_ch.Add(sigPath)
-                        xbins, xmin, xmax = GetBins(v)
+                        xbins, xmin, xmax = GetBins(varTitle)
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category) 
@@ -250,10 +251,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             Signals_AddedtoLegend[sigName]
 
                     outName = "%s/BackgroundsTest_%s.png"%(outputFolder,HHWWggTag)
-                    bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,v,HHWWggTag)
-                    SimpleDrawHisto(bkgStack,"PADS",bkgOutName,v)
+                    bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,HHWWggTag)
+                    SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)
                     bkgOutName = bkgOutName.replace(".png",".pdf")
-                    SimpleDrawHisto(bkgStack,"PADS",bkgOutName,v)  
+                    SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)  
                     ##-- Add text box with selection type 
                     offset = 0
                     # selText = TLatex(0.129+0.03+offset,0.85,cutName)
@@ -271,7 +272,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     stackSum.SetLineColor(kBlack)
                     stackSum.SetLineStyle(7) # to distinguish from data uncertainty 
                     DataHist.SetLineColor(kBlack)
-                    xTitle = GetXaxisTitle(v)
+                    xTitle = GetXaxisTitle(varTitle)
                     DataHist.GetXaxis().SetTitle(xTitle)
                     if(log_): 
                         DataHist.SetMinimum(0.01)
@@ -289,9 +290,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                     for fileType in ["pdf"]:
                         gStyle.SetErrorX(0.0001)
-                        outName = "%s/DataMC_%s_%s.%s"%(outputFolder,v,HHWWggTag,fileType)
-                        if(log_): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,v,HHWWggTag,fileType)
-                        else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,v,HHWWggTag,fileType)                        
+                        # varTitle = GetVarTitle(v)
+                        outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,HHWWggTag,fileType)
+                        if(log_): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,HHWWggTag,fileType)
+                        else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,HHWWggTag,fileType)                        
                         DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
                         rp.Draw("nogrid")
                         rp.GetLowYaxis().SetNdivisions(5)
@@ -358,7 +360,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         outName = outName.replace(".pdf",".png")                    
                         DataMCRatio_c.SaveAs(outName)                     
                     if(not drawPads_):
-                        bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,v,HHWWggTag)
+                        bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,HHWWggTag)
                         os.system('rm %s'%(bkgOutName))
                         bkgOutName = bkgOutName.replace(".png",".pdf")
                         os.system('rm %s'%(bkgOutName))

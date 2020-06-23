@@ -16,11 +16,7 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017 --signalFolder DataMC_2017_Signal --ShortVarsList --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined 
-# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017 --signalFolder DataMC_2017_Signal --ShortVarsList --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --SigScale 1 --ShortCutsList
-# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017 --signalFolder DataMC_2017_Signal --ShortVarsList --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --SigScale 25
-# python NtupleAnalysis.py --DataMC --dataFolder 20May_2017Data_FinalStateVars_Hadded_Combined --mcFolder HHWWgg_fggBackgrounds_v2_1_oneDY_Hadded --ShortVarsList --Lumi 41.5
-# python NtupleAnalysis.py --DataMC --dataFolder 20May_2017Data_FinalStateVars_Hadded_Combined --mcFolder HHWWgg_Backgrounds_Hadded --ShortCutsList --Lumi 41.5 --log
+# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017 --signalFolder DataMC_2017_Signal --VarBatch basic --CutsType Loose --Lumi 41.5 --Tags combined --verbose
 #########################################################################################################################################################################################################
 
 from python.NtupleAnalysisTools import * 
@@ -58,7 +54,7 @@ parser.add_argument('--dataFolder', type=str, default="", help="Input folder wit
 parser.add_argument('--mcFolder', type=str, default="", help="Input folder with hadded MC ntuples", required=False)
 parser.add_argument('--signalFolder', type=str, default="", help="Input folder with hadded Signal ntuples", required=False)
 parser.add_argument('--VarBatch', type=str, default="basic", help="Batch of variables to plot. Options: basic, MVA, loose, all ", required=False)
-parser.add_argument('--CutsType', type=int, default=1, help="Cut types. (1): Standard HHWWgg cutflow. (2): Loose selections. (3): Just preselections", required=False)
+parser.add_argument('--CutsType', type=str, default="Loose", help="Cuts type. Ex: PS, Loose, Medium, all", required=False)
 parser.add_argument("--drawPads", action="store_true", default=False, help="Draw each MC contribution to stack", required=False)
 parser.add_argument('--Lumi', type=float, default=0, help="Luminosity for scaling MC (in fb-1)", required=False)
 parser.add_argument('--SigScale', type=float, default=1, help="Artificial scale for signal", required=False)
