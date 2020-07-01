@@ -9,7 +9,7 @@
 #
 # Resonant Points:
 # HHWWgg_v2-7:
-# python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu_withTausAndbsFullTau.txt --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder HHWWgg_v2-7 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000
+# python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder HHWWgg_v2-7 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000
 # python Make_Fragments.py --template Templates/Resonant_EFT/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder TestResonant --masses 260,750
 #
 # EFT benchmarks:

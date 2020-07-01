@@ -100,15 +100,21 @@ submit_crab_postGEN(){
     # This naming convention assumes IDName of the form:
     # <ProductionProcess>_<ResonantParticle>_<ResonantDecay>_<Channel>_<numEvents>_<pileupOption>_<Step>
     # ex: ggF_X1250_WWgg_enuenugg_10000events_woPU_DR1
-    primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name 
-    snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
 
-    fullSndDset="${Campaign}_${snddset}" # add campaign name 
+    primdset=`echo $IDName | cut -d _ -f 3-6` # Primary dataset name # assumes campaign of form <a>_<b>
+    snddset=`echo $IDName | cut -d _ -f 7-` # Secondary dataset name 
+
+    # primdset=`echo $IDName | cut -d _ -f -4` # Primary dataset name # assumes campaign of form <a>_<b>
+    # snddset=`echo $IDName | cut -d _ -f 5-` # Secondary dataset name 
+
+    fullSndDset="${Campaign}_${snddset}" # add campaign name to secondary dataset name 
+    # fullSndDset="${snddset}" # add campaign name 
 
     echo "primary dataset name = $primdset"
     echo "secondary dataset name = $fullSndDset"
 
-    fullIDName="${Campaign}_${IDName}"
+    fullIDName="${IDName}"
+    # fullIDName="${Campaign}_${IDName}"
 
     echo "fullIDName: $fullIDName"
 
