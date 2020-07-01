@@ -8,6 +8,8 @@
 #
 # ##-- Resonant Points:
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000 --diHiggsDecay WWgg --fragOutDir HHWWgg_v2-7 --Campaign HHWWgg_v2-7 --dryRun 
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
+
 # python Make_MC_Configs.py --step GEN --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750 --diHiggsDecay HHWWgg --fragOutDir HHWWgg
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes --Campaign HHWWgg_v2-6
@@ -81,7 +83,7 @@ if(not path.exists("CMSSW_9_3_9_patch1")):
 		print'Creating now ...'
 		os.system('cd CMSSW_9_3_9_patch1/src') 
 		os.system('mkdir -p Configuration/GenProduction/python') 
-		os.system('cd ../..') 
+		os.system('cd ../..') # fix cd 
 
 else:
 	print'All proper CMSSW paths exist. Continuting...'
@@ -112,9 +114,9 @@ if(postGEN):
 					else:
 						for sndDirec in os.listdir("%s%s/"%(prevOutDir,dir)):
 							if(prevStep == "GEN-SIM"):
-								if(sndDirec != "%sevents_%s"%(nEvents,prevStep)): continue 
+								if(sndDirec != "%s_%sevents_%s"%(Campaign,nEvents,prevStep)): continue 
 							else:
-								if(sndDirec != "%sevents_%s_%s"%(nEvents,PU,prevStep)): continue
+								if(sndDirec != "%s_%sevents_%s_%s"%(Campaign,nEvents,PU,prevStep)): continue
 							
 							newestDir = sorted(os.listdir("%s/%s/%s"%(prevOutDir,dir,sndDirec)))[-1]
 							print(newestDir)
@@ -137,9 +139,9 @@ if(postGEN):
 					else:
 						for sndDirec in os.listdir("%s%s/"%(prevOutDir,dir)):
 							if(prevStep == "GEN-SIM"):
-								if(sndDirec != "%sevents_%s"%(nEvents,prevStep)): continue 
+								if(sndDirec != "%s_%sevents_%s"%(Campaign,nEvents,prevStep)): continue 
 							else:
-								if(sndDirec != "%sevents_%s_%s"%(nEvents,PU,prevStep)): continue							
+								if(sndDirec != "%s_%sevents_%s_%s"%(Campaign,nEvents,PU,prevStep)): continue							
 							newestDir = sorted(os.listdir("%s/%s/%s"%(prevOutDir,dir,sndDirec)))[-1]
 							print(newestDir)
 							print("Found full previous step directory:")
@@ -162,9 +164,9 @@ if(postGEN):
 					else:
 						for sndDirec in os.listdir("%s%s/"%(prevOutDir,dir)):
 							if(prevStep == "GEN-SIM"):
-								if(sndDirec != "%sevents_%s"%(nEvents,prevStep)): continue 
+								if(sndDirec != "%s_%sevents_%s"%(Campaign,nEvents,prevStep)): continue 
 							else:
-								if(sndDirec != "%sevents_%s_%s"%(nEvents,PU,prevStep)): continue							
+								if(sndDirec != "%s_%sevents_%s_%s"%(Campaign,nEvents,PU,prevStep)): continue							
 							newestDir = sorted(os.listdir("%s/%s/%s"%(prevOutDir,dir,sndDirec)))[-1]
 							print(newestDir)
 							print("Found full previous step directory:")

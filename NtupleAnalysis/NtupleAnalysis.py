@@ -68,7 +68,8 @@ args = parser.parse_args()
 if __name__ == '__main__':
     gROOT.SetBatch(1) # Do not output upon draw statement 
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
-    elif(args.DataMC): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v4/'    
+    elif(args.DataMC): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v5/'    
+    # elif(args.DataMC): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v4/'    
     prefix = '/eos/user/a/atishelm/ntuples/HHWWgg/'
 
     if(args.Efficiency):

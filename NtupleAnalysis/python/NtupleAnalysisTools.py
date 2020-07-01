@@ -46,7 +46,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
     print"cutNames:",cutNames
     if(verbose_): print"vars:",finalStateVars         
     for dF_ in dataFiles_:
-        for HHWWggTag in HHWWggTags:
+        cutBatchTag_pairs = [] 
+        dataNevents_list = []
+        # MC_names_lists = [] 
+        MC_names = [] 
+        MC_Nevents_lists = []
+        for itag,HHWWggTag in enumerate(HHWWggTags):          
             dPath = "%s/%s"%(dataDirec_,dF_)
             dFile = TFile.Open(dPath)
             if(HHWWggTag=="combined"):
@@ -64,9 +69,14 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             DATA_CUT = "%s*(%s)"%(BLIND_CUT,ZERO_CUT)       
             SIGNAL_CUT = "%s*(%s)"%(MC_WEIGHT,ZERO_CUT) # no blind cut on signal 
 
-            for ic,cut in enumerate(cuts):
-                print"Plotting with selection:",cut 
+            for ic,cut in enumerate(cuts):                
+                print"Plotting with selection:",cut                  
                 cutName = cutNames[ic]
+                cutBatchTag = "%s_%s"%(cutName,HHWWggTag)
+                cutBatchTag_pairs.append(cutBatchTag)
+                dataNevents = -999
+                these_MC_Nevents = []
+                # these_MC_names = []                  
                 outputFolder = "%s/%s"%(ol_,cutName)
                 if(not os.path.exists(outputFolder)):
                     os.system('mkdir %s'%(outputFolder))
@@ -74,7 +84,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 MC_CUT += "*(%s)"%(cut)
                 DATA_CUT += "*(%s)"%(cut)      
                 SIGNAL_CUT += "*(%s)"%(cut) 
-                for v in finalStateVars: 
+                for iv,v in enumerate(finalStateVars): 
                     varTitle = GetVarTitle(v)
                     print"Plotting variable:",varTitle
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
@@ -94,6 +104,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     Data_h_tmp.SetTitle("%s"%(varTitle))
                     Data_h_tmp.SetMarkerStyle(8)
                     exec('ch.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
+                    # only save events for first variable. Should be same for all 
+                    if(iv == 0): 
+                        dataNevents = Data_h_tmp.GetEntries()
+                        dataNevents_list.append(dataNevents)
                     if(verbose_): 
                         print"tag:",HHWWggTag
                         # print"numEvents:",Data_h_tmp.GetEntries()                    
@@ -124,7 +138,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             mc_ch.Add(mcPath)
                         xbins, xmin, xmax = GetBins(varTitle)
                         # print"tag:",HHWWggTag
-                        # print"numEvents:",mc_ch.GetEvents()                        
+                        # print"numEvents:",mc_ch.GetEvents()                      
                         # print"xbins xmin xmax",xbins, xmin, xmax 
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
@@ -142,7 +156,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
                         if(MC_Category == "GJet" or MC_Category == "QCD"): exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
-                        else: exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))
+                        else: exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
                         eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
                         ##-- Check if MC should be reweighted
                         reWeightVals = ReWeightMC(mcF_)
@@ -153,7 +167,15 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                                 print"ReWeighting MC"
                                 print"With scale: ",reWeightScale
                             eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
-                        
+                        if(iv == 0): # only save for 1st variable. Should be same for all variables
+                            # MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
+                            # MC_names.append(mcF_)    
+                            these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
+                            # only need to get MC names once 
+                            if(itag == 0 and ic == 0 and iv == 0): 
+                                MCname = GetMCName(mcF_)
+                                MC_names.append(MCname) # get shorter MC name here
+                                                          
                         newHist = thisHist.Clone("newHist")
                         # set title based on treeName 
                         newHist.SetTitle(MC_Category)
@@ -366,3 +388,16 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         os.system('rm %s'%(bkgOutName))
                     MC_CUT = MC_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
                     DATA_CUT = DATA_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
+
+                # MC_names_lists.append(these_MC_names) 
+                MC_Nevents_lists.append(these_MC_Nevents)      
+
+        # Produce table with number of events for each MC, total MC, and data 
+        # cutBatchTag_pairs  
+        # dataNevents_list 
+        # MC_names_lists  
+        # MC_Nevents_lists 
+        CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,ol_)
+
+        # CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_)
+        # CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names)

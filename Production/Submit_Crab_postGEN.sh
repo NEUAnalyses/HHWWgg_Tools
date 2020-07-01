@@ -112,7 +112,8 @@ submit_crab_postGEN(){
 
     echo "fullIDName: $fullIDName"
 
-    ccname="${Campaign}_${IDName}"
+    ccname="${IDName}"
+    # ccname="${Campaign}_${IDName}"
     # ccname=$IDName
     # ccname+=
     ccname+="_CrabConfig.py" # Crab Configuration file name 
@@ -179,7 +180,9 @@ submit_crab_postGEN(){
     echo " " >> TmpCrabConfig.py
     echo "config.JobType.pluginName = 'Analysis'" >> TmpCrabConfig.py
     #echo "arg = $1"
-    echo "config.JobType.psetName = '$localWorkingArea${Campaign}_$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    # echo "config.JobType.psetName = '$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
+    
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on cmssw config memory location  
     #s_str='SEED=$CRAB_Id'
     #echo "config.JobType.pyCfgParams = [$s_str]" >> TmpCrabConfig.py
