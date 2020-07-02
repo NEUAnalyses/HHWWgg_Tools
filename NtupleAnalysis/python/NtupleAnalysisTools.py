@@ -51,6 +51,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         # MC_names_lists = [] 
         MC_names = [] 
         MC_Nevents_lists = []
+        MC_Nevents_noweight_lists = []
         for itag,HHWWggTag in enumerate(HHWWggTags):          
             dPath = "%s/%s"%(dataDirec_,dF_)
             dFile = TFile.Open(dPath)
@@ -76,6 +77,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 cutBatchTag_pairs.append(cutBatchTag)
                 dataNevents = -999
                 these_MC_Nevents = []
+                these_MC_Nevents_noweights = [] 
                 # these_MC_names = []                  
                 outputFolder = "%s/%s"%(ol_,cutName)
                 if(not os.path.exists(outputFolder)):
@@ -90,6 +92,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     SIGNAL_CUT = SIGNAL_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
+                    MC_CUT_NOWEIGHT = MC_WEIGHT.replace(MC_WEIGHT,"(1)")                    
+                    
                     if(verbose_): 
                         print"MC_CUT:",MC_CUT         
                         print"DATA_CUT:",DATA_CUT                   
@@ -141,6 +145,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         # print"numEvents:",mc_ch.GetEvents()                      
                         # print"xbins xmin xmax",xbins, xmin, xmax 
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
+                        exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category)
                         # print"mcColor:",mcColor
@@ -151,12 +156,19 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" # selection: not true that both photons are prompt
                             original_MC_CUT = "%s"%(MC_CUT)
                             this_MC_CUT = "%s*(%s)"%(original_MC_CUT,removePromptPromptCut)
+                            this_MC_CUT_NOWEIGHT = this_MC_CUT.replace(MC_WEIGHT,"(1)")
+
                             # print"this_MC_CUT:",this_MC_CUT                     
 
                         eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
-                        if(MC_Category == "GJet" or MC_Category == "QCD"): exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
-                        else: exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
+                        if(MC_Category == "GJet" or MC_Category == "QCD"): 
+                            exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
+                            exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
+                        else: 
+                            exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
+                            exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
+
                         eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
                         ##-- Check if MC should be reweighted
                         reWeightVals = ReWeightMC(mcF_)
@@ -169,7 +181,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
                         if(iv == 0): # only save for 1st variable. Should be same for all variables
                             # MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-                            # MC_names.append(mcF_)    
+                            # MC_names.append(mcF_)  
+                            these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
                             these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
                             # only need to get MC names once 
                             if(itag == 0 and ic == 0 and iv == 0): 
@@ -390,14 +403,16 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     DATA_CUT = DATA_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
 
                 # MC_names_lists.append(these_MC_names) 
-                MC_Nevents_lists.append(these_MC_Nevents)      
+                MC_Nevents_lists.append(these_MC_Nevents)
+                MC_Nevents_noweight_lists.append(these_MC_Nevents_noweights)  
+                 
 
         # Produce table with number of events for each MC, total MC, and data 
         # cutBatchTag_pairs  
         # dataNevents_list 
         # MC_names_lists  
         # MC_Nevents_lists 
-        CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,ol_)
+        CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
 
         # CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_)
         # CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names)

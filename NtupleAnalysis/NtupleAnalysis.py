@@ -16,7 +16,7 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017 --signalFolder DataMC_2017_Signal --VarBatch basic --CutsType Loose --Lumi 41.5 --Tags combined --verbose
+# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017_noHHWWggbkgs --signalFolder DataMC_2017_Signal --VarBatch basic --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose
 #########################################################################################################################################################################################################
 
 from python.NtupleAnalysisTools import * 
