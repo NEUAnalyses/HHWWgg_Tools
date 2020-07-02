@@ -92,7 +92,9 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     SIGNAL_CUT = SIGNAL_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
-                    MC_CUT_NOWEIGHT = MC_WEIGHT.replace(MC_WEIGHT,"(1)")                    
+                    MC_CUT_NOWEIGHT = MC_WEIGHT.replace(MC_WEIGHT,"(1)")      
+
+                    if(varTitle == "weight"): MC_CUT = MC_CUT.replace(MC_WEIGHT,"(1)") # if you want to plot the "weight" variable, you should not scale it by weight!             
                     
                     if(verbose_): 
                         print"MC_CUT:",MC_CUT         
@@ -152,8 +154,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                         if(MC_Category == "GJet" or MC_Category == "QCD"):
                             # print"Remove prompt-prompt"
-                            removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: not true that both photons are prompt
-                            removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" # selection: not true that both photons are prompt
+                            removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: remove events where both photons are prompt
+                            # removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" # selection: 
                             original_MC_CUT = "%s"%(MC_CUT)
                             this_MC_CUT = "%s*(%s)"%(original_MC_CUT,removePromptPromptCut)
                             this_MC_CUT_NOWEIGHT = this_MC_CUT.replace(MC_WEIGHT,"(1)")
@@ -164,10 +166,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
                         if(MC_Category == "GJet" or MC_Category == "QCD"): 
                             exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
-                            exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
                         else: 
                             exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
-                            exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
 
                         eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
                         ##-- Check if MC should be reweighted
@@ -180,6 +180,11 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                                 print"With scale: ",reWeightScale
                             eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
                         if(iv == 0): # only save for 1st variable. Should be same for all variables
+                            if(MC_Category == "GJet" or MC_Category == "QCD" ):
+                                exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
+                            else: 
+                                exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
+
                             # MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
                             # MC_names.append(mcF_)  
                             these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
