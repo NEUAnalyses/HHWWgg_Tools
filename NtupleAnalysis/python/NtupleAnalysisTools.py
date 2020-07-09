@@ -29,7 +29,7 @@ def CalcEff(h_,cut_):
     pctPass_ = float(numPass) / float(N)
     return pctPass_ 
 
-def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_):
+def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_,noQCD_):
     print"Plotting Data / MC"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)    
@@ -123,6 +123,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                     ##-- Get MC Backgrounds 
                     bkgStack = THStack("bkgStack","bkgStack")
+                    # bkgStack.Sumw2()
                     histos = []
                     histCategories = [] 
                     for i,mcF_ in enumerate(mcFiles_):
@@ -132,6 +133,9 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         treeName = GetMCTreeName(mcF_)
                         MC_Category = GetMCCategory(mcF_)
                         if(verbose_): print"Background:",MC_Category
+                        if(MC_Category == "QCD") and (noQCD_): 
+                            print"Skipping QCD"
+                            continue 
                         ##-- If HHWWgg_bkg, need to multiply by another weight 
                         ##-- MC_WEIGHT = "%s*%s"%(MC_WEIGHT,HHWWgg_MC_Weight)
                         if(HHWWggTag=="combined"):
@@ -155,12 +159,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         if(MC_Category == "GJet" or MC_Category == "QCD"):
                             # print"Remove prompt-prompt"
                             removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: remove events where both photons are prompt
-                            # removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" # selection: 
+                            # removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" 
                             original_MC_CUT = "%s"%(MC_CUT)
                             this_MC_CUT = "%s*(%s)"%(original_MC_CUT,removePromptPromptCut)
                             this_MC_CUT_NOWEIGHT = this_MC_CUT.replace(MC_WEIGHT,"(1)")
-
-                            # print"this_MC_CUT:",this_MC_CUT                     
 
                         eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
@@ -174,11 +176,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         reWeightVals = ReWeightMC(mcF_)
                         doReWeight, reWeightScale = reWeightVals[0], reWeightVals[1]
                         # print"doReWeight,reWeightScale:",doReWeight, reWeightScale
-                        if(doReWeight):
-                            if(verbose_):
-                                print"ReWeighting MC"
-                                print"With scale: ",reWeightScale
-                            eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
+
+                        # if(doReWeight): ## turning off MC reweighting for HHWWgg backgrounds 
+                        #     if(verbose_):
+                        #         print"ReWeighting MC"
+                        #         print"With scale: ",reWeightScale
+                        #     eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
+
                         if(iv == 0): # only save for 1st variable. Should be same for all variables
                             if(MC_Category == "GJet" or MC_Category == "QCD" ):
                                 exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
@@ -194,6 +198,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                                 MCname = GetMCName(mcF_)
                                 MC_names.append(MCname) # get shorter MC name here
                                                           
+
                         newHist = thisHist.Clone("newHist")
                         # set title based on treeName 
                         newHist.SetTitle(MC_Category)
@@ -232,7 +237,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         eval("MC_h_tmp_%s.SetFillColorAlpha(eval(mcColor),0.1)"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
                         exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
-                        # eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
+                        eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i)) # should scale to luminosity by default 
+                        SigXS_Scale = GetXScale("HHWWgg_v2-6") # how to scale the XS which is by default in flashgg 1fb
+                        print("SigXS_Scale: ",SigXS_Scale)
+                        eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default 
                         # eval("MC_h_tmp_%s.Scale(float(SigScale_))"%(i))
                         newHist = thisHist.Clone("newHist")
 
@@ -282,13 +290,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             legend.AddEntry(h,bkgName,"F")
                             MC_AddedtoLegend[bkgName] = 1
 
-                    for sig_h in sig_orderedHistos:
-                        sigName = sig_h.GetTitle()
-                        added = Signals_AddedtoLegend[sigName]
-                        if(added): continue 
-                        else:
-                            legend.AddEntry(sig_h,sigName,"FL")
-                            Signals_AddedtoLegend[sigName]
+                    # for sig_h in sig_orderedHistos:
+                    #     sigName = sig_h.GetTitle()
+                    #     added = Signals_AddedtoLegend[sigName]
+                    #     if(added): continue 
+                    #     else:
+                    #         legend.AddEntry(sig_h,sigName,"FL")
+                    #         Signals_AddedtoLegend[sigName]
 
                     outName = "%s/BackgroundsTest_%s.png"%(outputFolder,HHWWggTag)
                     bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,HHWWggTag)
@@ -309,9 +317,11 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     # selText.SetNDC(1)
                     # selText.SetTextSize(0.045)   
                     stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio 
+                    stackSum.Sumw2() 
                     stackSum.SetLineColor(kBlack)
                     stackSum.SetLineStyle(7) # to distinguish from data uncertainty 
                     DataHist.SetLineColor(kBlack)
+                    DataHist.Sumw2()
                     xTitle = GetXaxisTitle(varTitle)
                     DataHist.GetXaxis().SetTitle(xTitle)
                     if(log_): 
@@ -371,8 +381,27 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         for sig_hist in sig_histos:
                             sigMax = sig_hist.GetMaximum()
                             if sigMax == 0: sigMax = 1 
-                            sigScale = float(maxHeight) / float(sigMax)
-                            sig_hist.Scale(sigScale)
+
+                            ##-- No user input signal scale 
+                            print("user sig scale:",SigScale_)
+                            if(SigScale_ == -999): 
+                                sigScale = (float(maxHeight)/10.) / float(sigMax) # in order to scale signal to 10th of max of plot 
+                                sig_hist.Scale(sigScale)  
+
+                            ##-- User input signal scale 
+                            else:
+                                sigScale = SigScale_
+                                sig_hist.Scale(sigScale) 
+                                                        
+                            for sig_h in sig_orderedHistos:
+                                # sigName = "%s X %d"%(sig_h.GetTitle(),sigScale)
+                                sigName = sig_h.GetTitle()
+                                added = Signals_AddedtoLegend[sigName]
+                                if(added): continue 
+                                else:
+                                    # print"label","%s * %d"%(sig_h.GetTitle(),sigScale)
+                                    legend.AddEntry(sig_h,"%s * %.5g"%(sig_h.GetTitle(),sigScale),"FL")
+                                    Signals_AddedtoLegend[sigName]                            
                             sig_hist.Draw("samehist")
                         legend.Draw("same")
                         selText.Draw("same")
@@ -413,11 +442,4 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                  
 
         # Produce table with number of events for each MC, total MC, and data 
-        # cutBatchTag_pairs  
-        # dataNevents_list 
-        # MC_names_lists  
-        # MC_Nevents_lists 
         CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
-
-        # CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_)
-        # CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names)

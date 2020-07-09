@@ -16,6 +16,8 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --dataFolder Data/hadded/ --mcFolder All_Bkg --signalFolder Signal --VarBatch basic --CutsType final-noPhoMVA --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --verbose --noQCD --log
+# python NtupleAnalysis.py --DataMC --dataFolder Data/hadded/ --mcFolder All_Bkg --signalFolder Signal --VarBatch basic --CutsType final-noPhoSels --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --verbose
 # python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017_noHHWWggbkgs --signalFolder DataMC_2017_Signal --VarBatch basic --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose
 #########################################################################################################################################################################################################
 
@@ -57,20 +59,24 @@ parser.add_argument('--VarBatch', type=str, default="basic", help="Batch of vari
 parser.add_argument('--CutsType', type=str, default="Loose", help="Cuts type. Ex: PS, Loose, Medium, all", required=False)
 parser.add_argument("--drawPads", action="store_true", default=False, help="Draw each MC contribution to stack", required=False)
 parser.add_argument('--Lumi', type=float, default=0, help="Luminosity for scaling MC (in fb-1)", required=False)
-parser.add_argument('--SigScale', type=float, default=1, help="Artificial scale for signal", required=False)
+parser.add_argument('--SigScale', type=float, default=-999, help="Artificial scale for signal", required=False)
 parser.add_argument('--Tags', type=str, default="", help="Comma separated list of tags to run. Ex: HHWWggTag_0,HHWWggTag_1,HHWWggTag_2 or HHWWggTag_2 or HHWWggTag_2,combined", required=False)
+parser.add_argument("--noQCD", action="store_true", default=False, help="Turn on to skip QCD", required=False)
 
 ##-- Misc
 parser.add_argument('--verbose', action="store_true", default=False, help="Verbosity. Set true for extra output information", required=False)
+parser.add_argument('--testFeatures', action="store_true", default=False, help="Change output to testing area", required=False)
 
 args = parser.parse_args()
 
 if __name__ == '__main__':
     gROOT.SetBatch(1) # Do not output upon draw statement 
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
-    elif(args.DataMC): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v5/'    
-    # elif(args.DataMC): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v4/'    
-    prefix = '/eos/user/a/atishelm/ntuples/HHWWgg/'
+    elif(args.DataMC): 
+        if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
+        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v6/'    
+        # else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v5/'    
+    prefix = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/'
 
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
@@ -422,11 +428,13 @@ if __name__ == '__main__':
         for file in os.listdir(mcDirec):
             mcFiles.append(file)
         # print"mcFiles:",mcFiles 
+
         signalFolder = str(args.signalFolder)
         signalDirec = prefix + signalFolder 
         signalFiles = [] 
         for file in os.listdir(signalDirec):
             signalFiles.append(file)
+
         # print"signalFiles:",signalFiles
         Tags = args.Tags.split(',')
-        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose)
+        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD)

@@ -9,7 +9,8 @@
 # ##-- Resonant Points:
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000 --diHiggsDecay WWgg --fragOutDir HHWWgg_v2-7 --Campaign HHWWgg_v2-7 --dryRun 
 # python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
-
+#
+#  python Make_MC_Configs.py --step MINIAOD --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250,260,270,280,320,400 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
 # python Make_MC_Configs.py --step GEN --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750 --diHiggsDecay HHWWgg --fragOutDir HHWWgg
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes --Campaign HHWWgg_v2-6

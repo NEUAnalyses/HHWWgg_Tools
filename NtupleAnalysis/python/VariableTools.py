@@ -18,8 +18,11 @@ def GetVars(VarBatch):
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
     if(VarBatch == "basic"):
         return ["CMS_hgg_mass"]
+        # return ["CMS_hgg_mass","weight"]
         # return ["CMS_hgg_mass",mjj]
         # return [mjj]
+    # elif(VarBatch == "Some"):
+        # return ["CMS_hgg_mass","MET_pt"]
     elif(VarBatch == "special"):
         return [dr_jj]
         # return [dr_gg,dr_jj]
@@ -36,6 +39,17 @@ def GetVars(VarBatch):
             "MET_pt"
             ] 
         return L2vars
+    elif(VarBatch == "MVA2"):
+        L2vars =  [
+            "Leading_Photon_eta", "Leading_Photon_phi",
+            "Subleading_Photon_eta", "Subleading_Photon_phi",
+            "goodElectrons_0_eta", "goodElectrons_0_phi", "goodElectrons_0_E",
+            "goodMuons_0_eta", "goodMuons_0_phi", "goodMuons_0_E",
+            "goodJets_0_eta", "goodJets_0_phi", "goodJets_0_E",
+            "goodJets_1_eta", "goodJets_1_phi", "goodJets_1_E",
+            "MET_phi"
+            ] 
+        return L2vars        
     elif(VarBatch == "Loose"):
         L3vars = [
             "CMS_hgg_mass",
@@ -135,7 +149,7 @@ def GetBins(variable_):
         # "CMS_hgg_mass": [80,100,180],
         # "CMS_hgg_mass": [24,100,180],
         "CMS_hgg_mass": [30,100,180],
-        "weight":[1000,-2,2],
+        "weight":[1000,-10,10],
         "puweight":[1000,-2,2],
         # "mjj" : [100,0,100]
         "mjj" : [100,0,300],
@@ -151,7 +165,8 @@ def GetBins(variable_):
         return [10,0,10]
     else:
         if ("eta" in variable_) or ("phi" in variable_):
-            return [80,-4,4]
+            return [16,-4,4]
+            # return [80,-4,4]
         elif ("pt" in variable_):
             return [20,0,200]   
         else:

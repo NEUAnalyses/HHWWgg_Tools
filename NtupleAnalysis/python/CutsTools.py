@@ -55,9 +55,24 @@ def GetCuts(CutsType):
     elif(CutsType == "all"):
         cuts = ["1", "passPhotonSels == 1", "passbVeto == 1", "ExOneLep == 1", "goodJets == 1"] # preselections, photon sels, bVeto, exactly 1 lepton, at least 2 good jets
         cutNames = ["PreSelections","PhotonSelections","bVeto","OneLep","TwoGoodJets"]
+    elif(CutsType == "finalwJetID"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(allJets_0_passTight2017==1)*(allJets_1_passTight2017==1)"]
+        cutNames = ["finalwJetID"]    
     elif(CutsType == "final"):
-        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)"]
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
         cutNames = ["final"]
+    elif(CutsType == "final-noPhoSels"):
+        cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1)"]
+        cutNames = ["final-noPhoSels"]  
+    elif(CutsType == "final-noPhoMVA"):
+        cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cutNames = ["final-noPhoMVA"]          
+    elif(CutsType == "bVeto-OneLep"):
+        cuts = ["(passbVeto==1)*(ExOneLep==1)"]
+        cutNames = ["bVeto-OneLep"]          
+    # elif(CutsType == "final-noPhoSels-withJetID"):
+        # cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1*())"]
+        # cutNames = ["final-noPhoSels-withJetID"]                
     return [cuts,cutNames]
 
 ##-- Create table with number of events all backgrounds plus (Blinded) Data for each set cutSet,tag pair 
@@ -73,6 +88,7 @@ def CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lis
     for MC_name in MC_names: yaxisLabels.append(MC_name)
     xaxisLabels = []
     for cutTagPair in cutBatchTag_pairs: xaxisLabels.append(cutTagPair)
+    firstCutBatch = xaxisLabels[0].split('_')[0]
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
     N_allMC_list = []
@@ -160,8 +176,8 @@ def CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lis
         # outNamepdf = "%s/%s_grid.pdf"%(ol_,ml)
         # outNamepng = "%s/EventsTable_%s.png"%(ol_,selections)
         # outNamepdf = "%s/EventsTable_%s.pdf"%(ol_,selections)    
-        outNamepng = "%s/EventsTable_%s.png"%(ol_,outLabel)
-        outNamepdf = "%s/EventsTable_%s.pdf"%(ol_,outLabel)       
+        outNamepng = "%s/%s_EventsTable_%s.png"%(ol_,firstCutBatch,outLabel)
+        outNamepdf = "%s/%s_EventsTable_%s.pdf"%(ol_,firstCutBatch,outLabel)       
         c_tmp = TCanvas('c_tmp','c_tmp',800,600)
         c_tmp.SetRightMargin(0.15)
         c_tmp.SetLeftMargin(0.23)
