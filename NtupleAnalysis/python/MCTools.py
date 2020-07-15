@@ -2,9 +2,11 @@
 # Abraham Tishelman-Charny
 # 15 June 2020
 #
-# The purpose of this module is to provide variables and definitions for NtupleAnalysisTools.py 
+# The purpose of this module is to provide MC related variables and definitions to NtupleAnalysisTools.py 
 #
 ###########################################################################################################################
+
+##-- Note: This module can be shrunk by mapping file name to treename, MCName, and MCCategory. Don't need dictionary for each one 
 
 def GetMCTreeName(fileName_):
     MCTreesDict = {

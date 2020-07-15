@@ -20,7 +20,7 @@ def GetVars(VarBatch):
     ##-- Variable batch definitions
 
     # Just diphoton mass 
-    if(VarBatch == "basic"):
+    if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
 
     # Just dR between two leading jets 

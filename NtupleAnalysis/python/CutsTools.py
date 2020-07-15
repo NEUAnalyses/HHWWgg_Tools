@@ -41,7 +41,7 @@ def GetCuts(CutsType):
                 jetCuts += "+"
 
         cuts = ["( (((%s) + (%s)) == 1) && ((%s) >= 2) && (%s))"%(electronCuts,muonCuts,jetCuts,photonCuts)] # exactly one lepton passing looser selections, at least two jets passing looser selections  
-        print"LOOSE cuts:",cuts
+        #print"LOOSE cuts:",cuts
         cutNames = ["Loose"]    
         
     ##-- Apply each analysis selection separately 
@@ -68,7 +68,7 @@ def GetCuts(CutsType):
     elif(CutsType == "bVeto-OneLep"):
         cuts = ["(passbVeto==1)*(ExOneLep==1)"]
         cutNames = ["bVeto-OneLep"]      
-            
+
     return [cuts,cutNames]
 
 ##-- Create table with number of events all backgrounds plus (Blinded) Data for each set cutSet,tag pair 

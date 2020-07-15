@@ -29,24 +29,30 @@ def CalcEff(h_,cut_):
     pctPass_ = float(numPass) / float(N)
     return pctPass_ 
 
+##-- Main Data / MC module 
 def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_,noQCD_):
     print"Plotting Data / MC"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)    
     gStyle.SetErrorX(0.0001)
     HHWWggTags = []
+
+    ##-- Get Tags 
     for t in Tags_:
         HHWWggTags.append(t)
     cuts, cutNames = GetCuts(CutsType_)
+
     ##-- if var batch is loose, need separate titles for variables since it will be sum of vars * bools 
     if(VarBatch_ == "Loose"):
         finalStateVars, varNames = GetVars(VarBatch_) # get vars from var batch 
-        print"finalStateVars = ",finalStateVars 
-        print"varNames = ",varNames
+        if(verbose_):
+            print"finalStateVars = ",finalStateVars 
+            print"varNames = ",varNames
     else: finalStateVars = GetVars(VarBatch_) # get vars from var batch 
-    print"cuts:",cuts
-    print"cutNames:",cutNames
-    if(verbose_): print"vars:",finalStateVars   
+    if(verbose_): 
+        #print"cuts:",cuts
+        print"cutNames:",cutNames        
+        print"vars:",finalStateVars   
 
     ##-- For each data file (can just be one)
     for dF_ in dataFiles_:
@@ -79,7 +85,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
             ##-- For each cut 
             for ic,cut in enumerate(cuts):                
-                print"Plotting with selection:",cut                  
+                #if(verbose_): print"Plotting with selection:",cut                  
                 cutName = cutNames[ic]
                 cutBatchTag = "%s_%s"%(cutName,HHWWggTag)
                 cutBatchTag_pairs.append(cutBatchTag)
@@ -108,9 +114,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                     if(varTitle == "weight"): MC_CUT = MC_CUT.replace(MC_WEIGHT,"(1)") # if you want to plot the "weight" variable, you should not scale it by weight!             
                     
-                    if(verbose_): 
-                        print"MC_CUT:",MC_CUT         
-                        print"DATA_CUT:",DATA_CUT                   
+                    ##-- Can add printing of cuts to debug 
+                    # if(verbose_): 
+                        # print"MC_CUT:",MC_CUT         
+                        # print"DATA_CUT:",DATA_CUT
+                    ##-- 
+
                     legend = TLegend(0.55,0.65,0.89,0.89)
                     legend.SetTextSize(0.025)
                     legend.SetBorderSize(0)
@@ -165,8 +174,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
                             mc_ch.Add(mcPath)
                         xbins, xmin, xmax = GetBins(varTitle)
-                        if(verbose_): 
-                            print"tag:",HHWWggTag
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
@@ -253,7 +260,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
                         eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i)) # should scale to luminosity by default 
                         SigXS_Scale = GetXScale("HHWWgg_v2-6") # how to scale the XS which is by default in flashgg 1fb
-                        print("SigXS_Scale: ",SigXS_Scale)
+                        if(verbose_): print"SigXS_Scale: ",SigXS_Scale
                         eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default 
                         newHist = thisHist.Clone("newHist")
 
@@ -378,13 +385,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             if sigMax == 0: sigMax = 1 
 
                             ##-- No user input signal scale 
-                            print("user sig scale:",SigScale_)
                             if(SigScale_ == -999): 
                                 sigScale = (float(maxHeight)/10.) / float(sigMax) # in order to scale signal to 10th of max of plot 
                                 sig_hist.Scale(sigScale)  
 
                             ##-- User input signal scale 
                             else:
+                                if(verbose_): print"user sig scale:",SigScale_
                                 sigScale = SigScale_
                                 sig_hist.Scale(sigScale) 
                                                         
