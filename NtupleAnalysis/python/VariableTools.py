@@ -3,31 +3,31 @@
 # 15 June 2020
 #
 # The purpose of this module is to define variable related objects
-#
 ###########################################################################################################################
 
 import numpy as np 
 
+##-- Get variables to plot based on user input variable batch name 
 def GetVars(VarBatch):
-    finalStateVars_ = [] 
-    # mjj = "sqrt(2*allJets_0_pt*allJets_1_pt*(cosh(allJets_0_eta-allJets_1_eta)-cos(allJets_0_phi-allJets_1_phi)))"
+
+    ##-- Definitions of some special variables, created from existing branch values 
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
+
+    ##-- Variable batch definitions
+
+    # Just diphoton mass 
     if(VarBatch == "basic"):
         return ["CMS_hgg_mass"]
-        # return ["CMS_hgg_mass","weight"]
-        # return ["CMS_hgg_mass",mjj]
-        # return [mjj]
-    # elif(VarBatch == "Some"):
-        # return ["CMS_hgg_mass","MET_pt"]
+
+    # Just dR between two leading jets 
     elif(VarBatch == "special"):
         return [dr_jj]
-        # return [dr_gg,dr_jj]
-        # return [e_mT,mu_mT]
-        # return [mjj]
+
+    # Some potentially useful MVA variables  
     elif(VarBatch == "MVA"):
         L2vars =  [
             "CMS_hgg_mass","Leading_Photon_pt","Subleading_Photon_pt",
@@ -39,6 +39,8 @@ def GetVars(VarBatch):
             "MET_pt"
             ] 
         return L2vars
+
+    # More possible MVA variables 
     elif(VarBatch == "MVA2"):
         L2vars =  [
             "Leading_Photon_eta", "Leading_Photon_phi",
@@ -49,31 +51,46 @@ def GetVars(VarBatch):
             "goodJets_1_eta", "goodJets_1_phi", "goodJets_1_E",
             "MET_phi"
             ] 
-        return L2vars        
-    elif(VarBatch == "Loose"):
-        L3vars = [
-            "CMS_hgg_mass",
-            ##-- Photon variables
-            "Leading_Photon_pt","Subleading_Photon_pt",
-            "Leading_Photon_MVA","Subleading_Photon_MVA",  
-            ##-- Lepton / Jet variables  
-            # "N_allElectrons","N_allMuons","N_allJets",
-            # "N_goodElectrons","N_goodMuons","N_goodJets",
-            "allElectrons_0_pt","allMuons_0_pt",
-            "allElectrons_0_E","allMuons_0_E",
-            "allElectrons_0_eta","allMuons_0_eta",
-            "allElectrons_0_phi","allMuons_0_phi",
-            "allJets_0_pt","allJets_1_pt",
-            "allJets_0_E","allJets_1_E",
-            "allJets_0_eta","allJets_1_eta",
-            "allJets_0_phi","allJets_1_phi",
-            "MET_pt","MET_phi"            
+        return L2vars 
+
+    # MET variables 
+    elif(VarBatch == "METvars"):
+        METvars = [
+            "MET_pt","MET_phi"
         ]
+        return METvars
 
-        # L3vars.append(mjj)
+    # Photon variables 
+    elif(VarBatch == "PhotonVars"):
+        PhotonVars = [
+            "Leading_Photon_pt","Leading_Photon_eta","Leading_Photon_E","Leading_Photon_MVA",
+            "Subleading_Photon_pt","Subleading_Photon_eta","Subleading_Photon_E","Subleading_Photon_MVA"
+        ]
+        return PhotonVars 
 
-        return L3vars 
+    # Variables that should be combined with Loose cuts. Plots kinematics of leading lepton (which changes event by event)
+    elif(VarBatch == "Loose"):
+        LooseVars = []        
+        LooseVarsNames = []
+        kinVars = ["pt","eta","E"]
+        maxObjects = 5
+        lepton_pt_cut = 10 
+        for kinVar in kinVars:
+            LooseGoodLepton_var = ""
+            for i in range(0,maxObjects):
+                elec, muon = "allElectrons_%s"%(i), "allMuons_%s"%(i)
+                elecCut = "( (%s_pt >= %s) && (%s_passLooseId==1 && (fabs(%s_eta)<1.4442 || ((fabs(%s_eta)>1.566 && fabs(%s_eta)<2.5) ) ) ) )"%(elec,lepton_pt_cut,elec,elec,elec,elec)
+                muonCut = "((%s_pt >= %s && %s_isTightMuon==1 && fabs(%s_eta)<=2.4))"%(muon,lepton_pt_cut,muon,muon)
+                varMatrixElement = "((%s_%s*%s) + (%s_%s*%s))"%(elec,kinVar,elecCut,muon,kinVar,muonCut)
+                LooseGoodLepton_var += varMatrixElement
+                if(i != maxObjects-1): LooseGoodLepton_var += " + "
+            LooseVars.append(LooseGoodLepton_var)
+            LooseVarsNames.append("Loose-Good_Lepton_%s"%(kinVar))
+        return LooseVars,LooseVarsNames 
+
+    # All known tree variables. This is a LOT 
     elif(VarBatch == "all"):
+        finalStateVars_ = []
         ##-- Add lepton, jet variables 
         # p4_variables = ["E","pt","px","py","pz","eta","phi"]
         p4_variables = ["E","pt","eta","phi"]
@@ -126,7 +143,6 @@ def GetVars(VarBatch):
                         entry = "%s"%(vtitle)
                         finalStateVars_.append(entry)                                                                      
 
-        # for removal of prompt-prompt events from QCD and GJet samples 
         # finalStateVars_.append("Leading_Photon_genMatchType")
         # finalStateVars_.append("Subleading_Photon_genMatchType")
 
@@ -141,42 +157,42 @@ def GetVars(VarBatch):
     
         return finalStateVars_ 
 
+##-- Get bins for a variable 
 def GetBins(variable_):
-    # mjj = "sqrt(2*allJets_0_pt*allJets_1_pt*(cosh(allJets_0_eta-allJets_1_eta)-cos(allJets_0_phi-allJets_1_phi)))"
+
+    # Specify bins for specific variables 
     binDict = {
         "Leading_Photon_MVA": [20,-1,1],
         "Subleading_Photon_MVA": [20,-1,1],
-        # "CMS_hgg_mass": [80,100,180],
-        # "CMS_hgg_mass": [24,100,180],
         "CMS_hgg_mass": [30,100,180],
         "weight":[1000,-10,10],
         "puweight":[1000,-2,2],
-        # "mjj" : [100,0,100]
         "mjj" : [100,0,300],
         "e_mT" : [100,0,300],
         "mu_mT" : [100,0,300],
         "dr_gg" : [60,0,3],
         "dr_jj" : [60,0,3]
     }    
-    otherVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj"]
-    if variable_ in otherVars:
+    specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj"]
+    if variable_ in specialVars:
         return binDict[variable_]
+
+    # If variable is a number of objects
     elif "N_" in variable_:
         return [10,0,10]
-    else:
-        if ("eta" in variable_) or ("phi" in variable_):
-            return [16,-4,4]
-            # return [80,-4,4]
-        elif ("pt" in variable_):
-            return [20,0,200]   
-        else:
-            return [10,0,100]
 
+    # Specified binning if variable has phi, eta or pt in name 
+    else:
+        if("phi" in variable_): return [16,-3.14,3.14]
+        elif("eta" in variable_): return [16,-4,4]
+        elif ("pt" in variable_): return [20,0,200]   
+        else: return [10,0,100] # if variable name meets none of the above conditions, default to this binning 
+
+##-- Get x axis title for ratio plot depending on the variable 
 def GetXaxisTitle(variable_):
     xAxisTitle = "" 
     variableName = variable_ 
     variableUnit = ""
-    # mjj = "sqrt(2*allJets_0_pt*allJets_1_pt*(cosh(allJets_0_eta-allJets_1_eta)-cos(allJets_0_phi-allJets_1_phi)))"
 
     variableUnitDict = {
         "CMS_hgg_mass": "GeV",
@@ -194,8 +210,6 @@ def GetXaxisTitle(variable_):
         "dr_jj" : "rad"
     }
 
-    # if(variableName == mjj): variableName = "mjj"
-
     for varFrag in variableUnitDict:
         varUnit = variableUnitDict[varFrag]
         if varFrag in variableName: variableUnit = varUnit
@@ -203,9 +217,9 @@ def GetXaxisTitle(variable_):
     xAxisTitle = "%s [%s]"%(variableName,variableUnit)
     return xAxisTitle           
 
+##-- Get the name of variable. Useful for variables that have long strings in draw statement. This returns a shortened value to be used for plot title and output file name 
 def GetVarTitle(varName):
     varTitle = ""
-    # mjj = "sqrt(2*allJets_0_pt*allJets_1_pt*(cosh(allJets_0_eta-allJets_1_eta)-cos(allJets_0_phi-allJets_1_phi)))"
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"    

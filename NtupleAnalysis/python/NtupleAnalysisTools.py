@@ -41,7 +41,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         # cuts = ["1"]
         # cutNames = ["PreSelections"]
     cuts, cutNames = GetCuts(CutsType_)
-    finalStateVars = GetVars(VarBatch_) # get certain vars based on cut 
+    ##-- if var batch is loose, need separate titles for variables since it will be sum of vars * bools 
+    if(VarBatch_ == "Loose"):
+        finalStateVars, varNames = GetVars(VarBatch_) # get vars from var batch 
+        print"finalStateVars = ",finalStateVars 
+        print"varNames = ",varNames
+    else: finalStateVars = GetVars(VarBatch_) # get vars from var batch 
+    # exit(1)
     print"cuts:",cuts
     print"cutNames:",cutNames
     if(verbose_): print"vars:",finalStateVars         
@@ -87,7 +93,9 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 DATA_CUT += "*(%s)"%(cut)      
                 SIGNAL_CUT += "*(%s)"%(cut) 
                 for iv,v in enumerate(finalStateVars): 
-                    varTitle = GetVarTitle(v)
+                    if(VarBatch_ == "Loose"): varTitle = varNames[iv]
+                    else: varTitle = GetVarTitle(v)
+                    
                     print"Plotting variable:",varTitle
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
@@ -107,6 +115,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     ##-- Get Data 
                     # print"xbins xmin xmax",xbins, xmin, xmax 
                     Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
+                    # if(VarBatch_ == "Loose"): Data_h_tmp.SetTitle("%s"%(varNames[iv]))
+                    # else: 
                     Data_h_tmp.SetTitle("%s"%(varTitle))
                     Data_h_tmp.SetMarkerStyle(8)
                     exec('ch.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
@@ -133,8 +143,16 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         treeName = GetMCTreeName(mcF_)
                         MC_Category = GetMCCategory(mcF_)
                         if(verbose_): print"Background:",MC_Category
-                        if(MC_Category == "QCD") and (noQCD_): 
+                        if(MC_Category == "QCD") and (noQCD_) and (HHWWggTag == "HHWWggTag_0" or HHWWggTag == "HHWWggTag_1"): 
                             print"Skipping QCD"
+                            these_MC_Nevents_noweights.append(0)
+                            these_MC_Nevents.append(0)
+                            # these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
+                            # these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
+                            # only need to get MC names once 
+                            if(itag == 0 and ic == 0 and iv == 0): 
+                                MCname = GetMCName(mcF_)
+                                MC_names.append(MCname) # get shorter MC name here                            
                             continue 
                         ##-- If HHWWgg_bkg, need to multiply by another weight 
                         ##-- MC_WEIGHT = "%s*%s"%(MC_WEIGHT,HHWWgg_MC_Weight)
@@ -269,6 +287,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         "tt" : 0,
                         "DY" : 0,
                         "WGGJets" : 0,
+                        "WGJJ" : 0,
                         "ttW" : 0
                     }
 

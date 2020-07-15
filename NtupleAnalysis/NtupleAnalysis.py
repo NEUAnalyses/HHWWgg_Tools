@@ -16,9 +16,7 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder Data/hadded/ --mcFolder All_Bkg --signalFolder Signal --VarBatch basic --CutsType final-noPhoMVA --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --verbose --noQCD --log
-# python NtupleAnalysis.py --DataMC --dataFolder Data/hadded/ --mcFolder All_Bkg --signalFolder Signal --VarBatch basic --CutsType final-noPhoSels --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --verbose
-# python NtupleAnalysis.py --DataMC --dataFolder 2017Data_Trees_Hadded_Combined --mcFolder DataMC_2017_noHHWWggbkgs --signalFolder DataMC_2017_Signal --VarBatch basic --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch PhotonVars --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --verbose --noQCD
 #########################################################################################################################################################################################################
 
 from python.NtupleAnalysisTools import * 
@@ -74,9 +72,8 @@ if __name__ == '__main__':
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
     elif(args.DataMC): 
         if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
-        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v6/'    
-        # else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v5/'    
-    prefix = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/'
+        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v7/'    
+    nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
 
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
@@ -96,7 +93,7 @@ if __name__ == '__main__':
 
             # folder = str(args.folder)
 
-            direc = prefix + folder
+            direc = nTupleDirec + folder
             colors = GetColors()
 
             x_values = array( 'd' )
@@ -417,20 +414,20 @@ if __name__ == '__main__':
     elif(args.DataMC):
         print"Performing Data / MC Analysis"
         dataFolder = str(args.dataFolder)
-        dataDirec = prefix + dataFolder
+        dataDirec = nTupleDirec + dataFolder
         dataFiles = []
         for file in os.listdir(dataDirec):
             dataFiles.append(file)
         # print"dataFiles:",dataFiles
         mcFolder = str(args.mcFolder)
-        mcDirec = prefix + mcFolder 
+        mcDirec = nTupleDirec + mcFolder 
         mcFiles = []
         for file in os.listdir(mcDirec):
             mcFiles.append(file)
         # print"mcFiles:",mcFiles 
 
         signalFolder = str(args.signalFolder)
-        signalDirec = prefix + signalFolder 
+        signalDirec = nTupleDirec + signalFolder 
         signalFiles = [] 
         for file in os.listdir(signalDirec):
             signalFiles.append(file)

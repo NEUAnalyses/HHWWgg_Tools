@@ -17,26 +17,55 @@ def GetCuts(CutsType):
         ##-- Electrons, Muons, Jets: Keep all analysis selections except dR, pT
 
         ## Selections that need to be kept:
-        # Electrons:
-        # passLooseId == 1
-        # 1.4442,1.566,2.5
-        # Muons: 
-        #
-        # Jets:
-        # abs(eta) <= 2.4
-        
-        # electronCuts = "(1)"
-        # muonCuts = "(1)"
-        # jetCuts = "(1)"
+        # Electrons: eta, passLooseID --> Then look at pT 
+        # Muons: eta, isTightMuon --> Then look at pT and isolation 
+        # Jets: pT > 10 GeV, eta, Tight2017 --> Then look at pT   
 
-        electronCuts = "((allElectrons_0_passLooseId==1)*(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   ) )"
-        # electronCuts = "(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   )  "
-        # electronCuts = "((allElectrons_0_passLooseId==1))"
-        # electronCuts = "((allElectrons_0_passLooseId==1))"
-        muonCuts = "((fabs(allMuons_0_eta) <= 2.4))"
-        orLepCuts = "(%s || %s)"%(electronCuts,muonCuts)    
+
+        # Make cuts a boolean that exactly 1 of the allElectrons or exactly of the allMuons passes selections 
+        # Then if true want to plot the distributions of the 
+        electronCuts = ""
+        muonCuts = ""
+        jetCuts = ""
+        maxObjects = 5
+
+        lepton_pt_cut = 10 
+        jet_pt_cut = 25 
+
+        photonCuts = "((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"
         
-        jetCuts = "((fabs(allJets_0_eta) <= 2.4)*(fabs(allJets_1_eta) <= 2.4))"
+        # electronCuts, muonCuts, jetCuts = ""
+        # for i in range(0,5): # info for 5 first electrons, muons, jets saved 
+        for i in range(0,maxObjects): # info for 5 first electrons, muons, jets saved 
+            elec, muon, jet = "allElectrons_%s"%(i), "allMuons_%s"%(i), "allJets_%s"%(i)
+            # electronCuts += "((%s_passLooseId==1)*(fabs(%s_eta)<1.4442 || ((fabs(%s_eta)>1.566 && fabs(%s_eta)<2.5))))"%(elec,elec,elec,elec)
+            # muonCuts += "((%s_isTightMuon==1)*(fabs(%s_eta)<=2.4))"%(muon,muon)
+            # jetCuts += "((%s_passTight2017==1))"%(jet)
+            electronCuts += "( (%s_pt >= %s) && (%s_passLooseId==1 && (fabs(%s_eta)<1.4442 || ((fabs(%s_eta)>1.566 && fabs(%s_eta)<2.5) ) ) ) )"%(elec,lepton_pt_cut,elec,elec,elec,elec)
+            muonCuts += "((%s_pt >= %s && %s_isTightMuon==1 && fabs(%s_eta)<=2.4))"%(muon,lepton_pt_cut,muon,muon)
+            jetCuts += "( (%s_pt>%s) && (%s_passTight2017==1) && fabs(%s_eta) <= 2.4)"%(jet,jet_pt_cut,jet,jet)     
+
+            if(i != maxObjects-1): # if not the last object, multiply by next selection
+                electronCuts += "+"
+                muonCuts += "+"
+                jetCuts += "+"
+        # print"electronCuts:",electronCuts
+        # print"muonCuts:",muonCuts
+        # print"jetCuts:",jetCuts
+
+        # exit(1)
+        cuts = ["( (((%s) + (%s)) == 1) && ((%s) >= 2) && (%s))"%(electronCuts,muonCuts,jetCuts,photonCuts)] # exactly one lepton passing looser selections, at least two jets passing looser selections  
+        # cuts = ["((%s)*(%s)*(%s))"%(electronCuts,muonCuts,jetCuts)]
+        print"LOOSE cuts:",cuts
+        cutNames = ["Loose"]    
+        # electronCuts = "((allElectrons_0_passLooseId==1)*(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   ) )"
+        # # electronCuts = "(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   )  "
+        # # electronCuts = "((allElectrons_0_passLooseId==1))"
+        # # electronCuts = "((allElectrons_0_passLooseId==1))"
+        # muonCuts = "((fabs(allMuons_0_eta) <= 2.4))"
+        # orLepCuts = "(%s || %s)"%(electronCuts,muonCuts)    
+        
+        # jetCuts = "((fabs(allJets_0_eta) <= 2.4)*(fabs(allJets_1_eta) <= 2.4))"
         # cuts = ["(N_allElectrons == 1 || N_allMuons == 1)*(N_allJets >= 2)*(Leading_Photon_MVA>-0.1)*(Subleading_Photon_MVA>-0.1)*%s*%s"%(jetCuts,orLepCuts)]
         # cuts = ["(N_allElectrons >= 1 || N_allMuons >= 1)*(N_allJets >= 2)*(Leading_Photon_MVA>-0.5)*(Subleading_Photon_MVA>-0.5)*%s*%s"%(jetCuts,orLepCuts)]
         # cuts = ["(N_allElectrons >= 1 || N_allMuons >= 1)*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
@@ -46,9 +75,8 @@ def GetCuts(CutsType):
         # cuts = ["( N_allElectrons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,electronCuts)]
         # cuts = ["( N_allElectrons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,electronCuts)]
         # cuts = ["( N_allElectrons == 1 || N_allMuons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s"%(jetCuts)]
-        cuts = ["((N_allElectrons == 1 && N_allMuons == 0 ) || (N_allElectrons == 0 && N_allMuons == 1 ))*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
+        # cuts = ["((N_allElectrons == 1 && N_allMuons == 0 ) || (N_allElectrons == 0 && N_allMuons == 1 ))*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
         # cuts = ["((N_allElectrons == 1 && N_allMuons == 0 ) || (N_allElectrons == 0 && N_allMuons == 1 ))*(N_allJets >= 2)*(passPhotonSels==1)*%s"%(jetCuts)]
-        cutNames = ["Loose"]
     elif(CutsType == "Medium"):
         cuts = ["(N_allElectrons + N_allMuons == 1)*(N_goodJets >= 2)*(passPhotonSels==1)"]
         cutNames = ["Medium"]
