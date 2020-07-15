@@ -10,20 +10,15 @@ from ROOT import TH2F, TCanvas
 
 def GetCuts(CutsType):
     cuts, cutNames = [], []
-    if(CutsType == "PS"):
+
+    ##-- Only apply preselections. This means applying no cut because preselection already applied to events in microAODs 
+    if(CutsType == "PreSelections"):
         cuts = ["1"]
         cutNames = ["PreSelections"]
+
+    ##-- Apply Loose selections 
     elif(CutsType == "Loose"):
         ##-- Electrons, Muons, Jets: Keep all analysis selections except dR, pT
-
-        ## Selections that need to be kept:
-        # Electrons: eta, passLooseID --> Then look at pT 
-        # Muons: eta, isTightMuon --> Then look at pT and isolation 
-        # Jets: pT > 10 GeV, eta, Tight2017 --> Then look at pT   
-
-
-        # Make cuts a boolean that exactly 1 of the allElectrons or exactly of the allMuons passes selections 
-        # Then if true want to plot the distributions of the 
         electronCuts = ""
         muonCuts = ""
         jetCuts = ""
@@ -34,13 +29,8 @@ def GetCuts(CutsType):
 
         photonCuts = "((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"
         
-        # electronCuts, muonCuts, jetCuts = ""
-        # for i in range(0,5): # info for 5 first electrons, muons, jets saved 
         for i in range(0,maxObjects): # info for 5 first electrons, muons, jets saved 
             elec, muon, jet = "allElectrons_%s"%(i), "allMuons_%s"%(i), "allJets_%s"%(i)
-            # electronCuts += "((%s_passLooseId==1)*(fabs(%s_eta)<1.4442 || ((fabs(%s_eta)>1.566 && fabs(%s_eta)<2.5))))"%(elec,elec,elec,elec)
-            # muonCuts += "((%s_isTightMuon==1)*(fabs(%s_eta)<=2.4))"%(muon,muon)
-            # jetCuts += "((%s_passTight2017==1))"%(jet)
             electronCuts += "( (%s_pt >= %s) && (%s_passLooseId==1 && (fabs(%s_eta)<1.4442 || ((fabs(%s_eta)>1.566 && fabs(%s_eta)<2.5) ) ) ) )"%(elec,lepton_pt_cut,elec,elec,elec,elec)
             muonCuts += "((%s_pt >= %s && %s_isTightMuon==1 && fabs(%s_eta)<=2.4))"%(muon,lepton_pt_cut,muon,muon)
             jetCuts += "( (%s_pt>%s) && (%s_passTight2017==1) && fabs(%s_eta) <= 2.4)"%(jet,jet_pt_cut,jet,jet)     
@@ -49,63 +39,41 @@ def GetCuts(CutsType):
                 electronCuts += "+"
                 muonCuts += "+"
                 jetCuts += "+"
-        # print"electronCuts:",electronCuts
-        # print"muonCuts:",muonCuts
-        # print"jetCuts:",jetCuts
 
-        # exit(1)
         cuts = ["( (((%s) + (%s)) == 1) && ((%s) >= 2) && (%s))"%(electronCuts,muonCuts,jetCuts,photonCuts)] # exactly one lepton passing looser selections, at least two jets passing looser selections  
-        # cuts = ["((%s)*(%s)*(%s))"%(electronCuts,muonCuts,jetCuts)]
         print"LOOSE cuts:",cuts
         cutNames = ["Loose"]    
-        # electronCuts = "((allElectrons_0_passLooseId==1)*(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   ) )"
-        # # electronCuts = "(   fabs(allElectrons_0_eta)<1.4442 || ((fabs(allElectrons_0_eta)>1.566 && fabs(allElectrons_0_eta)<2.5))   )  "
-        # # electronCuts = "((allElectrons_0_passLooseId==1))"
-        # # electronCuts = "((allElectrons_0_passLooseId==1))"
-        # muonCuts = "((fabs(allMuons_0_eta) <= 2.4))"
-        # orLepCuts = "(%s || %s)"%(electronCuts,muonCuts)    
         
-        # jetCuts = "((fabs(allJets_0_eta) <= 2.4)*(fabs(allJets_1_eta) <= 2.4))"
-        # cuts = ["(N_allElectrons == 1 || N_allMuons == 1)*(N_allJets >= 2)*(Leading_Photon_MVA>-0.1)*(Subleading_Photon_MVA>-0.1)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["(N_allElectrons >= 1 || N_allMuons >= 1)*(N_allJets >= 2)*(Leading_Photon_MVA>-0.5)*(Subleading_Photon_MVA>-0.5)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["(N_allElectrons >= 1 || N_allMuons >= 1)*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["( (N_allElectrons >= 1 && N_allElectrons <= 2) || (N_allMuons >= 1 && N_allMuons <= 2) )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["( N_allElectrons >= 1 || N_allMuons >= 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["( N_allElectrons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,electronCuts)]
-        # cuts = ["( N_allElectrons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,electronCuts)]
-        # cuts = ["( N_allElectrons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,electronCuts)]
-        # cuts = ["( N_allElectrons == 1 || N_allMuons == 1 )*(N_allJets >= 2)*(passPhotonSels==1)*%s"%(jetCuts)]
-        # cuts = ["((N_allElectrons == 1 && N_allMuons == 0 ) || (N_allElectrons == 0 && N_allMuons == 1 ))*(N_allJets >= 2)*(passPhotonSels==1)*%s*%s"%(jetCuts,orLepCuts)]
-        # cuts = ["((N_allElectrons == 1 && N_allMuons == 0 ) || (N_allElectrons == 0 && N_allMuons == 1 ))*(N_allJets >= 2)*(passPhotonSels==1)*%s"%(jetCuts)]
-    elif(CutsType == "Medium"):
-        cuts = ["(N_allElectrons + N_allMuons == 1)*(N_goodJets >= 2)*(passPhotonSels==1)"]
-        cutNames = ["Medium"]
+    ##-- Apply each analysis selection separately 
     elif(CutsType == "all"):
         cuts = ["1", "passPhotonSels == 1", "passbVeto == 1", "ExOneLep == 1", "goodJets == 1"] # preselections, photon sels, bVeto, exactly 1 lepton, at least 2 good jets
         cutNames = ["PreSelections","PhotonSelections","bVeto","OneLep","TwoGoodJets"]
-    elif(CutsType == "finalwJetID"):
-        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(allJets_0_passTight2017==1)*(allJets_1_passTight2017==1)"]
-        cutNames = ["finalwJetID"]    
+
+    ##-- Apply final analysis selections (may be missing one or two like Tight2017 Jet ID)
     elif(CutsType == "final"):
         cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
         cutNames = ["final"]
+    
+    ##-- Apply b Veto, exactly one good lepton, at least two good jets selections (Tight2017 Jet ID may be missing)
     elif(CutsType == "final-noPhoSels"):
         cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1)"]
         cutNames = ["final-noPhoSels"]  
+
+    ##-- Apply b Veto, exactly one good lepton, at least two good jets selections (Tight2017 Jet ID may be missing), and photon pT/mgg selections
     elif(CutsType == "final-noPhoMVA"):
         cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
-        cutNames = ["final-noPhoMVA"]          
+        cutNames = ["final-noPhoMVA"]    
+
+    ##-- Apply b Veto, exactly one good lepton selections 
     elif(CutsType == "bVeto-OneLep"):
         cuts = ["(passbVeto==1)*(ExOneLep==1)"]
-        cutNames = ["bVeto-OneLep"]          
-    # elif(CutsType == "final-noPhoSels-withJetID"):
-        # cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1*())"]
-        # cutNames = ["final-noPhoSels-withJetID"]                
+        cutNames = ["bVeto-OneLep"]      
+            
     return [cuts,cutNames]
 
 ##-- Create table with number of events all backgrounds plus (Blinded) Data for each set cutSet,tag pair 
 # def CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_):
-def CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_):
+def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_):
 # def CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names):
     print'Creating table of nEvents'
     # yaxisLabels = ['2.5%','16%','50%','84%','97.5%'] # Backgrounds, Background Total, Data

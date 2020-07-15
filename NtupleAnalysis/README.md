@@ -2,6 +2,8 @@
 
 The purpose of the python modules in this directory is to analyze flashgg outputs from the dumpers and tagger in HHWWgg_dev. At the moment there are two features: Signal efficiency and Data / MC comparisons. 
 
+**Note**: Can probably speed up plotting by implementing uproot 
+
 ## Data / MC: Example Usage and Explanation 
 
 An example command to produce Data / MC comparison plots and yields tables is: 

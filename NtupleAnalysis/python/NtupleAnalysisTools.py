@@ -37,9 +37,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
     HHWWggTags = []
     for t in Tags_:
         HHWWggTags.append(t)
-    # if(ShortCutsList_): 
-        # cuts = ["1"]
-        # cutNames = ["PreSelections"]
     cuts, cutNames = GetCuts(CutsType_)
     ##-- if var batch is loose, need separate titles for variables since it will be sum of vars * bools 
     if(VarBatch_ == "Loose"):
@@ -47,18 +44,22 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         print"finalStateVars = ",finalStateVars 
         print"varNames = ",varNames
     else: finalStateVars = GetVars(VarBatch_) # get vars from var batch 
-    # exit(1)
     print"cuts:",cuts
     print"cutNames:",cutNames
-    if(verbose_): print"vars:",finalStateVars         
+    if(verbose_): print"vars:",finalStateVars   
+
+    ##-- For each data file (can just be one)
     for dF_ in dataFiles_:
         cutBatchTag_pairs = [] 
         dataNevents_list = []
-        # MC_names_lists = [] 
         MC_names = [] 
         MC_Nevents_lists = []
         MC_Nevents_noweight_lists = []
-        for itag,HHWWggTag in enumerate(HHWWggTags):          
+
+        ##-- For each category (Ex: HHWWggTag_0, HHWWggTag_1, HHWWggTag_2, combined)
+        for itag,HHWWggTag in enumerate(HHWWggTags):
+            if(verbose_): 
+                print"tag:",HHWWggTag                      
             dPath = "%s/%s"%(dataDirec_,dF_)
             dFile = TFile.Open(dPath)
             if(HHWWggTag=="combined"):
@@ -76,6 +77,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             DATA_CUT = "%s*(%s)"%(BLIND_CUT,ZERO_CUT)       
             SIGNAL_CUT = "%s*(%s)"%(MC_WEIGHT,ZERO_CUT) # no blind cut on signal 
 
+            ##-- For each cut 
             for ic,cut in enumerate(cuts):                
                 print"Plotting with selection:",cut                  
                 cutName = cutNames[ic]
@@ -84,7 +86,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 dataNevents = -999
                 these_MC_Nevents = []
                 these_MC_Nevents_noweights = [] 
-                # these_MC_names = []                  
                 outputFolder = "%s/%s"%(ol_,cutName)
                 if(not os.path.exists(outputFolder)):
                     os.system('mkdir %s'%(outputFolder))
@@ -92,11 +93,14 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 MC_CUT += "*(%s)"%(cut)
                 DATA_CUT += "*(%s)"%(cut)      
                 SIGNAL_CUT += "*(%s)"%(cut) 
+
+                ##-- For each variable 
                 for iv,v in enumerate(finalStateVars): 
                     if(VarBatch_ == "Loose"): varTitle = varNames[iv]
                     else: varTitle = GetVarTitle(v)
                     
-                    print"Plotting variable:",varTitle
+                    if(verbose_): print"Plotting variable:",varTitle
+
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     SIGNAL_CUT = SIGNAL_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
@@ -112,50 +116,46 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     legend.SetBorderSize(0)
                     legend.SetFillStyle(0)
                     xbins, xmin, xmax = GetBins(varTitle)
-                    ##-- Get Data 
-                    # print"xbins xmin xmax",xbins, xmin, xmax 
+
+                    ##-- Fill histogram with data  
                     Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
-                    # if(VarBatch_ == "Loose"): Data_h_tmp.SetTitle("%s"%(varNames[iv]))
-                    # else: 
                     Data_h_tmp.SetTitle("%s"%(varTitle))
                     Data_h_tmp.SetMarkerStyle(8)
                     exec('ch.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
-                    # only save events for first variable. Should be same for all 
+
+                    ##-- Only save number of events for first variable. Should be same for all because same cut is used 
                     if(iv == 0): 
                         dataNevents = Data_h_tmp.GetEntries()
                         dataNevents_list.append(dataNevents)
-                    if(verbose_): 
-                        print"tag:",HHWWggTag
-                        # print"numEvents:",Data_h_tmp.GetEntries()                    
+                    # print"Blinded Data numEvents:",Data_h_tmp.GetEntries()                    
                     DataHist = Data_h_tmp.Clone("DataHist")
                     DataHist.SetDirectory(0)
                     legend.AddEntry(DataHist,"Data","P")
 
-                    ##-- Get MC Backgrounds 
+                    ##-- Get histograms with MC Backgrounds 
                     bkgStack = THStack("bkgStack","bkgStack")
-                    # bkgStack.Sumw2()
                     histos = []
                     histCategories = [] 
                     for i,mcF_ in enumerate(mcFiles_):
                         mcPath = "%s/%s"%(mcDirec_,mcF_)
                         mcFile = TFile.Open(mcPath)
-                        # print"Background File:",mcPath
                         treeName = GetMCTreeName(mcF_)
                         MC_Category = GetMCCategory(mcF_)
-                        if(verbose_): print"Background:",MC_Category
+                        if(verbose_): 
+                            # print"Background File:",mcPath
+                            print"Background:",MC_Category
+
+                        ##-- If noQCD set to true, skip QCD for Tag_0 and Tag_1 
                         if(MC_Category == "QCD") and (noQCD_) and (HHWWggTag == "HHWWggTag_0" or HHWWggTag == "HHWWggTag_1"): 
                             print"Skipping QCD"
-                            these_MC_Nevents_noweights.append(0)
-                            these_MC_Nevents.append(0)
-                            # these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
-                            # these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-                            # only need to get MC names once 
+                            these_MC_Nevents_noweights.append(0) # Set yields to 0 for table 
+                            these_MC_Nevents.append(0) # Set yields to 0 for table 
                             if(itag == 0 and ic == 0 and iv == 0): 
                                 MCname = GetMCName(mcF_)
-                                MC_names.append(MCname) # get shorter MC name here                            
+                                MC_names.append(MCname) # Skipping QCD, but still save name for yields because tag_2 may not be 0                           
                             continue 
-                        ##-- If HHWWgg_bkg, need to multiply by another weight 
-                        ##-- MC_WEIGHT = "%s*%s"%(MC_WEIGHT,HHWWgg_MC_Weight)
+
+                        ##-- Define TChain based on categories 
                         if(HHWWggTag=="combined"):
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_HHWWggTag_0'%(treeName))
                             mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_0"%(mcPath,treeName))
@@ -165,19 +165,17 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
                             mc_ch.Add(mcPath)
                         xbins, xmin, xmax = GetBins(varTitle)
-                        # print"tag:",HHWWggTag
-                        # print"numEvents:",mc_ch.GetEvents()                      
-                        # print"xbins xmin xmax",xbins, xmin, xmax 
+                        if(verbose_): 
+                            print"tag:",HHWWggTag
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category)
-                        # print"mcColor:",mcColor
 
+                        ##-- If GJet or QCD sample, need to remove prompt-prompt events 
                         if(MC_Category == "GJet" or MC_Category == "QCD"):
-                            # print"Remove prompt-prompt"
+                            if(verbose_): print"Remove prompt-prompt"
                             removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: remove events where both photons are prompt
-                            # removePromptPromptCut += "*(!((Leading_Photon_genMatchType == 0) || (Subleading_Photon_genMatchType == 0)))" 
                             original_MC_CUT = "%s"%(MC_CUT)
                             this_MC_CUT = "%s*(%s)"%(original_MC_CUT,removePromptPromptCut)
                             this_MC_CUT_NOWEIGHT = this_MC_CUT.replace(MC_WEIGHT,"(1)")
@@ -190,35 +188,32 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
 
                         eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
-                        ##-- Check if MC should be reweighted
-                        reWeightVals = ReWeightMC(mcF_)
-                        doReWeight, reWeightScale = reWeightVals[0], reWeightVals[1]
-                        # print"doReWeight,reWeightScale:",doReWeight, reWeightScale
 
-                        # if(doReWeight): ## turning off MC reweighting for HHWWgg backgrounds 
+                        ##-- MC reweighting for HHWWgg backgrounds (turned off for now)
+                        # reWeightVals = ReWeightMC(mcF_)
+                        # doReWeight, reWeightScale = reWeightVals[0], reWeightVals[1]
+                        # print"doReWeight,reWeightScale:",doReWeight, reWeightScale
+                        # if(doReWeight): 
                         #     if(verbose_):
                         #         print"ReWeighting MC"
                         #         print"With scale: ",reWeightScale
                         #     eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
+                        ## 
 
-                        if(iv == 0): # only save for 1st variable. Should be same for all variables
-                            if(MC_Category == "GJet" or MC_Category == "QCD" ):
-                                exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
-                            else: 
-                                exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
-
-                            # MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-                            # MC_names.append(mcF_)  
+                        ##-- Only save for 1st variable. Should be same for all variables
+                        if(iv == 0): 
+                            if(MC_Category == "GJet" or MC_Category == "QCD" ): exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
+                            else: exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
                             these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
                             these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-                            # only need to get MC names once 
+                            
+                            ##-- Only need to get MC names once 
                             if(itag == 0 and ic == 0 and iv == 0): 
                                 MCname = GetMCName(mcF_)
                                 MC_names.append(MCname) # get shorter MC name here
-                                                          
 
                         newHist = thisHist.Clone("newHist")
-                        # set title based on treeName 
+                        ##-- Set title based on treeName 
                         newHist.SetTitle(MC_Category)
                         newHist.GetXaxis().SetTitle(mcF_)
                         newHist.SetDirectory(0)
@@ -228,16 +223,15 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     sig_histos = []
                     sig_histCategories = []             
 
-                    ##-- Add Signal 
+                    ##-- Add Signal to plots 
                     for i,sigF_ in enumerate(signalFiles_):
                         sigPath = "%s/%s"%(signalDirec_,sigF_)
                         sigFile = TFile.Open(sigPath)
-                        # print"Signal File:",sigPath
                         treeName = GetMCTreeName(sigF_)
                         MC_Category = GetMCCategory(sigF_)
-                        if(verbose_): print"Signal:",MC_Category
-                        ##-- If HHWWgg_bkg, need to multiply by another weight 
-                        ##-- MC_WEIGHT = "%s*%s"%(MC_WEIGHT,HHWWgg_MC_Weight)
+                        if(verbose_):
+                            print"Signal File:",sigPath 
+                            print"Signal:",MC_Category
                         if(HHWWggTag=="combined"):
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_HHWWggTag_0'%(treeName))
                             mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_0"%(sigPath,treeName))
@@ -250,8 +244,10 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category) 
+                        ##-- Style options for signal to distinguish from Data, Background 
                         # eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         # eval("MC_h_tmp_%s.SetFillStyle(3004)"%(i))
+                        ##-- 
                         eval("MC_h_tmp_%s.SetFillColorAlpha(eval(mcColor),0.1)"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
                         exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
@@ -259,10 +255,9 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         SigXS_Scale = GetXScale("HHWWgg_v2-6") # how to scale the XS which is by default in flashgg 1fb
                         print("SigXS_Scale: ",SigXS_Scale)
                         eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default 
-                        # eval("MC_h_tmp_%s.Scale(float(SigScale_))"%(i))
                         newHist = thisHist.Clone("newHist")
 
-                        # set title based on treeName 
+                        ##-- Set title based on treeName 
                         newHist.SetTitle(MC_Category)
                         newHist.GetXaxis().SetTitle(sigF_)
                         newHist.SetLineStyle(1)
@@ -295,11 +290,11 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         "HHWWgg_SM" : 0
                     }
 
-                    # order histograms by MC category 
+                    ##-- Order histograms by MC category 
                     orderedHistos = OrderHistos(histos,histCategories)
                     sig_orderedHistos = OrderHistos(sig_histos,sig_histCategories)
 
-                    # for h in histos:
+                    ##-- Add backgrounds to background stack 
                     for h in orderedHistos:
                         bkgStack.Add(h,'hist')
                         bkgName = h.GetTitle()
@@ -309,32 +304,21 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             legend.AddEntry(h,bkgName,"F")
                             MC_AddedtoLegend[bkgName] = 1
 
-                    # for sig_h in sig_orderedHistos:
-                    #     sigName = sig_h.GetTitle()
-                    #     added = Signals_AddedtoLegend[sigName]
-                    #     if(added): continue 
-                    #     else:
-                    #         legend.AddEntry(sig_h,sigName,"FL")
-                    #         Signals_AddedtoLegend[sigName]
-
+                    ##-- By default draw background save background contributions. Later delete if not wanted 
                     outName = "%s/BackgroundsTest_%s.png"%(outputFolder,HHWWggTag)
                     bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,HHWWggTag)
                     SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)
                     bkgOutName = bkgOutName.replace(".png",".pdf")
                     SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)  
+
                     ##-- Add text box with selection type 
                     offset = 0
-                    # selText = TLatex(0.129+0.03+offset,0.85,cutName)
                     selText = TLatex(0.129,0.85,cutName)
                     selText.SetNDC(1)
                     selText.SetTextSize(0.04)   
-                    # combinedText = TLatex(0.129,0.8,"Combined Cats")
                     CatText = TLatex(0.129,0.8,HHWWggTag)
                     CatText.SetNDC(1)
                     CatText.SetTextSize(0.04)                                   
-                    # selText.SetTextAlign(33)
-                    # selText.SetNDC(1)
-                    # selText.SetTextSize(0.045)   
                     stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio 
                     stackSum.Sumw2() 
                     stackSum.SetLineColor(kBlack)
@@ -347,15 +331,17 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         DataHist.SetMinimum(0.01)
                         stackSum.SetMinimum(0.01)
                         bkgStack.SetMinimum(0.01)
+                        
+                    ##-- Define ratio plot for computing Data / MC ratio 
                     rp = TRatioPlot(DataHist,stackSum)
                     rp.SetH1DrawOpt("P")
                     rp.SetH2DrawOpt("hist")
                     # rp.SetGraphDrawOpt("PE2")
                     dMax = DataHist.GetMaximum()
                     bMax = stackSum.GetMaximum()
-                    # print'dMax:',dMax
-                    # print'bMax:',bMax
-                    maxHeight = max(dMax,bMax)
+                    maxHeight = max(dMax,bMax) 
+
+                    ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 
 
                     for fileType in ["pdf"]:
                         gStyle.SetErrorX(0.0001)
@@ -368,11 +354,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         rp.GetLowYaxis().SetNdivisions(5)
                         DataMCRatio_c.Update()
 
-                        # yaxis = rp.GetLowerRefGraph().GetYaxis()
-                        # print"n divisions:",yaxis.GetNdivisions()
-                        # yaxis.SetNdivisions(3)
-                        # print"n divisions:",yaxis.GetNdivisions()
-
                         ratioGraph = rp.GetCalculationOutputGraph()
                         ratioGraph.SetMarkerStyle(8)
                         ratioGraph.SetMarkerSize(0.5)
@@ -381,13 +362,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         # rp.SetGraphDrawOpt("EPZ2")
                         # rp.GetLowerRefYaxis().SetTitle("Data / MC")
 
-                        # yaxis.SetNdivisions(2)   
-                        # print"offset:",rp.GetLowerRefYaxis().GetTitleOffset()
-                        # rp.GetUpperRefYaxis().SetTitleOffset(-0.0000001)
-                        # print"offset",rp.GetUpperRefYaxis().GetTitleOffset()
                         rp.GetUpperRefYaxis().SetTitle("Entries")   
                         rp.GetLowerRefYaxis().SetTitle("Data / MC")
-                        # rp.GetLowerRefXaxis().SetTitle("testTitle")
                         rp.GetLowerPad().Update()
                         if(log_): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)   
                         else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.3)
@@ -418,7 +394,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                                 added = Signals_AddedtoLegend[sigName]
                                 if(added): continue 
                                 else:
-                                    # print"label","%s * %d"%(sig_h.GetTitle(),sigScale)
                                     legend.AddEntry(sig_h,"%s * %.5g"%(sig_h.GetTitle(),sigScale),"FL")
                                     Signals_AddedtoLegend[sigName]                            
                             sig_hist.Draw("samehist")
@@ -427,7 +402,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         CatText.Draw("same")
                         rp.GetLowerRefGraph().SetMinimum(0.5)
                         rp.GetLowerRefGraph().SetMaximum(1.5)     
-                        # rp.GetLowerRefGraph().GetXaxis().SetTitle("testTitle")                
                         Npoints = rp.GetLowerRefGraph().GetN()
                         for ip in range(0,Npoints):
                             rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
@@ -435,7 +409,6 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         if(log_): 
                             UpperPad.SetLogy()
                             UpperPad.Update() 
-                            # don't know why this removes Data / MC title   
                         rp.GetLowerPad().cd()
                         lowerPad = rp.GetLowerPad()
                         rp.GetLowerRefYaxis().SetTitle("Data / MC")
@@ -455,10 +428,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     MC_CUT = MC_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
                     DATA_CUT = DATA_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
 
-                # MC_names_lists.append(these_MC_names) 
                 MC_Nevents_lists.append(these_MC_Nevents)
                 MC_Nevents_noweight_lists.append(these_MC_Nevents_noweights)  
-                 
 
-        # Produce table with number of events for each MC, total MC, and data 
-        CreateEventsTable(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
+        ##-- Produce table with number of events for each MC, total MC, and data 
+        CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
