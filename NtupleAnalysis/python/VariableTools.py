@@ -23,10 +23,6 @@ def GetVars(VarBatch):
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
 
-    # Just dR between two leading jets 
-    elif(VarBatch == "special"):
-        return [dr_jj]
-
     # Some potentially useful MVA variables  
     elif(VarBatch == "MVA"):
         L2vars =  [
@@ -54,14 +50,14 @@ def GetVars(VarBatch):
         return L2vars 
 
     # MET variables 
-    elif(VarBatch == "METvars"):
+    elif(VarBatch == "MET"):
         METvars = [
             "MET_pt","MET_phi"
         ]
         return METvars
 
     # Photon variables 
-    elif(VarBatch == "PhotonVars"):
+    elif(VarBatch == "Photon"):
         PhotonVars = [
             "Leading_Photon_pt","Leading_Photon_eta","Leading_Photon_E","Leading_Photon_MVA",
             "Subleading_Photon_pt","Subleading_Photon_eta","Subleading_Photon_E","Subleading_Photon_MVA"
@@ -156,6 +152,10 @@ def GetVars(VarBatch):
                 finalStateVars_.append(vtitle)    
     
         return finalStateVars_ 
+
+    # Just dR between two leading jets 
+    elif(VarBatch == "special"):
+        return [dr_jj]
 
 ##-- Get bins for a variable 
 def GetBins(variable_):

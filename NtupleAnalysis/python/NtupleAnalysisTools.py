@@ -237,7 +237,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         treeName = GetMCTreeName(sigF_)
                         MC_Category = GetMCCategory(sigF_)
                         if(verbose_):
-                            print"Signal File:",sigPath 
+                            # print"Signal File:",sigPath 
                             print"Signal:",MC_Category
                         if(HHWWggTag=="combined"):
                             mc_ch = TChain('tagsDumper/trees/%s_13TeV_HHWWggTag_0'%(treeName))
