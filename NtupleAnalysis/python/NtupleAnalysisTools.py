@@ -8,7 +8,6 @@
 
 from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning
 import os 
-import tdrstyle
 from MCTools import * 
 from VariableTools import * 
 from PlotTools import * 
