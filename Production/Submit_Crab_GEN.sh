@@ -21,6 +21,7 @@ submit_crab_GEN(){
     LocalGridpackPath=$6
     Campaign=$7
     dryRun=$8
+    Year=$9 
 
     echo "Submit_Crab_GEN variable check"
     echo "cmssw_v: $cmssw_v"
@@ -167,13 +168,18 @@ submit_crab_GEN(){
     echo "config.JobType.psetName = '$localWorkingArea$1'" >> TmpCrabConfig.py # Depends on where config file was created  
     # echo "config.JobType.psetName = '/afs/cern.ch/work/a/atishelm/private/HH_WWgg/$1'" >> TmpCrabConfig.py # Depends on where config file was created  
 
-    #if [ $version == 939 ]
-    if [ $chosen_threads != noval ]
-    then
-        echo "config.JobType.numCores = $chosen_threads" >> TmpCrabConfig.py  
-        echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
-    else
-        echo "no thread customization chosen. Not including numCores or maxMemory options in crab config file."
+    echo "Year: $Year"
+    
+    ##-- couldn't find nthreads option in 2016 cmsDriver setup (CMSSW_7_X_X)
+    if [ $Year == "2017" ] || [ $Year == "2018" ]
+    then 
+        if [ $chosen_threads != noval ]
+        then
+            echo "config.JobType.numCores = $chosen_threads" >> TmpCrabConfig.py  
+            echo "config.JobType.maxMemoryMB = 8000" >> TmpCrabConfig.py
+        else
+            echo "no thread customization chosen. Not including numCores or maxMemory options in crab config file."
+        fi 
     fi 
 
     echo " " >> TmpCrabConfig.py

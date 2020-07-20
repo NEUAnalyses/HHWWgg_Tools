@@ -13,7 +13,8 @@ chosen_filename=$4
 #chosen_pileup=$5 
 LocalGridpack=$6
 Campaign=$7
-dryRun=$8
+Year=$8
+dryRun=$9
 
 #echo "all variables: $@"
 
@@ -377,5 +378,17 @@ shuffle_PU(){
     
 }
 
-# Currently assuming MCM chain of commands for fragments created with CMSSW_9_3_9_patch1 
-source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_939.sh 
+if [ $Year == 2016 ]
+then 
+    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2016.sh
+fi 
+
+if [ $Year == 2017 ]
+then 
+    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2017.sh
+fi 
+ 
+if [ $Year == 2018 ]
+then 
+    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2018.sh
+fi 

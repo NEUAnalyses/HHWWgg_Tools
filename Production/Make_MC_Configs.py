@@ -6,6 +6,11 @@
 #
 # Example Usage:
 #
+# ##-- Testing:
+## Low events 
+# python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign Test --Year 2016 --dryRun ##-- HHWWgg_SM20XX
+## Production type command 
+# python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign HHWWgg_SM2017 --Year 2017 --dryRun
 # ##-- Resonant Points:
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000 --diHiggsDecay WWgg --fragOutDir HHWWgg_v2-7 --Campaign HHWWgg_v2-7 --dryRun 
 # python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
@@ -45,6 +50,7 @@ parser.add_argument('--fragOutDir', type=str, default="", help="Directory fragme
 parser.add_argument('--prevOutDir', type=str, default="", help="Comma separated list of directories that previous step output files are in", required=False) # Ex: /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
 parser.add_argument('--PU', type=str, default="wPU", help="Pileup. Options: wPU, woPU", required=False) 
 parser.add_argument('--Campaign', type=str, default="", help="Campaign for secondary dataset name", required=False) 
+parser.add_argument('--Year', type=str, default="2017", help="Year to choose detector conditions. 2016, 2017 or 2018.", required=False) 
 
 ##-- Misc 
 parser.add_argument("--dryRun", action="store_true", default=False, help="If true, do not submit crab jobs", required=False)
@@ -55,7 +61,7 @@ args = parser.parse_args()
 ArgChecks(args)
 
 # Set arguments 
-step, nEvents, jobs_jobsize, diHiggsDecay, Campaign, dryRun = args.step, args.nEvents, args.jobs_jobsize, args.diHiggsDecay, args.Campaign, args.dryRun
+step, nEvents, jobs_jobsize, diHiggsDecay, Campaign, dryRun, Year = args.step, args.nEvents, args.jobs_jobsize, args.diHiggsDecay, args.Campaign, args.dryRun, args.Year
 fragOutDir = args.fragOutDir
 masses = args.masses.split(',')
 finalStates = args.finalStates.split(',')
@@ -74,20 +80,21 @@ postGENSteps = ["DR1","DR2","MINIAOD"]
 postGEN = 0 
 if step in postGENSteps: postGEN = 1 
 
-# if CMSSW_9_3_9_patch1 doesn't exist, get it now, so that fragments are setup 
-if(not path.exists("CMSSW_9_3_9_patch1")):
-	print'CMSSW_9_3_9_patch1 does not exist. Getting now ...'
-	os.system('export SCRAM_ARCH=slc6_amd64_gcc630')
-	os.system('cmsrel CMSSW_9_3_9_patch1') 
-	if(step == "GEN" or step == "GEN-SIM") and (not path.exists('CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python')):
-		print'Want to create GEN or GEN-SIM step but do not have fragment folder '
-		print'Creating now ...'
-		os.system('cd CMSSW_9_3_9_patch1/src') 
-		os.system('mkdir -p Configuration/GenProduction/python') 
-		os.system('cd ../..') # fix cd 
+if(Year==2017):
+	# if CMSSW_9_3_9_patch1 doesn't exist, get it now, so that fragments are setup 
+	if(not path.exists("CMSSW_9_3_9_patch1")):
+		print'CMSSW_9_3_9_patch1 does not exist. Getting now ...'
+		os.system('export SCRAM_ARCH=slc6_amd64_gcc630')
+		os.system('cmsrel CMSSW_9_3_9_patch1') 
+		if(step == "GEN" or step == "GEN-SIM") and (not path.exists('CMSSW_9_3_9_patch1/src/Configuration/GenProduction/python')):
+			print'Want to create GEN or GEN-SIM step but do not have fragment folder '
+			print'Creating now ...'
+			os.system('cd CMSSW_9_3_9_patch1/src') 
+			os.system('mkdir -p Configuration/GenProduction/python') 
+			os.system('cd ../..') # fix cd 
 
-else:
-	print'All proper CMSSW paths exist. Continuting...'
+	else:
+		print'All proper CMSSW paths exist. Continuting...'
 
 # add Campaign after HHWWgg_v2-6
 # https://help.github.com/en/actions/building-and-testing-code-with-continuous-integration/about-continuous-integration#in-this-article
@@ -188,10 +195,11 @@ if step == "GEN-SIM" or step == "GEN":
 	if(args.EFT):
 		# EFT_BMs = args.EFT_BMs.split(',')		
 		for ibm,bm in enumerate(EFT_BMs):
-			for finalState in finalStates:
-				expectedFragmentEnd = "GluGluToHHTo_%s_%s_node%s.py"%(diHiggsDecay,finalState,bm)
-				skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
-				if(skip): continue 
+			for finalState in finalStates: #FIXME need to comma separate finalstate entries in MC_Configs...
+				if(Year==2017):
+					expectedFragmentEnd = "GluGluToHHTo_%s_%s_node%s.py"%(diHiggsDecay,finalState,bm)
+					skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
+					if(skip): continue 
 
 				# Indentation of text chosen for visual output
 				MC_Configs_Entry = '''
@@ -203,7 +211,8 @@ if step == "GEN-SIM" or step == "GEN":
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
-						"dryRun"              : "{dryRun}" 
+						"Year"                : "{Year}", 
+						"dryRun"              : "{dryRun}"
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{bm}",str(bm))
@@ -214,6 +223,7 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 				
 				MC_Configs += MC_Configs_Entry
@@ -226,9 +236,10 @@ if step == "GEN-SIM" or step == "GEN":
 		for im,mass in enumerate(masses):
 			for ifs,finalState in enumerate(finalStates):
 
-				expectedFragmentEnd = "ggF_X%s_HH%s_%s.py"%(mass,diHiggsDecay,finalState)
-				skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
-				if(skip): continue 		
+				if(Year==2017):
+					expectedFragmentEnd = "ggF_X%s_HH%s_%s.py"%(mass,diHiggsDecay,finalState)
+					skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
+					if(skip): continue 		
 
 				# Indentation of text chosen for visual output
 				MC_Configs_Entry = '''
@@ -240,7 +251,8 @@ if step == "GEN-SIM" or step == "GEN":
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
-						"dryRun"              : "{dryRun}" 
+						"Year"                : "{Year}", 
+						"dryRun"              : "{dryRun}"
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{mass}",str(mass))
@@ -251,8 +263,8 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
-
 
 				MC_Configs += MC_Configs_Entry
 
@@ -266,9 +278,10 @@ if step == "GEN-SIM" or step == "GEN":
 			massHS = massPair[0]
 			massIS = massPair[1]
 			for ifs,finalState in enumerate(finalStates):
-				expectedFragmentEnd = "NMSSM_XYH%s%s_MX%s_MY%s.py"%(diHiggsDecay,finalState,massHS,massIS)
-				skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
-				if(skip): continue 					
+				if(Year==2017):
+					expectedFragmentEnd = "NMSSM_XYH%s%s_MX%s_MY%s.py"%(diHiggsDecay,finalState,massHS,massIS)
+					skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
+					if(skip): continue 					
 
 				# Indentation of text chosen for visual output
 				MC_Configs_Entry = '''
@@ -280,7 +293,8 @@ if step == "GEN-SIM" or step == "GEN":
 						"pileup"              : "{PU}",
 						"localGridpack"                : "1",
 						"Campaign"            : "{Campaign}",
-						"dryRun"              : "{dryRun}" 
+						"Year"                : "{Year}", 
+						"dryRun"              : "{dryRun}"
 
 				}'''
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
@@ -292,6 +306,7 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{diHiggsDecay}",str(diHiggsDecay)) 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
@@ -327,8 +342,8 @@ else:
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
-						"dryRun"              : "{dryRun}" 
-
+						"Year"                : "{Year}", 
+						"dryRun"              : "{dryRun}"
 				}'''
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{events}",str(nEvents))
@@ -336,6 +351,7 @@ else:
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
@@ -360,8 +376,8 @@ else:
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
-						"dryRun"              : "{dryRun}" 
-
+						"Year"                : "{Year}", 
+						"dryRun"              : "{dryRun}"
 				}'''
 
 				MC_Configs_Entry = MC_Configs_Entry.replace("{step}",str(step))
@@ -370,6 +386,7 @@ else:
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 				
 				MC_Configs += MC_Configs_Entry
@@ -397,6 +414,7 @@ else:
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
+						"Year"                : "{Year}", 
 						"dryRun"              : "{dryRun}" 
 
 				}'''
@@ -408,6 +426,7 @@ else:
 				MC_Configs_Entry = MC_Configs_Entry.replace("{prevDirec}",str(prevDirec))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{PU}",str(args.PU))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
 
 				MC_Configs += MC_Configs_Entry
