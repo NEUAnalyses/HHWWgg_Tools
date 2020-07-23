@@ -13,6 +13,7 @@ source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/Submit_Crab_
 if [ $chosen_step == GEN-SIM ] || [ $chosen_step == GEN ]
 then
     # MCM pages 
+    # 2018 PPD Recipe: HIG-RunIIFall18wmLHEGS-01909
     # https://cms-pdmv.cern.ch/mcm/public/restapi/requests/get_setup/HIG-RunIIFall18wmLHEGS-01909
 
     chosen_threads=8
@@ -51,287 +52,191 @@ then
 
 fi 
 
-# # DR
 
-# #---With CMSSW_8_0_21
+# DR
 
-# #if [ $chosen_startingstep == DR ] || [ "$started" = true ]
-# if [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
-# then
+if [ $chosen_step == DR1 ] || [ $chosen_step == DR2 ]
+then
 
-#     # Maybe make nthreads variable 
-#     #started=true
-#     cmssw_v=CMSSW_9_4_7
+    cmssw_v=CMSSW_10_2_5 
 
-#     #!/bin/bash
+    export SCRAM_ARCH=slc6_amd64_gcc700
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+    if [ -r CMSSW_10_2_5/src ] ; then 
+    echo release CMSSW_10_2_5 already exists
+    else
+    scram p CMSSW CMSSW_10_2_5
+    fi
+    cd CMSSW_10_2_5/src
+    eval `scram runtime -sh`   
 
-#     source /cvmfs/cms.cern.ch/cmsset_default.sh
-#     export SCRAM_ARCH=slc6_amd64_gcc630
-#     if [ -r CMSSW_9_4_7/src ] ; then 
-#     echo release CMSSW_9_4_7 already exists
-#     else
-#     scram p CMSSW CMSSW_9_4_7
-#     fi
-#     cd CMSSW_9_4_7/src
-#     eval `scram runtime -sh`
+    scram b
+    cd ../../
 
+    ##-- HIG-RunIIAutumn18DRPremix-01476
+    # cmsDriver.py step1 --fileout file:HIG-RunIIAutumn18DRPremix-01476_step1.root  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-PUAutumn18_102X_upgrade2018_realistic_v15-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 102X_upgrade2018_realistic_v15 --step DIGI,DATAMIX,L1,DIGI2RAW,HLT:@relval2018 --procModifiers premix_stage2 --nThreads 8 --geometry DB:Extended --datamix PreMix --era Run2_2018 --python_filename HIG-RunIIAutumn18DRPremix-01476_1_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 2626 || exit $? ; 
+    # cmsDriver.py step2 --filein file:HIG-RunIIAutumn18DRPremix-01476_step1.root --fileout file:HIG-RunIIAutumn18DRPremix-01476.root --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 102X_upgrade2018_realistic_v15 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --procModifiers premix_stage2 --nThreads 8 --era Run2_2018 --python_filename HIG-RunIIAutumn18DRPremix-01476_2_cfg.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 2626 || exit $? ;     
 
-#     scram b
-#     cd ../../
+    crab_input=''
+    crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    echo "Crab Input = $crab_input"
 
-#     #crab_input=''
-#     #crab_input=${GenSimOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
-#     #echo "Crab Input = $crab_input"
+    # If path ends in '.root', it's a single file  
+    # If path ends in '/', it's a directory
 
-#     # If path ends in '.root', it's a single file  
-#     # If path ends in '/', it's a directory
+    PathNoRoot=${GenSimOutput%?????} # remove .root
+    EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
 
-#     PathNoRoot=${GenSimOutput%?????} # remove .root
-#     EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
-#     # Should be ID of specific decay channel/PUconfig/events 
+    SinglePathNoRoot=${SinglePath%?????} # remove .root
+    EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
 
-#     SinglePathNoRoot=${SinglePath%?????} # remove .root
-#     EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
-#     # Should be ID of specific decay channel/PUconfig/events 
+    echo "EndofSinglePath = $EndofSinglePath"
 
-#     echo "EndofSinglePath = $EndofSinglePath"
+    #DR1Output=$EndofPath 
+    DR1Output=$EndofSinglePath 
+    DR2Output=$EndofSinglePath 
 
-#     #DR1Output=$EndofPath 
-#     DR1Output=$EndofSinglePath 
-#     DR2Output=$EndofSinglePath 
+    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
-#     mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
+    DR1Config=$cmssw_v/src/cmssw_configs/${Campaign}_
+    DR2Config=$cmssw_v/src/cmssw_configs/${Campaign}_
+    #DR1Config+=$EndofPath 
+    DR1Config+=$EndofSinglePath 
+    #DR2Config+=$EndofPath 
+    DR2Config+=$EndofSinglePath 
 
-#     DR1Config=$cmssw_v/src/cmssw_configs/${Campaign}_
-#     DR2Config=$cmssw_v/src/cmssw_configs/${Campaign}_
-#     #DR1Config+=$EndofPath 
-#     DR1Config+=$EndofSinglePath 
-#     #DR2Config+=$EndofPath 
-#     DR2Config+=$EndofSinglePath 
+    #DR2Output=$EndofPath 
 
-#     #DR2Output=$EndofPath 
+    # Remove previous step from name 
 
-#     # Remove previous step from name 
+    DR1Output=${DR1Output%_GEN-SIM*}
+    #DR1Output=${DR1Output%_GEN*}
+    DR2Output=${DR2Output%_DR1*}
+    DR1Config=${DR1Config%_GEN-SIM*}
+    #DR1Config=${DR1Config%_GEN*}
+    DR2Config=${DR2Config%_DR1*}
 
-#     DR1Output=${DR1Output%_GEN-SIM*}
-#     #DR1Output=${DR1Output%_GEN*}
-#     DR2Output=${DR2Output%_DR1*}
-#     DR1Config=${DR1Config%_GEN-SIM*}
-#     #DR1Config=${DR1Config%_GEN*}
-#     DR2Config=${DR2Config%_DR1*}
+    # Add PU info to file names 
+    # Should carry through to MINIAOD and MICROAOD names 
+    if [ $chosen_pileup == "wPU" ]
+        then
+        DR1Output+="_wPU"
+        DR1Config+="_wPU"
 
-#     # Add PU info to file names 
-#     # Should carry through to MINIAOD and MICROAOD names 
-#     if [ $chosen_pileup == "wPU" ]
-#         then
-#         DR1Output+="_wPU"
-#         DR1Config+="_wPU"
+    fi 
 
-#     fi 
+    if [ $chosen_pileup == "woPU" ]
+        then
+        DR1Output+="_woPU"
+        DR1Config+="_woPU"
 
-#     if [ $chosen_pileup == "woPU" ]
-#         then
-#         DR1Output+="_woPU"
-#         DR1Config+="_woPU"
+    fi 
 
-#     fi 
+    DR1Output+=_DR1.root
+    DR2Output+=_DR2.root
+    DR1Config+=_DR1.py 
+    DR2Config+=_DR2.py
 
-#     DR1Output+=_DR1.root
-#     DR2Output+=_DR2.root
-#     DR1Config+=_DR1.py 
-#     DR2Config+=_DR2.py
+    # With Pileup
 
-#     #voms-proxy-init -voms cms -rfc
+    if [ $chosen_pileup == "wPU" ]
+    then
 
-#     # With Pileup
+        if [ $chosen_step == DR1 ]
+        then 
 
-#     if [ $chosen_pileup == "wPU" ]
-#     then
+            echo 'Performing DR1 with Pileup'
 
-#         if [ $chosen_step == DR1 ]
-#         then 
+            # Make sure proxy available for pileup files 
+            check_proxy
+            chosen_threads=8
 
-#             echo 'Performing DR1 with Pileup'
+            echo "COMMAND:" ##-- originially missing "--filein" on McM 
+            echo "cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-PUAutumn18_102X_upgrade2018_realistic_v15-v1/GEN-SIM-DIGI-RAW --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 102X_upgrade2018_realistic_v15 --step DIGI,DATAMIX,L1,DIGI2RAW,HLT:@relval2018 --procModifiers premix_stage2 --nThreads $chosen_threads --geometry DB:Extended --datamix PreMix --era Run2_2018 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null"
 
-#             # Make sure proxy available for pileup files 
-#             check_proxy
+            cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-PUAutumn18_102X_upgrade2018_realistic_v15-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 102X_upgrade2018_realistic_v15 --step DIGI,DATAMIX,L1,DIGI2RAW,HLT:@relval2018 --procModifiers premix_stage2 --nThreads $chosen_threads --geometry DB:Extended --datamix PreMix --era Run2_2018 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null # do not output the many many pileup files names
+             
+            #shuffle_PU $DR1Config # To manually shuffle pileup each time
 
-#             chosen_threads=8
+            submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}"
 
-#             #cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+        elif [ $chosen_step == DR2 ]
+        then 
+            chosen_threads=8
+            echo 'Performing DR2 with Pileup'
+            echo "COMMAND:"
+            echo "cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 102X_upgrade2018_realistic_v15 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --procModifiers premix_stage2 --nThreads $chosen_threads --era Run2_2018 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events "
+            cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 102X_upgrade2018_realistic_v15 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --procModifiers premix_stage2 --nThreads $chosen_threads --era Run2_2018 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-#             echo "COMMAND:"
-#             echo "cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
+            submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
-            
-#             cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null # do not output the many many pileup files
+        fi # if wPU and (if DR1 elif DR2) 
+    fi # if wPU elif woPU 
+fi # if DR1 or DR2 
 
-#             # Need to edit cmssw config to shuffle pileup each time 
-#             #shuffle_PU $DR1Config
 
-#             submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}"
+# MiniAOD
 
-#         elif [ $chosen_step == DR2 ]
-#         then 
-#             echo 'Performing DR2 with Pileup'
-#             # From MCM
+if [ $chosen_step == MINIAOD ]
+then
 
-#             chosen_threads=8
-#             echo "COMMAND:"
-#             echo "cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
+    cmssw_v=CMSSW_10_2_5
 
-#             cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    #crab_input=${PrevStepOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
+    #echo "Crab Input = $crab_input"
 
-#             #cmsRun $DR2Config 
+    PathNoRoot=${PrevStepOutput%?????} # remove .root
+    EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
+    # Should be ID of specific decay channel/PUconfig/events 
 
-#             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-#             submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
+    SinglePathNoRoot=${SinglePath%?????} # remove .root
+    EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
 
-#             #end_script 
+    echo "EndofSinglePath = $EndofSinglePath"
 
-#         fi # if wPU and (if DR1 elif DR2) 
+    MINIAODInput=$PrevStepOutput
 
-#     elif [ $chosen_pileup == "woPU" ]
-#     then
-        
-#         # Without Pileup (need to test)
+    # Remove previous step from name 
+    #MINIAODOutput=$EndofPath 
+    MINIAODOutput=$EndofSinglePath 
+    MINIAODOutput=${MINIAODOutput%_DR2*}
+    MINIAODOutput+=_MINIAOD.root
 
-#         if [ $chosen_step == DR1 ]
-#         then
-#             echo 'Performing DR1 without Pileup'
 
-#             # 7125 DR1 With Pileup 
-#             #  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISpring15PrePremix-PUMoriond17_80X_mcRun2_asymptotic_2016_TrancheIV_v2-v2/GEN-SIM-DIGI-RAW" --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:@frozen2016 --nThreads 4 --datamix PreMix --era Run2_2016 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    MINIAODConfig=$cmssw_v/src/cmssw_configs/${Campaign}_
+    #MINIAODConfig+=$EndofPath
+    MINIAODConfig+=$EndofSinglePath
+    MINIAODConfig=${MINIAODConfig%_DR2*}
+    MINIAODConfig+=_MINIAOD.py
 
-#             # 939 DR1 With Pileup
-#             #  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW"  --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads 8 --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    export SCRAM_ARCH=slc6_amd64_gcc700
+    source /cvmfs/cms.cern.ch/cmsset_default.sh
+    if [ -r CMSSW_10_2_5/src ] ; then 
+    echo release CMSSW_10_2_5 already exists
+    else
+    scram p CMSSW CMSSW_10_2_5
+    fi
+    cd CMSSW_10_2_5/src
+    eval `scram runtime -sh`
 
-#             chosen_threads=8
+    # AODOutput=${PrevStepOutput%?????}
+    # AODConfig=$AODOutput
+    # AODOutput+=_MiniAOD.root
+    # AODConfig+=_MiniAOD.py
 
-#             #cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-#             echo "COMMAND:"
-#             echo "cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
-#             cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
+    chosen_threads=8
 
-#             # The one below worked once for some reason, while I remember the top one failing, even though they look the same 
-#             #cmsDriver.py step1 --filein file:testoutput.root --fileout file:test_Dr1output.root --mc --eventcontent RAWSIM --pileup NoPileUp --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGI,L1,DIGI2RAW,HLT:2e34v40 --nThreads 8 --era Run2_2017 --python_filename DR1config.py --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n 10
+    scram b
+    cd ../../
+    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
-#             # Put 939 nopileup DR1 here
+    echo "COMMAND:"
+    echo "cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 102X_upgrade2018_realistic_v15 --step PAT --nThreads $chosen_threads --geometry DB:Extended --era Run2_2018 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
+    
+    cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 102X_upgrade2018_realistic_v15 --step PAT --nThreads $chosen_threads --geometry DB:Extended --era Run2_2018 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
-#             #cmsRun $DR1Config
+    submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
 
-#             #echo "DR1Config = $DR1Config"
-
-#             #submit_crab_postGEN $DR1Config $cmssw_v $crab_input $chosen_threads $chosen_jobs "${f_paths[@]}"
-#             #submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_events "${f_paths[@]}"
-#             submit_crab_postGEN $DR1Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
-
-#             #end_script 
-
-#         elif [ $chosen_step == DR2 ]
-#         then
-#             echo 'Performing DR2 without Pileup'
-
-#             # 7125 DR2 With Pileup 
-#             # cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-
-#             # 939 DR2 With Pileup
-#             # cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent AODSIM --runUnscheduled --datatier AODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,RECO,RECOSIM,EI --nThreads 8 --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-
-#             # 7125 DR2 Without Pileup
-#             #cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 80X_mcRun2_asymptotic_2016_TrancheIV_v6 --step RAW2DIGI,L1Reco,RECO,EI --nThreads 4 --era Run2_2016 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-
-#             # 7125: RAW2DIGI,RECO,EI -> RAW2DIGI,L1Reco,RECO,EI
-#             # 939: RAW2DIGI,RECO,RECOSIM,EI -> RAW2DIGI,L1Reco,RECO,RECOSIM,EI
-            
-
-#             # Put 939 nopileup DR2 here
-
-#             chosen_threads=8
-
-#             #cmsDriver.py step2 --filein file:$DR1Output --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-#             echo "COMMAND:"
-#             echo "cmsDriver.py step2 --filein $paths_string --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
-#             cmsDriver.py step2 --filein $paths_string --fileout file:$DR2Output --mc --eventcontent RAWAODSIM --runUnscheduled --datatier RAWAODSIM --conditions 94X_mc2017_realistic_v11 --step RAW2DIGI,L1Reco,RECO,RECOSIM,EI --nThreads $chosen_threads --era Run2_2017 --python_filename $DR2Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-
-            
-
-#             #cmsRun $DR2Config 
-
-#             #submit_crab_postGEN $DR2Config $cmssw_v $crab_input $chosen_threads
-#             submit_crab_postGEN $DR2Config $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
-
-#             #end_script 
-        
-#         fi # if woPU and (if DR1 elif DR2) 
-
-#     fi # if wPU elif woPU 
-
-# fi # if DR1 or DR2 
-
-# # MiniAOD
-
-# if [ $chosen_step == MINIAOD ]
-# then
-
-#     cmssw_v=CMSSW_9_4_7
-
-#     #crab_input=${PrevStepOutput#"/eos/cms"} # Remove beginning of gen output (DR1 input) file path so it can be read by the crab config 
-#     #echo "Crab Input = $crab_input"
-
-#     PathNoRoot=${PrevStepOutput%?????} # remove .root
-#     EndofPath=${PathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
-#     # Should be ID of specific decay channel/PUconfig/events 
-
-#     SinglePathNoRoot=${SinglePath%?????} # remove .root
-#     EndofSinglePath=${SinglePathNoRoot##*/} # remove everything before and including final '/' in long path /eos/cms/store/...
-
-#     echo "EndofSinglePath = $EndofSinglePath"
-
-#     MINIAODInput=$PrevStepOutput
-
-#     # Remove previous step from name 
-#     #MINIAODOutput=$EndofPath 
-#     MINIAODOutput=$EndofSinglePath 
-#     MINIAODOutput=${MINIAODOutput%_DR2*}
-#     MINIAODOutput+=_MINIAOD.root
-
-#     mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
-
-#     MINIAODConfig=$cmssw_v/src/cmssw_configs/${Campaign}_
-#     #MINIAODConfig+=$EndofPath
-#     MINIAODConfig+=$EndofSinglePath
-#     MINIAODConfig=${MINIAODConfig%_DR2*}
-#     MINIAODConfig+=_MINIAOD.py
-
-#     #!/bin/bash
-#     source /cvmfs/cms.cern.ch/cmsset_default.sh
-#     export SCRAM_ARCH=slc6_amd64_gcc630
-#     if [ -r CMSSW_9_4_7/src ] ; then 
-#     echo release CMSSW_9_4_7 already exists
-#     else
-#     scram p CMSSW CMSSW_9_4_7
-#     fi
-#     cd CMSSW_9_4_7/src
-#     eval `scram runtime -sh`
-
-#     # AODOutput=${PrevStepOutput%?????}
-#     # AODConfig=$AODOutput
-#     # AODOutput+=_MiniAOD.root
-#     # AODConfig+=_MiniAOD.py
-
-#     chosen_threads=4
-
-#     scram b
-#     cd ../../
-#     echo "COMMAND:"
-#     echo "cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
-#     cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
-
-#     #cmsRun $AODConfig
-
-#     submit_crab_postGEN $MINIAODConfig $cmssw_v $chosen_threads $chosen_job_size $chosen_step $Campaign $dryRun "${f_paths[@]}" 
-
-#     #end_script 
-
-# fi 
+fi 

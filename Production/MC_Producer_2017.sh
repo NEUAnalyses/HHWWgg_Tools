@@ -217,9 +217,9 @@ then
             #cmsDriver.py step1 --filein file:$GenSimOutput --fileout file:$DR1Output  --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events
 
             echo "COMMAND:"
-            echo "cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
+            echo "cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output  --pileup_input dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null"
             
-            cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null # do not output the many many pileup files
+            cmsDriver.py step1 --filein $paths_string --fileout file:$DR1Output --pileup_input "dbs:/Neutrino_E-10_gun/RunIISummer17PrePremix-MCv2_correctPU_94X_mc2017_realistic_v9-v1/GEN-SIM-DIGI-RAW" --mc --eventcontent PREMIXRAW --datatier GEN-SIM-RAW --conditions 94X_mc2017_realistic_v11 --step DIGIPREMIX_S2,DATAMIX,L1,DIGI2RAW,HLT:2e34v40 --nThreads $chosen_threads --datamix PreMix --era Run2_2017 --python_filename $DR1Config --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events > /dev/null # do not output the many many pileup files names
 
             # Need to edit cmssw config to shuffle pileup each time 
             #shuffle_PU $DR1Config
@@ -351,7 +351,6 @@ then
     MINIAODOutput=${MINIAODOutput%_DR2*}
     MINIAODOutput+=_MINIAOD.root
 
-    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
 
     MINIAODConfig=$cmssw_v/src/cmssw_configs/${Campaign}_
     #MINIAODConfig+=$EndofPath
@@ -379,6 +378,8 @@ then
 
     scram b
     cd ../../
+    mkdir -p $cmssw_v/src/cmssw_configs/ # create directory if it doesn't exist 
+
     echo "COMMAND:"
     echo "cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events"
     cmsDriver.py step1 --filein $paths_string --fileout file:$MINIAODOutput --mc --eventcontent MINIAODSIM --runUnscheduled --datatier MINIAODSIM --conditions 94X_mc2017_realistic_v14 --step PAT --nThreads $chosen_threads --scenario pp --era Run2_2017,run2_miniAOD_94XFall17 --python_filename $MINIAODConfig --no_exec --customise Configuration/DataProcessing/Utils.addMonitoring -n $chosen_events

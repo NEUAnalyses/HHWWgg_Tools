@@ -6,16 +6,20 @@
 #
 # Example Usage:
 #
-# ##-- Testing:
-## Low events 
+# ##-- HHWWgg_SM20XX
+
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign Test --Year 2016 --dryRun ##-- HHWWgg_SM20XX
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 5 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign HHWWgg_SM2016 --Year 2016 --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --dryRun
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign HHWWgg_SM2017 --Year 2017 --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --dryRun
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign HHWWgg_SM2017 --Year 2017 --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
+
 ## Production type command 
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --EFT --EFT_BMs SM --diHiggsDecay WWgg  --Campaign HHWWgg_SM2017 --Year 2017 --dryRun
 # ##-- Resonant Points:
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000 --diHiggsDecay WWgg --fragOutDir HHWWgg_v2-7 --Campaign HHWWgg_v2-7 --dryRun 
 # python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
 #
-#  python Make_MC_Configs.py --step MINIAOD --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250,260,270,280,320,400 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
+# python Make_MC_Configs.py --step MINIAOD --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250,260,270,280,320,400 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
 # python Make_MC_Configs.py --step GEN --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 260,750 --diHiggsDecay HHWWgg --fragOutDir HHWWgg
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 260,600,1000 --diHiggsDecay WWgg --fragOutDir TestTauRes --Campaign HHWWgg_v2-6
@@ -356,8 +360,11 @@ else:
 
 				MC_Configs += MC_Configs_Entry
 
-				if imp is not len(massPairs)-1: MC_Configs += ',' # need comma separation 
+				if ifs is not len(finalStates)-1: MC_Configs += ',' # need comma separation 
 				else: continue # no comma at end of last object 
+
+			if imp is not len(massPairs)-1: MC_Configs += ',' # need comma separation 
+			else: continue # no comma at end of last object 
 
 	# If EFT, go through benchmarks and final states 
 	elif(args.EFT):
@@ -391,8 +398,11 @@ else:
 				
 				MC_Configs += MC_Configs_Entry
 
-				if ibm is not len(EFT_BMs)-1: MC_Configs += ',' # need comma separation 
-				else: continue # no comma at end of last object 	
+				if ifs is not len(finalStates)-1: MC_Configs += ',' # need comma separation 
+				else: continue # no comma at end of last object 
+
+			if ibm is not len(EFT_BMs)-1: MC_Configs += ',' # need comma separation 
+			else: continue # no comma at end of last object 
 
 	elif(args.Resonant):
 		for im,mass in enumerate(masses):
@@ -431,8 +441,11 @@ else:
 
 				MC_Configs += MC_Configs_Entry
 
-				if im is not len(masses)-1: MC_Configs += ',' # need comma separation 
+				if ifs is not len(finalStates)-1: MC_Configs += ',' # need comma separation 
 				else: continue # no comma at end of last object 
+
+			if im is not len(masses)-1: MC_Configs += ',' # need comma separation 
+			else: continue # no comma at end of last object 
 
 	MC_Configs += '\n]\n' # finish json 
 

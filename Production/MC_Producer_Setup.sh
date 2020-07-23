@@ -1,11 +1,5 @@
 #!/bin/bash
 
-#source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Cfgs.sh
-
-#chosen_config=$1
-
-#step events jobs_jobsize fragment_directory pileup
-
 chosen_step=$1
 chosen_events=$2
 chosen_jobs=$3
@@ -16,31 +10,12 @@ Campaign=$7
 Year=$8
 dryRun=$9
 
-#echo "all variables: $@"
-
-#echo "Chosen configuration: $chosen_config"
-
-# need an associative array as input 
-
-#chosen_step_=${chosen_config}[step]
-#chosen_step=${!chosen_step_}
-
 echo "chosen_step = $chosen_step"
 echo "LocalGridpack: $LocalGridpack "
 echo "Campaign: $Campaign"
 
 if [ $chosen_step == GEN-SIM ]
 then
-
-    # Params: filename, step, events 
-
-    # chosen_filename_=${chosen_config}[filename]
-    # chosen_events_=${chosen_config}[events]
-    # chosen_jobs_=${chosen_config}[jobs]
-
-    # chosen_filename=${!chosen_filename_}
-    # chosen_events=${!chosen_events_}
-    # chosen_jobs=${!chosen_jobs_}
 
     echo "Chosen setup parameters:"
     echo "  step: $chosen_step"
@@ -215,17 +190,6 @@ then
         done
 
     #echo "paths_string = $paths_string"
-
-
-
-    # chosen_pileup_=${chosen_config}[pileup]
-    # chosen_pileup=${!chosen_pileup_}
-
-    # chosen_events_=${chosen_config}[events]
-    # chosen_events=${!chosen_events_}
-
-    # chosen_job_size_=${chosen_config}[jobsize]
-    # chosen_job_size=${!chosen_job_size_}
 
     chosen_events=$2
     chosen_job_size=$3
