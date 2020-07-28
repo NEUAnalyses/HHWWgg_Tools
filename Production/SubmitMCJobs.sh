@@ -1,7 +1,6 @@
 #!/bin/bash
 
-# For each MC configuration, submit a crab job 
-# This is currently only configured for fragments created in CMSSW_9_3_9_patch1 
+# For each MC configuration, submit a batch of crab jobs 
 
 #unset jsonkeys 
 jsonkeys=(step events jobs_jobsize fragment_directory pileup localGridpack Campaign Year dryRun)
