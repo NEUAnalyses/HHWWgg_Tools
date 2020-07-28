@@ -1,35 +1,211 @@
 [
 				{ 
-						"step"      : "MINIAOD",
+						"step"      : "GEN-SIM",
 						"events"    : 100000,
-						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X260_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095532/0000/",
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X250_HHWWgg_qqqq",
 						"pileup"              : "wPU",
 						"localGridpack"                : "0",
-						"Campaign"            : "HHWWgg_v2-6",
-						"dryRun"              : "0" 
-
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
 				},
 				{ 
-						"step"      : "MINIAOD",
+						"step"      : "GEN-SIM",
 						"events"    : 100000,
-						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X600_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095605/0000/",
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X260_HHWWgg_qqqq",
 						"pileup"              : "wPU",
 						"localGridpack"                : "0",
-						"Campaign"            : "HHWWgg_v2-6",
-						"dryRun"              : "0" 
-
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
 				},
 				{ 
-						"step"      : "MINIAOD",
+						"step"      : "GEN-SIM",
 						"events"    : 100000,
-						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ggF_X1000_HHWWgg_qqlnu/100000events_wPU_DR2/200603_095657/0000/",
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X270_HHWWgg_qqqq",
 						"pileup"              : "wPU",
 						"localGridpack"                : "0",
-						"Campaign"            : "HHWWgg_v2-6",
-						"dryRun"              : "0" 
-
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X280_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X300_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X320_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X350_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X400_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X450_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X500_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X550_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X600_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X650_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X700_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X750_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X800_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X850_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X900_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
+				},
+				{ 
+						"step"      : "GEN-SIM",
+						"events"    : 100000,
+						"jobs_jobsize"      : 40,
+						"fragment_directory"  : "ggF_X1000_HHWWgg_qqqq",
+						"pileup"              : "wPU",
+						"localGridpack"                : "0",
+						"Campaign"            : "HHWWgg_v2-7",
+						"Year"                : "2017", 
+						"dryRun"              : "1"
 				}
 ]

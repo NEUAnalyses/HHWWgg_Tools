@@ -364,7 +364,7 @@ end_script(){
 
     #echo "Finished desired step: $chosen_step "
     echo "Exiting"
-    cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production
+    cd /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production
     return;
     #exit 1;
 }
@@ -380,15 +380,15 @@ shuffle_PU(){
 
 if [ $Year == 2016 ]
 then 
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2016.sh
+    source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/MC_Producer_2016.sh
 fi 
 
 if [ $Year == 2017 ]
 then 
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2017.sh
+    source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/MC_Producer_2017.sh
 fi 
  
 if [ $Year == 2018 ]
 then 
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_2018.sh
+    source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/MC_Producer_2018.sh
 fi 

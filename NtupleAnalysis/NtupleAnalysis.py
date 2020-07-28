@@ -4,38 +4,40 @@
 #
 # The purpose of this module is to analyze HHWWgg ntuples. The current options are:
 # - Cut flow efficiencies
-# - Data / MC comparison 
+# - Data / MC comparison
 #
-# Example Usage: 
+# Example Usage:
 #
 # ##-- Efficiency Analysis
 # python NtupleAnalysis.py --Efficiency --folder HHWWgg_v2-4_NMSSM_CutFlow_Hadded/ --note NMSSM_Test --NMSSM --SumTags
-# python NtupleAnalysis.py --Efficiency --folder HHWWgg_v2-4_CutFLow_Hadded/ --note EFT_Test --EFT --SumTags 
-# 
-# ##-- Efficiency Ratio 
+# python NtupleAnalysis.py --Efficiency --folder HHWWgg_v2-4_CutFLow_Hadded/ --note EFT_Test --EFT --SumTags
+#
+# ##-- Efficiency Ratio
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
-# 
+#
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures 
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures
 #########################################################################################################################################################################################################
 
-##-- Import python modules 
-from python.Options import * 
-from python.NtupleAnalysisTools import * 
+##-- Import python modules
+from python.Options import *
+from python.NtupleAnalysisTools import *
 from ROOT import gPad, TAxis, TTree, TChain, TLine, TGraph, TMultiGraph, TFile, TCanvas, gROOT, TH2F, TH1F, kPink, kGreen, kCyan, TLegend, kRed, kOrange, kBlack, TLegend, gStyle, TObjArray, kBlue, TGraphErrors
 from array import array
-import os 
+import os
 
-##-- Define flags and variables based on user input 
+##-- Define flags and variables based on user input
 args = GetOptions()
 
 if __name__ == '__main__':
-    gROOT.SetBatch(1) # Do not output upon draw statement 
-    if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
-    elif(args.DataMC): 
-        if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
-        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v7/'    
-    nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
+    gROOT.SetBatch(1) # Do not output upon draw statement
+    if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
+    elif(args.DataMC):
+        if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/DataMC_testFeatures/'
+        else: ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v3/DataMC_v7/'
+    # nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/NtupleAnalysis/2017_DataMC_ntuples_moreVars/'
+    # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
+    nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/background/dataMC/'
 
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
@@ -43,8 +45,8 @@ if __name__ == '__main__':
             nMassPoints = len(args.massPoints.split(','))
             ratio_x_vals = []
             for i in range(5):
-                exec("c1_y_vals_%s = array( 'd' )"%(i)) # campaign 1 efficiencies          
-                exec("c2_y_vals_%s = array ( 'd' )"%(i)) # campaign 2 efficiencies     
+                exec("c1_y_vals_%s = array( 'd' )"%(i)) # campaign 1 efficiencies
+                exec("c2_y_vals_%s = array ( 'd' )"%(i)) # campaign 2 efficiencies
 
         folders = args.folders.split(',')
         campaigns = args.campaigns.split(',')
@@ -61,7 +63,7 @@ if __name__ == '__main__':
             x_values = array( 'd' )
             x_errors = array( 'd' )
             y_errors = array( 'd' )
-            y_sigeff00 = array( 'd' ) # MicroAOD (efficiency of 1). Need # of events. 
+            y_sigeff00 = array( 'd' ) # MicroAOD (efficiency of 1). Need # of events.
             for i in range(5):
                 exec("y_sigeff%s = array( 'd' )"%(i))
             Npoints = 0
@@ -92,34 +94,34 @@ if __name__ == '__main__':
 
             # print"orderedFiles:",orderedFiles
 
-            # badMasses = ['X750','SM'] # masses to not include in the plot 
+            # badMasses = ['X750','SM'] # masses to not include in the plot
             badMasses = []
             plotLabels = []
-            
+
             # for fi,file in enumerate(os.listdir(direc)):
             # for fi,path in enumerate(files):
             for fi,path in enumerate(orderedFiles):
                 print"path:",path
                 Npass_0_tot, Npass_1_tot, Npass_2_tot, Npass_3_tot, Npass_4_tot = 0,0,0,0,0
                 badmass = 0
-                if(args.Res): 
+                if(args.Res):
                     mass = path.split('_')[1]
                     print'On mass:',mass
-                    for bM in badMasses:   
-                        if mass == bM: badmass = 1 
-                    if (badmass): continue   
+                    for bM in badMasses:
+                        if mass == bM: badmass = 1
+                    if (badmass): continue
                     # print"massPoints:",massPoints
-                    if(mass not in massPoints): continue           
+                    if(mass not in massPoints): continue
                     x_values.append(float(mass[1:]))
                     if(iFolder==0): ratio_x_vals.append(float(mass[1:]))
-                    
+
                     nTotEvents = GetEvents(mass,campaign)
 
                 elif(args.EFT):
                     SM_point = 0
                     print "thing:",path.split('_')[0]
                     if path.split('_')[0] == "SM":
-                        SM_point = 1 
+                        SM_point = 1
                         x_values.append(fi)
                         nTotEvents = GetEvents("SM")
                         plotLabels.append("SM")
@@ -127,7 +129,7 @@ if __name__ == '__main__':
                     else:
                         BM = path.split('_')[3][4]
                         print("BM:",BM)
-                        print"appending:",float(BM) + 1 
+                        print"appending:",float(BM) + 1
                         # x_values.append(float(BM) + 1)
                         x_values.append(fi)
                         nodeStr = "node%s"%(float(BM)+1)
@@ -142,48 +144,48 @@ if __name__ == '__main__':
                     my = path.split('_')[3]
                     massPair = "%s_%s"%(mx,my)
                     print"massPair:",massPair
-                    x_values.append(fi) # file i 
+                    x_values.append(fi) # file i
                     nTotEvents = GetEvents(massPair)
                     massPairString = massPair.replace("_",", ")
                     plotLabels.append(massPairString)
 
                 y_sigeff00.append(1) # Max efficiency
-                Npoints += 1 
+                Npoints += 1
                 x_errors.append(0.5)
                 y_errors.append(0)
                 # if(SM_point): ntags = 1
                 # else: ntags = 2
                 ntags = 3
-                if(campaign=="HHWWgg_v2-3"): ntags = 3 
-                elif(campaign=="HHWWgg_v2-6"): ntags = 3 
+                if(campaign=="HHWWgg_v2-3"): ntags = 3
+                elif(campaign=="HHWWgg_v2-6"): ntags = 3
 
                 print"ntags:",ntags
 
-                # if(args.SumTags): ntags = 3 
-                # if(args.SumTags): ntags = 2 
-                # else: ntags = 1 
+                # if(args.SumTags): ntags = 3
+                # if(args.SumTags): ntags = 2
+                # else: ntags = 1
                 for tag in range(0,ntags):
-                    # if(not args.SumTags and tag == 1): continue  
+                    # if(not args.SumTags and tag == 1): continue
                     # print'path:',path
                     # print'fi =',fi
                     # print'len(orderedFiles):',len(orderedFiles)
-                    # if fi == len(orderedFiles) - 2: continue 
+                    # if fi == len(orderedFiles) - 2: continue
                     color = colors[fi]
 
-                    print'Num events in MicroAOD:',nTotEvents 
+                    print'Num events in MicroAOD:',nTotEvents
 
                     signal_path = direc + '/' + str(path)
                     signal_file = TFile.Open(signal_path)
                     if(args.Res): treeEnd = 'ggF_' + mass + '_WWgg_qqlnugg_13TeV_HHWWggTag_%s'%(tag)
-                    elif(args.EFT): 
+                    elif(args.EFT):
                         if(SM_point): treeEnd = 'ggF_SM_WWgg_qqlnugg_13TeV_HHWWggTag_%s'%(tag)
                         else: treeEnd = 'GluGluToHHTo_WWgg_qqlnu_node%s_13TeV_HHWWggTag_%s'%(BM,tag)
-                        
-                    elif(args.NMSSM): treeEnd = 'NMSSM_XYHWWggqqlnu_%s_13TeV_HHWWggTag_%s'%(massPair,tag) 
+
+                    elif(args.NMSSM): treeEnd = 'NMSSM_XYHWWggqqlnu_%s_13TeV_HHWWggTag_%s'%(massPair,tag)
 
                     sig_tree = signal_file.Get('tagsDumper/trees/' + treeEnd)
 
-                    # outputName = mass + '_CutFlow_efficiencies.txt' # output text file path 
+                    # outputName = mass + '_CutFlow_efficiencies.txt' # output text file path
                     # EfficienciesTxt = "bthresh\tsigeff\tttHeff\n"
 
                     sig_h_0 = TH1F('sig_h_0','sig_h_0',2,0,2)
@@ -218,8 +220,8 @@ if __name__ == '__main__':
                 y_sigeff4.append(Neff_4)
 
                 for i in range(5):
-                    if(iFolder == 0): exec("c1_y_vals_%s.append(Neff_%s)"%(i,i)) # campaign 1 efficiencies 
-                    if(iFolder == 1): exec("c2_y_vals_%s.append(Neff_%s)"%(i,i)) # campaign 1 efficiencies 
+                    if(iFolder == 0): exec("c1_y_vals_%s.append(Neff_%s)"%(i,i)) # campaign 1 efficiencies
+                    if(iFolder == 1): exec("c2_y_vals_%s.append(Neff_%s)"%(i,i)) # campaign 1 efficiencies
 
                 # sig_tree.Draw(hasHighbjet + ' >> sig_h',hasHighbjet)
                 # NsigPass = float(Nsig) - float(sig_h.GetEntries())
@@ -232,13 +234,13 @@ if __name__ == '__main__':
                 # EfficienciesTxt += str(bthresh) + "\t" +  str(sig_eff) + "\t" + str(ttH_eff) + "\n"
 
                 # with open(outputName, "w") as output:
-                        # output.write(EfficienciesTxt) # write txt file 
+                        # output.write(EfficienciesTxt) # write txt file
 
             if(args.NMSSM) or (args.EFT):
                 sig_eff_g_00 = TGraphErrors(Npoints,x_values,y_sigeff00,x_errors,y_errors)
                 # SetBinLabels(sig_eff_g_00,Npoints,plotLabels)
                 for i in range(0,5):
-                    exec("sig_eff_g_%s = TGraphErrors(Npoints,x_values,y_sigeff%s,x_errors,y_errors)"%(i,i))      
+                    exec("sig_eff_g_%s = TGraphErrors(Npoints,x_values,y_sigeff%s,x_errors,y_errors)"%(i,i))
                     # exec("SetBinLabels(sig_eff_g_%d,Npoints,plotLabels)"%(i))
 
             else:
@@ -250,16 +252,16 @@ if __name__ == '__main__':
             SetGraphStyle(sig_eff_g_0,10,kBlue, 21)
             SetGraphStyle(sig_eff_g_1,9,kGreen, 22)
             SetGraphStyle(sig_eff_g_2,6,kPink, 23)
-            SetGraphStyle(sig_eff_g_3,2,95,34) # orange 
-            SetGraphStyle(sig_eff_g_4,7,9,33) # purple 
+            SetGraphStyle(sig_eff_g_3,2,95,34) # orange
+            SetGraphStyle(sig_eff_g_4,7,9,33) # purple
 
             if(args.NMSSM) or (args.EFT):
                 SetGraphStyle(sig_eff_g_00,1,kRed,20)
                 SetGraphStyle(sig_eff_g_0,1,kBlue, 21)
                 SetGraphStyle(sig_eff_g_1,1,kGreen, 22)
                 SetGraphStyle(sig_eff_g_2,1,kPink, 23)
-                SetGraphStyle(sig_eff_g_3,1,95,34) # orange 
-                SetGraphStyle(sig_eff_g_4,1,9,33) # purple         
+                SetGraphStyle(sig_eff_g_3,1,95,34) # orange
+                SetGraphStyle(sig_eff_g_4,1,9,33) # purple
 
             sig_eff_g_00.SetTitle("MicroAOD")
             sig_eff_g_0.SetTitle("Pass #gamma#gamma cuts")
@@ -288,12 +290,13 @@ if __name__ == '__main__':
             if args.log: outName += 'Log'
             if args.note is not "": outName += '_' + str(args.note)
             outName += '.png'
+            os.system("mkdir -p "+outName)
 
-            if(args.NMSSM) or (args.EFT): 
+            if(args.NMSSM) or (args.EFT):
                 DrawNonResHistogram(mg,"AP",outName,args.log,Npoints,plotLabels)
                 outName = outName.replace("png","pdf")
                 DrawNonResHistogram(mg,"AP",outName,args.log,Npoints,plotLabels)
-            else: 
+            else:
                 Draw_Histogram(mg,"APL",outName,args.log)
                 outName = outName.replace("png","pdf")
                 Draw_Histogram(mg,"APL",outName,args.log)
@@ -306,21 +309,21 @@ if __name__ == '__main__':
                 print"c1_y_vals_%s"%(i)
                 exec("print c1_y_vals_%s"%(i))
                 print"c2_y_vals_%s"%(i)
-                exec("print c2_y_vals_%s"%(i))      
+                exec("print c2_y_vals_%s"%(i))
 
             x_values = array( 'd' )
             y_ratioEff00 = array ( 'd' )
             for entry in ratio_x_vals:
                 x_values.append(entry)
                 y_ratioEff00.append(1)
-            
+
             for i in range(5):
                 exec("y_ratioEff%s = array( 'd' )"%(i))
             for i in range(len(args.massPoints.split(','))):
                 for j in range(5):
                     ratio = eval("c1_y_vals_%s[%s] / c2_y_vals_%s[%s]"%(j,i,j,i))
                     eval("y_ratioEff%s.append(%s)"%(j,ratio))
-                    
+
             Nmasses = len(args.massPoints.split(','))
             sig_ratioEff_g_00 = TGraph(Nmasses,x_values,y_ratioEff00)
             for i in range(0,5):
@@ -330,8 +333,8 @@ if __name__ == '__main__':
             SetGraphStyle(sig_ratioEff_g_0,10,kBlue, 21)
             SetGraphStyle(sig_ratioEff_g_1,9,kGreen, 22)
             SetGraphStyle(sig_ratioEff_g_2,6,kPink, 23)
-            SetGraphStyle(sig_ratioEff_g_3,2,95,34) # orange 
-            SetGraphStyle(sig_ratioEff_g_4,7,9,33) # purple  
+            SetGraphStyle(sig_ratioEff_g_3,2,95,34) # orange
+            SetGraphStyle(sig_ratioEff_g_4,7,9,33) # purple
 
             sig_ratioEff_g_00.SetTitle("MicroAOD")
             sig_ratioEff_g_0.SetTitle("Pass #gamma#gamma cuts")
@@ -357,23 +360,25 @@ if __name__ == '__main__':
             # ratio_mg.SetMinimum(0)
             # ratio_mg.SetMaximum(1.01)
             # ratio_mg.SetMinimum(0.5)
-# 
+#
             # outName = ol + 'CutFlow' + '_' + args.campaign
             outName = ol + 'CutFlow' + '_' + campaign
             if args.log: outName += 'Log'
             if args.note is not "": outName += '_' + str(args.note)
             outName += '.png'
+            if(not os.path.exists(outName)):
+                os.system("mkdir -p "+outName)
 
-            if(args.NMSSM) or (args.EFT): 
+            if(args.NMSSM) or (args.EFT):
                 DrawNonResHistogram(ratio_mg,"AP",outName,args.log,Npoints,plotLabels)
                 outName = outName.replace("png","pdf")
                 DrawNonResHistogram(ratio_mg,"AP",outName,args.log,Npoints,plotLabels)
-            else: 
+            else:
                 Draw_Histogram(ratio_mg,"APL",outName,args.log)
                 outName = outName.replace("png","pdf")
                 Draw_Histogram(ratio_mg,"APL",outName,args.log)
-    
-    ##-- Perform Data / MC analysis 
+
+    ##-- Perform Data / MC analysis
     elif(args.DataMC):
         print"Performing Data / MC Analysis"
 
@@ -387,7 +392,7 @@ if __name__ == '__main__':
 
         ##-- Get Background MC Files
         mcFolder = str(args.mcFolder)
-        mcDirec = nTupleDirec + mcFolder 
+        mcDirec = nTupleDirec + mcFolder
         mcFiles = []
         for file in os.listdir(mcDirec):
             mcFiles.append(file)
@@ -395,13 +400,13 @@ if __name__ == '__main__':
 
         ##-- Get Signal File(s)
         signalFolder = str(args.signalFolder)
-        signalDirec = nTupleDirec + signalFolder 
-        signalFiles = [] 
+        signalDirec = nTupleDirec + signalFolder
+        signalFiles = []
         for file in os.listdir(signalDirec):
             signalFiles.append(file)
         if(args.verbose): print"signalFiles:",signalFiles
 
-        ##-- Run Main Module 
+        ##-- Run Main Module
         Tags = args.Tags.split(',')
         PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD)
         print"DONE"

@@ -66,8 +66,8 @@ for i in $(seq 0 $max_el)
 do 
     :
     echo "Submitting crab job $i"
-    cd /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production
-    source /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]} ${saved_array_5[$i]} ${saved_array_6[$i]} ${saved_array_7[@]} ${saved_array_8[@]}
+    cd /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production
+    source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/MC_Producer_Setup.sh ${saved_array_0[$i]} ${saved_array_1[$i]} ${saved_array_2[$i]} ${saved_array_3[$i]} ${saved_array_4[$i]} ${saved_array_5[$i]} ${saved_array_6[$i]} ${saved_array_7[@]} ${saved_array_8[@]}
 
 done 
 

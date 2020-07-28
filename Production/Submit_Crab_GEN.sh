@@ -31,7 +31,7 @@ submit_crab_GEN(){
     echo "Campaign: $Campaign"
     echo "dryRun: $dryRun"
 
-    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
+    localWorkingArea="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/"
 
     cd $localWorkingArea$cmssw_v/src/ # Directory where config file was conceived. Need to be in same CMSSW for crab config 
     #echo "pwd = $PWD"

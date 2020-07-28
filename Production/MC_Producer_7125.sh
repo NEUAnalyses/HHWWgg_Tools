@@ -13,10 +13,10 @@
 # This version will include the MCM commands obtained from:
 # https://cms-pdmv.cern.ch/mcm/chained_requests?contains=HIG-RunIISummer15wmLHEGS-00486&page=0&shown=15
 
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/MC_Producer_Setup.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_GEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/Submit_Crab_postGEN.sh
-source /afs/cern.ch/work/a/atishelm/private/HH_WWgg/make_microAOD.sh
+source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/MC_Producer_Setup.sh
+source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Submit_Crab_GEN.sh
+source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Submit_Crab_postGEN.sh
+source /afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/make_microAOD.sh
 
 # CMSSW version of gen step 
 version=7125

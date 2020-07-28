@@ -17,7 +17,7 @@ submit_crab_postGEN(){
 
     #!/bin/bash
 
-    localWorkingArea="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/Production/"
+    localWorkingArea="/afs/cern.ch/user/r/rasharma/work/doubleHiggs/HHWWgg_Tools/Production/"
 
     unset file_paths # Make sure array name is free in memory 
     declare -a file_paths # unassociative array 
