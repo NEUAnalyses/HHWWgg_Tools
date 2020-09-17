@@ -18,6 +18,9 @@
 # NMSSM Points:
 # python Make_Fragments.py --template Templates/NMSSM/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
 #
+# Specified gridpack path:
+# python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/VBFToBulkGravitonToHH_M250/v1/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz  --masses 250 --prodMode VBFToBulkGravitonToHH-2-6-0
+# python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/VBFTBulkGravitonToHH_M250/v1/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30tarball.tar.xz --masses 250 --prodMode VBFToBulkGravitonToHH
 ########################################################################################################################
 
 import argparse
@@ -28,6 +31,7 @@ parser.add_argument('--templates', type=str, default="", help="Comma separated l
 parser.add_argument('--outFolder', type=str, default="none", help="Name of output folder for fragments", required=True)
 parser.add_argument('--diHiggsDecay', type=str, default="", help="HH decay", required=True)
 parser.add_argument('--fs', type=str, default="", help="Final state", required=True)
+parser.add_argument('--prodMode', type=str, default="", help="Production mode. Ex) ggF, VBF", required=True)
 parser.add_argument('--gridpacks', type=str, default="", help="Comma separated string of gridpacks to use", required=False)
 parser.add_argument("--Resonant", action="store_true", default=False, help="Create Radion/Graviton model", required=False)
 parser.add_argument("--NMSSM", action="store_true", default=False, help="Create Y->XH model(s)", required=False)
@@ -49,6 +53,7 @@ masses = args.masses.split(',')
 diHiggsDecay, finalState, outFolder = args.diHiggsDecay, args.fs, args.outFolder 
 
 # list of gridpacks 
+if(len(args.gridpacks.split(',')) > 0): userGridpack = 1
 gridpacks = []
 if(args.EFT):
     # get gluon gluon fusion HH Benchmark gridpacks
@@ -69,10 +74,17 @@ elif(args.NMSSM):
         # gridpacks[igp] = shortGridpack
 
 elif(args.Resonant):
-    # get gluon gluon fusion Radion gridpack for mass point 
-    for resMass in masses:
-        gridpack = GetResGridpack(resMass) 
-        gridpacks.append(gridpack)
+    # print"masses:",masses
+    # if(masses!=[""]):
+    if(not userGridpack):
+        # get gluon gluon fusion Radion gridpack for mass point 
+        for resMass in masses:
+            gridpack = GetResGridpack(resMass) 
+            gridpacks.append(gridpack)
+    else:
+        for gp in args.gridpacks.split(','):
+            print"user gridpack:",gp 
+            gridpacks.append(gp)
 
 if(args.verbose):
     print'[Make_Fragments.py: VERBOSE] - Gridpacks to use:',gridpacks 
@@ -127,7 +139,8 @@ for it, template in enumerate(templates):
             bsmMass = resMasses[igp]
             print'res mass:',bsmMass
             print'res gridpack:',gp 
-            outputName = "Outputs/{0}/ggF_X{1}_HH{2}_{3}.py".format(outFolder,bsmMass,diHiggsDecay,finalState)
+            # prodMode 
+            outputName = "Outputs/{0}/{1}_X{2}_HH{3}_{4}.py".format(outFolder,args.prodMode,bsmMass,diHiggsDecay,finalState)
 
         fragmentFile = fragmentFile.replace("{gridpack}",str(gp))
         fragmentFile += '\n' 

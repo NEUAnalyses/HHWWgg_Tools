@@ -29,7 +29,7 @@ def CalcEff(h_,cut_):
     return pctPass_ 
 
 ##-- Main Data / MC module 
-def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_,noQCD_):
+def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_,noQCD_,prefix_,signalCut_):
     print"Plotting Data / MC"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)    
@@ -68,18 +68,18 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             dPath = "%s/%s"%(dataDirec_,dF_)
             dFile = TFile.Open(dPath)
             if(HHWWggTag=="combined"):
-                ch = TChain('tagsDumper/trees/Data_13TeV_HHWWggTag_0')
-                ch.Add("%s/tagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath))
-                ch.Add("%s/tagsDumper/trees/Data_13TeV_HHWWggTag_1"%(dPath))
-                ch.Add("%s/tagsDumper/trees/Data_13TeV_HHWWggTag_2"%(dPath))
+                ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix_))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix_))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix_))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix_))
             else:
-                ch = TChain('tagsDumper/trees/Data_13TeV_%s'%(HHWWggTag))
+                ch = TChain('%sData_13TeV_%s'%(prefix_,HHWWggTag))
                 ch.Add(dPath)
             BLIND_CUT = "(CMS_hgg_mass < 115 || CMS_hgg_mass > 135)"
             MC_WEIGHT = "1*weight"
             ZERO_CUT = "ZERO_CUT"
             MC_CUT = "%s*(%s)*(%s)"%(MC_WEIGHT,BLIND_CUT,ZERO_CUT)
-            DATA_CUT = "%s*(%s)"%(BLIND_CUT,ZERO_CUT)       
+            DATA_CUT = "%s*(%s)"%(BLIND_CUT,ZERO_CUT)  
             SIGNAL_CUT = "%s*(%s)"%(MC_WEIGHT,ZERO_CUT) # no blind cut on signal 
 
             ##-- For each cut 
@@ -97,7 +97,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     os.system('cp %s/index.php %s'%(ol_,outputFolder))
                 MC_CUT += "*(%s)"%(cut)
                 DATA_CUT += "*(%s)"%(cut)      
-                SIGNAL_CUT += "*(%s)"%(cut) 
+                if(signalCut_): SIGNAL_CUT += "*(%s)"%(cut) 
 
                 ##-- For each variable 
                 for iv,v in enumerate(finalStateVars): 
@@ -165,12 +165,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                         ##-- Define TChain based on categories 
                         if(HHWWggTag=="combined"):
-                            mc_ch = TChain('tagsDumper/trees/%s_13TeV_HHWWggTag_0'%(treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_0"%(mcPath,treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_1"%(mcPath,treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_2"%(mcPath,treeName))
+                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(mcPath,prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix_,treeName))
                         else:
-                            mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
+                            mc_ch = TChain('%s%s_13TeV_%s'%(prefix_,treeName,HHWWggTag))
                             mc_ch.Add(mcPath)
                         xbins, xmin, xmax = GetBins(varTitle)
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
@@ -239,12 +239,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             # print"Signal File:",sigPath 
                             print"Signal:",MC_Category
                         if(HHWWggTag=="combined"):
-                            mc_ch = TChain('tagsDumper/trees/%s_13TeV_HHWWggTag_0'%(treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_0"%(sigPath,treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_1"%(sigPath,treeName))
-                            mc_ch.Add("%s/tagsDumper/trees/%s_13TeV_HHWWggTag_2"%(sigPath,treeName))
+                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(sigPath,prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,prefix_,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,prefix_,treeName))
                         else:
-                            mc_ch = TChain('tagsDumper/trees/%s_13TeV_%s'%(treeName,HHWWggTag))
+                            mc_ch = TChain('%s%s_13TeV_%s'%(prefix_,treeName,HHWWggTag))
                             mc_ch.Add(sigPath)
                         xbins, xmin, xmax = GetBins(varTitle)
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
@@ -324,7 +324,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     selText.SetTextSize(0.04)   
                     CatText = TLatex(0.129,0.8,HHWWggTag)
                     CatText.SetNDC(1)
-                    CatText.SetTextSize(0.04)                                   
+                    CatText.SetTextSize(0.04)                                                 
                     stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio 
                     stackSum.Sumw2() 
                     stackSum.SetLineColor(kBlack)
@@ -338,6 +338,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         stackSum.SetMinimum(0.01)
                         bkgStack.SetMinimum(0.01)
                         
+                    ##-- Compute chi squared 
+                    chi2 = GetChiSquared(DataHist,stackSum)
+                    # print"chi2 = ",chi2 
+                    chi2Text = TLatex(0.129,0.75,"#Chi^{2} = %.5g"%(chi2))       
+                    chi2Text.SetNDC(1)
+                    chi2Text.SetTextSize(0.04)                         
                     ##-- Define ratio plot for computing Data / MC ratio 
                     rp = TRatioPlot(DataHist,stackSum)
                     rp.SetH1DrawOpt("P")
@@ -372,7 +378,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         rp.GetLowerRefYaxis().SetTitle("Data / MC")
                         rp.GetLowerPad().Update()
                         if(log_): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)   
-                        else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.3)
+                        else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
                                 
                         UpperPad = rp.GetUpperPad()
                         UpperPad.cd()
@@ -406,6 +412,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         legend.Draw("same")
                         selText.Draw("same")
                         CatText.Draw("same")
+                        chi2Text.Draw("same")
                         rp.GetLowerRefGraph().SetMinimum(0.5)
                         rp.GetLowerRefGraph().SetMaximum(1.5)     
                         Npoints = rp.GetLowerRefGraph().GetN()
@@ -434,8 +441,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     MC_CUT = MC_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
                     DATA_CUT = DATA_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
 
+                    # chi2 value for each end of this loop (finished tag,cut,variable pair)
+                # end of 
+
                 MC_Nevents_lists.append(these_MC_Nevents)
                 MC_Nevents_noweight_lists.append(these_MC_Nevents_noweights)  
 
         ##-- Produce table with number of events for each MC, total MC, and data 
         CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
+        # CreateChiSquaredTable(variables,cutBatch,chiSquaredVals) # Want chi squared z value. x: variable, y: cut batch

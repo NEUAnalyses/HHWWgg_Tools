@@ -72,7 +72,8 @@ def GetMCTreeName(fileName_):
         "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg"
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM"
     }
 
     return MCTreesDict[fileName_]
@@ -170,7 +171,8 @@ def GetMCName(fileName_):
         "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM"
 
     }
 
@@ -272,7 +274,8 @@ def GetMCCategory(fileName_):
         "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM"
 
     }
 

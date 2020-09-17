@@ -16,7 +16,11 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch diphopt --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --noQCD --SigScale 1000000
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures 
+#
+# ##-- Gen / Reco Analysis 
+# python NtupleAnalysis.py --GenReco
 #########################################################################################################################################################################################################
 
 ##-- Import python modules 
@@ -34,8 +38,9 @@ if __name__ == '__main__':
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
     elif(args.DataMC): 
         if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
-        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_v7/'    
-    nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
+        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/'    
+    # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
+    nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/'
 
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
@@ -403,5 +408,9 @@ if __name__ == '__main__':
 
         ##-- Run Main Module 
         Tags = args.Tags.split(',')
-        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD)
+        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD,args.prefix,args.signalCut)
         print"DONE"
+
+    ##-- Perform Gen Reco analysis
+    elif(args.GenReco):
+        print"Performing Gen Reco Analysis" 

@@ -33,6 +33,10 @@
 # ##-- NMSSM Points:
 # python Make_MC_Configs.py --step GEN-SIM --nEvents 1000 --jobs_jobsize 1 --NMSSM --finalStates qqlnu --masses 500,300 --diHiggsDecay WWgg --fragOutDir HHWWgg_NMSSM
 # postGEN: python Make_MC_Configs.py --step DR2 --nEvents 100000 --jobs_jobsize 1 --NMSSM --finalStates qqlnu --masses 2000,1800 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/
+#
+# ##-- Specify gridpacks:
+# python Make_MC_Configs.py --step GEN --Year 2017 --nEvents 100000 --jobs_jobsize 40 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --Campaign HHWWgg_VBF-MG-VersionCheck --prodMode VBFToBulkGravitonToHH --fragOutDir VBFMadgraphCheck
+# python Make_MC_Configs.py --step DR1 --nEvents 100000 --jobs_jobsize 1 --finalStates qqlnu --Resonant --masses 250 --diHiggsDecay WWgg --prevOutDir /eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/ --Campaign HHWWgg_v2-7
 ########################################################################################################################
 
 import argparse
@@ -55,6 +59,7 @@ parser.add_argument('--prevOutDir', type=str, default="", help="Comma separated 
 parser.add_argument('--PU', type=str, default="wPU", help="Pileup. Options: wPU, woPU", required=False) 
 parser.add_argument('--Campaign', type=str, default="", help="Campaign for secondary dataset name", required=False) 
 parser.add_argument('--Year', type=str, default="2017", help="Year to choose detector conditions. 2016, 2017 or 2018.", required=False) 
+parser.add_argument('--prodMode', type=str, default="", help="Production mode", required=False) 
 
 ##-- Misc 
 parser.add_argument("--dryRun", action="store_true", default=False, help="If true, do not submit crab jobs", required=False)
@@ -75,6 +80,8 @@ PU = args.PU
 
 # if(args.dryRun): dryRun == "1"
 # else: dryRun == "0"
+
+prodMode = args.prodMode
 
 # Begin writing file 
 outputName = 'MC_Configs.json' # output json file path 
@@ -240,9 +247,10 @@ if step == "GEN-SIM" or step == "GEN":
 		for im,mass in enumerate(masses):
 			for ifs,finalState in enumerate(finalStates):
 
-				if(Year==2017):
-					expectedFragmentEnd = "ggF_X%s_HH%s_%s.py"%(mass,diHiggsDecay,finalState)
+				if(Year=="2017"):
+					expectedFragmentEnd = "%s_X%s_HH%s_%s.py"%(prodMode,mass,diHiggsDecay,finalState)
 					skip = ManageFragment(expectedFragmentEnd,fragOutDir,ultimateFragDirec,args.NMSSM)
+					print"skip:",skip
 					if(skip): continue 		
 
 				# Indentation of text chosen for visual output
@@ -251,7 +259,7 @@ if step == "GEN-SIM" or step == "GEN":
 						"step"      : "{step}",
 						"events"    : {events},
 						"jobs_jobsize"      : {jobs_jobsize},
-						"fragment_directory"  : "ggF_X{mass}_HH{diHiggsDecay}_{finalState}",
+						"fragment_directory"  : "{prodMode}_X{mass}_HH{diHiggsDecay}_{finalState}",
 						"pileup"              : "{PU}",
 						"localGridpack"                : "0",
 						"Campaign"            : "{Campaign}",
@@ -269,6 +277,7 @@ if step == "GEN-SIM" or step == "GEN":
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Campaign}",str(args.Campaign))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{Year}",str(Year))
 				MC_Configs_Entry = MC_Configs_Entry.replace("{dryRun}",str(int(dryRun)))
+				MC_Configs_Entry = MC_Configs_Entry.replace("{prodMode}",str(prodMode))
 
 				MC_Configs += MC_Configs_Entry
 

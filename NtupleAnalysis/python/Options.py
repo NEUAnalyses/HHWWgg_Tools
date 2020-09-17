@@ -5,9 +5,10 @@ import argparse
 def GetOptions():
     parser = argparse.ArgumentParser()
 
-    ##-- Choose Analysis Option
+    ##-- Analysis Options
     parser.add_argument("--Efficiency", action="store_true", default=False, help="Compute cutflow efficiency", required=False)
     parser.add_argument("--DataMC", action="store_true", default=False, help="Produce Data / MC Comparisons", required=False)
+    parser.add_argument("--GenReco", action="store_true", default=False, help="Perform Gen Reco analysis", required=False)
 
     ##-- Efficiency Plots 
     parser.add_argument("--ratio", action="store_true", default=False, help="Efficiency Ratio", required=False)
@@ -38,9 +39,13 @@ def GetOptions():
     parser.add_argument('--Tags', type=str, default="", help="Comma separated list of tags to run. Ex: HHWWggTag_0,HHWWggTag_1,HHWWggTag_2 or HHWWggTag_2 or HHWWggTag_2,combined", required=False)
     parser.add_argument("--noQCD", action="store_true", default=False, help="Turn on to skip QCD", required=False)
 
+    ##-- Gen Reco Analysis
+
     ##-- Misc
     parser.add_argument('--verbose', action="store_true", default=False, help="Verbosity. Set true for extra output information", required=False)
     parser.add_argument('--testFeatures', action="store_true", default=False, help="Change output to testing area", required=False)
+    parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
+    parser.add_argument('--prefix', type=str, default="", help="Tree prefix. Example: tagsDumper/trees/", required=False)
 
     args = parser.parse_args()
 

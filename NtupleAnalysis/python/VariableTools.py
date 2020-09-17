@@ -16,12 +16,19 @@ def GetVars(VarBatch):
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
+    pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
 
     ##-- Variable batch definitions
 
     # Just diphoton mass 
+    # make dictionary 
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
+    if(VarBatch == "DNN"):
+        return ["evalDNN","weight"]        
+
+    elif(VarBatch == "diphopt"):
+        return [pT_gg]
 
     # Some potentially useful MVA variables  
     elif(VarBatch == "MVA"):
@@ -171,9 +178,11 @@ def GetBins(variable_):
         "e_mT" : [100,0,300],
         "mu_mT" : [100,0,300],
         "dr_gg" : [60,0,3],
-        "dr_jj" : [60,0,3]
+        "dr_jj" : [60,0,3],
+        "pT_gg" : [40,0,400],
+        "evalDNN" : [20,0,1]
     }    
-    specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj"]
+    specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN"]
     if variable_ in specialVars:
         return binDict[variable_]
 
@@ -183,10 +192,10 @@ def GetBins(variable_):
 
     # Specified binning if variable has phi, eta or pt in name 
     else:
-        if("phi" in variable_): return [16,-3.14,3.14]
+        if("phi" in variable_): return [17,-3.14,3.5325]
         elif("eta" in variable_): return [16,-4,4]
         elif ("pt" in variable_): return [20,0,200]   
-        else: return [10,0,100] # if variable name meets none of the above conditions, default to this binning 
+        else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning 
 
 ##-- Get x axis title for ratio plot depending on the variable 
 def GetXaxisTitle(variable_):
@@ -207,7 +216,9 @@ def GetXaxisTitle(variable_):
         "e_mT" : "GeV",
         "mu_mT" : "GeV",
         "dr_gg" : "rad",
-        "dr_jj" : "rad"
+        "dr_jj" : "rad",
+        "pT_gg" : "GeV",
+        "evalDNN" : "unitless"
     }
 
     for varFrag in variableUnitDict:
@@ -225,10 +236,32 @@ def GetVarTitle(varName):
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"    
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
+    pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
     if(varName == mjj): varTitle = "mjj"
     elif(varName == e_mT): varTitle = "e_mT"
     elif(varName == mu_mT): varTitle = "mu_mT"
     elif(varName == dr_gg): varTitle = "dr_gg"
     elif(varName == dr_jj): varTitle = "dr_jj"
+    elif(varName == pT_gg): varTitle = "pT_gg"
     else: varTitle = varName 
     return varTitle 
+
+##-- Compute chi squared for a data / mc plot 
+def GetChiSquared(DataHist_,stackSum_):
+    # the two histos should have the same binning 
+    Nbins = DataHist_.GetNbinsX()
+    assert(Nbins == stackSum_.GetNbinsX())
+    chi2_total = 0
+    for bin_i in range(1,Nbins): # skip underflow bin 
+        data_y, MC_sum_y = DataHist_.GetBinContent(bin_i), stackSum_.GetBinContent(bin_i)
+        chi2_num = pow(abs(float(data_y)-float(MC_sum_y)),2)
+        # avoid a denominator of 0 
+        if(data_y == 0.0 and MC_sum_y == 0.0): continue 
+        elif(data_y == 0.0 and MC_sum_y != 0.0): chi2_den = MC_sum_y 
+        else: chi2_den = data_y  
+        # print"data_y:",data_y
+        # print"MC_sum_y:",MC_sum_y
+        chi2 = chi2_num / chi2_den 
+        chi2_total += chi2 
+    chi2_total /= Nbins 
+    return chi2_total 
