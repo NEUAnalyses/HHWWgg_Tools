@@ -1,6 +1,11 @@
 #include <sys/types.h>
 #include <dirent.h>
  
+void Print(string text) 
+{
+    cout << text << endl; 
+}
+
 vector<string> read_directory(string name)
 {
     vector<string> v;
