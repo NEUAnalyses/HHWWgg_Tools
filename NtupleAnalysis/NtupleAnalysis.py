@@ -16,6 +16,9 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1 --removeBackgroundYields
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_short --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5 --Tags combined --verbose
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch diphopt --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --noQCD --SigScale 1000000
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures 
 #
@@ -408,7 +411,8 @@ if __name__ == '__main__':
 
         ##-- Run Main Module 
         Tags = args.Tags.split(',')
-        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD,args.prefix,args.signalCut)
+        # PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD,args.prefix,args.signalCut,args.removeBackgroundYields)
+        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args)
         print"DONE"
 
     ##-- Perform Gen Reco analysis

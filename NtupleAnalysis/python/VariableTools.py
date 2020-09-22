@@ -25,7 +25,8 @@ def GetVars(VarBatch):
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
     if(VarBatch == "DNN"):
-        return ["evalDNN","weight"]        
+        return ["evalDNN"]        
+        #return ["evalDNN","weight"]        
 
     elif(VarBatch == "diphopt"):
         return [pT_gg]

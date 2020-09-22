@@ -88,7 +88,9 @@ def PlotEff(h_,ofn_):
 def Draw_Histogram(h_,opt_,fn_,log_):
     c_tmp = TCanvas('c_tmp','c_tmp',1300,800)
     h_.Draw("apl")
-    if(log_): gPad.SetLogy()
+    if(log_): 
+      h_.SetMinimum(0.0001)
+      gPad.SetLogy()
     h_.Draw(opt_)
 
     # c_tmp.BuildLegend(0.75,0.62,0.95,0.84)

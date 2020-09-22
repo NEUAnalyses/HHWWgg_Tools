@@ -38,14 +38,16 @@ def GetOptions():
     parser.add_argument('--SigScale', type=float, default=-999, help="Artificial scale for signal", required=False)
     parser.add_argument('--Tags', type=str, default="", help="Comma separated list of tags to run. Ex: HHWWggTag_0,HHWWggTag_1,HHWWggTag_2 or HHWWggTag_2 or HHWWggTag_2,combined", required=False)
     parser.add_argument("--noQCD", action="store_true", default=False, help="Turn on to skip QCD", required=False)
+    parser.add_argument("--SidebandScale", action="store_true", default=False, help="Scale all MC to Data sidebands", required=False)
+    parser.add_argument('--removeBackgroundYields', action="store_true", default=False, help="In yeilds output, only show last few summary rows", required=False) ##-- ideally you should just output both 
+    parser.add_argument('--prefix', type=str, default="", help="Tree prefix. Example: tagsDumper/trees/", required=False)
+    # parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
 
     ##-- Gen Reco Analysis
 
     ##-- Misc
     parser.add_argument('--verbose', action="store_true", default=False, help="Verbosity. Set true for extra output information", required=False)
     parser.add_argument('--testFeatures', action="store_true", default=False, help="Change output to testing area", required=False)
-    parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
-    parser.add_argument('--prefix', type=str, default="", help="Tree prefix. Example: tagsDumper/trees/", required=False)
 
     args = parser.parse_args()
 

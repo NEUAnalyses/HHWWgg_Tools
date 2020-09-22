@@ -16,6 +16,14 @@ def GetCuts(CutsType):
         cuts = ["1"]
         cutNames = ["PreSelections"]
 
+    elif(CutsType == "OneGoodElec"):
+        cuts = ["(N_goodElectrons==1)"]
+        cutNames = ["OneGoodElec"]
+
+    elif(CutsType == "OneGoodMuon"):
+        cuts = ["(N_goodMuons==1)"]
+        cutNames = ["OneGoodMuon"]        
+
     ##-- Apply Loose selections 
     elif(CutsType == "Loose"):
         ##-- Electrons, Muons, Jets: Keep all analysis selections except dR, pT
@@ -73,24 +81,40 @@ def GetCuts(CutsType):
 
 ##-- Create table with number of events all backgrounds plus (Blinded) Data for each set cutSet,tag pair 
 # def CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_):
-def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_):
+
+## need a new table for s/sqrt(b) since it's only the signal region and the current table shows MC yields for entire 100->180 region 
+def CreateYieldsTables(cutBatchTag_pairs, dataNevents_list, MC_names, MC_Nevents_lists, MC_Nevents_noweight_lists,
+                       ol_, Signal_Nevents_list_, removeBackgroundYields_, B_lists_, SidebandSF_):
 # def CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names):
     print'Creating table of nEvents'
     # yaxisLabels = ['2.5%','16%','50%','84%','97.5%'] # Backgrounds, Background Total, Data
     yaxisLabels = []
+
     yaxisLabels.append("Data / MC")
     yaxisLabels.append("Data (Blinded)")     
-    yaxisLabels.append("all_MC")
-    for MC_name in MC_names: yaxisLabels.append(MC_name)
+    yaxisLabels.append("S / sqrt(B)")
+    yaxisLabels.append("sqrt(B)")
+    yaxisLabels.append("B")
+    yaxisLabels.append("S")
+
+    numSpecialCats = 6
+
+    if(not removeBackgroundYields_): 
+        for MC_name in MC_names: yaxisLabels.append(MC_name)
     xaxisLabels = []
     for cutTagPair in cutBatchTag_pairs: xaxisLabels.append(cutTagPair)
     firstCutBatch = xaxisLabels[0].split('_')[0]
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
+
     N_allMC_list = []
+    B_vals = []
     for MC_events_list in MC_Nevents_lists: 
         N_allMC = sum(MC_events_list)
         N_allMC_list.append(N_allMC)
+    for B_list in B_lists_:
+        B = sum(B_list)
+        B_vals.append(B)
 
     N_allMC_noweight_list = []
     for MC_events_noweight_list in MC_Nevents_noweight_lists: 
@@ -107,11 +131,14 @@ def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_li
     ##-- One without MC weight applied, one with 
 
     for useMCWeight in [0,1]:
-        histTitles = ["Unscaled Events","Scaled Events"]
-        outLabels = ["Unscaled","Scaled"]
+        histTitles = ["Unweighted Events","Weighted Events"]
+        outLabels = ["Unweighted","Weighted"]
         MC_sumEvents_list = ["N_allMC_noweight_list","N_allMC_list"]
         MC_Nevents_vals_Opts = ["MC_Nevents_noweight_lists","MC_Nevents_lists"]
+        B_vals_list = ["B_vals","B_vals"]        
+ 
         histTitle, outLabel, MC_sumEvents_l, MC_Nevents_vals = histTitles[useMCWeight], outLabels[useMCWeight], MC_sumEvents_list[useMCWeight], MC_Nevents_vals_Opts[useMCWeight]
+        B_values = B_vals_list[useMCWeight] ### no yet configured for with and without weights...only with weights 
         h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
         h_grid.SetStats(0)
         h_grid.GetXaxis().SetLabelSize(.03)      
@@ -120,21 +147,42 @@ def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_li
             h_grid.GetYaxis().SetBinLabel(yli+1,yl) 
 
         for ixL,xLabel in enumerate(xaxisLabels):
+            S = Signal_Nevents_list_[ixL] ##-- assumes only one signal model! 
             h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
             dataNevents = dataNevents_list[ixL]
-            # MC_Nevents = MC_Nevents_lists[ixL]
             MC_Nevents = eval("%s[ixL]"%(MC_Nevents_vals))
             N_allMC = eval("%s[ixL]"%(MC_sumEvents_l))
+            B = eval("%s[ixL]"%(B_values))
 
-            # N_allMC = N_allMC_list[ixL]
-            if(N_allMC == 0): data_over_MC = 999
-            else: data_over_MC = dataNevents / N_allMC 
-            
+            B *= SidebandSF_ # SidebandSF_ should be 1 be default 
+
+	        # print("S = ",S)
+            # print("B = ",B)
+            # print("sqrt(B) = ",B**0.5)
+	    
+            if(N_allMC == 0.0):
+              data_over_MC = -1 
+              N_allMC = -1
+            else: 
+              data_over_MC = dataNevents / N_allMC
+
+            if(B == 0.0):
+              sOverSqrtB = -1 
+            else: 
+              sOverSqrtB = S / B**0.5 
+  
+
+	    SqrtB = B**0.5
+
             h_grid.Fill(ixL,0,data_over_MC)
             h_grid.Fill(ixL,1,dataNevents)
-            h_grid.Fill(ixL,2,N_allMC)
+            h_grid.Fill(ixL,2,sOverSqrtB)
+            h_grid.Fill(ixL,3,SqrtB)
+            h_grid.Fill(ixL,4,B)
+            h_grid.Fill(ixL,5,S)
+
             for ie,numEvents in enumerate(MC_Nevents):
-                h_grid.Fill(ixL,ie+3,numEvents)
+                h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
             
         # for gl_i,gl in enumerate(args.GridLabels):
         #     h_grid.GetXaxis().SetBinLabel(gl_i+1,gl)
@@ -172,8 +220,11 @@ def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_li
         # outNamepdf = "%s/%s_grid.pdf"%(ol_,ml)
         # outNamepng = "%s/EventsTable_%s.png"%(ol_,selections)
         # outNamepdf = "%s/EventsTable_%s.pdf"%(ol_,selections)    
-        outNamepng = "%s/%s_EventsTable_%s.png"%(ol_,firstCutBatch,outLabel)
-        outNamepdf = "%s/%s_EventsTable_%s.pdf"%(ol_,firstCutBatch,outLabel)       
+        sideScaleOpt = ""
+        if(SidebandSF_ != 1): sideScaleOpt = "WithSidebandScale"
+        else: sideScaleOpt = "WithoutSidebandScale"
+        outNamepng = "%s/%s_EventsTable_%s_%s.png"%(ol_, firstCutBatch, outLabel, sideScaleOpt)
+        outNamepdf = "%s/%s_EventsTable_%s_%s.pdf"%(ol_, firstCutBatch, outLabel, sideScaleOpt)       
         c_tmp = TCanvas('c_tmp','c_tmp',800,600)
         c_tmp.SetRightMargin(0.15)
         c_tmp.SetLeftMargin(0.23)

@@ -410,6 +410,10 @@ def GetXScale(sigCampaign_):
     if(sigCampaign_ == "HHWWgg_v2-6"): 
         HH_ProdXS = 33.49 # 33.49 fb 
         BR_HH_WWgg = 0.001 
-        BR_WWgg_finalState = 0.002864 # qqlnu, no taus  
+        BR_WWgg_finalState = 0.002864 # qqlnu, no taus ## - is this right?  
+    elif(sigCampaign_ == "HHWWgg_SM"):
+        HH_ProdXS = 33.49
+        BR_HH_WWgg = 0.00097
+        BR_WWgg_finalState = 0.441 # qqlnu, e mu tau included 
     XS_Scale = float(HH_ProdXS)*float(BR_HH_WWgg)*float(BR_WWgg_finalState)
     return XS_Scale 

@@ -29,7 +29,7 @@ def CalcEff(h_,cut_):
     return pctPass_ 
 
 ##-- Main Data / MC module 
-def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,drawPads_,Lumi_,SigScale_,ol_,log_,Tags_,VarBatch_,CutsType_,verbose_,noQCD_,prefix_,signalCut_):
+def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_):
     print"Plotting Data / MC"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)    
@@ -39,16 +39,16 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
     ##-- Get Tags 
     for t in Tags_:
         HHWWggTags.append(t)
-    cuts, cutNames = GetCuts(CutsType_)
+    cuts, cutNames = GetCuts(args_.CutsType)
 
     ##-- if var batch is loose, need separate titles for variables since it will be sum of vars * bools 
-    if(VarBatch_ == "Loose"):
-        finalStateVars, varNames = GetVars(VarBatch_) # get vars from var batch 
-        if(verbose_):
+    if(args_.VarBatch == "Loose"):
+        finalStateVars, varNames = GetVars(args_.VarBatch) # get vars from var batch 
+        if(args_.verbose):
             print"finalStateVars = ",finalStateVars 
             print"varNames = ",varNames
-    else: finalStateVars = GetVars(VarBatch_) # get vars from var batch 
-    if(verbose_): 
+    else: finalStateVars = GetVars(args_.VarBatch) # get vars from var batch 
+    if(args_.verbose): 
         #print"cuts:",cuts
         print"cutNames:",cutNames        
         print"vars:",finalStateVars   
@@ -60,61 +60,88 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         MC_names = [] 
         MC_Nevents_lists = []
         MC_Nevents_noweight_lists = []
+        S_list = [] ##--assumes one signal!
+        B_lists = [] # list of number of background events in the signal region (using MC)
 
         ##-- For each category (Ex: HHWWggTag_0, HHWWggTag_1, HHWWggTag_2, combined)
         for itag,HHWWggTag in enumerate(HHWWggTags):
-            if(verbose_): 
+            if(args_.verbose): 
                 print"tag:",HHWWggTag                      
             dPath = "%s/%s"%(dataDirec_,dF_)
             dFile = TFile.Open(dPath)
             if(HHWWggTag=="combined"):
-                ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix_))
-                ch.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix_))
-                ch.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix_))
-                ch.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix_))
+                ch = TChain('%sData_13TeV_HHWWggTag_0'%(args_.prefix))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,args_.prefix))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,args_.prefix))
+                ch.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,args_.prefix))
+                #ch.Add("%s/%sData_13TeV_HHWWggTag_3"%(dPath,args_.prefix))
+                #ch.Add("%s/%sData_13TeV_HHWWggTag_4"%(dPath,args_.prefix))
             else:
-                ch = TChain('%sData_13TeV_%s'%(prefix_,HHWWggTag))
+                ch = TChain('%sData_13TeV_%s'%(args_.prefix,HHWWggTag))
                 ch.Add(dPath)
             BLIND_CUT = "(CMS_hgg_mass < 115 || CMS_hgg_mass > 135)"
+            SR_CUT = "(CMS_hgg_mass >=115 && CMS_hgg_mass <= 135)"
             MC_WEIGHT = "1*weight"
             ZERO_CUT = "ZERO_CUT"
             MC_CUT = "%s*(%s)*(%s)"%(MC_WEIGHT,BLIND_CUT,ZERO_CUT)
             DATA_CUT = "%s*(%s)"%(BLIND_CUT,ZERO_CUT)  
-            SIGNAL_CUT = "%s*(%s)"%(MC_WEIGHT,ZERO_CUT) # no blind cut on signal 
+            SIGNAL_CUT = "%s*(%s)"%(MC_WEIGHT,ZERO_CUT) # no blind cut on signal
+ 
+            # For S and B computations
+            S_CUT = "%s*(%s)*(%s)"%(MC_WEIGHT,SR_CUT,ZERO_CUT) 
+            B_CUT = "%s*(%s)*(%s)"%(MC_WEIGHT,SR_CUT,ZERO_CUT)
 
-            ##-- For each cut 
+	        ##-- For each cut 
             for ic,cut in enumerate(cuts):                
-                #if(verbose_): print"Plotting with selection:",cut                  
+                #if(args_.verbose): print"Plotting with selection:",cut                  
                 cutName = cutNames[ic]
                 cutBatchTag = "%s_%s"%(cutName,HHWWggTag)
                 cutBatchTag_pairs.append(cutBatchTag)
                 dataNevents = -999
                 these_MC_Nevents = []
                 these_MC_Nevents_noweights = [] 
+                B_list = []
                 outputFolder = "%s/%s"%(ol_,cutName)
                 if(not os.path.exists(outputFolder)):
                     os.system('mkdir %s'%(outputFolder))
                     os.system('cp %s/index.php %s'%(ol_,outputFolder))
                 MC_CUT += "*(%s)"%(cut)
-                DATA_CUT += "*(%s)"%(cut)      
-                if(signalCut_): SIGNAL_CUT += "*(%s)"%(cut) 
+                DATA_CUT += "*(%s)"%(cut)
+                SIGNAL_CUT += "*(%s)"%(cut)
+                S_CUT += "*(%s)"%(cut)
+                B_CUT += "*(%s)"%(cut)
 
+                SIGNAL_CUT = SIGNAL_CUT.replace("goodJets","AtLeast2GoodJets")
+                S_CUT = S_CUT.replace("goodJets","AtLeast2GoodJets")
+                
                 ##-- For each variable 
                 for iv,v in enumerate(finalStateVars): 
-                    if(VarBatch_ == "Loose"): varTitle = varNames[iv]
+                    if(args_.VarBatch == "Loose"): varTitle = varNames[iv]
                     else: varTitle = GetVarTitle(v)
                     
-                    if(verbose_): print"Plotting variable:",varTitle
+                    if(args_.verbose): print"Plotting variable:",varTitle
 
                     MC_CUT = MC_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     SIGNAL_CUT = SIGNAL_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
                     MC_CUT_NOWEIGHT = MC_WEIGHT.replace(MC_WEIGHT,"(1)")      
+                    S_CUT = S_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
+                    B_CUT = B_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
+                    B_CUT_NOWEIGHT = B_CUT.replace(MC_WEIGHT,"(1)")
+                    S_CUT_NOWEIGHT = SIGNAL_CUT.replace(MC_WEIGHT,"(1)")
+
+                    # if(args_.verbose):
+                    #   print
+                    #   print"SIGNAL_CUT:",SIGNAL_CUT
+                    #   print"S_CUT:",S_CUT 
+                    #   print"MC_CUT:",MC_CUT
+                    #   print"B_CUT:",B_CUT 
+                    #   print 
 
                     if(varTitle == "weight"): MC_CUT = MC_CUT.replace(MC_WEIGHT,"(1)") # if you want to plot the "weight" variable, you should not scale it by weight!             
                     
                     ##-- Can add printing of cuts to debug 
-                    # if(verbose_): 
+                    # if(args_.verbose): 
                         # print"MC_CUT:",MC_CUT         
                         # print"DATA_CUT:",DATA_CUT
                     ##-- 
@@ -149,15 +176,17 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         mcFile = TFile.Open(mcPath)
                         treeName = GetMCTreeName(mcF_)
                         MC_Category = GetMCCategory(mcF_)
-                        if(verbose_): 
-                            # print"Background File:",mcPath
+                        if(args_.verbose): 
+                            #print"Background File:",mcPath
                             print"Background:",MC_Category
+                            # print"file:",mcPath  
 
-                        ##-- If noQCD set to true, skip QCD for Tag_0 and Tag_1 
-                        if(MC_Category == "QCD") and (noQCD_) and (HHWWggTag == "HHWWggTag_0" or HHWWggTag == "HHWWggTag_1"): 
+                        ##-- If noQCD set to true, skip QCD 
+                        if((MC_Category == "QCD") and (args_.noQCD)): 
                             print"Skipping QCD"
                             these_MC_Nevents_noweights.append(0) # Set yields to 0 for table 
-                            these_MC_Nevents.append(0) # Set yields to 0 for table 
+                            these_MC_Nevents.append(0) # Set yields to 0 for table
+                            B_list.append(0) 
                             if(itag == 0 and ic == 0 and iv == 0): 
                                 MCname = GetMCName(mcF_)
                                 MC_names.append(MCname) # Skipping QCD, but still save name for yields because tag_2 may not be 0                           
@@ -165,42 +194,54 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                         ##-- Define TChain based on categories 
                         if(HHWWggTag=="combined"):
-                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(mcPath,prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix_,treeName))
+                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(mcPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,args_.prefix,treeName))
+                            #mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_3"%(mcPath,args_.prefix,treeName))
+                            #mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_4"%(mcPath,args_.prefix,treeName))
                         else:
-                            mc_ch = TChain('%s%s_13TeV_%s'%(prefix_,treeName,HHWWggTag))
+                            mc_ch = TChain('%s%s_13TeV_%s'%(args_.prefix,treeName,HHWWggTag))
                             mc_ch.Add(mcPath)
                         xbins, xmin, xmax = GetBins(varTitle)
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
                         exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
+                        exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+                        exec("B_h_noweight_%s = TH1F('B_h_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+                        
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category)
 
                         ##-- If GJet or QCD sample, need to remove prompt-prompt events 
                         if(MC_Category == "GJet" or MC_Category == "QCD"):
-                            if(verbose_): print"Remove prompt-prompt"
+                            if(args_.verbose): print"Remove prompt-prompt"
                             removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: remove events where both photons are prompt
+                            original_B_CUT = "%s"%(B_CUT)
                             original_MC_CUT = "%s"%(MC_CUT)
                             this_MC_CUT = "%s*(%s)"%(original_MC_CUT,removePromptPromptCut)
+                            this_B_CUT = "%s*(%s)"%(original_B_CUT,removePromptPromptCut)
                             this_MC_CUT_NOWEIGHT = this_MC_CUT.replace(MC_WEIGHT,"(1)")
+                            this_B_CUT_NOWEIGHT = this_B_CUT.replace(MC_WEIGHT,"(1)")
 
                         eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
+
                         if(MC_Category == "GJet" or MC_Category == "QCD"): 
                             exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
+                            exec('mc_ch.Draw("%s >> B_h_%s","%s")'%(v,i,this_B_CUT))
                         else: 
-                            exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))                                           
+                            exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))    
+                            exec('mc_ch.Draw("%s >> B_h_%s","%s")'%(v,i,B_CUT))                                       
 
-                        eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i))
+                        eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i))
+                        eval("B_h_%s.Scale(float(args_.Lumi))"%(i))
 
                         ##-- MC reweighting for HHWWgg backgrounds (turned off for now)
                         # reWeightVals = ReWeightMC(mcF_)
                         # doReWeight, reWeightScale = reWeightVals[0], reWeightVals[1]
                         # print"doReWeight,reWeightScale:",doReWeight, reWeightScale
                         # if(doReWeight): 
-                        #     if(verbose_):
+                        #     if(args_.verbose):
                         #         print"ReWeighting MC"
                         #         print"With scale: ",reWeightScale
                         #     eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
@@ -208,11 +249,20 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
                         ##-- Only save for 1st variable. Should be same for all variables
                         if(iv == 0): 
-                            if(MC_Category == "GJet" or MC_Category == "QCD" ): exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
-                            else: exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
+                            if(MC_Category == "GJet" or MC_Category == "QCD" ): 
+                              exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
+                              exec('mc_ch.Draw("%s >> B_h_noweight_%s","%s")'%(v,i,this_B_CUT_NOWEIGHT))
+                            else: 
+                              exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
+                              exec('mc_ch.Draw("%s >> B_h_noweight_%s","%s")'%(v,i,B_CUT_NOWEIGHT))
                             these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
                             these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-                            
+                            B = eval("B_h_%s.Integral()"%(i))
+                            B_noweight = eval("B_h_noweight_%s.Integral()"%(i))
+                            # print "B = ",B
+                            # print "B_noweight ",B_noweight
+                            B_list.append(B)                            
+
                             ##-- Only need to get MC names once 
                             if(itag == 0 and ic == 0 and iv == 0): 
                                 MCname = GetMCName(mcF_)
@@ -235,32 +285,45 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         sigFile = TFile.Open(sigPath)
                         treeName = GetMCTreeName(sigF_)
                         MC_Category = GetMCCategory(sigF_)
-                        if(verbose_):
+                        if(args_.verbose):
                             # print"Signal File:",sigPath 
                             print"Signal:",MC_Category
                         if(HHWWggTag=="combined"):
-                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(sigPath,prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,prefix_,treeName))
-                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,prefix_,treeName))
+                            mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_0"%(sigPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_3"%(sigPath,args_.prefix,treeName))
+                            mc_ch.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,args_.prefix,treeName))
                         else:
-                            mc_ch = TChain('%s%s_13TeV_%s'%(prefix_,treeName,HHWWggTag))
+                            mc_ch = TChain('%s%s_13TeV_%s'%(args_.prefix,treeName,HHWWggTag))
                             mc_ch.Add(sigPath)
                         xbins, xmin, xmax = GetBins(varTitle)
                         exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
+                        exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) # Specifically for computing S in signal region 
                         thisHist = eval("MC_h_tmp_%s"%(i))
                         mcColor = GetMCColor(MC_Category) 
                         ##-- Style options for signal to distinguish from Data, Background 
                         # eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
                         # eval("MC_h_tmp_%s.SetFillStyle(3004)"%(i))
                         ##-- 
+			            #S_CUT = "weight*(CMS_hgg_mass >= 115 && CMS_hgg_mass <= 135)"
                         eval("MC_h_tmp_%s.SetFillColorAlpha(eval(mcColor),0.1)"%(i))
                         eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
                         exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
-                        eval("MC_h_tmp_%s.Scale(float(Lumi_))"%(i)) # should scale to luminosity by default 
-                        SigXS_Scale = GetXScale("HHWWgg_v2-6") # how to scale the XS which is by default in flashgg 1fb
-                        if(verbose_): print"SigXS_Scale: ",SigXS_Scale
-                        eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default 
+                        eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i)) # should scale to luminosity by default 
+                        SigXS_Scale = GetXScale("HHWWgg_SM") # how to scale the XS which is by default in flashgg 1fb
+                        if(args_.verbose): print"SigXS_Scale: ",SigXS_Scale
+                        eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default
+                        eval("mc_ch.Draw('%s >> S_h_%s','%s')"%(v,i,S_CUT))
+                        eval("S_h_%s.Scale(float(args_.Lumi))"%(i))
+                        eval("S_h_%s.Scale(float(SigXS_Scale))"%(i)) 
+                        S = eval("S_h_%s.Integral()"%(i)) # want number of signal events in the signal region: 115 -> 135 GeV 
+                        ##-- Only save for 1st variable. Should be same for all variables
+                        if(iv == 0):    
+                            # print("S = ",S)                     
+                            S_list.append(S) ##-- assumes one signal model! 
+
                         newHist = thisHist.Clone("newHist")
 
                         ##-- Set title based on treeName 
@@ -333,11 +396,29 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     DataHist.Sumw2()
                     xTitle = GetXaxisTitle(varTitle)
                     DataHist.GetXaxis().SetTitle(xTitle)
-                    if(log_): 
-                        DataHist.SetMinimum(0.01)
-                        stackSum.SetMinimum(0.01)
-                        bkgStack.SetMinimum(0.01)
-                        
+                    if(args_.log): 
+                        if(args_.verbose): print "Setting histogram minimums"
+                        DataHist.SetMinimum(0.0001)
+                        stackSum.SetMinimum(0.0001)
+                        bkgStack.SetMinimum(0.0001)
+
+                    ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
+                    SidebandSF = 1 
+                    if(args_.SidebandScale):
+                        data_sidebands_sum = DataHist.Integral() ##-- data hist is already in sidebands only 
+                        background_sidebands_sum = stackSum.Integral()
+                        if(background_sidebands_sum > 0): SidebandSF = float(data_sidebands_sum / background_sidebands_sum)
+                        else: 
+                            print "background sidebands sum <= 0. Setting sideband scale factor to 1"
+                            SidebandSF = 1
+                        print "data sum in sidebands:",data_sidebands_sum
+                        print "backgrounds sum in sidebands:",background_sidebands_sum
+                        print "Sideband scale factor:",SidebandSF
+                        for background in bkgStack.GetStack():
+                            background.Scale(SidebandSF)
+                        stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio 
+                        # stackSum.Scale(SidebandSF)                        
+	 	        
                     ##-- Compute chi squared 
                     chi2 = GetChiSquared(DataHist,stackSum)
                     # print"chi2 = ",chi2 
@@ -351,6 +432,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     # rp.SetGraphDrawOpt("PE2")
                     dMax = DataHist.GetMaximum()
                     bMax = stackSum.GetMaximum()
+
                     maxHeight = max(dMax,bMax) 
 
                     ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 
@@ -359,7 +441,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         gStyle.SetErrorX(0.0001)
                         # varTitle = GetVarTitle(v)
                         outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,HHWWggTag,fileType)
-                        if(log_): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,HHWWggTag,fileType)
+                        if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,HHWWggTag,fileType)
                         else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,HHWWggTag,fileType)                        
                         DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
                         rp.Draw("nogrid")
@@ -377,7 +459,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         rp.GetUpperRefYaxis().SetTitle("Entries")   
                         rp.GetLowerRefYaxis().SetTitle("Data / MC")
                         rp.GetLowerPad().Update()
-                        if(log_): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)   
+                        if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)   
                         else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
                                 
                         UpperPad = rp.GetUpperPad()
@@ -390,14 +472,14 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                             if sigMax == 0: sigMax = 1 
 
                             ##-- No user input signal scale 
-                            if(SigScale_ == -999): 
+                            if(args_.SigScale == -999): 
                                 sigScale = (float(maxHeight)/10.) / float(sigMax) # in order to scale signal to 10th of max of plot 
                                 sig_hist.Scale(sigScale)  
 
                             ##-- User input signal scale 
                             else:
-                                if(verbose_): print"user sig scale:",SigScale_
-                                sigScale = SigScale_
+                                if(args_.verbose): print"user sig scale:",args_.SigScale
+                                sigScale = args_.SigScale
                                 sig_hist.Scale(sigScale) 
                                                         
                             for sig_h in sig_orderedHistos:
@@ -419,7 +501,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         for ip in range(0,Npoints):
                             rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
                             rp.GetLowerRefGraph().SetPointEXlow(ip,0)  
-                        if(log_): 
+                        if(args_.log): 
                             UpperPad.SetLogy()
                             UpperPad.Update() 
                         rp.GetLowerPad().cd()
@@ -433,7 +515,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                         DataMCRatio_c.SaveAs(outName) 
                         outName = outName.replace(".pdf",".png")                    
                         DataMCRatio_c.SaveAs(outName)                     
-                    if(not drawPads_):
+                    if(not args_.drawPads):
                         bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,HHWWggTag)
                         os.system('rm %s'%(bkgOutName))
                         bkgOutName = bkgOutName.replace(".png",".pdf")
@@ -442,11 +524,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                     DATA_CUT = DATA_CUT.replace("(%s != 0) && (%s != -999)"%(v,v),"ZERO_CUT")
 
                     # chi2 value for each end of this loop (finished tag,cut,variable pair)
-                # end of 
 
+                ## -- append for every cut/tag combination
+                B_lists.append(B_list) 
                 MC_Nevents_lists.append(these_MC_Nevents)
                 MC_Nevents_noweight_lists.append(these_MC_Nevents_noweights)  
 
         ##-- Produce table with number of events for each MC, total MC, and data 
-        CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_lists,MC_Nevents_noweight_lists,ol_)
+        CreateYieldsTables(cutBatchTag_pairs, dataNevents_list, MC_names, MC_Nevents_lists, MC_Nevents_noweight_lists,
+                           ol_, S_list, args_.removeBackgroundYields, B_lists, SidebandSF)
         # CreateChiSquaredTable(variables,cutBatch,chiSquaredVals) # Want chi squared z value. x: variable, y: cut batch
