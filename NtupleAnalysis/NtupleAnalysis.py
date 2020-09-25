@@ -16,6 +16,8 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5  --verbose  --SigScale 1 
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType PreSelections --Lumi 41.5 --verbose
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1 --removeBackgroundYields
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_short --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5 --Tags combined --verbose
@@ -391,7 +393,7 @@ if __name__ == '__main__':
         dataFiles = []
         for file in os.listdir(dataDirec):
             dataFiles.append(file)
-        if(args.verbose): print"dataFiles:",dataFiles
+        # if(args.verbose): print"dataFiles:",dataFiles
 
         ##-- Get Background MC Files
         mcFolder = str(args.mcFolder)
@@ -399,7 +401,7 @@ if __name__ == '__main__':
         mcFiles = []
         for file in os.listdir(mcDirec):
             mcFiles.append(file)
-        if(args.verbose): print"mcFiles:",mcFiles
+        # if(args.verbose): print"mcFiles:",mcFiles
 
         ##-- Get Signal File(s)
         signalFolder = str(args.signalFolder)
@@ -407,12 +409,24 @@ if __name__ == '__main__':
         signalFiles = [] 
         for file in os.listdir(signalDirec):
             signalFiles.append(file)
-        if(args.verbose): print"signalFiles:",signalFiles
+        # if(args.verbose): print"signalFiles:",signalFiles
 
         ##-- Run Main Module 
         Tags = args.Tags.split(',')
-        # PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD,args.prefix,args.signalCut,args.removeBackgroundYields)
-        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args)
+
+        if(not args.SB and not args.SR):
+            print "No phase space regions selected"
+            print "To run on the signal region pass the flag --SR"
+            print "To run on the signal sidebands region, pass the flag --SB"
+            print "You can pass both flags "
+
+        ##-- Data, MC and Signal Together. Data and MC in sidebands
+        region = "SB"
+        if(args.SB): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args,region)
+
+        ##-- MC and Signal in Signal Region 
+        region = "SR"
+        if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args,region)
         print"DONE"
 
     ##-- Perform Gen Reco analysis

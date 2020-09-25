@@ -23,6 +23,8 @@
 # python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/VBFTBulkGravitonToHH_M250/v1/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30tarball.tar.xz --masses 250 --prodMode VBFToBulkGravitonToHH
 ########################################################################################################################
 
+# /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/CentralGridpackProduction/genproductions/bin/MadGraph5_aMCatNLO/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc630_CMSSW_9_3_16_tarball.tar.xz
+# /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/CentralGridpackProduction/genproductions/bin/MadGraph5_aMCatNLO/VBFToBulkGravitonToHH_M850_slc6_amd64_gcc630_CMSSW_9_3_16_tarball.tar.xz
 import argparse
 import os 
 from Make_Fragments_Tools import * 

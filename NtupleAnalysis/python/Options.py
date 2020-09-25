@@ -41,6 +41,8 @@ def GetOptions():
     parser.add_argument("--SidebandScale", action="store_true", default=False, help="Scale all MC to Data sidebands", required=False)
     parser.add_argument('--removeBackgroundYields', action="store_true", default=False, help="In yeilds output, only show last few summary rows", required=False) ##-- ideally you should just output both 
     parser.add_argument('--prefix', type=str, default="", help="Tree prefix. Example: tagsDumper/trees/", required=False)
+    parser.add_argument("--SB", action="store_true", default=False, help="Plot and analyze signal sidebands", required=False)
+    parser.add_argument("--SR", action="store_true", default=False, help="Plot and analyze signal region", required=False)
     # parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
 
     ##-- Gen Reco Analysis

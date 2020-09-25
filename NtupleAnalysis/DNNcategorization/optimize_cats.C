@@ -36,24 +36,33 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double minevents = 1.;
 	// double xmin = 0.0;
 	double xmin = xcutoff;
-	double xmax = 1.0;
+	double xmax = 1.00001; // to include values that == 1  
 	// Double_t bin_width=0.01; // course binning 
 	// Double_t bin_width=0.0025;
 	Double_t bin_width = bin_width_;
 	TString xmin_str = to_string(xcutoff);
 	TString binWidth_str = to_string(bin_width_);
+	TString extraSelection = "*(1)";
+	// TString extraSelection = "*(N_goodMuons == 1)";
+	// TString extraSelection = "*(N_goodMuons == 1)";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
 	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
-	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)"; // normalize signal properly with cross section 
-	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)";
-	TString selection_data = "(1)";
+	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelection; // normalize signal properly with cross section 
+	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelection;
+	TString selection_data = "(1)" + extraSelection;
 	TString s; TString sel;
 	TString outname = s.Format("Categorization_%s_%dcats",what_to_opt.Data(),NCATS);
 
 	// Combine Signal Trees
+	cout << "nBins: " << int((xmax-xmin)/bin_width) << endl;
+	cout << "xmin: " << xmin << endl;
+	cout << "xmax: " << xmax << endl;
+
 	TChain *file_s =  new TChain("file_s");
 	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_0");
 	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_1");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
 	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
 	TH1F *hist_S = new TH1F("hist_S","hist_S",int((xmax-xmin)/bin_width),xmin,xmax);
     s.Form("%s>>hist_S",what_to_opt.Data());
@@ -533,6 +542,9 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	gPad->RedrawAxis();
 
 	// Make Significance Plots
+	cout << "Signal integral: " << hist_S2->Integral() << endl;;
+	cout << "Background integral: " << hist_B2->Integral() << endl;;
+
 	gStyle->SetOptStat(0000);
 	int bin_i = 0;
 	double sig, bkg = 0.; 
@@ -545,16 +557,17 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		bkg = hist_B2->GetBinContent(bin_i);
 		if(bkg != 0){
 			sigOverSqrtb = sig / sqrt(bkg);	
-			Significance_h->SetBinContent(bin_i, sigOverSqrtb); // should make sure background isn't zero...
+			Significance_h->SetBinContent(bin_i, sigOverSqrtb); 
 			if(sigOverSqrtb > maxsigOverSqrtb) maxsigOverSqrtb = sigOverSqrtb;
 			cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
+			cout << "S : " << sig << endl;
+			cout << "B : " << bkg << endl;
 			cout << "significance: " << sigOverSqrtb << endl;
-
 		}
 	}
 
-	TH1F * Shaded_Area = new TH1F("Shaded_Area","S/#sqrt{B} vs. DNN Score " + scaleOpt,1,xmin,xcutoff);
-	Shaded_Area->SetFillColorAlpha(kRed,0.5);
+	// TH1F * Shaded_Area = new TH1F("Shaded_Area","S/#sqrt{B} vs. DNN Score " + scaleOpt,1,xmin,xcutoff);
+	// Shaded_Area->SetFillColorAlpha(kRed,0.5);
 
 	// Get Total Significance for each category
 	ofstream catSigOut;
@@ -562,6 +575,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double cat_min, cat_max = 0.; 	
 	double Cat_significance = 0.;
 	int min_bin, max_bin = 0;
+	double S_total, B_total = 0; 
 	for(int i = 0; i < NCATS; i++){
 		if(i == 0){
 			cat_min = xcutoff;
@@ -571,26 +585,35 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 			cat_min = borders[i];
 			cat_max = borders[i+1];
 		}
-		// min_bin = ( (cat_min) / bin_width ) + 1;
-		// max_bin = (cat_max) / bin_width; // no + 1 because want bin max to go up to border max
 
 		cout << "Cat min: " << cat_min << endl;
 		cout << "Cat max: " << cat_max << endl;
 
-		min_bin = Significance_h->FindBin(cat_min);
-		if(i == NCATS-1) max_bin = Significance_h->FindBin(cat_max);
-		else max_bin = Significance_h->FindBin(cat_max)-1;
+		// sig = hist_S2->GetBinContent(bin_i);  
+		// bkg = hist_B2->GetBinContent(bin_i);
+
+		min_bin = hist_S2->FindBin(cat_min);
+		max_bin = hist_S2->FindBin(cat_max);
+		// if(i == NCATS-1) max_bin = Significance_h->FindBin(cat_max);
+		// else max_bin = Significance_h->FindBin(cat_max)-1;
 
 		// cout << "min_bin: " << min_bin << endl;
 		// cout << "max_bin: " << max_bin << endl;
 
-		cout << "min_bin low edge: " << Significance_h->GetBinLowEdge(min_bin) << endl;
-		cout << "max_bin low edge: " << Significance_h->GetBinLowEdge(max_bin) << endl;		
+		cout << "min_bin low edge: " << hist_S2->GetBinLowEdge(min_bin) << endl;
+		cout << "max_bin low edge: " << hist_S2->GetBinLowEdge(max_bin) << endl;		
 
 		// cout << "min bin: " << Significance_h->GetBinLowEdge(min_bin) << endl;
 		// cout << "max bin: " << Significance_h->GetBinLowEdge(max_bin) << endl;
 
-		Cat_significance = Significance_h->Integral(min_bin,max_bin); // significance for all signal region events in this category
+		// Cat_significance = Significance_h->Integral(min_bin,max_bin); // significance for all signal region events in this category
+		S_total = hist_S2->Integral(min_bin, max_bin);
+		B_total = hist_B2->Integral(min_bin, max_bin);
+
+		cout << "S: " << S_total << endl; 
+		cout << "B: " << B_total << endl; 
+
+		Cat_significance = S_total / sqrt(B_total); 
 		cout << "Significance in the signal region events: " << Cat_significance << endl;
 		catSigOut << "Cat: [" << cat_min << ", " << cat_max << "]: " << Cat_significance << "\n";
 	}
