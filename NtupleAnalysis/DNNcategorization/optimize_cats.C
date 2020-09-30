@@ -44,6 +44,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	TString binWidth_str = to_string(bin_width_);
 	TString extraSelection = "*(1)";
 	// TString extraSelection = "*(N_goodMuons == 1)";
+	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodElectrons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)";
+	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"
 	// TString extraSelection = "*(N_goodMuons == 1)";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
 	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
@@ -545,6 +547,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	cout << "Signal integral: " << hist_S2->Integral() << endl;;
 	cout << "Background integral: " << hist_B2->Integral() << endl;;
 
+	cout << "Total Significance integral: " << hist_S2->Integral() / sqrt(hist_B2->Integral()) << endl;
+
 	gStyle->SetOptStat(0000);
 	int bin_i = 0;
 	double sig, bkg = 0.; 
@@ -559,10 +563,10 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 			sigOverSqrtb = sig / sqrt(bkg);	
 			Significance_h->SetBinContent(bin_i, sigOverSqrtb); 
 			if(sigOverSqrtb > maxsigOverSqrtb) maxsigOverSqrtb = sigOverSqrtb;
-			cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
-			cout << "S : " << sig << endl;
-			cout << "B : " << bkg << endl;
-			cout << "significance: " << sigOverSqrtb << endl;
+			// cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
+			// cout << "S : " << sig << endl;
+			// cout << "B : " << bkg << endl;
+			// cout << "significance: " << sigOverSqrtb << endl;
 		}
 	}
 
@@ -576,6 +580,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double Cat_significance = 0.;
 	int min_bin, max_bin = 0;
 	double S_total, B_total = 0; 
+	int numBins = int((xmax-xmin)/bin_width);
 	for(int i = 0; i < NCATS; i++){
 		if(i == 0){
 			cat_min = xcutoff;
@@ -589,22 +594,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		cout << "Cat min: " << cat_min << endl;
 		cout << "Cat max: " << cat_max << endl;
 
-		// sig = hist_S2->GetBinContent(bin_i);  
-		// bkg = hist_B2->GetBinContent(bin_i);
-
-		min_bin = hist_S2->FindBin(cat_min);
-		max_bin = hist_S2->FindBin(cat_max);
-		// if(i == NCATS-1) max_bin = Significance_h->FindBin(cat_max);
-		// else max_bin = Significance_h->FindBin(cat_max)-1;
-
-		// cout << "min_bin: " << min_bin << endl;
-		// cout << "max_bin: " << max_bin << endl;
+		min_bin = (cat_min - xmin) / bin_width + 1;
+		max_bin = (cat_max - xmin) / bin_width; 
 
 		cout << "min_bin low edge: " << hist_S2->GetBinLowEdge(min_bin) << endl;
 		cout << "max_bin low edge: " << hist_S2->GetBinLowEdge(max_bin) << endl;		
-
-		// cout << "min bin: " << Significance_h->GetBinLowEdge(min_bin) << endl;
-		// cout << "max bin: " << Significance_h->GetBinLowEdge(max_bin) << endl;
 
 		// Cat_significance = Significance_h->Integral(min_bin,max_bin); // significance for all signal region events in this category
 		S_total = hist_S2->Integral(min_bin, max_bin);
