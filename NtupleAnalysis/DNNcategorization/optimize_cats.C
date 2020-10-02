@@ -42,16 +42,25 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	Double_t bin_width = bin_width_;
 	TString xmin_str = to_string(xcutoff);
 	TString binWidth_str = to_string(bin_width_);
-	TString extraSelection = "*(1)";
+	// TString extraSelection = "*(1)";
 	// TString extraSelection = "*(N_goodMuons == 1)";
+
+	// Training Selections 
+	// TString extraSelections = "*( (passPhotonSels==1) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
+	// TString extraSelections_Signal = "*( (passPhotonSels==1)  && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
+
+	// No Photon MVA Selection
+	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
+	TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";
+	
 	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodElectrons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)";
 	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"
 	// TString extraSelection = "*(N_goodMuons == 1)";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
 	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
-	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelection; // normalize signal properly with cross section 
-	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelection;
-	TString selection_data = "(1)" + extraSelection;
+	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections_Signal; // normalize signal properly with cross section 
+	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
+	TString selection_data = "(1)" + extraSelections;
 	TString s; TString sel;
 	TString outname = s.Format("Categorization_%s_%dcats",what_to_opt.Data(),NCATS);
 
@@ -61,11 +70,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	cout << "xmax: " << xmax << endl;
 
 	TChain *file_s =  new TChain("file_s");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_0");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_1");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_0");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_1");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
+	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
 	TH1F *hist_S = new TH1F("hist_S","hist_S",int((xmax-xmin)/bin_width),xmin,xmax);
     s.Form("%s>>hist_S",what_to_opt.Data());
     sel.Form("%s",(selection_sig+Mgg_window).Data());
@@ -73,8 +82,12 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	// Combine Background Trees
 	TChain *tree_bg =  new TChain("tree_bg");
-	string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Backgrounds_promptpromptselapplied";
-	vector<string> v;     
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Backgrounds_promptpromptselapplied";
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied";
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
+	string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied"; // Prompt Prompt removal applied
+	vector<string> v;
 	v = read_directory(backgroundDirec); // Get vector of background files 
 	cout << " " << endl; 
 	cout << "Number of background files: " << v.size() << endl;
@@ -456,8 +469,10 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		outfile.close();
 	}
 
+	// float ymin=hist_B2->GetBinContent(hist_B2->FindFirstBinAbove(0.))*0.1;
 	// float ymin=hist_S2->GetBinContent(hist_S2->FindFirstBinAbove(0.))*0.1;
 	float ymin = 0.0001;
+	// float ymin = 0.0001;
 	float ymax=hist_B2->GetMaximum()*1e02;
 
 	TLine* lines[10];
@@ -507,7 +522,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		lines[index]->Draw("same");
 	gPad->RedrawAxis();
 	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
-	c1->Print(s.Format("%s/%s_%s_xMin-%s_binIwdth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	// c1->Print(s.Format("%s/%s_%s_xMin-%s_binIwdth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
 
 	double* cat_scan = &categories_scans[0];
 	double* sign_scan = &significance_scans[0];
@@ -559,7 +574,15 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		bin_i = i + 1; // +1 to skip underflow bin
 		sig = hist_S2->GetBinContent(bin_i);  
 		bkg = hist_B2->GetBinContent(bin_i);
-		if(bkg != 0){
+
+		// if(verbose){
+			// cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
+			// cout << "S : " << sig << endl;
+			// cout << "B : " << bkg << endl;		
+		// }
+
+		
+		if(bkg > 0){
 			sigOverSqrtb = sig / sqrt(bkg);	
 			Significance_h->SetBinContent(bin_i, sigOverSqrtb); 
 			if(sigOverSqrtb > maxsigOverSqrtb) maxsigOverSqrtb = sigOverSqrtb;
@@ -567,6 +590,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 			// cout << "S : " << sig << endl;
 			// cout << "B : " << bkg << endl;
 			// cout << "significance: " << sigOverSqrtb << endl;
+		}
+		else{
+			cout << "for DNN val: " << Significance_h->GetBinLowEdge(bin_i) << ", Background Yield < 0: " << bkg << endl;
+			Significance_h->SetBinContent(bin_i, 0); 
+
 		}
 	}
 

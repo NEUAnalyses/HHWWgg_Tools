@@ -19,6 +19,7 @@
 # python Make_Fragments.py --template Templates/NMSSM/TEMPLATE_HHWWgg_qqlnu.txt --diHiggsDecay WWgg --fs qqlnu --NMSSM --outFolder HHWWgg_NMSSM --gridpacks /afs/cern.ch/work/a/atishelm/private/gitClones/HH_WWgg_2/HH_WWgg/HHWWgg_NMSSM/genproductions/bin/MadGraph5_aMCatNLO/NMSSM_XYH_WWgg_MX_500_MY_300_slc6_amd64_gcc630_CMSSW_9_3_8_tarball.tar.xz --masses 500,300
 #
 # Specified gridpack path:
+# python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --SM --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.5/VBF_HH_CV_1_C2V_1_C3_1_13TeV-madgraph/v1/VBF_HH_CV_1_C2V_1_C3_1_13TeV-madgraph_slc6_amd64_gcc630_CMSSW_9_3_16_tarball.tar.xz --prodMode Non-Res-SM-VBFToToHH-2-6-5
 # python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.6.0/VBFToBulkGravitonToHH_M250/v1/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30_tarball.tar.xz  --masses 250 --prodMode VBFToBulkGravitonToHH-2-6-0
 # python Make_Fragments.py --template Templates/OfficialRequest/ResonanceDecayFilter_example_HHTo2G2WTo2G2Q1L1Nu_madgraph_pythia8_CP5_cff.py --diHiggsDecay WWgg --fs qqlnu --Resonant --outFolder VBFMadgraphCheck --gridpacks /cvmfs/cms.cern.ch/phys_generator/gridpacks/2017/13TeV/madgraph/V5_2.4.2/VBFTBulkGravitonToHH_M250/v1/VBFToBulkGravitonToHH_M250_slc6_amd64_gcc481_CMSSW_7_1_30tarball.tar.xz --masses 250 --prodMode VBFToBulkGravitonToHH
 ########################################################################################################################
@@ -87,6 +88,10 @@ elif(args.Resonant):
         for gp in args.gridpacks.split(','):
             print"user gridpack:",gp 
             gridpacks.append(gp)
+
+## -- If user input gridpacks, use them (override any previous gridpack path setting)
+if(userGridpack):
+    gridpacks = args.gridpacks.split(',')
 
 if(args.verbose):
     print'[Make_Fragments.py: VERBOSE] - Gridpacks to use:',gridpacks 

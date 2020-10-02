@@ -45,6 +45,9 @@ def GetOptions():
     parser.add_argument("--SR", action="store_true", default=False, help="Plot and analyze signal region", required=False)
     # parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
 
+    ##-- Skim Ntuples
+    parser.add_argument("--AppendNtuples", action="store_true", default=False, help="Append new variables / flags to ntuples", required=False)
+
     ##-- Gen Reco Analysis
 
     ##-- Misc

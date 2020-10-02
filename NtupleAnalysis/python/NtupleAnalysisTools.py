@@ -13,6 +13,16 @@ from VariableTools import *
 from PlotTools import * 
 from CutsTools import * 
     
+def GetFiles(nTupleDirec_, Folder_):
+    files = [] 
+    Direc = "%s/%s"%(nTupleDirec_,Folder_)
+    for file in os.listdir(Direc): files.append(file)
+    return files 
+
+def AppendNtuples(dataFiles_, mcFiles_, signalFiles_):
+    print "In AppendNtuples"
+    # for each input file, make a new output file with an added branch
+
 def CalcEff(h_,cut_):
     ##-- return percentage of events that pass cut 
     pctPass_ = 0
@@ -98,12 +108,15 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
     B_CUT = "%s*(%s)*(%s)"%(B_WEIGHT,REGION_CUT,ZERO_CUT)
     B_CUT += "*(%s)"%(cut)  
     B_CUT = B_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
+    B_CUT_NOWEIGHT = "%s"%(B_CUT)
+    B_CUT_NOWEIGHT = B_CUT_NOWEIGHT.replace(B_WEIGHT,"(1)")
 
     ##-- Get Background Histograms 
     bkgHistos_ = []
     bkgHistCategories_ = [] 
     Bkg_Names_ = [] 
     Bkg_Nevents_ = [] 
+    Bkg_Nevents_unweighted_ = [] 
     for i,mcF_ in enumerate(mcFiles):
         mcPath = "%s/%s"%(mcDirec,mcF_)
         mcFile = TFile.Open(mcPath)
@@ -120,6 +133,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         if((MC_Category == "QCD") and (noQCD)): 
             print"Skipping QCD"
             Bkg_Nevents_.append(0)
+            Bkg_Nevents_unweighted_.append(0)
             # these_MC_Nevents_noweights.append(0) # Set yields to 0 for table 
             # these_MC_Nevents.append(0) # Set yields to 0 for table
             # B_list.append(0) 
@@ -141,6 +155,9 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         # exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
         # exec("B_h_noweight_%s = TH1F('B_h_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+
+        ##-- no weights 
+        exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
         
         # thisHist = eval("MC_h_tmp_%s"%(i))
         thisHist = eval("B_h_%s"%(i))
@@ -148,7 +165,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
 
         ##-- If GJet or QCD sample, need to remove prompt-prompt events 
         if(MC_Category == "GJet" or MC_Category == "QCD"):
-            if(verbose): print"Remove prompt-prompt"
+            if(verbose): print"Removing prompt-prompt"
             removePromptPromptCut = "(!((Leading_Photon_genMatchType == 1) && (Subleading_Photon_genMatchType == 1)))" # selection: remove events where both photons are prompt
             original_B_CUT = "%s"%(B_CUT)
             # original_MC_CUT = "%s"%(MC_CUT)
@@ -166,45 +183,26 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         if(MC_Category == "GJet" or MC_Category == "QCD"): 
             # exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
             exec('Bkg_Trees.Draw("%s >> B_h_%s","%s")'%(v,i,this_B_CUT))
+            exec('Bkg_Trees.Draw("%s >> B_h_%s_noweights","%s")'%(v,i,this_B_CUT_NOWEIGHT))
+            
         else: 
             # exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,MC_CUT))    
             exec('Bkg_Trees.Draw("%s >> B_h_%s","%s")'%(v,i,B_CUT))                                       
+            exec('Bkg_Trees.Draw("%s >> B_h_%s_noweights","%s")'%(v,i,B_CUT_NOWEIGHT))                                       
 
         # eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i))
         eval("B_h_%s.Scale(float(Lumi))"%(i))
         Bkg_Nevents_.append(eval("B_h_%s.Integral()"%(i))) 
 
-        ##-- MC reweighting for HHWWgg backgrounds (turned off for now)
-        # reWeightVals = ReWeightMC(mcF_)
-        # doReWeight, reWeightScale = reWeightVals[0], reWeightVals[1]
-        # print"doReWeight,reWeightScale:",doReWeight, reWeightScale
-        # if(doReWeight): 
-        #     if(args_.verbose):
-        #         print"ReWeighting MC"
-        #         print"With scale: ",reWeightScale
-        #     eval("MC_h_tmp_%s.Scale(float(reWeightScale))"%(i))
-        ## 
+        ##-- Check for negative bins 
+        for bi in range(eval("B_h_%s.GetNbinsX()"%(i))):
+            bin_i = bi + 1 # skip underflow bin 
+            Nbkg = eval("B_h_%s.GetBinContent(%s)"%(i,bin_i)) 
+            if(Nbkg < 0):
+                print"bin ",bin_i," Background Yield is < 0: ",Nbkg
 
-        # ##-- Only save for 1st variable. Should be same for all variables
-        # if(iv == 0): 
-        #     if(MC_Category == "GJet" or MC_Category == "QCD" ): 
-        #         # exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,this_MC_CUT_NOWEIGHT))
-        #         exec('Bkg_Trees.Draw("%s >> B_h_noweight_%s","%s")'%(v,i,this_B_CUT_NOWEIGHT))
-        #     else: 
-        #         # exec('mc_ch.Draw("%s >> MC_h_tmp_noweight_%s","%s")'%(v,i,MC_CUT_NOWEIGHT))
-        #         exec('Bkg_Trees.Draw("%s >> B_h_noweight_%s","%s")'%(v,i,B_CUT_NOWEIGHT))
-        #     # these_MC_Nevents_noweights.append(eval("MC_h_tmp_noweight_%s.Integral()"%(i)))   
-        #     # these_MC_Nevents.append(eval("MC_h_tmp_%s.Integral()"%(i)))
-        #     # B = eval("B_h_%s.Integral()"%(i))
-        #     # B_noweight = eval("B_h_noweight_%s.Integral()"%(i))
-        #     # print "B = ",B
-        #     # print "B_noweight ",B_noweight
-        #     # B_list.append(B)                            
-
-        #     ##-- Only need to get MC names once 
-        #     if(itag == 0 and ic == 0 and iv == 0): 
-        #         MCname = GetMCName(mcF_)
-        #         MC_names.append(MCname) # get shorter MC name here
+        ##-- without weights
+        Bkg_Nevents_unweighted_.append(eval("B_h_%s_noweights.Integral()"%(i))) 
 
         newHist = thisHist.Clone("newHist")
 
@@ -215,7 +213,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         bkgHistos_.append(newHist)
         bkgHistCategories_.append(MC_Category)
 
-    return bkgHistos_, bkgHistCategories_, Bkg_Names_, Bkg_Nevents_
+    return bkgHistos_, bkgHistCategories_, Bkg_Names_, Bkg_Nevents_, Bkg_Nevents_unweighted_
 
 def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose,cut):
     print "Getting Signal histogram(s)"
@@ -237,6 +235,8 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
     S_CUT += "*(%s)"%(cut)  
     S_CUT = S_CUT.replace("goodJets","AtLeast2GoodJets") ## for the case where the data and background ntuples have a different variable name than signal here for the same thing 
     S_CUT = S_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
+    S_CUT_NOWEIGHTS = "%s"%(S_CUT)
+    S_CUT_NOWEIGHTS = S_CUT_NOWEIGHTS.replace(S_WEIGHT,"(1)")
 
     ##-- Get Signal Histogram(s) 
     for i,sigF_ in enumerate(signalFiles):
@@ -257,9 +257,8 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
         Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
 
         xbins, xmin, xmax = GetBins(varTitle)
-        # exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',v,xbins,xmin,xmax)"%(i,i))
-        exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) # Specifically for computing S in signal region 
-        # thisHist = eval("MC_h_tmp_%s"%(i))
+        exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
+        exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
         thisHist = eval("S_h_%s"%(i))
         mcColor = GetMCColor(MC_Category) 
         ##-- Style options for signal to distinguish from Data, Background 
@@ -273,20 +272,14 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
         eval("S_h_%s.SetLineColor(eval(mcColor))"%(i))        
         # exec('Signal_Trees.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
         exec('Signal_Trees.Draw("%s >> S_h_%s","%s")'%(v,i,S_CUT))
-        # eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i)) # should scale to luminosity by default 
+        exec('Signal_Trees.Draw("%s >> S_h_%s_unweighted","%s")'%(v,i,S_CUT_NOWEIGHTS))
         SigXS_Scale = GetXScale("HHWWgg_SM") # how to scale the XS which is by default in flashgg 1fb
         if(verbose): print"SigXS_Scale: ",SigXS_Scale
         eval("S_h_%s.Scale(float(Lumi))"%(i))
-        eval("S_h_%s.Scale(float(SigXS_Scale))"%(i))         
-        # eval("MC_h_tmp_%s.Scale(float(SigXS_Scale))"%(i)) # should scale to luminosity by default
-        # eval("Signal_Trees.Draw('%s >> S_h_%s','%s')"%(v,i,S_CUT))
-        # eval("S_h_%s.Scale(float(args_.Lumi))"%(i))
-        # eval("S_h_%s.Scale(float(SigXS_Scale))"%(i)) 
-        # S = eval("S_h_%s.Integral()"%(i)) # want number of signal events in the signal region: 115 -> 135 GeV 
-        ##-- Only save for 1st variable. Should be same for all variables
-        # if(iv == 0):    
-        #     # print("S = ",S)                     
-        #     S_list.append(S) ##-- assumes one signal model! 
+        eval("S_h_%s.Scale(float(SigXS_Scale))"%(i))       
+
+        S_ = eval("S_h_%s.Integral()"%(i))
+        S_unweighted_ = eval("S_h_%s_unweighted.Integral()"%(i))
 
         newHist = thisHist.Clone("newHist")
 
@@ -300,7 +293,7 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
         sig_histos_.append(newHist)
         sig_histCategories_.append(MC_Category)     
 
-    return sig_histos_, sig_histCategories_
+    return sig_histos_, sig_histCategories_, S_, S_unweighted_
 
 ##-- Main Data / MC module 
 def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_):
@@ -350,8 +343,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
         ##-- In either case, SB or SR, get backgrounds and signal(s)
         bkgStack = THStack("bkgStack","bkgStack")
-        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents = GetBackgroundHists(mcFiles_,mcDirec_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut)         
-        sig_histos, sig_histCategories = GetSignalHists(signalFiles_,signalDirec_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut)
+        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(mcFiles_,mcDirec_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut)         
+        sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFiles_,signalDirec_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut)
 
         MC_AddedtoLegend = {
             "QCD" : 0,
@@ -562,8 +555,11 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         elif(region_ == "SR"):
             print "Plotting Signal Region"
 
-            plotLog = 1 ##-- Plot signal region selected plots in log scale by default since HH->WWgg signal is small 
-            upperPlotymin = 0.001           
+            # plotLog = 1 ##-- Plot signal region selected plots in log scale by default since HH->WWgg signal is small 
+            # upperPlotymin = 0.001           
+            plotLog = args_.log
+            if(plotLog): upperPlotymin = 0.001
+            else: upperPlotymin = 0 
             dataNevents = 0 
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
@@ -734,7 +730,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         ##-- Only create yields table for 0th variable because yields are cut dependent, not variable dependent
         if(iv==0): 
             B_vals_ = [] 
-            CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_) 
+            CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_,Bkg_Nevents_unweighted, S_, S_unweighted_) 
 
         ## For each variable loop ends here 
     

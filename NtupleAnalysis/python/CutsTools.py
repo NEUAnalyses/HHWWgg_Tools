@@ -52,15 +52,46 @@ def GetCuts(CutsType):
         #print"LOOSE cuts:",cuts
         cutNames = ["Loose"]    
         
+    elif(CutsType == "WithWJetsTraining"):
+        # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
+        cutNames = ["WithWJetsTraining"]
+
+    elif(CutsType == "WithWJetsTrainingLoose"):
+        # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1)"]
+        cutNames = ["WithWJetsTrainingLoose"]        
+
     ##-- Apply each analysis selection separately 
-    elif(CutsType == "all"):
-        cuts = ["1", "passPhotonSels == 1", "passbVeto == 1", "ExOneLep == 1", "goodJets == 1"] # preselections, photon sels, bVeto, exactly 1 lepton, at least 2 good jets
-        cutNames = ["PreSelections","PhotonSelections","bVeto","OneLep","TwoGoodJets"]
+    # elif(CutsType == "all"):
+        # cuts = ["1", "passPhotonSels == 1", "passbVeto == 1", "ExOneLep == 1", "goodJets == 1"] # preselections, photon sels, bVeto, exactly 1 lepton, at least 2 good jets
+        # cutNames = ["PreSelections","PhotonSelections","bVeto","OneLep","TwoGoodJets"]
 
     ##-- Apply final analysis selections (may be missing one or two like Tight2017 Jet ID)
     elif(CutsType == "final"):
-        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"]
         cutNames = ["final"]
+
+    elif(CutsType == "finalNoSumpt"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cutNames = ["finalNoSumpt"] 
+
+    elif(CutsType == "old_HHWWggTag_0"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(N_goodElectrons==1)"]
+        cutNames = ["old_HHWWggTag_0"]
+
+    elif(CutsType == "old_HHWWggTag_1"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(N_goodMuons==1)"]
+        cutNames = ["old_HHWWggTag_1"]        
+
+    ##-- Cut based analysis categories
+    elif(CutsType == "HHWWggTag_0"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodElectrons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"]
+        cutNames = ["HHWWggTag_0"]
+
+    elif(CutsType == "HHWWggTag_1"):
+        cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"]
+        cutNames = ["HHWWggTag_1"]
     
     ##-- Apply b Veto, exactly one good lepton, at least two good jets selections (Tight2017 Jet ID may be missing)
     elif(CutsType == "final-noPhoSels"):
@@ -88,13 +119,8 @@ def GetCuts(CutsType):
 
 # def CreateEventsTable(cutCatPairs,dataNevents,MC_Nevents,MC_names):
 
-def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,dataNevents,SidebandSF,Bkg_Nevents,ol):
+def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,dataNevents,SidebandSF,Bkg_Nevents,ol, Bkg_Nevents_unweighted, S, S_unweighted):
     print'Creating yields table'
-
-    # for s_val in S_vals:
-        # print"sval:",s_val
-    # for b_val in B_vals:
-        # print"bval:",b_val
 
     yaxisLabels = []
     if(region == "SB"):
@@ -126,106 +152,116 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
     xaxisLabels = []
     xaxisLabels.append(cut)
 
-    # for cutTagPair in cutBatchTag_pairs: xaxisLabels.append(cutTagPair)
-    # firstCutBatch = xaxisLabels[0].split('_')[0]
-
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
 
-    # Bkg_sums = []
+    for doUnweighted in [0,1]:
 
+        histTitles = ["Weighted Events", "Unweighted Events"]
+        bkgValues_str = ["Bkg_Nevents","Bkg_Nevents_unweighted"]
+        Syield_str = ["S", "S_unweighted"]
+        outLabels = ["Weighted", "Unweighted"]
 
-    # N_allMC_list = []
-    # B_vals = []
+        bkgYields = eval(bkgValues_str[doUnweighted])
+        S = eval(Syield_str[doUnweighted])
+        histTitle = histTitles[doUnweighted]
+        outLabel = outLabels[doUnweighted]
 
-    # for MC_events_list in MC_Nevents_lists: 
-        # N_allMC = sum(MC_events_list)
-        # N_allMC_list.append(N_allMC)
-    # for B_list in B_lists_:
-        # B = sum(B_list)
-        # B_vals.append(B)
+        h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
+        h_grid.SetStats(0)
+        h_grid.GetXaxis().SetLabelSize(.03)   
 
-    # N_allMC_noweight_list = []
-    # for MC_events_noweight_list in MC_Nevents_noweight_lists: 
-    #     N_allMC_noweight = sum(MC_events_noweight_list)
-    #     N_allMC_noweight_list.append(N_allMC_noweight)  
+        for yli, yl in enumerate(yaxisLabels):
+            h_grid.GetYaxis().SetBinLabel(yli+1,yl)
 
-    histTitle = "Weighted Events"
+        for ixL,xLabel in enumerate(xaxisLabels):
+            # S = Signal_Nevents_list_[ixL] ##-- assumes only one signal model! 
+            # S = sum(S_vals) # per bin vals 
 
-    h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
-    h_grid.SetStats(0)
-    h_grid.GetXaxis().SetLabelSize(.03)   
+            # S_, S_unweighted_
+            
+            # Bkg_Nevents_unweighted
+            B = sum(bkgYields)
 
-    for yli, yl in enumerate(yaxisLabels):
-        h_grid.GetYaxis().SetBinLabel(yli+1,yl)
+            h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
+            # MC_Nevents = eval("%s[ixL]"%(MC_Nevents_vals))
+            # N_allMC = eval("%s[ixL]"%(MC_sumEvents_l))
 
-    for ixL,xLabel in enumerate(xaxisLabels):
-        # S = Signal_Nevents_list_[ixL] ##-- assumes only one signal model! 
-        S = sum(S_vals) # per bin vals 
-        # B = sum(B_vals) # per bin vals in ratio plot 
-        B = sum(Bkg_Nevents)
+            # B = eval("%s[ixL]"%(B_values))
 
-        h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
-        # MC_Nevents = eval("%s[ixL]"%(MC_Nevents_vals))
-        # N_allMC = eval("%s[ixL]"%(MC_sumEvents_l))
+            B *= SidebandSF # SidebandSF_ should be 1 by default 
+        
+            if(B <= 0.0): 
+                data_over_MC = -1 
+                SqrtB = -1 
+                sOverSqrtB = -1 
+            else: 
+                data_over_MC = dataNevents / B
+                SqrtB = B**0.5
+                sOverSqrtB = S / SqrtB
 
-        # B = eval("%s[ixL]"%(B_values))
+            # print"S = ",S
+            # print"B = ",B
+            # print"sqrtB = ",SqrtB
+            # print"sOverSqrtB = ",sOverSqrtB
 
-        B *= SidebandSF # SidebandSF_ should be 1 by default 
-    
-        # if(N_allMC == 0.0)
-        if(B <= 0.0): 
-            data_over_MC = -1 
-            SqrtB = -1 
-            sOverSqrtB = -1 
+            if(region == "SB"):
+                h_grid.Fill(ixL,0,data_over_MC)
+                h_grid.Fill(ixL,1,dataNevents)
+                h_grid.Fill(ixL,2,sOverSqrtB)
+                h_grid.Fill(ixL,3,SqrtB)
+                h_grid.Fill(ixL,4,B)
+                h_grid.Fill(ixL,5,S)
+
+            elif(region == "SR"):
+                h_grid.Fill(ixL,0,sOverSqrtB)
+                h_grid.Fill(ixL,1,SqrtB)
+                h_grid.Fill(ixL,2,B)
+                h_grid.Fill(ixL,3,S)
+
+            # for ie,numEvents in enumerate(MC_Nevents):
+            for ie,numEvents in enumerate(bkgYields):
+                h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
+
+        sideScaleOpt = ""
+        if(SidebandSF != 1): sideScaleOpt = "WithSidebandScale"
+        else: sideScaleOpt = "WithoutSidebandScale"
+        outNamepng = "%s/%s_%s_YieldsTable_%s_%s.png"%(ol, region, cut, outLabel, sideScaleOpt)
+        outNamepdf = "%s/%s_%s_YieldsTable_%s_%s.pdf"%(ol, region, cut, outLabel, sideScaleOpt)       
+        c_tmp = TCanvas('c_tmp','c_tmp',800,600)
+        c_tmp.SetRightMargin(0.15)
+        c_tmp.SetLeftMargin(0.23)
+        c_tmp.SetBottomMargin(0.15)
+        c_tmp.SetTopMargin(0.1)
+        
+        if(not removeBackgroundYields): 
+            h_grid.GetXaxis().SetLabelSize(0.1)        
+            h_grid.SetMarkerSize(1.2)
         else: 
-            data_over_MC = dataNevents / B
-            SqrtB = B**0.5
-            sOverSqrtB = S / SqrtB
+            if(region == "SB"): h_grid.GetYaxis().SetLabelSize(0.08)
+            else: h_grid.GetYaxis().SetLabelSize(0.1)
+            h_grid.GetXaxis().SetLabelSize(0.1)        
+            h_grid.SetMarkerSize(5)
+        h_grid.Draw("text COL1")
+        # label.DrawLatex(0.3,0.95,"HHWWgg 95% CL Limits: " + ml)
+        c_tmp.SaveAs(outNamepng)
+        c_tmp.SaveAs(outNamepdf) 
 
-        # print"S = ",S
-        # print"B = ",B
-        # print"sqrtB = ",SqrtB
-        # print"sOverSqrtB = ",sOverSqrtB
-
-        if(region == "SB"):
-            h_grid.Fill(ixL,0,data_over_MC)
-            h_grid.Fill(ixL,1,dataNevents)
-            h_grid.Fill(ixL,2,sOverSqrtB)
-            h_grid.Fill(ixL,3,SqrtB)
-            h_grid.Fill(ixL,4,B)
-            h_grid.Fill(ixL,5,S)
-
-        elif(region == "SR"):
-            h_grid.Fill(ixL,0,sOverSqrtB)
-            h_grid.Fill(ixL,1,SqrtB)
-            h_grid.Fill(ixL,2,B)
-            h_grid.Fill(ixL,3,S)
-
-        # for ie,numEvents in enumerate(MC_Nevents):
-        for ie,numEvents in enumerate(Bkg_Nevents):
-            h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
-
-    outLabel = "Weighted"
-
-    sideScaleOpt = ""
-    if(SidebandSF != 1): sideScaleOpt = "WithSidebandScale"
-    else: sideScaleOpt = "WithoutSidebandScale"
-    outNamepng = "%s/%s_%s_YieldsTable_%s_%s.png"%(ol, region, cut, outLabel, sideScaleOpt)
-    outNamepdf = "%s/%s_%s_YieldsTable_%s_%s.pdf"%(ol, region, cut, outLabel, sideScaleOpt)       
-    c_tmp = TCanvas('c_tmp','c_tmp',800,600)
-    c_tmp.SetRightMargin(0.15)
-    c_tmp.SetLeftMargin(0.23)
-    c_tmp.SetBottomMargin(0.15)
-    c_tmp.SetTopMargin(0.1)
-    h_grid.SetMarkerSize(1.2)
-    h_grid.Draw("text COL1")
-    # label.DrawLatex(0.3,0.95,"HHWWgg 95% CL Limits: " + ml)
-    c_tmp.SaveAs(outNamepng)
-    c_tmp.SaveAs(outNamepdf) 
+    # h_grid.~TH2()
 
     # ##-- Create Two Tables
     # ##-- One without MC weight applied, one with 
+
+
+    ##-- Unweighted Table 
+    # Bkg_Nevents_unweighted
+
+    # histTitle = "UnWeighted Events"
+
+    # h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
+    # h_grid.SetStats(0)
+    # h_grid.GetXaxis().SetLabelSize(.03)  
+
 
     # # for useMCWeight in [0,1]:
     # for useMCWeight in [1]:

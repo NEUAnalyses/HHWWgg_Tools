@@ -16,6 +16,7 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch DNN --CutsType WithWJetsTraining --Lumi 41.5  --verbose  --SigScale 100 --SB --noQCD --log
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5  --verbose  --SigScale 1 
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType PreSelections --Lumi 41.5 --verbose
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1 --removeBackgroundYields
@@ -43,10 +44,10 @@ if __name__ == '__main__':
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
     elif(args.DataMC): 
         if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
-        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/'    
+        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
     # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
-    nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/'
-
+    nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'
+    # nTupleDirec = '/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_add_WJets_graph/'
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
         if(args.ratio):
@@ -390,26 +391,20 @@ if __name__ == '__main__':
         ##-- Get Data File(s)
         dataFolder = str(args.dataFolder)
         dataDirec = nTupleDirec + dataFolder
-        dataFiles = []
-        for file in os.listdir(dataDirec):
-            dataFiles.append(file)
         # if(args.verbose): print"dataFiles:",dataFiles
+        dataFiles = GetFiles(nTupleDirec, dataFolder)
 
         ##-- Get Background MC Files
         mcFolder = str(args.mcFolder)
         mcDirec = nTupleDirec + mcFolder 
-        mcFiles = []
-        for file in os.listdir(mcDirec):
-            mcFiles.append(file)
         # if(args.verbose): print"mcFiles:",mcFiles
+        mcFiles = GetFiles(nTupleDirec, mcFolder)
 
         ##-- Get Signal File(s)
         signalFolder = str(args.signalFolder)
         signalDirec = nTupleDirec + signalFolder 
-        signalFiles = [] 
-        for file in os.listdir(signalDirec):
-            signalFiles.append(file)
         # if(args.verbose): print"signalFiles:",signalFiles
+        signalFiles = GetFiles(nTupleDirec, signalFolder)
 
         ##-- Run Main Module 
         Tags = args.Tags.split(',')
@@ -431,4 +426,12 @@ if __name__ == '__main__':
 
     ##-- Perform Gen Reco analysis
     elif(args.GenReco):
-        print"Performing Gen Reco Analysis" 
+        print "Performing Gen Reco Analysis" 
+
+    elif(args.AppendNtuples):
+        folders = ["data","mc","signal"]
+        for folder in folders: 
+            exec("%sFolder = str(args.%sFolder)"%(folder,folder))
+            exec("%sFiles = GetFiles(nTupleDirec, %sFolder)"%(folder,folder))
+            if(args.verbose): exec("print'%sFiles:',%sFiles"%(folder,folder)) 
+        AppendNtuples(dataFiles, mcFiles, signalFiles)

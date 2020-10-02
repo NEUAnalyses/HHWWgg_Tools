@@ -182,7 +182,8 @@ def GetBins(variable_):
         "pT_gg" : [40,0,400],
         # "evalDNN" : [20,0,1.00001] # To include value == 1 
         # "evalDNN" : [10,0,1.00001] # To include value == 1 
-        "evalDNN" : [10,0,1.00001] # To include value == 1 
+        # "evalDNN" : [25,0,1.00001] # To include value == 1 
+        "evalDNN" : [100,0,1.00001] # To include value == 1 
     }    
     specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN"]
     if variable_ in specialVars:
