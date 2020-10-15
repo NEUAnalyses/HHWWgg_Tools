@@ -1,20 +1,25 @@
-######################################################################################################################################################################################
-# Abraham Tishelman-Charny                                                                                   
-# 15 October 2020                                                                                            
-#                                                                                                            
-# The purpose of this module is to apply selections to trees and merge them into a new file.                 
-#                                                                                                            
-# Special thanks to these links for info on adding tree selections in pyROOT:                                
-# https://indico.cern.ch/event/704163/contributions/2936719/attachments/1693833/2726445/Tutorial-Pypdf       
-# https://root-forum.cern.ch/t/copytree-with-a-selection/12908                                               
-# TFile* file = TFile::Open("TEST.root");                                                                    
-# TTree* originalTree = (TTree*)file->Get("reducedTree");                                                    
-# TFile* ouput = TFile::Open("TESTskim.root","RECREATE");                                                    
-# TTree* selectedTree = originalTree->CopyTree("ptLept1>50.")    
-# 
-# Example Usage:
-# python SkimFiles.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples-withTDirecs-cp/Backgrounds --outDir /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples-withTDirecs-cp/Backgrounds --doppRemoval
-######################################################################################################################################################################################
+##################################################################################################################################################################################################
+# Abraham Tishelman-Charny                                                                                                                                                                       #
+# 15 October 2020                                                                                                                                                                                #
+#                                                                                                                                                                                                #
+# The purpose of this module is to apply selections to trees and merge them into a new file.                                                                                                     #
+#                                                                                                                                                                                                #
+# Special thanks to these links for info on adding tree selections in pyROOT:                                                                                                                    #
+# https://indico.cern.ch/event/704163/contributions/2936719/attachments/1693833/2726445/Tutorial-Pypdf                                                                                           #
+# https://root-forum.cern.ch/t/copytree-with-a-selection/12908                                                                                                                                   #
+# TFile* file = TFile::Open("TEST.root");                                                                                                                                                        #
+# TTree* originalTree = (TTree*)file->Get("reducedTree");                                                                                                                                        #
+# TFile* ouput = TFile::Open("TESTskim.root","RECREATE");                                                                                                                                        #
+# TTree* selectedTree = originalTree->CopyTree("ptLept1>50.")                                                                                                                                    #
+#                                                                                                                                                                                                #
+# Example Usage:                                                                                                                                                                                 #
+# with prompt-prompt removal and merging of trees:                                                                                                                                               #
+# ##-- NOTE: when doing prompt-prompt removal, inDir should ONLY contain GJet and QCD samples (up to 6 total)                                                                                    #
+# python SkimFiles.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --doppRemoval             #
+#                                                                                                                                                                                                # 
+# without prompt-prompt removal, just merging of trees:                                                                                                                                          #
+# python SkimFiles.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --Signal                  #
+##################################################################################################################################################################################################
 
 ##-- Imports 
 import argparse
@@ -29,7 +34,7 @@ parser.add_argument('--outDir', type=str, default="", help="Comma separated list
 parser.add_argument('--fileType', type=str, default="", help="File type: Data, Signal, or Bkg", required=True)
 parser.add_argument("--doppRemoval", action="store_true", default=False, help="Remove prompt-prompt events", required=False)
 parser.add_argument("--oneFile", action="store_true", default=False, help="Only run on one file (helpful for quicker testing)", required=False)
-# parser.add_argument("--mergeTags", action="store_true", default=False, help="Merge multiple trees into one tree", required=False) # not implemented yet. merges be default 
+# parser.add_argument("--mergeTags", action="store_true", default=False, help="Merge multiple trees into one tree", required=False) # not implemented yet. merges by default 
 args = parser.parse_args()
 
 ##-- Set variables to user args 
