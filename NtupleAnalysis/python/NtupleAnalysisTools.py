@@ -125,7 +125,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         MCname = GetMCName(mcF_)
         Bkg_Names_.append(MCname) # get shorter MC name here        
         if(verbose): 
-            #print"Background File:",mcPath
+            # print"Background File:",mcPath
             print"Background:",MC_Category
             # print"file:",mcPath  
 
@@ -199,7 +199,15 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
             bin_i = bi + 1 # skip underflow bin 
             Nbkg = eval("B_h_%s.GetBinContent(%s)"%(i,bin_i)) 
             if(Nbkg < 0):
+                Nbkg_unweighted = eval("B_h_%s_noweights.GetBinContent(%s)"%(i,bin_i)) 
                 print"bin ",bin_i," Background Yield is < 0: ",Nbkg
+                print"number of unweighted events: ",Nbkg_unweighted
+            # if(bin_i == 5 and Nbkg > 0):
+            #     print"bin_i == 5"
+            #     Nbkg_unweighted = eval("B_h_%s_noweights.GetBinContent(%s)"%(i,bin_i)) 
+            #     # print"bin ",bin_i," Background Yield is < 0: ",Nbkg
+            #     print"Weighted Background Yield: ",Nbkg
+            #     print"number of unweighted events: ",Nbkg_unweighted                
 
         ##-- without weights
         Bkg_Nevents_unweighted_.append(eval("B_h_%s_noweights.Integral()"%(i))) 
@@ -233,7 +241,7 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
     ZERO_CUT = "ZERO_CUT"
     S_CUT = "%s*(%s)*(%s)"%(S_WEIGHT,REGION_CUT,ZERO_CUT)    
     S_CUT += "*(%s)"%(cut)  
-    S_CUT = S_CUT.replace("goodJets","AtLeast2GoodJets") ## for the case where the data and background ntuples have a different variable name than signal here for the same thing 
+    # S_CUT = S_CUT.replace("goodJets","AtLeast2GoodJets") ## for the case where the data and background ntuples have a different variable name than signal here for the same thing 
     S_CUT = S_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v))
     S_CUT_NOWEIGHTS = "%s"%(S_CUT)
     S_CUT_NOWEIGHTS = S_CUT_NOWEIGHTS.replace(S_WEIGHT,"(1)")

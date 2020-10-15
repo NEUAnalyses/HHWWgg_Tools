@@ -22,13 +22,14 @@
 
 using namespace std;
 
-void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_) {
+void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_, TString ext) {
 	
 	// Misc 
 	gROOT->SetBatch("kTrue");
 
 	// Parameters 
-	TString scaleOpt;
+	cout << "extension: " << ext << endl;
+        TString scaleOpt;
 	if(scaleBkgSideband) scaleOpt = "withSidebandScale";
 	else scaleOpt = "noSidebandScale";	
 	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/DNN_Categorization/";
@@ -46,12 +47,16 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// TString extraSelection = "*(N_goodMuons == 1)";
 
 	// Training Selections 
-	// TString extraSelections = "*( (passPhotonSels==1) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-	// TString extraSelections_Signal = "*( (passPhotonSels==1)  && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
+	// TString extraSelections = "*( passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
+	// TString extraSelections_Signal = "*( passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
 
 	// No Photon MVA Selection
 	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
 	TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";
+
+	// No Photon MVA Selection
+	// TString extraSelections = "*(Leading_Photon_pt/CMS_hgg_mass) > 0.35) && ((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
+	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
 	
 	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodElectrons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)";
 	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"
@@ -62,7 +67,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
 	TString selection_data = "(1)" + extraSelections;
 	TString s; TString sel;
-	TString outname = s.Format("Categorization_%s_%dcats",what_to_opt.Data(),NCATS);
+	TString outname = s.Format("Categorization_%s_%dcats_%s",what_to_opt.Data(),NCATS,ext.Data());
 
 	// Combine Signal Trees
 	cout << "nBins: " << int((xmax-xmin)/bin_width) << endl;
@@ -412,12 +417,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	borders[NCATS] = END;
 
 	// // Save Border Values to Text File
-	// ofstream outborder;
-	// outborder.open(s.Format("%s%s_%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data()));
-	// for (int index=0;index<NCATS+1;index++)
-	// 	outborder<<borders[index] << "\t";
-	// outborder<<endl;
-	// outborder.close();
+	TString outnameborder = "Borders";
+	ofstream outborder;
+	outborder.open(s.Format("%s%s_%s_%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data(),ext.Data()));
+	for (int index=0;index<NCATS+1;index++)
+		outborder<<borders[index] << "\t";
+	outborder<<endl;
+	outborder.close();
 
 	// Write Output Text File 
 	ofstream out;
@@ -522,7 +528,15 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		lines[index]->Draw("same");
 	gPad->RedrawAxis();
 	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
-	// c1->Print(s.Format("%s/%s_%s_xMin-%s_binIwdth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	
+        gPad->Update();
+        frame2->SetMaximum(50);
+        c1->SetLogy(0);
+                
+	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s_nonLog.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+
+        // c1->Print(s.Format("%s/%s_%s_xMin-%s_binIwdth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
 
 	double* cat_scan = &categories_scans[0];
 	double* sign_scan = &significance_scans[0];
@@ -586,10 +600,10 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 			sigOverSqrtb = sig / sqrt(bkg);	
 			Significance_h->SetBinContent(bin_i, sigOverSqrtb); 
 			if(sigOverSqrtb > maxsigOverSqrtb) maxsigOverSqrtb = sigOverSqrtb;
-			// cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
-			// cout << "S : " << sig << endl;
-			// cout << "B : " << bkg << endl;
-			// cout << "significance: " << sigOverSqrtb << endl;
+			cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
+			cout << "S : " << sig << endl;
+			cout << "B : " << bkg << endl;
+			cout << "significance: " << sigOverSqrtb << endl;
 		}
 		else{
 			cout << "for DNN val: " << Significance_h->GetBinLowEdge(bin_i) << ", Background Yield < 0: " << bkg << endl;
@@ -666,7 +680,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// Shaded_Area->Fill(0.00001,canvas_ymax);
 	// Shaded_Area->Draw("hist same");
 
-	sig_c->SaveAs(outDir + "Significance_" + scaleOpt + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + ".png");
+	sig_c->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + ".png");
 
 	TCanvas * sig_c_log = new TCanvas("sig_c_log","sig_c_log",800,600);
 	sig_c_log->cd();
@@ -691,5 +705,6 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	// Shaded_Area->SetBinContent(1,100);
 	// Shaded_Area->Draw("hist same");
-	sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.png");
+	sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.png");
+	sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.pdf");
 }

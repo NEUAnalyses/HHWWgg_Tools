@@ -51,16 +51,29 @@ def GetCuts(CutsType):
         cuts = ["( (((%s) + (%s)) == 1) && ((%s) >= 2) && (%s))"%(electronCuts,muonCuts,jetCuts,photonCuts)] # exactly one lepton passing looser selections, at least two jets passing looser selections  
         #print"LOOSE cuts:",cuts
         cutNames = ["Loose"]    
-        
-    elif(CutsType == "WithWJetsTraining"):
-        # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
-        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
-        cutNames = ["WithWJetsTraining"]
+
+    elif(CutsType == "TrainingSelections"):
+        cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections 
+        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
+        cutNames = ["TrainingSelections"]
+
+    # elif(CutsType == "WithWJetsTraining"):
+    #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections 
+    #     cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
+    #     cutNames = ["WithWJetsTraining"]
 
     elif(CutsType == "WithWJetsTrainingLoose"):
-        # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1)"]
-        cutNames = ["WithWJetsTrainingLoose"]        
+        cutNames = ["WithWJetsTrainingLoose"] 
+
+    elif(CutsType == "DNNLoose"):
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1)"]
+        cutNames = ["DNNLoose"]           
+
+    # elif(CutsType == "WithWJetsTrainingLoose"):
+    #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
+    #     cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1)"]
+    #     cutNames = ["WithWJetsTrainingLoose"]        
 
     ##-- Apply each analysis selection separately 
     # elif(CutsType == "all"):

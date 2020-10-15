@@ -16,14 +16,11 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch DNN --CutsType WithWJetsTraining --Lumi 41.5  --verbose  --SigScale 100 --SB --noQCD --log
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/ --dataFolder Data --mcFolder Bkgs --signalFolder Signal --VarBatch DNN --CutsType DNNLoose  --Lumi 41.5  --verbose  --SigScale 10000 --SR --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/ --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch DNN --CutsType WithWJetsTraining --Lumi 41.5  --verbose  --SigScale 100 --SB --noQCD --log 
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5  --verbose  --SigScale 1 
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType PreSelections --Lumi 41.5 --verbose
 # python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1 --removeBackgroundYields
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_short --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5 --Tags combined --verbose
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch diphopt --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --noQCD --SigScale 1000000
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures 
 #
 # ##-- Gen / Reco Analysis 
 # python NtupleAnalysis.py --GenReco
@@ -44,9 +41,18 @@ if __name__ == '__main__':
     if(args.Efficiency): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/cutFlow/'
     elif(args.DataMC): 
         if(args.testFeatures): ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DataMC_testFeatures/'
-        else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
+        else: 
+            ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
+            if(not os.path.exists(ol)):
+                print"Path %s does not exist, so creating it now"
+                print'mkdir %s'%(ol)
+                os.system('mkdir %s'%(ol))
+                print'cp %s/../index.php %s'%(ol,ol)
+                os.system('cp %s/../index.php %s'%(ol,ol))
+        # else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
     # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
-    nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'
+    # nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'
+    nTupleDirec = args.nTupleDirec
     # nTupleDirec = '/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_add_WJets_graph/'
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
