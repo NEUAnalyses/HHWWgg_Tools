@@ -54,9 +54,9 @@ def GetDataHist(dataDirec_,dF_,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose
     # ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     # data_trees = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     data_trees = TChain('data_trees')
-    data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
-    data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
-    data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
+    data_trees.Add("%s/%sData"%(dPath,prefix))
+    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
+    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
     SB_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
     ZERO_CUT = "ZERO_CUT" ## to cut empty entries 
     DATA_CUT = "%s*(%s)"%(SB_CUT,ZERO_CUT)
@@ -145,9 +145,9 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         ##-- Get Background Trees 
         Bkg_Trees = TChain("Bkg_Trees")
         # mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
-        Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_0"%(mcPath,prefix,treeName))
-        Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,prefix,treeName))
-        Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix,treeName))
+        Bkg_Trees.Add("%s/%s%s"%(mcPath,prefix,treeName))
+        # Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,prefix,treeName))
+        # Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix,treeName))
 
         ##-- Fill Histogram
         xbins, xmin, xmax = GetBins(varTitle)
@@ -161,6 +161,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         
         # thisHist = eval("MC_h_tmp_%s"%(i))
         thisHist = eval("B_h_%s"%(i))
+        thisHist.Sumw2()
         mcColor = GetMCColor(MC_Category)
 
         ##-- If GJet or QCD sample, need to remove prompt-prompt events 
@@ -218,6 +219,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
         newHist.SetTitle(MC_Category)
         newHist.GetXaxis().SetTitle(mcF_)
         newHist.SetDirectory(0)
+        newHist.Sumw2()
         bkgHistos_.append(newHist)
         bkgHistCategories_.append(MC_Category)
 
@@ -258,11 +260,11 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
 
         # Signal_Trees = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
         Signal_Trees = TChain("Signal_Trees")
-        Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_0"%(sigPath,prefix,treeName))
-        Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,prefix,treeName))
-        Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,prefix,treeName))
-        Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_3"%(sigPath,prefix,treeName))
-        Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
+        Signal_Trees.Add("%s/%s%s"%(sigPath,prefix,treeName))
+        # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,prefix,treeName))
+        # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,prefix,treeName))
+        # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_3"%(sigPath,prefix,treeName))
+        # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
 
         xbins, xmin, xmax = GetBins(varTitle)
         exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
@@ -379,6 +381,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
         ##-- Add backgrounds to background stack 
         for h in orderedHistos:
+            h.Sumw2()
             bkgStack.Add(h,'hist')
             bkgName = h.GetTitle()
             added = MC_AddedtoLegend[bkgName]
