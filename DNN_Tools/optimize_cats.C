@@ -22,14 +22,14 @@
 
 using namespace std;
 
-void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_, TString ext) {
+void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_, TString ext, TString nTupleLocation) {
 	
 	// Misc 
 	gROOT->SetBatch("kTrue");
 
 	// Parameters 
 	cout << "extension: " << ext << endl;
-        TString scaleOpt;
+	TString scaleOpt;
 	if(scaleBkgSideband) scaleOpt = "withSidebandScale";
 	else scaleOpt = "noSidebandScale";	
 	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/DNN_Categorization/";
@@ -51,8 +51,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// TString extraSelections_Signal = "*( passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
 
 	// No Photon MVA Selection
-	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-	TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";
+	// TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
+	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";
+
+	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";
+	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";	
 
 	// No Photon MVA Selection
 	// TString extraSelections = "*(Leading_Photon_pt/CMS_hgg_mass) > 0.35) && ((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
@@ -63,23 +66,30 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// TString extraSelection = "*(N_goodMuons == 1)";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
 	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
-	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections_Signal; // normalize signal properly with cross section 
+	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section 
 	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
 	TString selection_data = "(1)" + extraSelections;
 	TString s; TString sel;
 	TString outname = s.Format("Categorization_%s_%dcats_%s",what_to_opt.Data(),NCATS,ext.Data());
+
+// --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ 
+// --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/
 
 	// Combine Signal Trees
 	cout << "nBins: " << int((xmax-xmin)/bin_width) << endl;
 	cout << "xmin: " << xmin << endl;
 	cout << "xmax: " << xmax << endl;
 
+	TString signal_Loc_s;
+	TString signal_Location = signal_Loc_s.Format("%s/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM",nTupleLocation.Data());
+
 	TChain *file_s =  new TChain("file_s");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_0");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_1");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
-	file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
+	// file_s->Add("")
+	file_s->Add(signal_Location);
+	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_1");
+	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
+	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
+	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
 	TH1F *hist_S = new TH1F("hist_S","hist_S",int((xmax-xmin)/bin_width),xmin,xmax);
     s.Form("%s>>hist_S",what_to_opt.Data());
     sel.Form("%s",(selection_sig+Mgg_window).Data());
@@ -91,33 +101,54 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied";
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
-	string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied"; // Prompt Prompt removal applied
+
+	TString bkg_Loc_s;
+	TString bkg_Location = bkg_Loc_s.Format("%s/Bkgs/",nTupleLocation.Data());
+
+	string backgroundDirec = bkg_Location.Data();
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied"; // Prompt Prompt removal applied
+	cout << "backgroundDirec " << backgroundDirec << endl;
 	vector<string> v;
 	v = read_directory(backgroundDirec); // Get vector of background files 
 	cout << " " << endl; 
 	cout << "Number of background files: " << v.size() << endl;
 
 	for(int i = 0; i < v.size(); i++){ // for each file 
-		for(int c = 0; c < 3; c++){ // for each category 
-			string cat = to_string(c);
-			string file = v[i];
-			string treePath = GetMCTreeName(file);
-			string fullPath = backgroundDirec + "/"; 
-			fullPath.append(file);
-			fullPath.append( "/" + treePath + "_13TeV_HHWWggTag_" + cat);
+		string file = v[i];
+		string treePath = GetMCTreeName(file);
+		string fullPath = backgroundDirec + "/"; 
+		fullPath.append(file);
+		fullPath.append( "/" + treePath);
+		
+		// cout << "full path: " << fullPath << endl;
+
+		tree_bg->Add(fullPath.c_str());	
+
+		// If there are multiple trees per file 
+		// for(int c = 0; c < 3; c++){ // for each category 
+			// string cat = to_string(c);
+			// string file = v[i];
+			// string treePath = GetMCTreeName(file);
+			// string fullPath = backgroundDirec + "/"; 
+			// fullPath.append(file);
+			// fullPath.append( "/" + treePath + "_13TeV_HHWWggTag_" + cat);
 			
-			// cout << "full path: " << fullPath << endl;
+			// // cout << "full path: " << fullPath << endl;
 
-			tree_bg->Add(fullPath.c_str());
+			// tree_bg->Add(fullPath.c_str());
 
-		}
+		// }
 	}
 
 	// Combine Data Trees 
+	TString Data_Loc_s;
+	TString Data_Location = Data_Loc_s.Format("%s/Data/Data.root/Data",nTupleLocation.Data());
+
 	TChain *tree_data =  new TChain("tree_data");
-	tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_0");
-	tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_1");
-	tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_2");
+	tree_data->Add(Data_Location);
+	// tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_0");
+	// tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_1");
+	// tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_2");
 
 	// Get Data over Background in sidebands scale factor 
 	TH1F* hist_background_sideband = new TH1F("hist_background_sideband","hist_background_sideband",100,-1,1);
