@@ -32,40 +32,22 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	TString scaleOpt;
 	if(scaleBkgSideband) scaleOpt = "withSidebandScale";
 	else scaleOpt = "noSidebandScale";	
-	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/DNN_Categorization/";
+	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/DNN_Tools/";
 	TString what_to_opt = "evalDNN";
 	double minevents = 1.;
-	// double xmin = 0.0;
 	double xmin = xcutoff;
 	double xmax = 1.00001; // to include values that == 1  
-	// Double_t bin_width=0.01; // course binning 
-	// Double_t bin_width=0.0025;
 	Double_t bin_width = bin_width_;
 	TString xmin_str = to_string(xcutoff);
 	TString binWidth_str = to_string(bin_width_);
-	// TString extraSelection = "*(1)";
-	// TString extraSelection = "*(N_goodMuons == 1)";
-
-	// Training Selections 
-	// TString extraSelections = "*( passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-	// TString extraSelections_Signal = "*( passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
-
-	// No Photon MVA Selection
-	// TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";
 
 	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";
-	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";	
-
-	// No Photon MVA Selection
-	// TString extraSelections = "*(Leading_Photon_pt/CMS_hgg_mass) > 0.35) && ((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-	// TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )";	
-	
-	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodElectrons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)";
-	// TString extraSelections = "(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"
-	// TString extraSelection = "*(N_goodMuons == 1)";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
 	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
+
+	//// Important: Semi-Leptonic branching ratio of 0.441 is in here. Need to change for other final states
+	// 41.5 set as 2017 luminosity
+
 	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section 
 	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
 	TString selection_data = "(1)" + extraSelections;
