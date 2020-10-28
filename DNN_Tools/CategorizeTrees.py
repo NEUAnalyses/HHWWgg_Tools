@@ -1,10 +1,10 @@
 # from ROOT import *
 
-##-- Signal
-# python reduceTrees.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/ForResults_Signal_Combined/  --m 60 --opt signal --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal_ForResults_Skimmed/ --nCat /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/DNN_Categorization/Borders_noSidebandScale_3cats.txt
+##-- Signal 
+# python CategorizeTrees.py --iD /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/Signal/  --opt signal --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/ --nCat /eos/user/a/atishelm/www/HHWWgg/DNN_Tools/Borders_withSidebandScale_TestNewFiles.txt
 
 ##-- Data 
-# python reduceTrees.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/ForResults_Data_Combined/  --m 60 --opt data --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Data_ForResults_Skimmed/ --nCat /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN/DNN_Categorization/Borders_noSidebandScale_3cats.txt
+# python CategorizeTrees.py --iD /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/Data/  --opt Data --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/ --nCat /eos/user/a/atishelm/www/HHWWgg/DNN_Tools/Borders_withSidebandScale_TestNewFiles.txt
 
 import os 
 import ROOT
@@ -126,34 +126,27 @@ for num,f in enumerate(input_files):
             treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
             # treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
         elif (opt.year == '2017'):
-           treename = "HHWWgg_Tags"
-        #    treename = ""
-        #    treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCP5_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
-        #    treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCP5_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
+           treename = "GluGluToHHTo_WWgg_qqlnu_nodeSM"
         elif (opt.year == '2018'):
            treename = "tagsDumper/trees/HAHMHToAA_AToGG_MA_"+opt.m+"GeV_TuneCP5_PSweights_13TeV_madgraph_pythia8_13TeV_H4GTag_0"+systLabel
         #    treename = "tagsDumper/trees/HAHMHToAA_AToGG_MA_"+opt.m+"GeV_TuneCP5_PSweights_13TeV_madgraph_pythia8_13TeV_H4GTag_0"+systLabel
         treelist.append(treename)
  else:
-    #  treename = "Data_13TeV_H4GTag_0"
-     treename = "HHWWgg_Tags"
-    #  treename = "Data_13TeV_HHWWggTag_0"
+     treename = "Data"
      treelist.append(treename)
  # treelist.append(treename)
 #  f_out = ROOT.TFile.Open(opt.out_dir+opt.inp_files+'_skim.root','RECREATE')
- f_out = ROOT.TFile.Open(opt.out_dir+'output'+'_skim.root','RECREATE')
- # common_cut = '(weight)*(pho1_pt > 30 && pho2_pt > 18 && pho3_pt > 15 && pho4_pt > 15 && abs(pho1_eta) < 2.5 && abs(pho2_eta) < 2.5 && abs(pho3_eta) < 2.5 && abs(pho4_eta) < 2.5 && (abs(pho1_eta) < 1.4442 || abs(pho1_eta) > 1.566) && (abs(pho2_eta) < 1.4442 || abs(pho2_eta) > 1.566) && (abs(pho3_eta) < 1.4442 || abs(pho3_eta) > 1.566) && (abs(pho4_eta) < 1.4442 || abs(pho4_eta) > 1.566) && pho1_electronveto==1 && pho2_electronveto==1 && pho3_electronveto==1&& pho4_electronveto==1  && tp_mass > 110 && tp_mass < 180)'
-#  TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )";
-#  TString extraSelections_Signal = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )"; 
-#  common_cut = '(pho1_pt > 30 && pho2_pt > 18 && pho3_pt > 15 && pho4_pt > 15 && abs(pho1_eta) < 2.5 && abs(pho2_eta) < 2.5 && abs(pho3_eta) < 2.5 && abs(pho4_eta) < 2.5 && (abs(pho1_eta) < 1.4442 || abs(pho1_eta) > 1.566) && (abs(pho2_eta) < 1.4442 || abs(pho2_eta) > 1.566) && (abs(pho3_eta) < 1.4442 || abs(pho3_eta) > 1.566) && (abs(pho4_eta) < 1.4442 || abs(pho4_eta) > 1.566) && pho1_electronveto==1 && pho2_electronveto==1 && pho3_electronveto==1&& pho4_electronveto==1  && tp_mass > 110 && tp_mass < 180)'
- if(opt.option=='signal'): common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && AtLeast2GoodJets==1 )'
- else: common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )'
-#  common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )'
-
+#  f_out = ROOT.TFile.Open(opt.out_dir+'output'+'_skim.root','RECREATE')
+ outName = "%s/%s_CategorizedTrees.root"%(opt.out_dir,opt.option)
+ f_out = ROOT.TFile.Open(outName,'RECREATE')
+#  if(opt.option=='signal'): common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_good_Jets >= 1 )'
+#  else: common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )'
+ common_cut = '(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )'
  for tree_i, tree in enumerate(treelist):
      ntuple = tfile.Get(treelist[tree_i])
      for icat, cat in enumerate(cut_list):
          # f_out.cd()
+         print"ntuple:",ntuple
          small = ntuple.CopyTree(common_cut+'&&'+cut_list[icat])
          # treename_tmp = treelist[tree_i].replace('tagsDumper/trees/','')
          # print "on tree: ",treename_tmp, " Cat#: ", icat

@@ -39,7 +39,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double xmax = 1.00001; // to include values that == 1  
 	Double_t bin_width = bin_width_;
 	TString xmin_str = to_string(xcutoff);
-	TString binWidth_str = to_string(bin_width_);
+	TString binWidth_str = to_string(bin_width_); 
 
 	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";

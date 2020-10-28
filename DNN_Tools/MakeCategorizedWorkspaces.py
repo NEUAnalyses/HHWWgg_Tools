@@ -1,10 +1,9 @@
 
 ##-- Signal
-# python mkWS.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal_ForResults_Skimmed_addWJets/ --i signal_m_60_2016_skim  --opt signal --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal_ForResults_Skimmed_Workspace_addWJets/
-# python mkWS.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal_ForResults_Skimmed/ --i signal_m_60_2016_skim  --opt signal --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal_ForResults_Skimmed_Workspace/
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/Signal/ --i signal  --opt signal --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/
 
 ##-- Data
-# python mkWS.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Data_ForResults_Skimmed/ --i signal_m_60_2016_skim  --opt data --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Data_ForResults_Skimmed_Workspace/
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/Data/ --i data  --opt data --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/
 
 #####
 
