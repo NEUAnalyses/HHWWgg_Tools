@@ -1,0 +1,11 @@
+% This allows you two produce two columns 
+
+\begin{frame}{Two Column Template}
+    \noindent
+    \begin{minipage}{.5\textwidth}
+    column 1
+    \end{minipage}% A '%' must go next to `\end{minipage}`
+    \begin{minipage}{.5\textwidth}
+    column 2 
+    \end{minipage}%
+\end{frame}
