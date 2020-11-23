@@ -165,8 +165,16 @@ def GetVars(VarBatch):
         return [dr_jj]
 
 ##-- Get bins for a variable 
-def GetBins(variable_):
+# def GetBins(variable_,DNNbinWidth_):
+def GetBins(variable_,DNNbinWidth_ = 0.1):
 
+    # evalDNNmin, evalDNNmax = 0, 1.00001
+    # evalDNNmin, evalDNNmax = 0.9, 1.00001
+    evalDNNmin, evalDNNmax = 0, 1.00001
+    nDNNbins = int(float((evalDNNmax - evalDNNmin)) / float(DNNbinWidth_))
+
+    if(DNNbinWidth_ != 0.1):
+        print"nDNNbins: ",nDNNbins
     # Specify bins for specific variables 
     binDict = {
         "Leading_Photon_MVA": [20,-1,1],
@@ -184,7 +192,7 @@ def GetBins(variable_):
         # "evalDNN" : [10,0,1.00001] # To include value == 1 
         # "evalDNN" : [25,0,1.00001] # To include value == 1 
         # "evalDNN" : [100,0,1.00001] # To include value == 1 
-        "evalDNN" : [10,0,1.00001] # To include value == 1 
+        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax] # To include value == 1 
         # "evalDNN" : [10,0,1] # To include value == 1 
     }    
     specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN"]

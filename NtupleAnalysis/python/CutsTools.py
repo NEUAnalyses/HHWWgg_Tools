@@ -68,7 +68,10 @@ def GetCuts(CutsType):
 
     elif(CutsType == "DNNLoose"):
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1)"]
-        cutNames = ["DNNLoose"]           
+        cutNames = ["DNNLoose"]    
+    elif(CutsType == "DNNLooseCat0"):
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1 && evalDNN > 0.9)"]
+        cutNames = ["DNNLooseCat0"]                   
 
     # elif(CutsType == "WithWJetsTrainingLoose"):
     #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]

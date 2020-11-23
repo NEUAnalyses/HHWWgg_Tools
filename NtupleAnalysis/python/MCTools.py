@@ -73,7 +73,19 @@ def GetMCTreeName(fileName_):
 
         ##-- HHWWgg Signal
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM"
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
+        "HHWWgg-SL-SM-NLO-2016.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
+        "HHWWgg-SL-SM-NLO-2017.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2018.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+    
+        ##-- Single Higgs
+        "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2016.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2016.root" : "wzh_125",
+        "VBFHToGG_M125_13TeV_2018.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2018.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2018.root" : "wzh_125"
     }
 
     return MCTreesDict[fileName_]
@@ -172,7 +184,10 @@ def GetMCName(fileName_):
 
         ##-- HHWWgg Signal
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
 
     }
 
@@ -185,12 +200,22 @@ def GetMCCategory(fileName_):
         "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD",
         "QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD",
 
+        
+
+        # ##-- SM Hgg
+        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
+        # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "SMhgg", 
+        # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "SMhgg",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
+        "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ",
+
         ##-- SM Hgg
-        "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
-        "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "SMhgg", 
-        "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "SMhgg",
-        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
-        "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "SMhgg",
+        "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "ggH",
+        "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "ggH", 
+        "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "VH",
+        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFH",
+        "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "ttHJetToGG",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "SMhgg",
 
         ##-- GJet
         "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet",
@@ -261,7 +286,7 @@ def GetMCCategory(fileName_):
         "WW_TuneCP5_13TeV-pythia8_Hadded.root" : "WW", # non exclusive with WWTo... ?
         "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "WW",
 
-        "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt",
         "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "tt",
         "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "tt",
         "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt",
@@ -275,7 +300,11 @@ def GetMCCategory(fileName_):
 
         ##-- HHWWgg Signal
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
+
 
     }
 
@@ -286,10 +315,13 @@ def OrderHistos(histos_,categories_):
     # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox","W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu", "WW", "tt", "DY", "WGGJets", "ttW",
     #             "HHWWgg_SM"
     #             ] 
+    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
+                # "HHWWgg_SM"
+                # ]                 
     MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
-                "HHWWgg_SM"
-                ]                 
-                
+               "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ"
+               ]                   
+
     orderedHistos = []
     for cat in MC_Cats:
         for ih_,h_ in enumerate(histos_):
@@ -301,9 +333,31 @@ def OrderHistos(histos_,categories_):
 
 def GetMCColor(MC_Category_):
 
+    # MCColorsDict = {
+    #     "QCD" : "8",
+    #     "SMhgg" : "9",
+    #     "GJet" : "46",
+    #     # "GJets" : "7",
+    #     "DiPhoJets" : "6",
+    #     "DiPhoJetsBox" : "42",
+    #     # "W1JetsToLNu" : "70",
+    #     # "W2JetsToLNu" : "38",
+    #     # "W3JetsToLNu" : "208",
+    #     # "W4JetsToLNu" : "222",
+    #     "WJets" : "70",
+    #     "WW":"47",
+    #     "tt":"51",
+    #     "DY":"28",
+    #     "WGGJets":"2",
+    #     "ttW":"30",
+    #     "WGJJ":"12",
+    #     "HHWWgg_SM": "56"
+    #     # "other" : "47"
+    # }
+
     MCColorsDict = {
         "QCD" : "8",
-        "SMhgg" : "9",
+        # "SMhgg" : "9",
         "GJet" : "46",
         # "GJets" : "7",
         "DiPhoJets" : "6",
@@ -318,10 +372,15 @@ def GetMCColor(MC_Category_):
         "DY":"28",
         "WGGJets":"2",
         "ttW":"30",
-        "WGJJ":"12",
-        "HHWWgg_SM": "56"
-        # "other" : "47"
-    }
+        "WGJJ":"11",
+        "HHWWgg_SM": "56",
+        # "other" : "47",
+        "ggH" : "12",
+        "VH" : "28",
+        "VBFH" : "70",
+        "ttHJetToGG" : "41",
+        "THQ" : "9"
+    }    
 
     return MCColorsDict[MC_Category_]
 

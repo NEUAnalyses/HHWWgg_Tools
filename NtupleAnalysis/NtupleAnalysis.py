@@ -16,11 +16,7 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/ --dataFolder Data --mcFolder Bkgs --signalFolder Signal --VarBatch DNN --CutsType DNNLoose  --Lumi 41.5  --verbose  --SigScale 10000 --SR --log 
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_testnewfiles_allBkgs/ --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch DNN --CutsType WithWJetsTraining --Lumi 41.5  --verbose  --SigScale 100 --SB --noQCD --log 
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch DNN --CutsType PreSelections --Lumi 41.5  --verbose  --SigScale 1 
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType PreSelections --Lumi 41.5 --verbose
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds_promptpromptselapplied --signalFolder Signal --VarBatch mass --CutsType final --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,combined --verbose --SigScale 1 --removeBackgroundYields
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DebugUncertainty/ --dataFile /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_weights_exp_allBkgs/2017Data.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/ --VarBatch DNN --CutsType DNNLoose --Lumi 41.5  --verbose --SigScale 1 --SB --SidebandScale 
 #
 # ##-- Gen / Reco Analysis 
 # python NtupleAnalysis.py --GenReco
@@ -52,7 +48,7 @@ if __name__ == '__main__':
         # else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
     # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
     # nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'
-    nTupleDirec = args.nTupleDirec
+    # nTupleDirec = args.nTupleDirec
     # nTupleDirec = '/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_add_WJets_graph/'
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
@@ -394,27 +390,17 @@ if __name__ == '__main__':
     elif(args.DataMC):
         print"Performing Data / MC Analysis"
 
-        ##-- Get Data File(s)
-        dataFolder = str(args.dataFolder)
-        dataDirec = nTupleDirec + dataFolder
-        # if(args.verbose): print"dataFiles:",dataFiles
-        dataFiles = GetFiles(nTupleDirec, dataFolder)
+        ##-- Get Data File
+        dataFile = args.dataFile 
 
-        ##-- Get Background MC Files
-        mcFolder = str(args.mcFolder)
-        mcDirec = nTupleDirec + mcFolder 
-        # if(args.verbose): print"mcFiles:",mcFiles
-        mcFiles = GetFiles(nTupleDirec, mcFolder)
+        ##-- Get Background Files 
+        bkgDirec = args.bkgDirec 
+        bkgFiles = GetFiles(bkgDirec)
 
-        ##-- Get Signal File(s)
-        signalFolder = str(args.signalFolder)
-        signalDirec = nTupleDirec + signalFolder 
-        # if(args.verbose): print"signalFiles:",signalFiles
-        signalFiles = GetFiles(nTupleDirec, signalFolder)
+        ##-- Get Signal File 
+        signalFile = args.signalFile 
 
         ##-- Run Main Module 
-        Tags = args.Tags.split(',')
-
         if(not args.SB and not args.SR):
             print "No phase space regions selected"
             print "To run on the signal region pass the flag --SR"
@@ -423,21 +409,11 @@ if __name__ == '__main__':
 
         ##-- Data, MC and Signal Together. Data and MC in sidebands
         region = "SB"
-        if(args.SB): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args,region)
+        # if(args.SB): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
+        if(args.SB): PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region)
 
         ##-- MC and Signal in Signal Region 
         region = "SR"
-        if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,Tags,ol,args,region)
+        # if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
+        if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
         print"DONE"
-
-    ##-- Perform Gen Reco analysis
-    elif(args.GenReco):
-        print "Performing Gen Reco Analysis" 
-
-    elif(args.AppendNtuples):
-        folders = ["data","mc","signal"]
-        for folder in folders: 
-            exec("%sFolder = str(args.%sFolder)"%(folder,folder))
-            exec("%sFiles = GetFiles(nTupleDirec, %sFolder)"%(folder,folder))
-            if(args.verbose): exec("print'%sFiles:',%sFiles"%(folder,folder)) 
-        AppendNtuples(dataFiles, mcFiles, signalFiles)

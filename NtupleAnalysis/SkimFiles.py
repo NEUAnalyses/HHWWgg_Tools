@@ -18,7 +18,8 @@
 # python SkimFiles.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --doppRemoval             #
 #                                                                                                                                                                                                # 
 # without prompt-prompt removal, just merging of trees:                                                                                                                                          #
-# python SkimFiles.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --Signal                  #
+# python SkimFiles.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded --fileType Signal 
+# python SkimFiles.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --fileType Signal                  #
 ##################################################################################################################################################################################################
 
 ##-- Imports 
@@ -44,9 +45,10 @@ for argName in argNames:
   exec("print '%s :', %s"%(argName,argName))
 
 ##-- Temporary: Define tags list 
-tags = []
-if(fileType == "Signal"): tags = [0,1,2,3,4]
-else: tags = [0,1,2]
+# tags = []
+tags = [0,1,2,3,4]
+# if(fileType == "Signal"): tags = [0,1,2,3,4]
+# else: tags = [0,1,2]
 
 ##-- Define tree selection
 selection = ""
@@ -76,7 +78,11 @@ for inFileName in os.listdir(inDir):
     tagOutFile.mkdir("tagsDumper/trees")
     tagOutFile.cd("tagsDumper/trees")
     if(fileType == "Data"): treeName = "tagsDumper/trees/Data_13TeV_HHWWggTag_%s"%(str(tag_i))
-    elif(fileType == "Signal"): treeName = "tagsDumper/trees/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_%s"%(str(tag_i))
+    # elif(fileType == "Signal"): treeName = "tagsDumper/trees/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_%s"%(str(tag_i))
+    elif(fileType == "Signal"): 
+      treeName = "tagsDumper/trees/%s_13TeV_HHWWggTag_%s"%(MCTreeName,str(tag_i))
+      # treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER_13TeV_HHWWggTag_%s"%(str(tag_i))
+      # treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER_13TeV_HHWWggTag_%s"%(str(tag_i))
     else: treeName = "tagsDumper/trees/%s_13TeV_HHWWggTag_%s"%(MCTreeName,str(tag_i))
     
     originalTree = inFile.Get(treeName)
@@ -85,7 +91,7 @@ for inFileName in os.listdir(inDir):
     tagOutFile.Close()
     allTags_skimmedTrees.Add("%s/%s"%(tagOutFilePath,treeName))
 
-  outFileName = "skimmed_%s"%(inFileName.split('/')[-1])
+  outFileName = "merged_%s"%(inFileName.split('/')[-1])
   outFilePath = "%s/%s"%(outDir,outFileName)
   outFile = TFile.Open(outFilePath,"RECREATE")
   # allTags_skimmedTrees.SetName(MCTreeName)

@@ -12,12 +12,19 @@ from MCTools import *
 from VariableTools import * 
 from PlotTools import * 
 from CutsTools import * 
-    
-def GetFiles(nTupleDirec_, Folder_):
+
+def GetFiles(direc):
     files = [] 
-    Direc = "%s/%s"%(nTupleDirec_,Folder_)
-    for file in os.listdir(Direc): files.append(file)
-    return files 
+    for fileEnd in os.listdir(direc): 
+        fullPath = "%s/%s"%(direc,fileEnd)
+        files.append(fullPath)
+    return files   
+
+# def GetFiles(nTupleDirec_, Folder_):
+#     files = [] 
+#     Direc = "%s/%s"%(nTupleDirec_,Folder_)
+#     for file in os.listdir(Direc): files.append(file)
+#     return files 
 
 def AppendNtuples(dataFiles_, mcFiles_, signalFiles_):
     print "In AppendNtuples"
@@ -46,9 +53,8 @@ def GetBinVals(h_):
         binVals_.append(bin_val)
     return binVals_
 
-def GetDataHist(dataDirec_,dF_,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
+def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
     print "Getting data histogram" 
-    dPath = "%s/%s"%(dataDirec_,dF_)
     dFile = TFile.Open(dPath)
     # print "Data file path: ",dPath
     # ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
@@ -91,7 +97,7 @@ def GetDataHist(dataDirec_,dF_,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose
 
     return DataHist_
 
-def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut):
+def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut):
     print "Getting background stack"
 
     ##-- Define cut 
@@ -117,12 +123,14 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
     Bkg_Names_ = [] 
     Bkg_Nevents_ = [] 
     Bkg_Nevents_unweighted_ = [] 
-    for i,mcF_ in enumerate(mcFiles):
-        mcPath = "%s/%s"%(mcDirec,mcF_)
+    # for i,mcF_ in enumerate(mcFiles):
+    for i,mcPath in enumerate(bkgFiles_):
+        # mcPath = "%s/%s"%(mcDirec,mcF_)
+        mcEnd = mcPath.split('/')[-1]
         mcFile = TFile.Open(mcPath)
-        treeName = GetMCTreeName(mcF_)
-        MC_Category = GetMCCategory(mcF_)
-        MCname = GetMCName(mcF_)
+        treeName = GetMCTreeName(mcEnd)
+        MC_Category = GetMCCategory(mcEnd)
+        MCname = GetMCName(mcEnd)
         Bkg_Names_.append(MCname) # get shorter MC name here        
         if(verbose): 
             # print"Background File:",mcPath
@@ -217,7 +225,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
 
         ##-- Set title based on treeName 
         newHist.SetTitle(MC_Category)
-        newHist.GetXaxis().SetTitle(mcF_)
+        newHist.GetXaxis().SetTitle(mcEnd)
         newHist.SetDirectory(0)
         newHist.Sumw2()
         bkgHistos_.append(newHist)
@@ -225,7 +233,7 @@ def GetBackgroundHists(mcFiles,mcDirec,noQCD,verbose,prefix,varTitle,region,v,Lu
 
     return bkgHistos_, bkgHistCategories_, Bkg_Names_, Bkg_Nevents_, Bkg_Nevents_unweighted_
 
-def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose,cut):
+def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
     print "Getting Signal histogram(s)"
     sig_histos_ = []
     sig_histCategories_ = []          
@@ -249,11 +257,14 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
     S_CUT_NOWEIGHTS = S_CUT_NOWEIGHTS.replace(S_WEIGHT,"(1)")
 
     ##-- Get Signal Histogram(s) 
-    for i,sigF_ in enumerate(signalFiles):
-        sigPath = "%s/%s"%(signalDirec,sigF_)
+    signalFiles = [] 
+    signalFiles.append(signalFile_)
+    for i,sigPath in enumerate(signalFiles):
+        # sigPath = "%s/%s"%(signalDirec,sigF_)
+        sigEnd = sigPath.split('/')[-1]
         sigFile = TFile.Open(sigPath)
-        treeName = GetMCTreeName(sigF_)
-        MC_Category = GetMCCategory(sigF_)
+        treeName = GetMCTreeName(sigEnd)
+        MC_Category = GetMCCategory(sigEnd)
         if(verbose):
             # print"Signal File:",sigPath 
             print"Signal:",MC_Category
@@ -295,7 +306,7 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
 
         ##-- Set title based on treeName 
         newHist.SetTitle(MC_Category)
-        newHist.GetXaxis().SetTitle(sigF_)
+        newHist.GetXaxis().SetTitle(sigPath)
         newHist.SetLineStyle(1)
         newHist.SetLineWidth(5)
 
@@ -306,8 +317,8 @@ def GetSignalHists(signalFiles,signalDirec,prefix,v,region,varTitle,Lumi,verbose
     return sig_histos_, sig_histCategories_, S_, S_unweighted_
 
 ##-- Main Data / MC module 
-def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_):
-
+# def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
+def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_):
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
@@ -342,34 +353,57 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
 
     ##-- For each Variable 
     for iv,v in enumerate(Variables):
-        legend = TLegend(0.55,0.65,0.89,0.89)
+        # legend = TLegend(0.55,0.65,0.89,0.89)
+        legend = TLegend(0.55,0.55,0.89,0.89)
         legend.SetTextSize(0.025)
         legend.SetBorderSize(0)
         legend.SetFillStyle(0)        
         if(args_.VarBatch == "Loose"): varTitle = varNames[iv]
         else: varTitle = GetVarTitle(v)    
         if(args_.verbose): print"Plotting variable:",varTitle
+        # xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
         xbins, xmin, xmax = GetBins(varTitle)
 
         ##-- In either case, SB or SR, get backgrounds and signal(s)
         bkgStack = THStack("bkgStack","bkgStack")
-        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(mcFiles_,mcDirec_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut)         
-        sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFiles_,signalDirec_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut)
+        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut)         
+        sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFile_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut)
+
+        # MC_AddedtoLegend = {
+        #      "QCD" : 0,
+        #      "SMhgg" : 0,
+        #      "GJet" : 0,
+        #      "DiPhoJets" : 0,
+        #      "DiPhoJetsBox" : 0,
+        #      "WJets" : 0,
+        #      "WW" : 0,
+        #      "tt" : 0,
+        #      "DY" : 0,
+        #      "WGGJets" : 0,
+        #      "WGJJ" : 0,
+        #      "ttW" : 0
+        #  }
 
         MC_AddedtoLegend = {
-            "QCD" : 0,
-            "SMhgg" : 0,
-            "GJet" : 0,
-            "DiPhoJets" : 0,
-            "DiPhoJetsBox" : 0,
-            "WJets" : 0,
-            "WW" : 0,
-            "tt" : 0,
-            "DY" : 0,
-            "WGGJets" : 0,
-            "WGJJ" : 0,
-            "ttW" : 0
+           "QCD" : 0,
+           "SMhgg" : 0,
+           "GJet" : 0,
+           "DiPhoJets" : 0,
+           "DiPhoJetsBox" : 0,
+           "WJets" : 0,
+           "WW" : 0,
+           "tt" : 0,
+           "DY" : 0,
+           "WGGJets" : 0,
+           "WGJJ" : 0,
+           "ttW" : 0,
+           "ggH" : 0,
+           "VH" : 0,
+           "VBFH" : 0,
+           "ttHJetToGG" : 0,
+           "THQ" : 0
         }
+   
 
         Signals_AddedtoLegend = {
             "HHWWgg_SM" : 0
@@ -435,7 +469,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
         if(region_ == "SB"):
             # define selections 
             # just use combined tag always. Define a category or look at cut based analysis categories by making selections 
-            DataHist = GetDataHist(dataDirec_,dataFiles_[0],args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
+            DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
             dataNevents = DataHist.GetEntries()
             # legend.AddEntry(DataHist,"Data","P")
             DataHist.SetLineColor(kBlack)
@@ -470,7 +504,13 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             # print"chi2 = ",chi2 
             chi2Text = TLatex(0.129,0.75,"#Chi^{2} = %.5g"%(chi2))       
             chi2Text.SetNDC(1)
-            chi2Text.SetTextSize(0.04)                         
+            chi2Text.SetTextSize(0.04)    
+            for i,bin in enumerate(stackSum):
+                binUnc = bin**(1/2)
+                # print"bin %s: yield equals: %s"%(i,bin) 
+                # print"uncertainty: ",stackSum.GetBinError(i)
+                stackSum.SetBinError(i,binUnc)
+
             ##-- Define ratio plot for computing Data / MC ratio 
             rp = TRatioPlot(DataHist,stackSum)
             rp.SetH1DrawOpt("P")
@@ -575,9 +615,18 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
             if(args_.SidebandScale):
-                DataHist = GetDataHist(dataDirec_,dataFiles_[0],args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
+                DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
                 data_sidebands_sum = DataHist.Integral() ##-- data hist is already in sidebands only 
-                background_sidebands_sum = stackSum.Integral()
+
+                ##-- If region is SR, need to draw background in SB in order to obtain proper SF 
+                bkgStack_sidebands = THStack("bkgStack_sidebands","bkgStack_sidebands")
+                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut) ##-- Sidebands     
+                orderedHistos_sidebands = OrderHistos(bkgHistos_sidebands,bkgHistCategories_sidebands)
+                for h in orderedHistos_sidebands:
+                    h.Sumw2()
+                    bkgStack_sidebands.Add(h,'hist')
+                stackSum_sidebands = bkgStack_sidebands.GetStack().Last() #->Draw(); # for computing ratio 
+                background_sidebands_sum = stackSum_sidebands.Integral()
                 if(background_sidebands_sum > 0): SidebandSF_ = float(data_sidebands_sum / background_sidebands_sum)
                 else: 
                     print "background sidebands sum <= 0. Setting sideband scale factor to 1"
@@ -614,6 +663,12 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             #     B_vals_.append(B_val)
             #     # if(B_val != 0.0): B_vals_.append(B_val)
 
+            for i,bin in enumerate(stackSum):
+                binUnc = bin**(1/2)
+                # print"bin %s: yield equals: %s"%(i,bin) 
+                # print"uncertainty: ",stackSum.GetBinError(i)
+                stackSum.SetBinError(i,binUnc)
+
             rp = TRatioPlot(Signal_h_clone,stackSum) ## S / B
 
             rp.SetH1DrawOpt("hist")
@@ -622,6 +677,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             sMax = Signal_h_clone.GetMaximum()
             bMax = stackSum.GetMaximum()
 
+            # maxHeight = max(sMax,bMax) 
             maxHeight = max(sMax,bMax) 
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 
@@ -647,7 +703,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerPad().Update()
                 if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*100.)   
-                else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
+                # else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
+                else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.7) # to make room for plot text 
                         
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
