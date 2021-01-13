@@ -177,7 +177,7 @@ def GetMCTreeName(fileName_):
         # "output_numEvent500.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
     
         ##-- Single Higgs
-        "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
+        "VBFHToGG.root" : "vbf_125",
         "GluGluHToGG_M125_13TeV_2016.root" : "ggh_125",
         "VHToGG_M125_13TeV_2016.root" : "wzh_125",
         "VBFHToGG_M125_13TeV_2018.root" : "vbf_125",
