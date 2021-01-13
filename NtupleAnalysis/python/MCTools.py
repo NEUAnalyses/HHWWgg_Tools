@@ -208,7 +208,7 @@ def GetMCName(fileName_):
         # "VHToGG.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
         "TTGG_0Jets.root" : "TTGG_0Jets",
         "DYJetsToLL_M-50.root" : "DYJetsToLL_M_50",
-        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG",
         "TTJets_TuneCP5.root" : "TTJets",
         "TTGJets_TuneCP5.root" : "TTGJets",
 
@@ -259,7 +259,7 @@ def GetMCName(fileName_):
         "output_numEvent500.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
     
         ##-- Single Higgs
-        "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
+        "VBFHToGG.root" : "vbf_125",
         "GluGluHToGG_M125_13TeV_2016.root" : "ggh_125",
         "VHToGG_M125_13TeV_2016.root" : "wzh_125",
         "VBFHToGG_M125_13TeV_2018.root" : "vbf_125",
@@ -599,7 +599,7 @@ def GetMCCategoryOld(fileName_):
         "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "ggH",
         "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "ggH", 
         "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "VH",
-        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFH",
+        "VBFHToGG.root" : "VBFH",
         "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "ttHJetToGG",
         # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "SMhgg",
 
