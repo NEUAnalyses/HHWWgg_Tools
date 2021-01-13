@@ -60,7 +60,8 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
     # ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     # data_trees = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     data_trees = TChain('data_trees')
-    data_trees.Add("%s/%sData"%(dPath,prefix))
+    # data_trees.Add("%s/%sData"%(dPath,prefix))
+    data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
     SB_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
@@ -129,13 +130,14 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         mcEnd = mcPath.split('/')[-1]
         mcFile = TFile.Open(mcPath)
         treeName = GetMCTreeName(mcEnd)
+        treeName += "_13TeV_HHWWggTag_0"
         MC_Category = GetMCCategory(mcEnd)
         MCname = GetMCName(mcEnd)
         Bkg_Names_.append(MCname) # get shorter MC name here        
         if(verbose): 
             # print"Background File:",mcPath
             print"Background:",MC_Category
-            # print"file:",mcPath  
+            print"file:",mcPath  
 
         ##-- If noQCD set to true, skip QCD 
         if((MC_Category == "QCD") and (noQCD)): 
@@ -264,6 +266,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
         sigEnd = sigPath.split('/')[-1]
         sigFile = TFile.Open(sigPath)
         treeName = GetMCTreeName(sigEnd)
+        treeName += "_13TeV_HHWWggTag_0"
         MC_Category = GetMCCategory(sigEnd)
         if(verbose):
             # print"Signal File:",sigPath 
@@ -318,18 +321,13 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
 
 ##-- Main Data / MC module 
 # def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
-def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_):
+def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName):
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)    
     gStyle.SetErrorX(0.0001)  
-
-    ##-- Get Cut(s) ## I think cut should actually be singular here. Just loop outside PlotDataMC module to try different cuts 
-    # cuts, cutNames = GetCuts(args_.CutsType)
-    cuts, cutNames = GetCuts(args_.CutsType)
-    cut = cuts[0] ## using only first cut.
-    cutName = cutNames[0] ## using only first cut.
+    chi2 = 0
 
     ##-- Output
     outputFolder = "%s/%s"%(ol_,cutName)
@@ -704,7 +702,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_):
                 rp.GetLowerPad().Update()
                 if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*100.)   
                 # else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
-                else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.7) # to make room for plot text 
+                else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*2.0) # to make room for plot text 
                         
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
@@ -799,6 +797,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_):
         if(iv==0): 
             B_vals_ = [] 
             CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_,Bkg_Nevents_unweighted, S_, S_unweighted_) 
-
+        
         ## For each variable loop ends here 
+
+    return chi2
     

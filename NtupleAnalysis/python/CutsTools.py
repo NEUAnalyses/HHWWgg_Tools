@@ -12,9 +12,13 @@ def GetCuts(CutsType):
     cuts, cutNames = [], []
 
     ##-- Only apply preselections. This means applying no cut because preselection already applied to events in microAODs 
-    if(CutsType == "PreSelections"):
+    # if(CutsType == "PreSelections"):
+        # cuts = ["1"]
+        # cutNames = ["PreSelections"]
+
+    if(CutsType == "OneGoodLep"):
         cuts = ["1"]
-        cutNames = ["PreSelections"]
+        cutNames = ["OneGoodLep"]        
 
     elif(CutsType == "OneGoodElec"):
         cuts = ["(N_goodElectrons==1)"]
@@ -22,7 +26,12 @@ def GetCuts(CutsType):
 
     elif(CutsType == "OneGoodMuon"):
         cuts = ["(N_goodMuons==1)"]
-        cutNames = ["OneGoodMuon"]        
+        cutNames = ["OneGoodMuon"] 
+
+    ##-- jets
+    # elif(CutsType == "LeadbScores"):
+
+
 
     ##-- Apply Loose selections 
     elif(CutsType == "Loose"):
@@ -53,8 +62,7 @@ def GetCuts(CutsType):
         cutNames = ["Loose"]    
 
     elif(CutsType == "TrainingSelections"):
-        cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections 
-        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
         cutNames = ["TrainingSelections"]
 
     # elif(CutsType == "WithWJetsTraining"):
@@ -72,6 +80,16 @@ def GetCuts(CutsType):
     elif(CutsType == "DNNLooseCat0"):
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1 && evalDNN > 0.9)"]
         cutNames = ["DNNLooseCat0"]                   
+
+    elif(CutsType == "DNNScan"):
+        cuts = []
+        cutNames = [] 
+        for nGoodJets in [0,1,2,3,4,5]:
+            cut = "(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets==%s)"%(nGoodJets)
+            cutName = "DNNScan-%sGoodJets"%(nGoodJets)
+            cuts.append(cut)
+            cutNames.append(cutName)
+        
 
     # elif(CutsType == "WithWJetsTrainingLoose"):
     #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]

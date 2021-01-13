@@ -24,8 +24,14 @@ def GetVars(VarBatch):
     # make dictionary 
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
-    if(VarBatch == "DNN"):
+    elif(VarBatch == "DNN"):
         return ["evalDNN"]        
+
+    elif(VarBatch == "Ngood"):
+        return ["N_goodElectrons","N_goodMuons","N_goodLeptons","N_goodJets"]
+
+    elif(VarBatch == "LeadPhopt"):
+        return ["Leading_Photon_pt"]
 
     elif(VarBatch == "diphopt"):
         return [pT_gg]
@@ -70,6 +76,22 @@ def GetVars(VarBatch):
             "Subleading_Photon_pt","Subleading_Photon_eta","Subleading_Photon_E","Subleading_Photon_MVA"
         ]
         return PhotonVars 
+
+    # Photon variables 
+    elif(VarBatch == "LeadingPhoton"):
+        PhotonVars = [
+            "Leading_Photon_pt","Leading_Photon_eta","Leading_Photon_E","Leading_Photon_MVA"
+        ]
+        return PhotonVars         
+
+    elif(VarBatch =="bScores"):
+        bScores = []
+        scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+        # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
+        # bScores.append(scoresum)
+        for score in scores:
+            bScores.append("goodJets_0_%s"%(score))
+        return bScores 
 
     # Variables that should be combined with Loose cuts. Plots kinematics of leading lepton (which changes event by event)
     elif(VarBatch == "Loose"):
@@ -196,6 +218,10 @@ def GetBins(variable_,DNNbinWidth_ = 0.1):
         # "evalDNN" : [10,0,1] # To include value == 1 
     }    
     specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN"]
+
+    scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+    scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
+    if variable_ == scoresum: return [50,0,1]
     if variable_ in specialVars:
         return binDict[variable_]
 
@@ -206,8 +232,10 @@ def GetBins(variable_,DNNbinWidth_ = 0.1):
     # Specified binning if variable has phi, eta or pt in name 
     else:
         if("phi" in variable_): return [17,-3.14,3.5325]
-        elif("eta" in variable_): return [16,-4,4]
+        # elif("eta" in variable_): return [16,-4,4]
+        elif("eta" in variable_): return [10,-2.5,2.5]
         elif ("pt" in variable_): return [20,0,200]   
+        elif("bDiscriminator" in variable_): return [20,0,1]
         else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning 
 
 ##-- Get x axis title for ratio plot depending on the variable 
@@ -231,6 +259,7 @@ def GetXaxisTitle(variable_):
         "dr_gg" : "rad",
         "dr_jj" : "rad",
         "pT_gg" : "GeV",
+        "DeepJetScore" : "unitless",
         "evalDNN" : "unitless"
     }
 
@@ -244,6 +273,8 @@ def GetXaxisTitle(variable_):
 ##-- Get the name of variable. Useful for variables that have long strings in draw statement. This returns a shortened value to be used for plot title and output file name 
 def GetVarTitle(varName):
     varTitle = ""
+    scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+    scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])    
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"    
@@ -256,6 +287,7 @@ def GetVarTitle(varName):
     elif(varName == dr_gg): varTitle = "dr_gg"
     elif(varName == dr_jj): varTitle = "dr_jj"
     elif(varName == pT_gg): varTitle = "pT_gg"
+    elif(varName == scoresum): varTitle = "DeepJetScore"
     else: varTitle = varName 
     return varTitle 
 

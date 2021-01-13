@@ -31,12 +31,7 @@ def GetOptions():
     parser.add_argument('--dataFile', type=str, default="", help="Path to data file", required=False)
     parser.add_argument('--signalFile', type=str, default="", help="Path to signal file", required=False)
     parser.add_argument('--bkgDirec', type=str, default="", help="Directory containing backgrounds", required=False)
-
-    # parser.add_argument('--dataFolder', type=str, default="", help="Input folder with hadded Data ntuples", required=False)
-    # parser.add_argument('--mcFolder', type=str, default="", help="Input folder with hadded MC ntuples", required=False)
-    # parser.add_argument('--signalFolder', type=str, default="", help="Input folder with hadded Signal ntuples", required=False)
     parser.add_argument('--ol', type=str, default="", help="Output directory for plots. Ex: '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'",required=False)
-    # parser.add_argument('--nTupleDirec', type=str, default="", help="Directory to obtain data, mc and signal ntuples from. Ex: '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'",required=False)
     parser.add_argument('--VarBatch', type=str, default="basic", help="Batch of variables to plot. Options: basic, MVA, loose, all ", required=False)
     parser.add_argument('--CutsType', type=str, default="Loose", help="Cuts type. Ex: PS, Loose, Medium, all", required=False)
     parser.add_argument("--drawPads", action="store_true", default=False, help="Draw each MC contribution to stack", required=False)
@@ -50,12 +45,6 @@ def GetOptions():
     parser.add_argument("--SB", action="store_true", default=False, help="Plot and analyze signal sidebands", required=False)
     parser.add_argument("--SR", action="store_true", default=False, help="Plot and analyze signal region", required=False)
     parser.add_argument("--DNNbinWidth", type=float, default=0.1, help="Bin width for evalDNN variable")
-    # parser.add_argument('--signalCut', action="store_true", default=False, help="Apply selections to signal", required=False)
-
-    ##-- Skim Ntuples
-    # parser.add_argument("--AppendNtuples", action="store_true", default=False, help="Append new variables / flags to ntuples", required=False)
-
-    ##-- Gen Reco Analysis
 
     ##-- Misc
     parser.add_argument('--verbose', action="store_true", default=False, help="Verbosity. Set true for extra output information", required=False)

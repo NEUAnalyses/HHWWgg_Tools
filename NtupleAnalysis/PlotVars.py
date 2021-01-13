@@ -7,6 +7,12 @@
 # ##-- Run on every lxplus instance: source /cvmfs/sft.cern.ch/lcg/views/LCG_98/x86_64-centos7-gcc10-opt/setup.sh                       						                                     #               
 #                                                                                                                                                                                                    #
 # ##-- Example usage:   
+#
+##-- Pre-Production Checks:
+# python PlotVars.py --inputFile output_numEvent1000_SL.root --VarsBatch ScaleFactors --xmin 0 --xmax 1.3  --individualPlots --treeName tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0 --OutputLoc /eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/SF-Checks-UpdatedSFs-SLTag-again/
+# python PlotVars.py --inputFile output_numEvent500.root --VarsBatch ScaleFactors --xmin 0 --xmax 1.3  --individualPlots --treeName tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0 --OutputLoc /eos/user/a/atishelm/www/HHWWgg/SF-Checks-UpdatedSFs-SLTag/
+#
+##-- Older Checks: 
 # python PlotVars.py --inputFile output_numEvent500.root --VarsBatch ScaleFactors --xmin 0 --xmax 1.3  --individualPlots --treeName tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0 --OutputLoc /eos/user/a/atishelm/www/HHWWgg/SF-Checks-SLTag/
 # python PlotVars.py --inputFile output_numEvent500.root --VarsBatch ScaleFactors --xmin 0 --xmax 1.3  --individualPlots --treeName tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0 --OutputLoc /eos/user/a/atishelm/www/HHWWgg/SF-Checks-SL/
 # python PlotVars.py --inputFile output_numEvent500.root --VarBatch ScaleFactors --xmin 0 --xmax 1.3  --individualPlots --treeName tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0 --OutputLoc /eos/user/a/atishelm/www/HHWWgg/SF-Checks/ 

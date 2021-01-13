@@ -8,13 +8,15 @@
 
 ##-- Note: This module can be shrunk by mapping file name to treename, MCName, and MCCategory. Don't need dictionary for each one 
 
-def GetMCTreeName(fileName_):
+def GetMCTreeNameOld(fileName_):
     MCTreesDict = {
         # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox1BJet_MGG_80toInf_13TeV_Sherpa",
         # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox2BJets_MGG_80toInf_13TeV_Sherpa",
+
         "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhotonJetsBox_M40_80_Sherpa",
         "DiPhotonJets_MGG-80toInf_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "DiPhotonJets_MGG_80toInf_13TeV_amcatnloFXFX_pythia8",
         "WW_TuneCP5_13TeV-pythia8_Hadded.root" : "WW_TuneCP5_13TeV_pythia8",
+
         # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets_HT_40To100_TuneCP5_13TeV_madgraphMLM_pythia8",
         # "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets_HT_600ToInf_TuneCP5_13TeV_madgraphMLM_pythia8",
         "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "GluGluHToGG_M_125_13TeV_powheg_pythia8",
@@ -22,13 +24,21 @@ def GetMCTreeName(fileName_):
         "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
         "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa",
         
-        "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
-        "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-20to40.root" : "GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-40toInf.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-20toInf.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
         
-        "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        #"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        #"GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        #"GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        
+        "QCD_Pt-30to40.root" : "QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-30toInf.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-40toInf.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        
+        #"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        #"QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        #"QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
 
         "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
         "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8",
@@ -78,6 +88,93 @@ def GetMCTreeName(fileName_):
         "HHWWgg-SL-SM-NLO-2017.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
         "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
         "HHWWgg-SL-SM-NLO-2018.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+        "output_numEvent500.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
+    
+        ##-- Single Higgs
+        "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2016.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2016.root" : "wzh_125",
+        "VBFHToGG_M125_13TeV_2018.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2018.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2018.root" : "wzh_125"
+    }
+
+    return MCTreesDict[fileName_]
+
+def GetMCTreeName(fileName_):
+    MCTreesDict = {
+        "DiPhotonJetsBox_M40_80.root" : "DiPhotonJetsBox_M40_80_Sherpa",
+        # "DiPhotonJets_MGG-80toInf.root" : "DiPhotonJets_MGG_80toInf_13TeV_amcatnloFXFX_pythia8",
+        "WW_TuneCP5.root" : "WW_TuneCP5_13TeV_pythia8",
+        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "GluGluHToGG_M_125_13TeV_powheg_pythia8",
+        # "GluGluHToGG.root" : "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8", 
+        "GluGluHToGG.root" : "ggh_125", 
+        # "ttHJetToGG.root" : "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
+        "ttHJetToGG.root" : "tth_125",
+        "DiPhotonJetsBox_MGG-80toInf.root" : "DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa",
+        
+        "GJet_Pt-20to40.root" : "GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-40toInf.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-20toInf.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        
+        "QCD_Pt-30to40.root" : "QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-30toInf.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-40toInf.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        
+        "VHToGG.root" : "wzh_125",
+        # "VHToGG.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
+        "TTGG_0Jets.root" : "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8",
+        "DYJetsToLL_M-50.root" : "DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG_M_125_13TeV_powheg_pythia8",
+        "TTJets_TuneCP5.root" : "TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "TTGJets_TuneCP5.root" : "TTGJets_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8",
+
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+        "THQ_ctcvcp.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+
+        # HHWWgg_bkg_v2 
+        "TTJets_HT-2500toInf.root" : "TTJets_HT_2500toInf_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-600to800.root" : "TTJets_HT_600to800_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-800to1200.root" : "TTJets_HT_800to1200_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-1200to2500.root" : "TTJets_HT_1200to2500_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTToHadronic.root" : "TTToHadronic_TuneCP5_13TeV_powheg_pythia8",
+
+        # HHWWgg_bkg_v3 
+        "W1JetsToLNu_LHEWpT_0-50.root": "W1JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_50-150.root": "W1JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_400-inf.root": "W1JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_250-400.root": "W1JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_150-250.root": "W1JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8", 
+        "W1JetsToLNu_LHEWpT_100-150.root": "W1JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+
+        # HHWWgg_bkg_v4 
+        "W2JetsToLNu_LHEWpT_50-150.root": "W2JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W3JetsToLNu.root": "W3JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "W4JetsToLNu.root": "W4JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "W2JetsToLNu_LHEWpT_0-50.root": "W2JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_250-400.root": "W2JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_400-inf.root": "W2JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_100-150.root": "W2JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_150-250.root": "W2JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8",
+
+        # HHWWgg_bkg_v5
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGGJets.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WWTo1L1Nu2Q.root": "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8",
+        "ttWJets.root":"ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGJJToLNuGJJ_EWK.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+        "WGJJToLNu_EWK_QCD.root" : "WGJJToLNu_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8",
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+
+        ##-- HHWWgg Signal
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1",
+        # "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
+        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
+        # "HHWWgg-SL-SM-NLO-2016.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
+        # "HHWWgg-SL-SM-NLO-2017.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        # "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        # "HHWWgg-SL-SM-NLO-2018.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+        # "output_numEvent500.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
     
         ##-- Single Higgs
         "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
@@ -92,6 +189,173 @@ def GetMCTreeName(fileName_):
 
 def GetMCName(fileName_):
     MCNameDict = {
+        "DiPhotonJetsBox_M40_80.root" : "DiPhoJetsBox_M40_80",
+        "DiPhotonJets_MGG-80toInf.root" : "DiPhoJets_MGG-80toInf",
+        "WW_TuneCP5.root" : "WW",
+        "GluGluHToGG.root" : "GluGluHToGG", 
+        "ttHJetToGG.root" : "ttHJetToGG",
+        "DiPhotonJetsBox_MGG-80toInf.root" : "DiPhoJetsBox_MGG-80toInf",
+        
+        "GJet_Pt-20to40.root" : "GJet_20to40",
+        "GJet_Pt-40toInf.root" : "GJet_40toInf",
+        "GJet_Pt-20toInf.root" : "GJet_20toInf",
+        
+        "QCD_Pt-30to40.root" : "QCD_30to40",
+        "QCD_Pt-30toInf.root" : "QCD_30toInf",
+        "QCD_Pt-40toInf.root" : "QCD_40toInf",
+        
+        "VHToGG.root" : "wzh_125",
+        # "VHToGG.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
+        "TTGG_0Jets.root" : "TTGG_0Jets",
+        "DYJetsToLL_M-50.root" : "DYJetsToLL_M_50",
+        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG",
+        "TTJets_TuneCP5.root" : "TTJets",
+        "TTGJets_TuneCP5.root" : "TTGJets",
+
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+        "THQ_ctcvcp.root" : "THQ",
+
+        # HHWWgg_bkg_v2 
+        "TTJets_HT-2500toInf.root" : "TTJets_HT-2500toInf",
+        "TTJets_HT-600to800.root" : "TTJets_HT-600to800",
+        "TTJets_HT-800to1200.root" : "TTJets_HT-800to1200",
+        "TTJets_HT-1200to2500.root" : "TTJets_HT-1200to2500",
+        "TTToHadronic.root" : "TTToHadronic", ##-- bbWW --> bbqqqq
+
+        # HHWWgg_bkg_v3 
+        "W1JetsToLNu_LHEWpT_0-50.root": "W1Jets_pT_0-50",
+        "W1JetsToLNu_LHEWpT_50-150.root": "W1Jets_pT_50-150",
+        "W1JetsToLNu_LHEWpT_400-inf.root": "W1Jets_pT_400-inf",
+        "W1JetsToLNu_LHEWpT_250-400.root": "W1Jets_pT_250-400",
+        "W1JetsToLNu_LHEWpT_150-250.root": "W1Jets_pT_150-250", 
+        "W1JetsToLNu_LHEWpT_100-150.root": "W1Jets_pT_100-150",
+
+        # HHWWgg_bkg_v4 
+        "W2JetsToLNu_LHEWpT_50-150.root": "W2Jets_pT_50-150",
+        "W3JetsToLNu.root": "W3Jets",
+        "W4JetsToLNu.root": "W4Jets",
+        "W2JetsToLNu_LHEWpT_0-50.root": "W2Jets_pT_0-50",
+        "W2JetsToLNu_LHEWpT_250-400.root": "W2Jets_pT_250-400",
+        "W2JetsToLNu_LHEWpT_400-inf.root": "W2Jets_pT_400-inf",
+        "W2JetsToLNu_LHEWpT_100-150.root": "W2Jets_pT_100-150",
+        "W2JetsToLNu_LHEWpT_150-250.root": "W2Jets_pT_150-250",
+
+        # HHWWgg_bkg_v5
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGGJets.root": "WGGJets",
+        "WWTo1L1Nu2Q.root": "WWTo1L1Nu2Q",
+        "ttWJets.root":"ttWJets",
+        "WGJJToLNuGJJ_EWK.root" : "WGJJToLNuGJJ_EWK_aQGC",
+        "WGJJToLNu_EWK_QCD.root" : "WGJJToLNu_EWK_QCD",
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+
+        ##-- HHWWgg Signal
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
+        "HHWWgg-SL-SM-NLO-2016.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
+        "HHWWgg-SL-SM-NLO-2017.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2018.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+        "output_numEvent500.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
+    
+        ##-- Single Higgs
+        "VBFHToGG_M125_13TeV_2016.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2016.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2016.root" : "wzh_125",
+        "VBFHToGG_M125_13TeV_2018.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2018.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2018.root" : "wzh_125"
+
+
+
+        # ##-- QCD
+        # "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-30to40",
+        # "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-40toInf",
+        # "QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-30toInf",
+
+        # ##-- SM Hgg
+        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "GluGluHToGG",
+        # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "GluGluHToGG", 
+        # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "VHToGG",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG",
+        # # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ_HToGG",
+        # "THQ_ctcvcp.root" : "THQ_HToGG",
+
+        # ##-- GJet
+        # "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt-20to40_MGG-80toInf",
+        # "GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt-20toInf_MGG-40to80",
+        # "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt-40toInf_MGG-80toInf",
+
+        # ##-- GJets 
+        # # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets",
+        # # "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets", 
+
+        # ##-- DiPhotonJets 
+        # "DiPhotonJets_MGG-80toInf_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "DiPhoJets_MGG-80-Inf",
+         
+
+        # ##-- DiPhotonJetsBox
+        # # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-40_80",
+        # "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-80toInf",
+
+        # # HHWWgg_bkg_v2 
+        # "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "TTJets_HT-2500toInf",
+        # "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "TTJets_HT-600to800",
+        # "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "TTJets_HT_1200to2500",
+        # "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "TTJets_HT_800to1200",
+        # "TTToHadronic_TuneCP5_13TeV-powheg-pythia8_Hadded.root" : "TTToHadronic",
+
+        # ##-- HHWWgg_bkg_v3 
+        # "W1JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "W1Jets_LHEWpT_0-50",
+        # "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "W1Jets_LHEWpT_50-150",
+        # "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1Jets_LHEWpT_400-inf",
+        # "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1Jets_LHEWpT_250-400",
+        # "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1Jets_LHEWpT_150-250", 
+        # "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1Jets_LHEWpT_100-150",        
+
+        # ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
+        # "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_50-150",
+        # "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W3JetsToLNu",
+        # "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W4JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_0-50",
+        # "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_250-400",
+        # "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_400-inf",
+        # "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_100-150",
+        # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu_150-250",
+
+        # ##-- Other 
+        # "WW_TuneCP5_13TeV-pythia8_Hadded.root" : "WW", # non exclusive with WWTo... ?
+        # "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "WWTo1L1Nu2Q",
+
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "ttHJetToGG",
+        # "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "TTGG_0Jets",
+        # "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "TTJets",
+        # "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "TTGJets",
+
+        # "DYJetsToLL_M-50.root" : "DY",
+        # # "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
+
+        # ##-- HHWWgg_bkg_v5 
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
+        # "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "WGGJets",
+        # # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets",
+        # "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
+
+        # ##-- HHWWgg Signal
+        # "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
+        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
+        # "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
+        # "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
+        # "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
+
+    }
+
+    return MCNameDict[fileName_]
+
+def GetMCNameOld(fileName_):
+    MCNameDict = {
         ##-- QCD
         "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-30to40",
         "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-40toInf",
@@ -102,7 +366,8 @@ def GetMCName(fileName_):
         "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "GluGluHToGG", 
         "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "VHToGG",
         "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "VBFHToGG",
-        "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ_HToGG",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "THQ_HToGG",
+        "THQ_ctcvcp.root" : "THQ_HToGG",
 
         ##-- GJet
         "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet_Pt-20to40_MGG-80toInf",
@@ -174,7 +439,8 @@ def GetMCName(fileName_):
         "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "TTJets",
         "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "TTGJets",
 
-        "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
+        "DYJetsToLL_M-50.root" : "DY",
+        # "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
 
         ##-- HHWWgg_bkg_v5 
         "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
@@ -194,6 +460,126 @@ def GetMCName(fileName_):
     return MCNameDict[fileName_]
 
 def GetMCCategory(fileName_):
+    MCCategoryDict = {
+        ##-- QCD
+        "QCD_Pt-30to40.root" : "QCD",
+        "QCD_Pt-40toInf.root" : "QCD",
+        "QCD_Pt-30toInf.root" : "QCD",
+
+        
+
+        # ##-- SM Hgg
+        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
+        # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded.root" : "SMhgg", 
+        # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "SMhgg",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded.root" : "SMhgg",
+        "THQ_ctcvcp.root" : "THQ",
+
+        ##-- SM Hgg
+        "GluGluHToGG.root" : "ggH",
+        # "GluGluHToGG.root" : "ggH", 
+        "VHToGG.root" : "VH",
+        "VBFHToGG.root" : "VBFH",
+        "ttHJetToGG.root" : "ttHJetToGG",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "SMhgg",
+
+        ##-- GJet
+        "GJet_Pt-20to40.root" : "GJet",
+        "GJet_Pt-20toInf.root" : "GJet",
+        "GJet_Pt-40toInf.root" : "GJet",
+
+        ##-- GJets 
+        # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets",
+        # "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets", 
+
+        ##-- DiPhotonJets 
+        "DiPhotonJets_MGG-80toInf.root" : "DiPhoJets",
+         
+
+        ##-- DiPhotonJetsBox
+        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        "DiPhotonJetsBox_M40_80.root" : "DiPhoJetsBox",
+        "DiPhotonJetsBox_MGG-80toInf.root" : "DiPhoJetsBox",
+
+        # HHWWgg_bkg_v2 
+        "TTJets_HT-2500toInf.root" : "tt",
+        "TTJets_HT-800to1200.root" : "tt",
+        "TTJets_HT-1200to2500.root" : "tt",
+        "TTJets_HT-600to800.root" : "tt",
+        "TTToHadronic.root" : "tt",
+
+
+        # ##-- HHWWgg_bkg_v3 
+        # "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1JetsToLNu", 
+        # "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W1JetsToLNu",        
+
+        # ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
+        # "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+        # "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W3JetsToLNu",
+        # "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W4JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
+
+        ##-- HHWWgg_bkg_v3 
+        "W1JetsToLNu_LHEWpT_0-50.root":  "WJets",
+        "W1JetsToLNu_LHEWpT_50-150.root":  "WJets",
+        "W1JetsToLNu_LHEWpT_400-inf.root": "WJets",
+        "W1JetsToLNu_LHEWpT_250-400.root": "WJets",
+        "W1JetsToLNu_LHEWpT_150-250.root": "WJets", 
+        "W1JetsToLNu_LHEWpT_100-150.root": "WJets",        
+
+        ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
+        "W2JetsToLNu_LHEWpT_50-150.root": "WJets",
+        "W3JetsToLNu.root": "WJets",
+        "W4JetsToLNu.root": "WJets",
+        "W2JetsToLNu_LHEWpT_0-50.root": "WJets",
+        "W2JetsToLNu_LHEWpT_250-400.root": "WJets",
+        "W2JetsToLNu_LHEWpT_400-inf.root": "WJets",
+        "W2JetsToLNu_LHEWpT_100-150.root": "WJets",
+        "W2JetsToLNu_LHEWpT_150-250.root": "WJets",
+
+        ##-- HHWWgg_bkg_v5 
+        "WGJJToLNuGJJ_EWK.root" : "WGJJ",
+        "WGJJToLNu_EWK_QCD.root" : "WGJJ",
+
+        ##-- Other 
+        "WW_TuneCP5.root" : "WW", # non exclusive with WWTo... ?
+        "WWTo1L1Nu2Q.root" : "WW",
+
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt",
+        "TTGG_0Jets.root" : "tt",
+        "TTJets_TuneCP5.root" : "tt",
+        "TTGJets_TuneCP5.root" : "tt",
+
+        "DYJetsToLL_M-50.root" : "DY",
+
+        ##-- HHWWgg_bkg_v5 
+        "WGGJets.root": "WGGJets",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets",
+        "ttWJets.root": "ttW",
+
+        ##-- HHWWgg Signal
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM",
+
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
+
+
+    }
+
+    return MCCategoryDict[fileName_]
+
+def GetMCCategoryOld(fileName_):
     MCCategoryDict = {
         ##-- QCD
         "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD",

@@ -16,6 +16,10 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch LeadingPhoton --CutsType TrainingSelections --Lumi 41.5  --verbose --SigScale 1 --SB --SidebandScale --noQCD
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch mass --CutsType TrainingSelections --Lumi 41.5  --verbose --SigScale 1 --SB --noQCD --SidebandScale --log
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch mass --CutsType PreSelections --Lumi 41.5  --verbose --SigScale 100000 --SB --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DebugUncertainty/ --dataFile /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_weights_exp_allBkgs/2017Data.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/ --VarBatch Ngood --CutsType PreSelections --Lumi 41.5  --verbose --SigScale 100000 --SR --SidebandScale
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DebugUncertainty/ --dataFile /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_weights_exp_allBkgs/2017Data.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/ --VarBatch DNN --CutsType DNNLoose --Lumi 41.5  --verbose --SigScale 1 --SB --SidebandScale 
 #
 # ##-- Gen / Reco Analysis 
@@ -408,12 +412,30 @@ if __name__ == '__main__':
             print "You can pass both flags "
 
         ##-- Data, MC and Signal Together. Data and MC in sidebands
-        region = "SB"
-        # if(args.SB): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
-        if(args.SB): PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region)
+        if(args.SB): region = "SB"
+        elif(args.SR): region = "SR"
+        cuts, cutNames = GetCuts(args.CutsType)
+        for i in range(0,len(cuts)):
+            cut_ = cuts[i] ## using only first cut.
+            cutName_ = cutNames[i] ## using only first cut.     
+            print"cut_:",cut_
+            print"cutName_:",cutName_       
+            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_)
+            print "chi2:",chi2
+                
 
-        ##-- MC and Signal in Signal Region 
-        region = "SR"
-        # if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
-        if(args.SR): PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,ol,args,region,args.DNNbinWidth)
+        # ##-- MC and Signal in Signal Region 
+        # if(args.SR): 
+        #     region = "SR"
+        #     cuts, cutNames = GetCuts(args.CutsType)
+        #     for i in range(0,len(cuts)):
+        #         cut_ = cuts[i] ## using only first cut.
+        #         cutName_ = cutNames[i] ## using only first cut.     
+        #         print"cut_:",cut_
+        #         print"cutName_:",cutName_       
+        #         chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_)
+        #         print "chi2:",chi2        
+        # if(args.SR): 
+        #     region = "SR"
+        #     PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region)
         print"DONE"

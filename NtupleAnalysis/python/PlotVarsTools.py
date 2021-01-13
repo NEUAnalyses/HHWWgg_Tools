@@ -43,9 +43,10 @@ def GetVarsList(VarsBatch):
     VSEVAweights = ['weight_lo_SM', 'weight_nlo_SM']
 
     ##-- Scale Factors 
-    SF_xmin, SF_xmax = 0.8, 1.2 
+    # SF_xmin, SF_xmax = 0.8, 1.2 
+    SF_xmin, SF_xmax = 0, 1.5 
     SFs = ["LooseMvaSF", "PreselSF", "TriggerWeight", "prefireWeight", "electronVetoSF", 
-           "ElectronIDWeight", "ElectronRecoWeight", "MuonTightIDWeight", "MuonTightRelISOWeight", 
+           "ElectronIDWeight", "ElectronRecoWeight", "MuonIDWeight", "MuonIsoWeight", 
            "JetBTagCutWeight", "JetBTagReshapeWeight"]
     SFnames = ["%sCentral"%(SF) for SF in SFs]
     SFnames.append("weight")
@@ -54,9 +55,10 @@ def GetVarsList(VarsBatch):
 
     centralProduct = ""
     for i,SFname in enumerate(SFnames):
-        if(SFname != "weight" and SFname != "centralObjectWeight"): 
+        if(SFname != "weight" and SFname != "centralObjectWeight" and SFname != "puweight"): 
             centralProduct += SFname 
-            if(i != len(SFnames) - 1): centralProduct += "*"
+            # print"SFname:",SFname
+            if(SFname != "JetBTagReshapeWeightCentral"): centralProduct += "*" ##-- if not on the final SF, add multiply for next one 
     print"centralProduct:",centralProduct   
     SFnames.append(centralProduct)
 
@@ -73,7 +75,7 @@ def GetVarsList(VarsBatch):
 
 def GetVarTitle(VarName_):
     SFs = ["LooseMvaSF", "PreselSF", "TriggerWeight", "prefireWeight", "electronVetoSF", 
-           "ElectronIDWeight", "ElectronRecoWeight", "MuonTightIDWeight", "MuonTightRelISOWeight", 
+           "ElectronIDWeight", "ElectronRecoWeight", "MuonIDWeight", "MuonIsoWeight", 
            "JetBTagCutWeight", "JetBTagReshapeWeight"]    
     SFnames = ["%sCentral"%(SF) for SF in SFs]
     SFnames.append("weight")
@@ -81,9 +83,10 @@ def GetVarTitle(VarName_):
     SFnames.append("puweight")    
     centralProduct = ""
     for i,SFname in enumerate(SFnames):
-        if(SFname != "weight" and SFname != "centralObjectWeight"): 
+        if(SFname != "weight" and SFname != "centralObjectWeight" and SFname != "puweight"): 
+            # print"SFname:",SFname
             centralProduct += SFname 
-            if(i != len(SFnames) - 1): centralProduct += "*"
+            if(SFname != "JetBTagReshapeWeightCentral"): centralProduct += "*" ##-- if not on the final SF, add multiply for next one 
 
     VarTitleDict = {
         centralProduct : "SF-Product"
@@ -120,7 +123,7 @@ def PlotVar(VarName,tree,OutputLoc,xmin,xmax):
 
     mean, std = VarArray.mean(), VarArray.std()
 
-    print("mean:",mean)
+    print"mean:",mean
     plt.hist(VarArray,
             bins = bins,
             label = VarTitle,
