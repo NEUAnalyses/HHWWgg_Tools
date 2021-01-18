@@ -10,18 +10,20 @@
 # TFile* file = TFile::Open("TEST.root");                                                                                                                                                        #
 # TTree* originalTree = (TTree*)file->Get("reducedTree");                                                                                                                                        #
 # TFile* ouput = TFile::Open("TESTskim.root","RECREATE");                                                                                                                                        #
-# TTree* selectedTree = originalTree->CopyTree("ptLept1>50.")                                                                                                                                    #
+# TTree* selectedTree = originalTree->CopyTree("ptLept1>50.")  
+# 
+# https://root-forum.cern.ch/t/multiple-trees-with-the-same-name/20878/3                                                                                                                                  #
 #                                                                                                                                                                                                #
 # Example Usage:                                                                                                                                                                                 #
 # with prompt-prompt removal and merging of trees:                                                                                                                                               #
 # ##-- NOTE: when doing prompt-prompt removal, inDir should ONLY contain GJet and QCD samples (up to 6 total)                                                                                    
-# python MergeTrees.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --doppRemoval --fileType Bkg             
-# python MergeTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one_output/ --fileType Bkg --doppRemoval ##-- With p-p removal, output separate trees per tag
-# python MergeTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one_output/ --fileType Bkg --doppRemoval --mergeTags ##-- With p-p removal, output 1 merged tree
+# python ManageTrees.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --doppRemoval --fileType Bkg             
+# python ManageTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one_output/ --fileType Bkg --doppRemoval ##-- With p-p removal, output separate trees per tag
+# python ManageTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/GJetQCD_one_output/ --fileType Bkg --doppRemoval --mergeTags ##-- With p-p removal, output 1 merged tree
 #                                                                                                                                                                                           
 # without prompt-prompt removal, just merging of trees:                                                                                                                                         
-# python MergeTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded --fileType Signal 
-# python MergeTrees.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --fileType Signal                 
+# python ManageTrees.py --inDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded/ --outDir /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Private-SL-SM-saveGenVars/hadded --fileType Signal 
+# python ManageTrees.py --inDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --outDir /eos/user/<letter>/<userName>/<projectDirectory>/skimFilesInput --fileType Signal                 
 ##################################################################################################################################################################################################
 
 ##-- Imports 
@@ -48,8 +50,6 @@ for argName in argNames:
 
 ##-- Temporary: Define tags list 
 tags = [0,1,2,3]
-# tags = [0]
-# tags = [0,1,2]
 
 ##-- Define tree selection
 selection = "(1)"
@@ -84,10 +84,10 @@ for inFileName in os.listdir(inDir):
       else: 
         print "Looking for treeName: tagsDumper/trees/%s_13TeV_HHWWggTag_%s"%(MCTreeName,str(tag_i))
         treeName = "tagsDumper/trees/%s_13TeV_HHWWggTag_%s"%(MCTreeName,str(tag_i))
-      # DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa_13TeV_HHWWggTag_0;1
       originalTree = inFile.Get(treeName)
       selectedTree = originalTree.CopyTree(selection)
-      selectedTree.Write()
+      # selectedTree.Write()
+      selectedTree.Write("",2)
       tagOutFile.Close()   
       allTags_mergedTrees.Add("%s/%s"%(tagOutFilePath,treeName))   
 
@@ -98,6 +98,7 @@ for inFileName in os.listdir(inDir):
     ##-- If merging tags, add the merged trees as one tree into output file 
     allTags_mergedTrees.Merge(outFilePath) ##-- add merged 
     outFile.Close()
+    del outFile 
 
   else: 
     outLabel = ""
@@ -115,9 +116,11 @@ for inFileName in os.listdir(inDir):
       originalTree = inFile.Get(treeName)
       selectedTree = originalTree.CopyTree(selection)
       outFile.cd()
-      selectedTree.Write()
+      selectedTree.Write("",2)
       del selectedTree
+      del originalTree 
     outFile.Close()
+    del outFile 
 
   inFile.Close()
 

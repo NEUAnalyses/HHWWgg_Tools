@@ -62,7 +62,8 @@ def GetCuts(CutsType):
         cutNames = ["Loose"]    
 
     elif(CutsType == "TrainingSelections"):
-        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections 
+        cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 1/3)*((Subleading_Photon_pt/CMS_hgg_mass) > 1/4))"] # training selections 
+        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections 
         # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
         cutNames = ["TrainingSelections"]
 

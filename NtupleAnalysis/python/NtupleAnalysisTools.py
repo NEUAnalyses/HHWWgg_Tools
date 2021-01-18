@@ -53,7 +53,7 @@ def GetBinVals(h_):
         binVals_.append(bin_val)
     return binVals_
 
-def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
+def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWidth_):
     print "Getting data histogram" 
     dFile = TFile.Open(dPath)
     # print "Data file path: ",dPath
@@ -61,7 +61,8 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
     # data_trees = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     data_trees = TChain('data_trees')
     # data_trees.Add("%s/%sData"%(dPath,prefix))
-    data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
+    data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
+    # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
     SB_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
@@ -75,7 +76,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
     # if(verbose): print"Plotting variable:",varTitle
     DATA_CUT = DATA_CUT.replace("ZERO_CUT","(%s != 0) && (%s != -999)"%(v,v)) 
     # if(varTitle == "weight"): MC_CUT = MC_CUT.replace(MC_WEIGHT,"(1)") # if you want to plot the "weight" variable, you should not scale it by weight!             
-    xbins, xmin, xmax = GetBins(varTitle)
+    xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
 
     ##-- Fill histogram with data  
     Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
@@ -98,7 +99,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose):
 
     return DataHist_
 
-def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut):
+def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut,DNNbinWidth_):
     print "Getting background stack"
 
     ##-- Define cut 
@@ -160,7 +161,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         # Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix,treeName))
 
         ##-- Fill Histogram
-        xbins, xmin, xmax = GetBins(varTitle)
+        xbins, xmin, xmax = GetBins(varTitle, DNNbinWidth_)
         # exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         # exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
@@ -203,6 +204,24 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
         # eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i))
         eval("B_h_%s.Scale(float(Lumi))"%(i))
+        ##-- If required, scale by fraction of events to total due to flashgg submission 
+        # need for 
+        # W1JetsToLNu_LHEWpT_150-250 
+        #
+        # W1JetsToLNu_LHEWpT_150-250 ext1 258842513
+        # W1JetsToLNu_LHEWpT_150-250 new_pmx 108925160
+        #
+        # W1JetsToLNu_LHEWpT_400-inf
+        #
+        # W1JetsToLNu_LHEWpT_400-inf v2 4465538
+        # W1JetsToLNu_LHEWpT_400-inf ext1 9066797
+        # 
+        # W2JetsToLNu_LHEWpT_100-150
+        # W2JetsToLNu_LHEWpT_150-250
+        # W2JetsToLNu_LHEWpT_50-150
+
+        
+
         Bkg_Nevents_.append(eval("B_h_%s.Integral()"%(i))) 
 
         ##-- Check for negative bins 
@@ -235,7 +254,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
     return bkgHistos_, bkgHistCategories_, Bkg_Names_, Bkg_Nevents_, Bkg_Nevents_unweighted_
 
-def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
+def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinWidth_):
     print "Getting Signal histogram(s)"
     sig_histos_ = []
     sig_histCategories_ = []          
@@ -280,7 +299,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_3"%(sigPath,prefix,treeName))
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
 
-        xbins, xmin, xmax = GetBins(varTitle)
+        xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
         exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
         exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
         thisHist = eval("S_h_%s"%(i))
@@ -321,7 +340,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut):
 
 ##-- Main Data / MC module 
 # def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
-def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName):
+def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_):
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
@@ -359,13 +378,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName):
         if(args_.VarBatch == "Loose"): varTitle = varNames[iv]
         else: varTitle = GetVarTitle(v)    
         if(args_.verbose): print"Plotting variable:",varTitle
-        # xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
-        xbins, xmin, xmax = GetBins(varTitle)
+        xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
+        # xbins, xmin, xmax = GetBins(varTitle)
 
         ##-- In either case, SB or SR, get backgrounds and signal(s)
         bkgStack = THStack("bkgStack","bkgStack")
-        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut)         
-        sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFile_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut)
+        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut,DNNbinWidth_)         
+        sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFile_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut,DNNbinWidth_)
 
         # MC_AddedtoLegend = {
         #      "QCD" : 0,
@@ -467,7 +486,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName):
         if(region_ == "SB"):
             # define selections 
             # just use combined tag always. Define a category or look at cut based analysis categories by making selections 
-            DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
+            DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose,DNNbinWidth_) ## assuming one data file!
             dataNevents = DataHist.GetEntries()
             # legend.AddEntry(DataHist,"Data","P")
             DataHist.SetLineColor(kBlack)
@@ -613,12 +632,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName):
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
             if(args_.SidebandScale):
-                DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose) ## assuming one data file!
+                DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose, DNNbinWidth_) ## assuming one data file!
                 data_sidebands_sum = DataHist.Integral() ##-- data hist is already in sidebands only 
 
                 ##-- If region is SR, need to draw background in SB in order to obtain proper SF 
                 bkgStack_sidebands = THStack("bkgStack_sidebands","bkgStack_sidebands")
-                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut) ##-- Sidebands     
+                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut,DNNbinWidth_) ##-- Sidebands     
                 orderedHistos_sidebands = OrderHistos(bkgHistos_sidebands,bkgHistCategories_sidebands)
                 for h in orderedHistos_sidebands:
                     h.Sumw2()

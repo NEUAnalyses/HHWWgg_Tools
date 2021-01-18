@@ -420,7 +420,7 @@ if __name__ == '__main__':
             cutName_ = cutNames[i] ## using only first cut.     
             print"cut_:",cut_
             print"cutName_:",cutName_       
-            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_)
+            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth)
             print "chi2:",chi2
                 
 

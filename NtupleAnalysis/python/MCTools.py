@@ -167,7 +167,8 @@ def GetMCTreeName(fileName_):
         # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
+        # "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1",
         # "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
         # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
         # "HHWWgg-SL-SM-NLO-2016.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",

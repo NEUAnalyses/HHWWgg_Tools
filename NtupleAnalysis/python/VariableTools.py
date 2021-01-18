@@ -187,12 +187,13 @@ def GetVars(VarBatch):
         return [dr_jj]
 
 ##-- Get bins for a variable 
-# def GetBins(variable_,DNNbinWidth_):
-def GetBins(variable_,DNNbinWidth_ = 0.1):
+def GetBins(variable_,DNNbinWidth_):
+# def GetBins(variable_,DNNbinWidth_ = 0.1):
 
     # evalDNNmin, evalDNNmax = 0, 1.00001
     # evalDNNmin, evalDNNmax = 0.9, 1.00001
-    evalDNNmin, evalDNNmax = 0, 1.00001
+    # evalDNNmin, evalDNNmax = 0, 1.00001
+    evalDNNmin, evalDNNmax = 0, 1
     nDNNbins = int(float((evalDNNmax - evalDNNmin)) / float(DNNbinWidth_))
 
     if(DNNbinWidth_ != 0.1):
