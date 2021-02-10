@@ -191,6 +191,14 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
 
+    ##-- For table 
+    names, Unweighted_vals, Weighted_vals = [], [], []  
+
+    # for ylabel in yaxisLabels:
+    for MC_name in Bkg_Names:
+        names.append(MC_name)
+
+    ##-- Create TeX file for each 
     for doUnweighted in [0,1]:
 
         histTitles = ["Weighted Events", "Unweighted Events"]
@@ -211,19 +219,9 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
             h_grid.GetYaxis().SetBinLabel(yli+1,yl)
 
         for ixL,xLabel in enumerate(xaxisLabels):
-            # S = Signal_Nevents_list_[ixL] ##-- assumes only one signal model! 
-            # S = sum(S_vals) # per bin vals 
 
-            # S_, S_unweighted_
-            
-            # Bkg_Nevents_unweighted
             B = sum(bkgYields)
-
             h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
-            # MC_Nevents = eval("%s[ixL]"%(MC_Nevents_vals))
-            # N_allMC = eval("%s[ixL]"%(MC_sumEvents_l))
-
-            # B = eval("%s[ixL]"%(B_values))
 
             B *= SidebandSF # SidebandSF_ should be 1 by default 
         
@@ -235,11 +233,6 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
                 data_over_MC = dataNevents / B
                 SqrtB = B**0.5
                 sOverSqrtB = S / SqrtB
-
-            # print"S = ",S
-            # print"B = ",B
-            # print"sqrtB = ",SqrtB
-            # print"sOverSqrtB = ",sOverSqrtB
 
             if(region == "SB"):
                 h_grid.Fill(ixL,0,data_over_MC)
@@ -258,6 +251,7 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
             # for ie,numEvents in enumerate(MC_Nevents):
             for ie,numEvents in enumerate(bkgYields):
                 h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
+                exec("%s_vals.append(%s)"%(outLabel,numEvents))
 
         sideScaleOpt = ""
         if(SidebandSF != 1): sideScaleOpt = "WithSidebandScale"
@@ -283,94 +277,26 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
         c_tmp.SaveAs(outNamepng)
         c_tmp.SaveAs(outNamepdf) 
 
-    # h_grid.~TH2()
 
-    # ##-- Create Two Tables
-    # ##-- One without MC weight applied, one with 
+    ##-- TeX file table 
+    fileName = "Yields-Table.tex"
+    file = open(fileName,"w")
+    file.write("\\begin{table}[H]\n")
+    file.write("\t\\begin{center}\n")
+    file.write("\t\t\\begin{tabular}{c|c|c}\n")
+    file.write("\t\t\tMC Sample & Unweighted & Weighted \\\ \\hline \n")
 
+    for i, name in enumerate(names):
+        name = name.replace("_","\_")
+        unweighted_val = Unweighted_vals[i]
+        weighted_val = Weighted_vals[i]
+        file.write("\t\t\t %s & %s & %s \\\ \n"%(name,int(unweighted_val),round(weighted_val,5)))
 
-    ##-- Unweighted Table 
-    # Bkg_Nevents_unweighted
+    file.write("\t\t\end{tabular}\n")
+    file.write("\t\caption{Unweighted and weighted training MC yields}\n")
+    file.write("\t\\end{center}\n")
+    file.write("\end{table}\n")  
 
-    # histTitle = "UnWeighted Events"
+    file.close()
 
-    # h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
-    # h_grid.SetStats(0)
-    # h_grid.GetXaxis().SetLabelSize(.03)  
-
-
-    # # for useMCWeight in [0,1]:
-    # for useMCWeight in [1]:
-    #     histTitles = ["Unweighted Events","Weighted Events"]
-    #     outLabels = ["Unweighted","Weighted"]
-    #     MC_sumEvents_list = ["N_allMC_noweight_list","N_allMC_list"]
-    #     MC_Nevents_vals_Opts = ["MC_Nevents_noweight_lists","MC_Nevents_lists"]
-    #     B_vals_list = ["B_vals","B_vals"]        
- 
-    #     histTitle, outLabel, MC_sumEvents_l, MC_Nevents_vals = histTitles[useMCWeight], outLabels[useMCWeight], MC_sumEvents_list[useMCWeight], MC_Nevents_vals_Opts[useMCWeight]
-    #     B_values = B_vals_list[useMCWeight] ### not yet configured for with and without weights...only with weights 
-    #     h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
-    #     h_grid.SetStats(0)
-    #     h_grid.GetXaxis().SetLabelSize(.03)      
-
-    #     for yli, yl in enumerate(yaxisLabels):
-    #         h_grid.GetYaxis().SetBinLabel(yli+1,yl) 
-
-    #     for ixL,xLabel in enumerate(xaxisLabels):
-    #         # S = Signal_Nevents_list_[ixL] ##-- assumes only one signal model! 
-    #         S_sum = sum(S_vals) # per bin vals 
-    #         B_sum = sum(B_vals)
-
-    #         h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
-    #         dataNevents = dataNevents_list[ixL]
-    #         MC_Nevents = eval("%s[ixL]"%(MC_Nevents_vals))
-    #         N_allMC = eval("%s[ixL]"%(MC_sumEvents_l))
-    #         # B = eval("%s[ixL]"%(B_values))
-
-    #         B *= SidebandSF # SidebandSF_ should be 1 by default 
-	    
-    #         if(N_allMC == 0.0):
-    #           data_over_MC = -1 
-    #           N_allMC = -1
-    #         else: 
-    #           data_over_MC = dataNevents / N_allMC
-
-    #         if(B == 0.0):
-    #           sOverSqrtB = -1 
-    #         else: 
-    #           sOverSqrtB = S / B**0.5 
-
-    #         SqrtB = B**0.5
-
-    #         if(region == "SB"):
-    #             h_grid.Fill(ixL,0,data_over_MC)
-    #             h_grid.Fill(ixL,1,dataNevents)
-    #             h_grid.Fill(ixL,2,sOverSqrtB)
-    #             h_grid.Fill(ixL,3,SqrtB)
-    #             h_grid.Fill(ixL,4,B)
-    #             h_grid.Fill(ixL,5,S)
-
-    #         elif(region == "SR"):
-    #             h_grid.Fill(ixL,0,sOverSqrtB)
-    #             h_grid.Fill(ixL,1,SqrtB)
-    #             h_grid.Fill(ixL,2,B)
-    #             h_grid.Fill(ixL,3,S)
-
-    #         for ie,numEvents in enumerate(MC_Nevents):
-    #             h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
-
-    #     sideScaleOpt = ""
-    #     if(SidebandSF != 1): sideScaleOpt = "WithSidebandScale"
-    #     else: sideScaleOpt = "WithoutSidebandScale"
-    #     outNamepng = "%s/%s_EventsTable_%s_%s.png"%(ol_, firstCutBatch, outLabel, sideScaleOpt)
-    #     outNamepdf = "%s/%s_EventsTable_%s_%s.pdf"%(ol_, firstCutBatch, outLabel, sideScaleOpt)       
-    #     c_tmp = TCanvas('c_tmp','c_tmp',800,600)
-    #     c_tmp.SetRightMargin(0.15)
-    #     c_tmp.SetLeftMargin(0.23)
-    #     c_tmp.SetBottomMargin(0.15)
-    #     c_tmp.SetTopMargin(0.1)
-    #     h_grid.SetMarkerSize(1.2)
-    #     h_grid.Draw("text COL1")
-    #     # label.DrawLatex(0.3,0.95,"HHWWgg 95% CL Limits: " + ml)
-    #     c_tmp.SaveAs(outNamepng)
-    #     c_tmp.SaveAs(outNamepdf)    
+    print"Saving yields table: ",fileName
