@@ -23,7 +23,7 @@
 import argparse
 import os 
 from os import path 
-from DataFormats.FWLite import Handle, Runs, Lumis, Events
+from DataFormats.FWLite import Handle, Runs, Lumis, Events, ChainEvent
 from ROOT import gROOT, Math, TTree, TFile, TCanvas, TH1F, TTree, TLegend, gStyle 
 from GenPlotTools import *
 from array import array 
@@ -34,6 +34,7 @@ parser = argparse.ArgumentParser(description='GEN and GEN-SIM ntuple production 
 parser.add_argument("--CreateNtuple", action="store_true", default=False, help="Create GEN Ntuple", required=False)
 parser.add_argument("--outPlots", action="store_true", default=False, help="Output plots to website, or output location", required=False)
 parser.add_argument('-i', type=str, default="", help="Input GEN file, format: 'store/.../.root", required=False)
+parser.add_argument('-inFolder', type=str, default="", help="Input GEN files folder", required=False)
 parser.add_argument('-v', type=str, default="pdgId", help="Comma separated list of variables to plot", required=False)
 parser.add_argument('-sp', type=str, default="", help="Single particles to plot variables of", required=False)
 parser.add_argument('--genType', type=str, default="GEN", help="Gen type. Used to create output folder", required=False)
@@ -106,44 +107,45 @@ if(args.CreateNtuple):
     if(NONRES):
         particleNames = ['H']
         extraVars = ['invM_HH']
-    maxpdgIds = 10000
+        
+    # maxpdgIds = 10000
 
-    iEvent = array('i', 10000*[-99]) #
-    outTree.Branch('iEvent',iEvent,'iEvent[10000]/I')
-    branches.append("iEvent")
+    # iEvent = array('i', 10000*[-99]) #
+    # outTree.Branch('iEvent',iEvent,'iEvent[10000]/I')
+    # branches.append("iEvent")
 
-    status = array('d', 10000*[-99]) #
-    outTree.Branch('status',status,'status[10000]/D')
-    branches.append("status")
+    # status = array('d', 10000*[-99]) #
+    # outTree.Branch('status',status,'status[10000]/D')
+    # branches.append("status")
 
-    isPromptFinalState = array('d', 10000*[-99]) #
-    outTree.Branch('isPromptFinalState',isPromptFinalState,'isPromptFinalState[10000]/D')
-    branches.append("isPromptFinalState")
+    # isPromptFinalState = array('d', 10000*[-99]) #
+    # outTree.Branch('isPromptFinalState',isPromptFinalState,'isPromptFinalState[10000]/D')
+    # branches.append("isPromptFinalState")
     
-    fromHardProcessFinalState = array('d', 10000*[-99]) #
-    outTree.Branch('fromHardProcessFinalState',fromHardProcessFinalState,'fromHardProcessFinalState[10000]/D')
-    branches.append("fromHardProcessFinalState")
+    # fromHardProcessFinalState = array('d', 10000*[-99]) #
+    # outTree.Branch('fromHardProcessFinalState',fromHardProcessFinalState,'fromHardProcessFinalState[10000]/D')
+    # branches.append("fromHardProcessFinalState")
 
-    isHardProcess = array('d', 10000*[-99]) #
-    outTree.Branch('isHardProcess',isHardProcess,'isHardProcess[10000]/D')
-    branches.append("isHardProcess")
+    # isHardProcess = array('d', 10000*[-99]) #
+    # outTree.Branch('isHardProcess',isHardProcess,'isHardProcess[10000]/D')
+    # branches.append("isHardProcess")
 
-    numberOfDaughters = array('d', 10000*[-99]) #
-    outTree.Branch('numberOfDaughters',numberOfDaughters,'numberOfDaughters[10000]/D')
-    branches.append("numberOfDaughters")
+    # numberOfDaughters = array('d', 10000*[-99]) #
+    # outTree.Branch('numberOfDaughters',numberOfDaughters,'numberOfDaughters[10000]/D')
+    # branches.append("numberOfDaughters")
 
-    daughterOnepdgId = array('d', 10000*[-99]) #
-    outTree.Branch('daughterOnepdgId',daughterOnepdgId,'daughterOnepdgId[10000]/D')
-    branches.append("daughterOnepdgId")
+    # daughterOnepdgId = array('d', 10000*[-99]) #
+    # outTree.Branch('daughterOnepdgId',daughterOnepdgId,'daughterOnepdgId[10000]/D')
+    # branches.append("daughterOnepdgId")
 
-    if(args.doTauChecks):
-        isDirectHardProcessTauDecayProductFinalState = array('d', 10000*[-99]) #
-        outTree.Branch('isDirectHardProcessTauDecayProductFinalState',isDirectHardProcessTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
-        branches.append("isDirectHardProcessTauDecayProductFinalState")
+    # if(args.doTauChecks):
+    #     isDirectHardProcessTauDecayProductFinalState = array('d', 10000*[-99]) #
+    #     outTree.Branch('isDirectHardProcessTauDecayProductFinalState',isDirectHardProcessTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
+    #     branches.append("isDirectHardProcessTauDecayProductFinalState")
 
-        isDirectPromptTauDecayProductFinalState = array('d', 10000*[-99]) #
-        outTree.Branch('isDirectPromptTauDecayProductFinalState',isDirectPromptTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
-        branches.append("isDirectPromptTauDecayProductFinalState")
+    #     isDirectPromptTauDecayProductFinalState = array('d', 10000*[-99]) #
+    #     outTree.Branch('isDirectPromptTauDecayProductFinalState',isDirectPromptTauDecayProductFinalState,'isDirectHardProcessTauDecayProductFinalState[10000]/D')
+    #     branches.append("isDirectPromptTauDecayProductFinalState")
 
 
 
@@ -187,6 +189,11 @@ if(args.CreateNtuple):
     # if(not requireHardProcess): events.getByLabel('genParticles', genHandle) # all particles 
     events = Events(fnalPath) # needs to be file with root prefix
     # events.getByLabel('genParticles', genHandle) # all particles 
+
+
+    eventsChain = ChainEvent()
+
+
     genHandle = Handle('vector<reco::GenParticle>')
 
     if(args.doTauChecks):
