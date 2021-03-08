@@ -16,11 +16,10 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 # 
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch LeadingPhoton --CutsType TrainingSelections --Lumi 41.5  --verbose --SigScale 1 --SB --SidebandScale --noQCD
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch mass --CutsType TrainingSelections --Lumi 41.5  --verbose --SigScale 1 --SB --noQCD --SidebandScale --log
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Data_Trees/Data_2017.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/SL_NLO_2017_hadded/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/ --VarBatch mass --CutsType PreSelections --Lumi 41.5  --verbose --SigScale 100000 --SB --SidebandScale
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DebugUncertainty/ --dataFile /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_weights_exp_allBkgs/2017Data.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/ --VarBatch Ngood --CutsType PreSelections --Lumi 41.5  --verbose --SigScale 100000 --SR --SidebandScale
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DebugUncertainty/ --dataFile /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_weights_exp_allBkgs/2017Data.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/ --VarBatch DNN --CutsType DNNLoose --Lumi 41.5  --verbose --SigScale 1 --SB --SidebandScale 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling_ANv3/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 5 --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch RestOfTrainingVars --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch Jet --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale
 #
 # ##-- Gen / Reco Analysis 
 # python NtupleAnalysis.py --GenReco
@@ -49,11 +48,6 @@ if __name__ == '__main__':
                 os.system('mkdir %s'%(ol))
                 print'cp %s/../index.php %s'%(ol,ol)
                 os.system('cp %s/../index.php %s'%(ol,ol))
-        # else: ol = '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
-    # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
-    # nTupleDirec = '/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/'
-    # nTupleDirec = args.nTupleDirec
-    # nTupleDirec = '/eos/user/b/bmarzocc/HHWWgg/2017_DataMC_ntuples_moreVars/HHWWyyDNN_binary_add_WJets_graph/'
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
         if(args.ratio):
@@ -400,6 +394,8 @@ if __name__ == '__main__':
         ##-- Get Background Files 
         bkgDirec = args.bkgDirec 
         bkgFiles = GetFiles(bkgDirec)
+        print"bkgFiles:",bkgFiles
+        # exit(1) 
 
         ##-- Get Signal File 
         signalFile = args.signalFile 
@@ -420,9 +416,8 @@ if __name__ == '__main__':
             cutName_ = cutNames[i] ## using only first cut.     
             print"cut_:",cut_
             print"cutName_:",cutName_       
-            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth)
+            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax)
             print "chi2:",chi2
-                
 
         # ##-- MC and Signal in Signal Region 
         # if(args.SR): 

@@ -45,6 +45,8 @@ def GetOptions():
     parser.add_argument("--SB", action="store_true", default=False, help="Plot and analyze signal sidebands", required=False)
     parser.add_argument("--SR", action="store_true", default=False, help="Plot and analyze signal region", required=False)
     parser.add_argument("--DNNbinWidth", type=float, default=0.1, help="Bin width for evalDNN variable")
+    parser.add_argument("--ratioMin", type=float, default=0.5, help="Ymin for ratio plot")
+    parser.add_argument("--ratioMax", type=float, default=1.5, help="Ymax for ratio plot")
 
     ##-- Misc
     parser.add_argument('--verbose', action="store_true", default=False, help="Verbosity. Set true for extra output information", required=False)

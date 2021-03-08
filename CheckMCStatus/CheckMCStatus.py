@@ -29,11 +29,21 @@ if __name__ == '__main__':
 
     ##-- Define Dataset Names based on physics process, type, year, step 
     pDsetNames, Processes, sDsetNames, steps, instances, outDsetNames = [], [], [], [], [], []
-    finalStates = ["GluGluToHHTo2G2Qlnu*", "GluGluToHHTo2G4Q*", "GluGluToHHTo2G2l2nu*"]
+    
+    ##-- GF Spin 0 and 2 
+    # finalStates = ["GluGluToRadionToHHTo2G2Qlnu_M-*","GluGluToRadionToHHTo2G2l2nu_M-*","GluGluToRadionToHHTo2G4Q_M-*", "GluGluToRadionToHHTo2G2ZTo2G4Q_M-*",
+        # "GluGluToBulkGravitonToHHTo2G2Qlnu_M-*","GluGluToBulkGravitonToHHTo2G2l2nu_M-*","GluGluToBulkGravitonToHHTo2G4Q_M-*","GluGluToBulkGravitonToHHTo2G2ZTo2G4Q_M-*"]
+
+    ##-- VBF Spin 0 and 2 
+    finalStates = ["VBFToRadionToHHTo2G2Qlnu_M-*","VBFToRadionToHHTo2G2l2nu_M-*","VBFToRadionToHHTo2G4Q_M-*", "VBFToRadionToHHTo2G2ZTo2G4Q_M-*",
+        "VBFToBulkGravitonToHHTo2G2Qlnu_M-*","VBFToBulkGravitonToHHTo2G2l2nu_M-*","VBFToBulkGravitonToHHTo2G4Q_M-*", "VBFToBulkGravitonToHHTo2G2ZTo2G4Q_M-*",]
+
     years = ["*RunIISummer16MiniAODv3*", "*RunIIFall17MiniAODv2*", "*RunIIAutumn18MiniAOD*"]
     step = "MINIAODSIM"
+
     instance = "prod/global"
-    Processes_ = GetProcesses("NonResonant")
+    Processes_ = GetProcesses("Resonant")
+    # Processes_ = GetProcesses("NonResonant")
 
     for Process in Processes_:
         for finalState in finalStates:
@@ -75,3 +85,5 @@ if __name__ == '__main__':
                 check.Plot(dsets,outLoc,"GF_NLO")
             if(Process=="VBF"):
                 check.Plot(dsets,outLoc,"VBF_LO")
+            if(Process=="Resonant"):
+                check.Plot(dsets,outLoc,"Resonant")

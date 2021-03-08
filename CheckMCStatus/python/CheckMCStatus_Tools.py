@@ -51,6 +51,10 @@ class CheckMC:
         fontsize = 8 
         if( (len(nodes) >= 6) and len(nodes) <= 13): fontsize = 9
         elif(len(nodes) <= 5): fontsize = 12
+        else: fontsize = 5
+
+        print "nodes: ",nodes
+        print "nEvents: ",nEvents
 
         x_pos = [i for i, _ in enumerate(nodes)]
         y_pos = np.arange(len(nodes))
@@ -59,7 +63,9 @@ class CheckMC:
         plt.xticks(y_pos, nodes)
         plt.ylim(ymin=0,ymax=420000)
         plt.ylabel('Nevents')
-        plt.xlabel('Non-Resonant Node')
+        if(Process_ != "Resonant"):
+            plt.xlabel('Non-Resonant Node')
+        else: plt.xlabel('Resonant Mass')
         plt.xticks(fontsize=fontsize)
         plt.title('%s MiniAOD Nevents'%(self.outDsets))
         plt.hlines(400000,-0.5,len(nodes), linestyles='dashed', colors='black')
@@ -74,10 +80,26 @@ def GetPlotVals(outDsets_, dsets_, Process):
     nodes_, nEvents_ = [], [] 
     MetaData = pd.read_csv('MetaData/%s_MetaData.txt'%(outDsets_), header=None)
 
-    datasets = dsets_[0].tolist()
-    nodes = [str(fullSt.split('/')[1].split('_')[2]) for fullSt in datasets]
-    nEvents = [int(nEvent_str.split(':')[-1]) for nEvent_str in MetaData[12]] ##-- 12: nEvents 
-    node_nEvt_pairs = zip(nodes,nEvents)
+    if(Process != "Resonant"):
+
+        datasets = dsets_[0].tolist()
+        nodes = [str(fullSt.split('/')[1].split('_')[2]) for fullSt in datasets]
+        nEvents = [int(nEvent_str.split(':')[-1]) for nEvent_str in MetaData[12]] ##-- 12: nEvents 
+        node_nEvt_pairs = zip(nodes,nEvents)
+
+    else: 
+        datasets = dsets_[0].tolist()
+        nodes = [str(fullSt.split('/')[1].split('_')[1]) for fullSt in datasets] # M-X
+        for i,node in enumerate(nodes): 
+            node = node.replace("M-","")
+            nodes[i] = node 
+        nEvents = [int(nEvent_str.split(':')[-1]) for nEvent_str in MetaData[12]] ##-- 12: nEvents 
+        node_nEvt_pairs_unsorted = zip(nodes,nEvents)        
+        node_nEvt_pairs = sorted(node_nEvt_pairs_unsorted, key = lambda x: float(x[0]))
+
+    # print "nodes:",nodes
+    # print "nEvents:",nEvents
+    # print "process:",Process
 
     if(Process == "GF_LO"):
         for pair in node_nEvt_pairs:
@@ -96,14 +118,22 @@ def GetPlotVals(outDsets_, dsets_, Process):
             node, nEvent = pair
             if("C2V" in node):
                 nodes_.append(node)
-                nEvents_.append(nEvent)                   
+                nEvents_.append(nEvent) 
+    elif(Process == "Resonant"):
+        for pair in node_nEvt_pairs:
+            node, nEvent = pair
+            # if("C2V" in node):
+            nodes_.append(node)
+            nEvents_.append(nEvent)         
+        
                              
     return nodes_, nEvents_  
 
 def GetProcessLabel(Process):
     outName_Process_Dict = {
         "*_node_*" : "GF",
-        "*CV_*_C2V_*_C3_*_*" : "VBF"
+        "*CV_*_C2V_*_C3_*_*" : "VBF",
+        "*" : "Resonant"
     }    
     return outName_Process_Dict[Process]
 
@@ -111,7 +141,28 @@ def GetFSLabel(fullFS):
     outName_FS_Dict = {
         "GluGluToHHTo2G2Qlnu*": "Semi-Leptonic", 
         "GluGluToHHTo2G4Q*": "Fully-Hadronic", 
-        "GluGluToHHTo2G2l2nu*" : "Fully-Leptonic"
+        "GluGluToHHTo2G2l2nu*" : "Fully-Leptonic",
+        "GluGluToHHTo2G2ZTo2G4Q*" : "ZZ-Fully-Hadronic",
+
+        ##-- GF Spin 0, 2 
+        "GluGluToRadionToHHTo2G2Qlnu_M-*" : "GF-Spin-0-Semi-Leptonic",
+        "GluGluToBulkGravitonToHHTo2G2Qlnu_M-*" : "GF-Spin-2-Semi-Leptonic",
+        "GluGluToRadionToHHTo2G2l2nu_M-*" : "GF-Spin-0-Fully-Leptonic",
+        "GluGluToBulkGravitonToHHTo2G2l2nu_M-*" : "GF-Spin-2-Fully-Leptonic",
+        "GluGluToRadionToHHTo2G4Q_M-*" : "GF-Spin-0-Fully-Hadronic",
+        "GluGluToBulkGravitonToHHTo2G4Q_M-*" : "GF-Spin-2-Fully-Hadronic",   
+        "GluGluToRadionToHHTo2G2ZTo2G4Q_M-*" : "GF-Spin-0-ZZgg-Fully-Hadronic",
+        "GluGluToBulkGravitonToHHTo2G2ZTo2G4Q_M-*" : "GF-Spin-2-ZZgg-Fully-Hadronic",           
+
+        ##-- VBF Spin 0, 2            
+        "VBFToRadionToHHTo2G2Qlnu_M-*" : "VBF-Spin-0-Semi-Leptonic",
+        "VBFToBulkGravitonToHHTo2G2Qlnu_M-*" : "VBF-Spin-2-Semi-Leptonic",
+        "VBFToRadionToHHTo2G2l2nu_M-*" : "VBF-Spin-0-Fully-Leptonic",
+        "VBFToBulkGravitonToHHTo2G2l2nu_M-*" : "VBF-Spin-2-Fully-Leptonic",
+        "VBFToRadionToHHTo2G4Q_M-*" : "VBF-Spin-0-Fully-Hadronic",
+        "VBFToBulkGravitonToHHTo2G4Q_M-*" : "VBF-Spin-2-Fully-Hadronic",    
+        "VBFToRadionToHHTo2G2ZTo2G4Q_M-*" : "VBF-Spin-0-ZZgg-Fully-Hadronic",
+        "VBFToBulkGravitonToHHTo2G2ZTo2G4Q_M-*" : "VBF-Spin-2-ZZgg-Fully-Hadronic",                     
     }
     return outName_FS_Dict[fullFS]
 
@@ -133,8 +184,11 @@ def CheckMakeOutLocation(outLoc_):
 def GetProcesses(PhysicsType):
     GF_dsetStr = "*_node_*"
     VBF_dsetStr = "*CV_*_C2V_*_C3_*_*"
+    
+
 
     processDict = {
-        "NonResonant" : [GF_dsetStr, VBF_dsetStr]
+        "NonResonant" : [GF_dsetStr, VBF_dsetStr],
+        "Resonant" : ["*"]
     }   
     return processDict[PhysicsType]     

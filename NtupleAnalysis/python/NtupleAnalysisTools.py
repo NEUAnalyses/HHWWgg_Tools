@@ -15,9 +15,133 @@ from CutsTools import *
 
 def GetFiles(direc):
     files = [] 
+    ##-- training 
+    MCendsTraining = [
+
+
+        'DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root',
+        'GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root',
+        'TTGG_0Jets_HHWWggTag_0_MoreVars.root',
+        'TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root',
+        'ttWJets_HHWWggTag_0_MoreVars.root',
+        'TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root',
+        'W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root',
+        'W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root',
+        'W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root',
+        'W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root',
+        'W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root',
+        'W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root',
+        'W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root',
+        'W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root',
+        'WGGJets_HHWWggTag_0_MoreVars.root',
+        'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root',
+        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file 
+        # 'GluGluHToGG_2017_HHWWggTag_0_MoreVars.root',
+        # 'VBFHToGG_2017_HHWWggTag_0_MoreVars.root',
+        # 'VHToGG_2017_HHWWggTag_0_MoreVars.root',
+        # 'ttHJetToGG_2017_HHWWggTag_0_MoreVars.root',
+        # 'VBFHToGG_HHWWggTag_0_MoreVars.root',
+        # 'VHToGG_HHWWggTag_0_MoreVars.root',
+        # 'ttHJetToGG_HHWWggTag_0_MoreVars.root'
+
+
+        # # "DYJetsToLL_M-50_HHWWggTag_0_MoreVars.root",
+        # # "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars.root",
+        # "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root",
+        # # "GJet_Pt-20to40_HHWWggTag_0_MoreVars.root",
+        # # "GJet_Pt-20toInf_HHWWggTag_0_MoreVars.root",
+        # "GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root",
+        # # "GluGluHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        # # "QCD_Pt-30to40_HHWWggTag_0_MoreVars.root",
+        # # "QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root",
+        # # "QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root",
+        # # "THQ_ctcvcp_HHWWggTag_0_MoreVars.root",
+        # "TTGG_0Jets_HHWWggTag_0_MoreVars.root",
+        # "TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root",
+        # # "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars.root",
+        # # "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars.root",
+        # # "TTJets_HT-600to800_HHWWggTag_0_MoreVars.root",
+        # # "TTJets_HT-800to1200_HHWWggTag_0_MoreVars.root",
+        # "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root",
+        # # "TTToHadronic_HHWWggTag_0_MoreVars.root",
+        # # "VBFHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        # # "VHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        # # "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root",
+        # # "W1JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root",
+        # "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root",
+        # "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root",
+        # "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root",
+        # "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root",
+        # # "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root",
+        # # "W2JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root",
+        # "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root",
+        # "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root",
+        # "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root",
+        # "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root",
+        # # "W3JetsToLNu_HHWWggTag_0_MoreVars.root",
+        # # "W4JetsToLNu_HHWWggTag_0_MoreVars.root",
+        # "WGGJets_HHWWggTag_0_MoreVars.root",
+        # "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars.root",
+        # # "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root",
+        # # "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars.root",
+        # # "WW_TuneCP5_HHWWggTag_0_MoreVars.root",
+        # # "ttHJetToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        # # "ttWJets_HHWWggTag_0_MoreVars.root"
+
+    ]
+
+    MCends = [
+        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars.root",
+        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars.root",
+        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root",
+        "GJet_Pt-20to40_HHWWggTag_0_MoreVars.root",
+        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars.root",
+        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root",
+        "GluGluHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        "QCD_Pt-30to40_HHWWggTag_0_MoreVars.root",
+        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root",
+        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root",
+        "THQ_ctcvcp_HHWWggTag_0_MoreVars.root",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars.root",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root",
+        # "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars.root",
+        # "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars.root",
+        # "TTJets_HT-600to800_HHWWggTag_0_MoreVars.root",
+        # "TTJets_HT-800to1200_HHWWggTag_0_MoreVars.root",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root",
+        "TTToHadronic_HHWWggTag_0_MoreVars.root",
+        "VBFHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        "VHToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root",
+        # "W1JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root",
+        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root",
+        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root",
+        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root",
+        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root",
+        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars.root",
+        # "W2JetsToLNu_LHEWpT_100-150_extra_HHWWggTag_0_MoreVars.root",
+        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars.root",
+        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars.root",
+        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars.root",
+        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars.root",
+        "W3JetsToLNu_HHWWggTag_0_MoreVars.root",
+        "W4JetsToLNu_HHWWggTag_0_MoreVars.root",
+        "WGGJets_HHWWggTag_0_MoreVars.root",
+        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars.root",
+        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root",
+        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars.root",
+        "WW_TuneCP5_HHWWggTag_0_MoreVars.root",
+        "ttHJetToGG_HHWWggTag_0_MoreVars_noSyst.root",
+        "ttWJets_HHWWggTag_0_MoreVars.root"
+
+    ]
+
     for fileEnd in os.listdir(direc): 
-        fullPath = "%s/%s"%(direc,fileEnd)
-        files.append(fullPath)
+        # if ((".root" in fileEnd) and ( (fileEnd == "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars.root") or (fileEnd in MCends) ) ):
+        # if ( fileEnd in MCends ):
+        if ( fileEnd in MCendsTraining ):
+            fullPath = "%s/%s"%(direc,fileEnd)
+            files.append(fullPath)
     return files   
 
 # def GetFiles(nTupleDirec_, Folder_):
@@ -61,7 +185,8 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     # data_trees = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     data_trees = TChain('data_trees')
     # data_trees.Add("%s/%sData"%(dPath,prefix))
-    data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
+    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
+    data_trees.Add("%s/%sData_13TeV_HHWWggTag_0_v1"%(dPath,prefix))
     # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
@@ -132,7 +257,13 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         mcFile = TFile.Open(mcPath)
         treeName = GetMCTreeName(mcEnd)
         treeName += "_13TeV_HHWWggTag_0"
+        # treeName += "_13TeV_HHWWggTag_0_v1"
         MC_Category = GetMCCategory(mcEnd)
+        print("MC_Category:",MC_Category)
+     
+        v1_mcs = ["VBFH","ttHJetToGG","ggH","VH"]
+        if(MC_Category in v1_mcs):
+            treeName += "_v1"
         MCname = GetMCName(mcEnd)
         Bkg_Names_.append(MCname) # get shorter MC name here        
         if(verbose): 
@@ -285,7 +416,8 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         sigEnd = sigPath.split('/')[-1]
         sigFile = TFile.Open(sigPath)
         treeName = GetMCTreeName(sigEnd)
-        treeName += "_13TeV_HHWWggTag_0"
+        # treeName += "_13TeV_HHWWggTag_0"
+        treeName += "_13TeV_HHWWggTag_0_v1"
         MC_Category = GetMCCategory(sigEnd)
         if(verbose):
             # print"Signal File:",sigPath 
@@ -340,7 +472,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
 
 ##-- Main Data / MC module 
 # def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
-def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_):
+def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_, ratioMin, ratioMax):
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
@@ -495,9 +627,14 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             DataHist.GetXaxis().SetTitle(xTitle)
             if(args_.log): 
                 if(args_.verbose): print "Setting histogram minimums"
-                DataHist.SetMinimum(0.0001)
-                stackSum.SetMinimum(0.0001)
-                bkgStack.SetMinimum(0.0001)            
+                print"Setting histogram minimums"
+                #bkgStack.SetMinimum(1)
+                DataHist.SetMinimum(1.)
+                stackSum.SetMinimum(1.)
+                bkgStack.SetMinimum(1.)
+                #bkgStack.SetMinimum(0.0001)            
+                #stackSum.SetMinimum(0.0001)
+                #bkgStack.SetMinimum(0.0001)            
 
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
@@ -569,6 +706,17 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 bkgStack.Draw("same")
                 stackSum.Draw("sameE")
                 DataHist.Draw("samePE")
+
+                ##-- Does this work?
+
+                #DataHist.SetMinimum(1.)
+                #stackSum.SetMinimum(1.)
+                #bkgStack.SetMinimum(1.)
+                
+                #DataHist.SetMaximum(6000.)
+                #stackSum.SetMaximum(6000.)
+                #bkgStack.SetMaximum(6000.)
+
                 for sig_hist in sig_histos:
                     sigMax = sig_hist.GetMaximum()
                     if sigMax == 0: sigMax = 1 
@@ -598,8 +746,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 selText.Draw("same")
                 CatText.Draw("same")
                 chi2Text.Draw("same")
-                rp.GetLowerRefGraph().SetMinimum(0.5)
-                rp.GetLowerRefGraph().SetMaximum(1.5)     
+                rp.GetLowerRefGraph().SetMinimum(ratioMin)
+                rp.GetLowerRefGraph().SetMaximum(ratioMax)     
                 Npoints = rp.GetLowerRefGraph().GetN()
                 for ip in range(0,Npoints):
                     rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  

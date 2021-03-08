@@ -17,6 +17,12 @@ def GetVars(VarBatch):
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
     pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
+    Scaled_Leading_Photon_pt = "(Leading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_pt = "(Subleading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Leading_Photon_E = "(Leading_Photon_E / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"    
+    Leading_Jet_bscore = "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+    Subleading_Jet_bscore = "(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
 
     ##-- Variable batch definitions
 
@@ -27,6 +33,9 @@ def GetVars(VarBatch):
     elif(VarBatch == "DNN"):
         return ["evalDNN"]        
 
+    elif(VarBatch == "Jet"):
+        return ["Leading_Jet_pt","Leading_Jet_E","Leading_Jet_eta","N_goodJets"]
+
     elif(VarBatch == "Ngood"):
         return ["N_goodElectrons","N_goodMuons","N_goodLeptons","N_goodJets"]
 
@@ -35,6 +44,64 @@ def GetVars(VarBatch):
 
     elif(VarBatch == "diphopt"):
         return [pT_gg]
+
+    elif(VarBatch == "TrainingVariables"):
+        TrainingVars = [
+            "evalDNN",
+            Scaled_Leading_Photon_pt,
+            "goodJets_0_pt",
+            "goodLepton_pt",
+            "Wmass_goodJets12",
+            Scaled_Subleading_Photon_pt,
+            "goodJets_1_E",
+            "goodJets_1_pt",
+            "goodLepton_E",
+            "METCor_pt",
+            "goodJets_0_E",
+            "goodLepton_phi",
+            "Leading_Photon_MVA",
+            "goodLepton_eta",
+            "goodJets_1_eta",
+            "goodJets_1_phi",
+            "Subleading_Photon_eta",
+            Leading_Jet_bscore,
+            Subleading_Jet_bscore,
+            "Subleading_Photon_phi",
+            "N_goodJets",
+            "goodJets_0_phi",
+            Scaled_Leading_Photon_E,
+            Scaled_Subleading_Photon_E,
+            "Leading_Photon_phi",
+            "Subleading_Photon_MVA",
+            "goodJets_0_eta",
+            "Leading_Photon_eta",
+            "Wmt_L"             
+        ]
+        return TrainingVars 
+
+    # elif(VarBatch == "RestOfTrainingVars"):
+    #     RestOfTrainingVars = [
+    #         "goodLepton_phi",
+    #         "Leading_Photon_MVA",
+    #         "goodLepton_eta",
+    #         "goodJets_1_eta",
+    #         "goodJets_1_phi",
+    #         "Subleading_Photon_eta",
+    #         Leading_Jet_bscore,
+    #         Subleading_Jet_bscore,
+    #         "Subleading_Photon_phi",
+    #         "N_goodJets",
+    #         "goodJets_0_phi",
+    #         Scaled_Leading_Photon_E,
+    #         Scaled_Subleading_Photon_E,
+    #         "Leading_Photon_phi",
+    #         "Subleading_Photon_MVA",
+    #         "goodJets_0_eta",
+    #         "Leading_Photon_eta",
+    #         "Wmt_L" 
+
+    #     ]
+    #     return RestOfTrainingVars
 
     # Some potentially useful MVA variables  
     elif(VarBatch == "MVA"):
@@ -211,14 +278,38 @@ def GetBins(variable_,DNNbinWidth_):
         "dr_gg" : [60,0,3],
         "dr_jj" : [60,0,3],
         "pT_gg" : [40,0,400],
+
+        "goodJets_0_pt" : [18,0,360],
+        "goodLepton_pt" : [18,0,360],
+        "Wmass_goodJets12": [25,0,500],
+        # "Subleading_Photon_pt/CMS_hgg_mass",
+        "goodJets_1_E": [18,0,360],
+        "goodJets_1_pt": [18,0,360],
+        "goodLepton_E": [18,0,360],
+        "METCor_pt": [40,0,400],
+        "goodJets_0_E": [18,0,360],
+        "Scaled_Leading_Photon_pt" : [30,0,3],
+        "Scaled_Subleading_Photon_pt" : [15,0,1.5],
+        "Scaled_Leading_Photon_E" : [30,0,3],
+        "Scaled_Subleading_Photon_E" : [15,0,1.5],
+        "Leading_Jet_bscore" : [50,0,1],
+        "Subleading_Jet_bscore" : [50,0,1],
+        "Wmt_L" : [30,0,300],
+
+
         # "evalDNN" : [20,0,1.00001] # To include value == 1 
         # "evalDNN" : [10,0,1.00001] # To include value == 1 
         # "evalDNN" : [25,0,1.00001] # To include value == 1 
         # "evalDNN" : [100,0,1.00001] # To include value == 1 
-        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax] # To include value == 1 
+        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1 
+        "Subleading_Photon_pt" : [24,0,120]
         # "evalDNN" : [10,0,1] # To include value == 1 
     }    
-    specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN"]
+    specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN",
+                    "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E", "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
+                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L"
+    
+    ]
 
     scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
     scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
@@ -232,7 +323,8 @@ def GetBins(variable_,DNNbinWidth_):
 
     # Specified binning if variable has phi, eta or pt in name 
     else:
-        if("phi" in variable_): return [17,-3.14,3.5325]
+        # if("phi" in variable_): return [20,-3.14,3.14]
+        if("phi" in variable_): return [17,-3.14,3.15]
         # elif("eta" in variable_): return [16,-4,4]
         elif("eta" in variable_): return [10,-2.5,2.5]
         elif ("pt" in variable_): return [20,0,200]   
@@ -261,7 +353,14 @@ def GetXaxisTitle(variable_):
         "dr_jj" : "rad",
         "pT_gg" : "GeV",
         "DeepJetScore" : "unitless",
-        "evalDNN" : "unitless"
+        "evalDNN" : "unitless",
+        "Scaled_Leading_Photon_pt" : "unitless",
+        "Scaled_Subleading_Photon_pt" : "unitless",
+        "Leading_Jet_bscore" : "unitless", 
+        "Subleading_Jet_bscore" : "unitless",
+        "Scaled_Leading_Photon_E" : "unitless",
+        "Scaled_Subleading_Photon_E" : "unitless",
+        "Wmt_L" : "GeV"
     }
 
     for varFrag in variableUnitDict:
@@ -275,20 +374,33 @@ def GetXaxisTitle(variable_):
 def GetVarTitle(varName):
     varTitle = ""
     scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
-    scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])    
+    # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])    
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"    
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
     pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
+    Scaled_Leading_Photon_pt = "(Leading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_pt = "(Subleading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Leading_Photon_E = "(Leading_Photon_E / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"
+    Leading_Jet_bscore = "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+    Subleading_Jet_bscore = "(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+
     if(varName == mjj): varTitle = "mjj"
     elif(varName == e_mT): varTitle = "e_mT"
     elif(varName == mu_mT): varTitle = "mu_mT"
     elif(varName == dr_gg): varTitle = "dr_gg"
     elif(varName == dr_jj): varTitle = "dr_jj"
     elif(varName == pT_gg): varTitle = "pT_gg"
-    elif(varName == scoresum): varTitle = "DeepJetScore"
+    # elif(varName == scoresum): varTitle = "DeepJetScore"
+    elif(varName == Scaled_Leading_Photon_pt): varTitle = "Scaled_Leading_Photon_pt"
+    elif(varName == Scaled_Subleading_Photon_pt): varTitle = "Scaled_Subleading_Photon_pt"
+    elif(varName == Scaled_Leading_Photon_E): varTitle = "Scaled_Leading_Photon_E"
+    elif(varName == Scaled_Subleading_Photon_E): varTitle = "Scaled_Subleading_Photon_E"
+    elif(varName == Leading_Jet_bscore) : varTitle = "Leading_Jet_bscore"
+    elif(varName == Subleading_Jet_bscore): varTitle = "Subleading_Jet_bscore"
     else: varTitle = varName 
     return varTitle 
 

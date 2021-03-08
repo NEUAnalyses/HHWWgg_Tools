@@ -1,3 +1,20 @@
+##-- testnewfiles
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2017Signal/ --i signal  --opt signal --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2017Signal_WS/
+
+##-- Single Higgs
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2016SingleHiggs_Trees/1/ --i SingleHiggs --opt SingleHiggs --t PerYear --year 2016 --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/SingleHiggsForFggFinalfit/
+
+##-- Signal
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2016Signal/ --i signal  --opt signal --t PerYear  --year 2016  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2016Signal_WS/
+
+##-- Data
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2016Data/ --i data  --opt data --t PerYear  --year 2016  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFilesRun2/2016Data_WS/
+
+
+########################3
+
+# Single Higgs
+# python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/WeightsExp/2017SingleHiggs/1/ --i SingleHiggs --opt SingleHiggs --t PerYear --year 2017 --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/WeightsExp/SingleHiggsForFggFinalfit/
 
 ##-- Signal
 # python MakeCategorizedWorkspaces.py --iD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/Signal/ --i signal  --opt signal --t PerYear  --year 2017  --oD /eos/user/a/atishelm/ntuples/HHWWgg_DNN_Categorization/TestNewFiles/
@@ -92,6 +109,24 @@ def add_mc_vars_to_workspace(ws=None):
 #   CMS_hgg_mass.setConstant(False)
 #   CMS_hgg_mass.setBins(160)
 #   getattr(ws, 'import')(CMS_hgg_mass, ROOT.RooFit.Silence())
+
+def GetMCLabel(MCfileName_):
+    NameDict = {
+        "SingleHiggs_ttHJetToGG_2017_CategorizedTrees.root" : "ttHJetToGG",
+        "SingleHiggs_VBFHToGG_2017_CategorizedTrees.root" : "VBFHToGG",
+        "SingleHiggs_GluGluHToGG_2017_CategorizedTrees.root" : "GluGluHToGG",
+        "SingleHiggs_VHToGG_2017_CategorizedTrees.root" : "VHToGG",
+        "SingleHiggs_ttHJetToGG_2016_CategorizedTrees.root" : "ttHJetToGG",
+        "SingleHiggs_VBFHToGG_2016_CategorizedTrees.root" : "VBFHToGG",
+        "SingleHiggs_GluGluHToGG_2016_CategorizedTrees.root" : "GluGluHToGG",
+        "SingleHiggs_VHToGG_2016_CategorizedTrees.root" : "VHToGG",  
+        "SingleHiggs_ttHJetToGG_2018_CategorizedTrees.root" : "ttHJetToGG",
+        "SingleHiggs_VBFHToGG_2018_CategorizedTrees.root" : "VBFHToGG",
+        "SingleHiggs_GluGluHToGG_2018_CategorizedTrees.root" : "GluGluHToGG",
+        "SingleHiggs_VHToGG_2018_CategorizedTrees.root" : "VHToGG",                
+    }
+
+    return NameDict[MCfileName_] 
 
 def add_data_vars_to_workspace(ws=None):
   IntLumi = ROOT.RooRealVar("IntLumi","IntLumi",1000)
@@ -268,7 +303,9 @@ systLabels = [""]
 
 # Cats = ['Cat0','Cat1','Cat2','Cat3','Cat4']
 # Cats = ['Cat0','Cat1','Cat2','Cat3','Cat4']
-Cats = [i for i in range(0,3)]
+# Cats = [i for i in range(0,4)] ##-- hardcoded
+Cats = [i for i in range(0,3)] ##-- hardcoded
+# Cats = [i for i in range(0,3)]
 for num,f in enumerate(input_files):
  # print 'input file: ',f
  tfile = ROOT.TFile(opt.inp_dir+f)
@@ -276,13 +313,13 @@ for num,f in enumerate(input_files):
  datasets = []
  datahists = []
  ws = ROOT.RooWorkspace("cms_hgg_13TeV", "cms_hgg_13TeV")
- if (opt.option == 'signal'):
+ if (opt.option == 'signal' or opt.option == 'SingleHiggs'):
      add_mc_vars_to_workspace( ws)
  else: add_data_vars_to_workspace(ws)
  treename = ""
  treelist = []
  for cat in Cats:
-     if (opt.option == 'signal'):
+     if (opt.option == 'signal' or opt.option=='SingleHiggs'):
         for sys_i,syst in enumerate(systLabels):
             systLabel = ""
             # print (syst)
@@ -291,14 +328,23 @@ for num,f in enumerate(input_files):
             # treename = "H4GTag_"+cat+systLabel+"_13TeV"
             # treename = "H4GTag_"+cat+systLabel+"_13TeV"
             
-            treename = "GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_%s"%(cat)
+  # treename = "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER"
+            # treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
+            # treename = "tagsDumper/trees/SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_0"+systLabel
+
+
+            if(opt.option=='SingleHiggs'):
+              Label = GetMCLabel(f)
+              treename = "%s_13TeV_HHWWggTag_%s"%(Label,cat)
+
+            else: treename = "GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_%s"%(cat)
             # if (opt.year == '2016'):
-            #     treename = "SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_"+cat+systLabel
+            #     treename = "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER"
             # elif (opt.year == '2017'):
-            #    treename = "SUSYGluGluToHToAA_AToGG_M_"+opt.m+"_TuneCP5_13TeV_pythia8_13TeV_H4GTag_"+cat+systLabel
+            #    treename = "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER"
             # elif (opt.year == '2018'):
-            #    treename = "HAHMHToAA_AToGG_MA_"+opt.m+"GeV_TuneCP5_PSweights_13TeV_madgraph_pythia8_13TeV_H4GTag_"+cat+systLabel
-            # print treename
+            #    treename = "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER"
+            print "treeName: ",treename
             treelist.append(treename)
      else:
          # treename = "Data_13TeV_H4GTag_"+cat
@@ -336,10 +382,13 @@ for num,f in enumerate(input_files):
            else: datahists += add_datahist_to_workspace(data,ws,newname+'_'+str(opt.year))
         else:
             print "here ", tree
+            print "tfile: ",tfile 
+            print "tree: ",tree
             data = pd.DataFrame(tree2array(tfile.Get(tree)))
             if (opt.option == 'signal' and opt.year == '2016'):
                newname = tree.replace('SUSYGluGluToHToAA_AToGG_M_'+opt.m+'_TuneCUETP8M1_13TeV_pythia8_13TeV_H4GTag_','H4GTag_')
-            elif (opt.option == 'signal' and opt.year == '2017'):
+            # elif ((opt.option == 'signal' or opt.option == 'SingleHiggs') and opt.year == '2017'):
+            elif ((opt.option == 'signal' or opt.option == 'SingleHiggs') and (opt.year == '2016' or opt.year == '2017' or opt.year == '2018')):
                newname = tree.replace('','')
             #    newname = tree.replace('SUSYGluGluToHToAA_AToGG_M_'+opt.m+'_TuneCP5_13TeV_pythia8_13TeV_H4GTag_','H4GTag_')
             elif (opt.option == 'signal' and opt.year == '2018'):
@@ -366,8 +415,10 @@ for num,f in enumerate(input_files):
     # print datahist
     # ws.data(datahist).changeObservableName('CMS_hgg_mass','CMS_hgg_mass')
 
-
- f_out = ROOT.TFile.Open(opt.out_dir+opt.inp_files+"_WS.root","RECREATE")
+ if(opt.option=='SingleHiggs'):
+   Label = GetMCLabel(f)
+   f_out = ROOT.TFile.Open(opt.out_dir+opt.inp_files+"_%s_%s_WS.root"%(opt.year,Label),"RECREATE")
+ else: f_out = ROOT.TFile.Open(opt.out_dir+opt.inp_files+"_%s_WS.root"%(opt.year),"RECREATE")
  dir_ws = f_out.mkdir("tagsDumper")
  dir_ws.cd()
  ws.Write()

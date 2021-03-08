@@ -23,7 +23,8 @@
 using namespace std;
 
 void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_, TString ext, TString nTupleLocation) {
-	
+// void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, int Nbins, TString ext, TString nTupleLocation, TString year) {
+	TString year = "2017";
 	// Misc 
 	gROOT->SetBatch("kTrue");
 
@@ -32,14 +33,17 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	TString scaleOpt;
 	if(scaleBkgSideband) scaleOpt = "withSidebandScale";
 	else scaleOpt = "noSidebandScale";	
-	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/DNN_Tools/";
+	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/DNN_Tools_again/";
 	TString what_to_opt = "evalDNN";
-	double minevents = 1.;
+	double minevents = 5;
 	double xmin = xcutoff;
 	double xmax = 1.00001; // to include values that == 1  
+	// double xmax = 1; // 
 	Double_t bin_width = bin_width_;
+	// int Nbins = Nbins_;
 	TString xmin_str = to_string(xcutoff);
 	TString binWidth_str = to_string(bin_width_); 
+	// TString Nbins_str = to_string(Nbins);
 
 	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
@@ -47,23 +51,40 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	//// Important: Semi-Leptonic branching ratio of 0.441 is in here. Need to change for other final states
 	// 41.5 set as 2017 luminosity
+	TString lumi;
+	if(year=="2016") lumi = "35.9"    ;
+	else if(year=="2017")   lumi = "41.5" ;
+	else if(year=="2018") lumi = "59.4";
 
-	TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section 
+	// TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section 
+	TString selection_sig = "31.049*0.00097*0.441*" + lumi + "*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section and branching ratio
 	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
 	TString selection_data = "(1)" + extraSelections;
 	TString s; TString sel;
-	TString outname = s.Format("Categorization_%s_%dcats_%s",what_to_opt.Data(),NCATS,ext.Data());
+	TString outname = s.Format("%sCategorization_%s_%dcats_%s",year.Data(),what_to_opt.Data(),NCATS,ext.Data());
 
 // --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ 
 // --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/
 
 	// Combine Signal Trees
-	cout << "nBins: " << int((xmax-xmin)/bin_width) << endl;
+	cout << "nBins: " << int((float(xmax)-float(xmin))/float(bin_width)) << endl;
+	// cout << "nBins: " << Nbins << endl;/
 	cout << "xmin: " << xmin << endl;
 	cout << "xmax: " << xmax << endl;
 
 	TString signal_Loc_s;
-	TString signal_Location = signal_Loc_s.Format("%s/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM",nTupleLocation.Data());
+	// TString signal_Location = signal_Loc_s.Format("%s/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM",nTupleLocation.Data());
+	TString signal_Location;
+	//  = signal_Loc_s.Format("%s/Signal/HHWWgg-SL-SM-NLO-2017.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",nTupleLocation.Data());
+
+	if(year=="2016") signal_Location = signal_Loc_s.Format("/eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2016/Signal/HHWWgg-SL-SM-NLO-2016.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER");
+	// else if(year=="2017") signal_Location = signal_Loc_s.Format("/eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2017/Signal/HHWWgg-SL-SM-NLO-2017.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER");
+	else if(year=="2017") signal_Location = signal_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_testnewfiles_allBkgs/HHWWgg-SL-SM-NLO-2017.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER");
+	else if(year=="2018") signal_Location = signal_Loc_s.Format("/eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2018/Signal/HHWWgg-SL-SM-NLO-2018.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER");
+	else{
+		cout << "Don't know what to do for year: " << year << endl;
+		cout << "Exiting" << endl; 
+	}
 
 	TChain *file_s =  new TChain("file_s");
 	// file_s->Add("")
@@ -72,10 +93,15 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_2");
 	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_3");
 	// file_s->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Signal/ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root/GluGluToHHTo_WWgg_qqlnu_nodeSM_13TeV_HHWWggTag_4");
-	TH1F *hist_S = new TH1F("hist_S","hist_S",int((xmax-xmin)/bin_width),xmin,xmax);
+	TH1F *hist_S = new TH1F("hist_S","hist_S",int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax));
+	// TH1F *hist_S = new TH1F("hist_S","hist_S",Nbins,float(xmin),float(xmax));
     s.Form("%s>>hist_S",what_to_opt.Data());
     sel.Form("%s",(selection_sig+Mgg_window).Data());
 	file_s->Draw(s,sel,"goff");
+
+	// cout << "nbins: " << int((xmax-xmin)/bin_width) << endl;
+	// cout << "xmin: " << xmin << endl;
+	// cout << "xmax: " << xmax << endl;
 
 	// Combine Background Trees
 	TChain *tree_bg =  new TChain("tree_bg");
@@ -85,7 +111,9 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
 
 	TString bkg_Loc_s;
-	TString bkg_Location = bkg_Loc_s.Format("%s/Bkgs/",nTupleLocation.Data());
+	// TString bkg_Location = bkg_Loc_s.Format("%s/Bkgs/",nTupleLocation.Data()); 
+	// TString bkg_Location = bkg_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/"); //-- Hardcoded
+	TString bkg_Location = bkg_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/Bkgs/"); //-- Hardcoded
 
 	string backgroundDirec = bkg_Location.Data();
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied"; // Prompt Prompt removal applied
@@ -124,7 +152,10 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	// Combine Data Trees 
 	TString Data_Loc_s;
-	TString Data_Location = Data_Loc_s.Format("%s/Data/Data.root/Data",nTupleLocation.Data());
+	// TString Data_Location = Data_Loc_s.Format("%s/Data/Data.root/Data",nTupleLocation.Data());
+	// TString Data_Location = Data_Loc_s.Format("%s/Data/2017-Data.root/Data",nTupleLocation.Data());
+	// TString Data_Location = Data_Loc_s.Format("%s/Data/2017-Data.root/Data",nTupleLocation.Data()); 
+	TString Data_Location = Data_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_testnewfiles_allBkgs/2017-Data.root/Data"); 
 
 	TChain *tree_data =  new TChain("tree_data");
 	tree_data->Add(Data_Location);
@@ -156,7 +187,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		scale = hist_data_sideband->Integral() / hist_background_sideband->Integral();
 
 	// Create Background Hists
-	TH1F *hist_B = new TH1F("hist_B","hist_B",int((xmax-xmin)/bin_width),xmin,xmax); //200 bins  -- background signal region
+	TH1F *hist_B = new TH1F("hist_B","hist_B",int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax)); //200 bins  -- background signal region
+	// TH1F *hist_B = new TH1F("hist_B","hist_B",Nbins,float(xmin),float(xmax)); //200 bins  -- background signal region
     s.Form("%s>>hist_B",what_to_opt.Data());
     sel.Form("%s",(selection_bg+Mgg_window).Data());
 	tree_bg->Draw(s,sel,"goff");
@@ -166,7 +198,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		cout << " " << endl;
 		cout << "BG integral under Mgg "<< hist_B->Integral() << endl;
 	} 
-	TH1F *hist_B_sideband = new TH1F("hist_B_sideband","hist_B_sideband",int((xmax-xmin)/bin_width),xmin,xmax); // background sideband region
+	TH1F *hist_B_sideband = new TH1F("hist_B_sideband","hist_B_sideband",int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax)); // background sideband region
+	// TH1F *hist_B_sideband = new TH1F("hist_B_sideband","hist_B_sideband",Nbins,float(xmin),float(xmax)); // background sideband region
 
     s.Form("%s>>hist_B_sideband",what_to_opt.Data());
     sel.Form("%s",(selection_bg+Mgg_sideband).Data());
@@ -179,7 +212,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	}
 
 	// Create Data hist
-	TH1F *hist_D_sideband = new TH1F("hist_D_sideband","hist_D_sideband",int((xmax-xmin)/bin_width),xmin,xmax); //200 bins -- data sideband region
+	TH1F *hist_D_sideband = new TH1F("hist_D_sideband","hist_D_sideband",int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax)); //200 bins -- data sideband region
+	// TH1F *hist_D_sideband = new TH1F("hist_D_sideband","hist_D_sideband",Nbins,float(xmin),float(xmax)); //200 bins -- data sideband region
 
     s.Form("%s>>hist_D_sideband",what_to_opt.Data());
     sel.Form("%s",(selection_data+Mgg_sideband).Data());
@@ -192,6 +226,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// Get Start and Ends of Optimization Range 
 	double END = hist_B->GetBinCenter(hist_B->FindLastBinAbove(-1.)) + hist_B->GetBinWidth(1)/2.; // Left end of BDT distibution
 	double START = hist_B->GetBinCenter(hist_B->FindFirstBinAbove(-1.)) - hist_B->GetBinWidth(1)/2.; // Right end of BDT distibution
+	cout << "START: " << START << endl;
+	cout << "END: " << END << endl;
 	if(verbose){
 		cout << " " << endl;
 		cout << "start = " << START << " , end = " << END << endl;
@@ -288,10 +324,15 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double data_yields_sideband[10] = {0,0,0,0,0,0,0,0,0,0};
 	double sig_yields[10] = {0,0,0,0,0,0,0,0,0,0};
 
-	for (int index = 0; index < NCATS; index++){
-		start_n[index]=START+(index+1)*bin_width; // what is start_n? Initial CAT Minimum maybe
-		cout << "start_n[" << index << "] = " << start_n[index] << endl;
-	}
+	// for (int index = 0; index < NCATS; index++){
+		// start_n[index]=START+(index+1)*bin_width; // what is start_n? Initial CAT Minimum maybe
+		// cout << "start_n[" << index << "] = " << start_n[index] << endl;
+	// }
+
+    // double bin_width = float((float(xmax) - float(xmin))/ Nbins);
+
+	cout << "bin_width: " << bin_width << endl;
+
 	int minevt_cond_n[10] = {};
 
 	std::vector<double> categories_scans;
@@ -403,7 +444,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 						max_sum+=max_n[index];
 						// minevt_cond_n[index] = ( (data_sideband_n[index] >= 4));
 						//  minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents );
-						minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 6));
+						// minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 3)); // 3 hardcoded for number of sideband events 
+						minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 10)); // 3 hardcoded for number of sideband events 
 					}
 					minevt_cond = std::accumulate(minevt_cond_n, minevt_cond_n + NCATS, 0); // minevt_cond_n+1 for tth only when optimizing separately
 					if (((max_sum)>=max) && (minevt_cond==(NCATS))) { //NCATS-1 for tth
@@ -430,9 +472,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	borders[NCATS] = END;
 
 	// // Save Border Values to Text File
-	TString outnameborder = "Borders";
+	//TString outnameborder = "Borders";
 	ofstream outborder;
-	outborder.open(s.Format("%s%s_%s_%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data(),ext.Data()));
+	TString outnameborder = s.Format("%sBorders_%s_%dcats_%s",year.Data(),what_to_opt.Data(),NCATS,ext.Data());
+	//outborder.open(s.Format("%s%s",outDir.Data(),outnameborder.Data()));
+        //outborder.open(s.Format("%s%s_%s_%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data(),ext.Data()));
+	// outborder.open(s.Format("%s%s_%s_xmin-%s_Nbins-%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data(),xmin_str.Data(),Nbins_str.Data()));
+	outborder.open(s.Format("%s%s_%s_xmin-%s_binWidth-%s.txt",outDir.Data(),outnameborder.Data(),scaleOpt.Data(),xmin_str.Data(),binWidth_str.Data()));
 	for (int index=0;index<NCATS+1;index++)
 		outborder<<borders[index] << "\t";
 	outborder<<endl;
@@ -441,6 +487,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// Write Output Text File 
 	ofstream out;
 	out.open(s.Format("%s%s_%s_xmin-%s_binWidth-%s.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),binWidth_str.Data()));
+	// out.open(s.Format("%s%s_%s_xmin-%s_Nbins-%s.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),Nbins_str.Data()));
 	out << "(S**2)tot/Btot over all bins: " << TOTAL_S2OB << endl;
 	out << endl;
 	out << "sqrt((S**2)tot/Btot) over all bins: " << sqrt(TOTAL_S2OB) << endl;
@@ -540,14 +587,18 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	for (int index=0;index<NCATS-1;index++)
 		lines[index]->Draw("same");
 	gPad->RedrawAxis();
-	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
-	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
+	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
+	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s.png",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s.pdf",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));	
+	
 	
         gPad->Update();
-        frame2->SetMaximum(50);
+        frame2->SetMaximum(100);
         c1->SetLogy(0);
                 
-	c1->Print(s.Format("%s/%s_%s_xMin-%s_binWidth-%s_nonLog.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s_nonLog.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
+	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s_nonLog.png",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
 
         // c1->Print(s.Format("%s/%s_%s_xMin-%s_binIwdth-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
 
@@ -596,7 +647,9 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double sig, bkg = 0.; 
 	double sigOverSqrtb = 0;
 	double maxsigOverSqrtb = -99;
-	TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,int((xmax-xmin)/bin_width),xmin,xmax);
+	TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax));
+	// TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,Nbins,float(xmin),float(xmax));
+	// TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,Nbins,float(xmin),float(xmax));
 	for(int i = 0; i < (int) hist_S2->GetNbinsX(); i++){
 		bin_i = i + 1; // +1 to skip underflow bin
 		sig = hist_S2->GetBinContent(bin_i);  
@@ -625,18 +678,41 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		}
 	}
 
+	cout << "********************" << endl;
+	for(int i = 0; i <NCATS+1; i++){
+		cout << "borders[" << i << "] = " << borders[i] << endl;
+	}
+	cout << "********************" << endl;
+
+	// if(borders[0]==0 && borders[1]==0){
+	// 	cout << "ERROR ------- FIRST TWO BOUNDARIES ARE ZERO ----- CANNOT USE THIS CATEGORIZATION AS PURITY CALCULATION IS INCORRECT" << endl;
+	// 	cout << "EXITING" << endl;
+	// 	exit(1);
+	// }
+
+	// Significance_h->SaveAs("Sig_h.root");
+
 	// TH1F * Shaded_Area = new TH1F("Shaded_Area","S/#sqrt{B} vs. DNN Score " + scaleOpt,1,xmin,xcutoff);
 	// Shaded_Area->SetFillColorAlpha(kRed,0.5);
 
 	// Get Total Significance for each category
 	ofstream catSigOut;
+	// catSigOut.open(s.Format("%s%s_%s_xmin-%s_Nbins-%s_CatSignificances.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),Nbins_str.Data()));
 	catSigOut.open(s.Format("%s%s_%s_xmin-%s_binWidth-%s_CatSignificances.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),binWidth_str.Data()));
 	double cat_min, cat_max = 0.; 	
 	double Cat_significance = 0.;
 	int min_bin, max_bin = 0;
 	double S_total, B_total = 0; 
-	int numBins = int((xmax-xmin)/bin_width);
+	// int numBins = int((float(xmax)-float(xmin))/float(bin_width));
+	// int num
+
+
 	for(int i = 0; i < NCATS; i++){
+		cout << "---" << endl; 
+		// cat_min = borders[i];
+		// cat_max = borders[i+1];
+
+		//assuming xcutoff 0 for now 
 		if(i == 0){
 			cat_min = xcutoff;
 			cat_max = borders[i+1];
@@ -649,11 +725,25 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		cout << "Cat min: " << cat_min << endl;
 		cout << "Cat max: " << cat_max << endl;
 
-		min_bin = (cat_min - xmin) / bin_width + 1;
-		max_bin = (cat_max - xmin) / bin_width; 
+		// cout << "xmin : " << xmin << endl;
+		// cout << "bin_width : " << bin_width << endl;
 
-		cout << "min_bin low edge: " << hist_S2->GetBinLowEdge(min_bin) << endl;
-		cout << "max_bin low edge: " << hist_S2->GetBinLowEdge(max_bin) << endl;		
+		// cout << "cat_min - xmin: " << (cat_min - xmin) << endl;
+		// cout << "(cat_min - xmin) / bin_width: " << (cat_min - xmin) / bin_width << endl;
+
+		// cout << "cat_max - xmin: " << (cat_max - xmin) << endl;
+		// cout << "(cat_max - xmin) / bin_width: " << (cat_max - xmin) / bin_width << endl;		
+
+		cout << "bin_width = " << bin_width << endl;
+
+		min_bin = (float(cat_min) - float(xmin)) / float(bin_width) + 1;
+		max_bin = (float(cat_max) - float(xmin)) / float(bin_width);		
+
+		cout << "min_bin : " << min_bin << endl;
+		cout << "max_bin : " << max_bin << endl;
+
+		// cout << "min_bin low edge: " << hist_S2->GetBinLowEdge(int(min_bin)) << endl;
+		// cout << "max_bin low edge: " << hist_B2->GetBinLowEdge(int(max_bin)) << endl;		
 
 		// Cat_significance = Significance_h->Integral(min_bin,max_bin); // significance for all signal region events in this category
 		S_total = hist_S2->Integral(min_bin, max_bin);
@@ -665,6 +755,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		Cat_significance = S_total / sqrt(B_total); 
 		cout << "Significance in the signal region events: " << Cat_significance << endl;
 		catSigOut << "Cat: [" << cat_min << ", " << cat_max << "]: " << Cat_significance << "\n";
+		cout << "---" << endl;
 	}
 
 	catSigOut.close();
@@ -693,7 +784,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// Shaded_Area->Fill(0.00001,canvas_ymax);
 	// Shaded_Area->Draw("hist same");
 
-	sig_c->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + ".png");
+	// sig_c->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_Nbins-" + Nbins_str + ".png");
+	sig_c->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + ".png");
 
 	TCanvas * sig_c_log = new TCanvas("sig_c_log","sig_c_log",800,600);
 	sig_c_log->cd();
@@ -718,6 +810,9 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	// Shaded_Area->SetBinContent(1,100);
 	// Shaded_Area->Draw("hist same");
-	sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.png");
-	sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.pdf");
+	// sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_Nbins-" + Nbins_str + "_log.png");
+	// sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_Nbins-" + Nbins_str + "_log.pdf");
+	sig_c_log->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.png");
+	sig_c_log->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.pdf");	
+	
 }

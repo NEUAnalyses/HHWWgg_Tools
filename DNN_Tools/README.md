@@ -36,7 +36,7 @@ In this case, there are two categories: 0-0.7 and 0.7-1.00001. The 1.00001 is us
 
 You should also see a txt file whose name ends with "CatSignificances". This contains the S / sqrt(B) values for each category. These are not used by any subsequent steps, but are useful to know as they are a rough approximation of the result from the asymptotic limit method calculation by combine. 
 
-## Categorize Trees
+## Tree Categorization
 
 Now that you have optimized category boundaries, the next step is to separate your trees by category in order to eventually combine as separate categories in signal fitting, background fitting, and combine results. This is done with the python module CategorizeTrees.py 
 
@@ -62,7 +62,7 @@ A similar command is run for data:
 
 The only differences here are the location being changed to the directory containing the data file, and the opt option being changed to Data. If this works, you should find a Data_CategorizedTrees.root output file with one tree per category. 
 
-## Categorized Workspaces
+## Workspace Categorization
 
 Now that you have trees with events separated by category, you will need a RooWorkspace in order for your files to be compatible with flashggfinalfit. This is done using the python module MakeCategorizedWorkspaces.py. 
 
