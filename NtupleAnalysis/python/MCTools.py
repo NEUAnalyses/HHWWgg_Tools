@@ -9,7 +9,30 @@
 ##-- Note: This module can be shrunk by mapping file name to treename, MCName, and MCCategory. Don't need dictionary for each one
 
 def GetMCTreeName(fileName_):
+    print("fileName_: ",fileName_)
     MCTreesDict = {
+        #########################
+        #       FH Trees        #
+        #########################
+        "DYJetsToLL_M-50_TuneCP5_13TeV.root": "DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "DiPhotonJetsBox_M40_80.root": "",
+        "DiPhotonJetsBox_MGG-80toInf_13TeV.root": "",
+        "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV.root": "",
+        "GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV.root": "",
+        "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf.root": "",
+        "GluGluHToGG_M125_TuneCP5_13TeV.root": "",
+        "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV.root": "",
+        "QCD_Pt-30toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV.root": "",
+        "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf.root": "",
+        "THQ_ctcvcp_HToGG_M125_13TeV.root": "",
+        "TTGG_0Jets_TuneCP5_13TeV.root": "",
+        "TTGJets_TuneCP5_13TeV.root": "",
+        "TTJets_TuneCP5_13TeV.root": "",
+        "VBFHToGG_M125_13TeV.root": "",
+        "VHToGG_M125_13TeV.root": "",
+        "WW_TuneCP5_13TeV-pythia8.root": "",
+        "ttHJetToGG_M125_13TeV.root": "",
+        # 
         # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox1BJet_MGG_80toInf_13TeV_Sherpa",
         # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox2BJets_MGG_80toInf_13TeV_Sherpa",
         "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhotonJetsBox_M40_80_Sherpa",
@@ -81,6 +104,7 @@ def GetMCTreeName(fileName_):
 
 def GetMCName(fileName_):
     MCNameDict = {
+        ## FH
         ##-- QCD
         "QCD_Pt-30to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-30to40",
         "QCD_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "QCD_Pt-40toInf",
@@ -165,6 +189,7 @@ def GetMCName(fileName_):
         "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "TTGJets",
 
         "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
+        "DYJetsToLL_M-50_TuneCP5_13TeV.root":"DY",
 
         ##-- HHWWgg_bkg_v5
         "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
@@ -270,6 +295,7 @@ def GetMCCategory(fileName_):
         "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt",
 
         "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
+        "DYJetsToLL_M-50_TuneCP5_13TeV.root": "DY",
 
         ##-- HHWWgg_bkg_v5
         "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "WGGJets",

@@ -40,6 +40,8 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
     for t in Tags_:
         HHWWggTags.append(t)
     cuts, cutNames = GetCuts(CutsType_)
+    print("cutNames: ",cutNames)
+    print("cuts: ",cuts)
 
     ##-- if var batch is loose, need separate titles for variables since it will be sum of vars * bools
     if(VarBatch_ == "Loose"):
@@ -66,6 +68,7 @@ def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_
             if(verbose_):
                 print"tag:",HHWWggTag
             dPath = "%s/%s"%(dataDirec_,dF_)
+            print("path of file: ",dPath)
             dFile = TFile.Open(dPath)
             if(HHWWggTag=="combined"):
                 ch = TChain('tagsDumper/trees/Data_13TeV_HHWWggTag_0')

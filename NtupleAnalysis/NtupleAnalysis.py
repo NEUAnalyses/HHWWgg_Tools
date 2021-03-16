@@ -34,10 +34,10 @@ if __name__ == '__main__':
     if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
     elif(args.DataMC):
         if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/DataMC_testFeatures/'
-        else: ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v3/DataMC_v7/'
+        else: ol = '/eos/user/r/rasharma/www/doubleHiggs/New_2021/NtupleAnalysis_v1/'
     # nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/NtupleAnalysis/2017_DataMC_ntuples_moreVars/'
     # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
-    nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/background/dataMC/'
+    nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
 
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"

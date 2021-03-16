@@ -14,6 +14,13 @@ An example command to produce Data / MC comparison plots and yields tables is:
 python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --signalFolder signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0,HHWWggTag_1,HHWWggTag_2,combined --noQCD --verbose 
 ```
 
+#Delete
+```bash
+python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --signalFolder signal --VarBatch Fully-Hadronic  --CutsType 4Jet-Sel --Lumi 41.5 --Tags HHWWggTag_2  --verbose
+
+python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --signalFolder signal --VarBatch Fully-Hadronic  --CutsType 4Jet-SelPhoPt --Lumi 41.5 --Tags HHWWggTag_2  --verbose
+```
+
 An explanation of each flag in the command: 
 
 - **DataMC**: Produce Data / MC ratios and yields tables 

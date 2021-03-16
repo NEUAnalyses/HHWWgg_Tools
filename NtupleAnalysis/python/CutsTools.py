@@ -56,6 +56,12 @@ def GetCuts(CutsType):
         cutNames = ["4Jet-Sel"]
 
     ##-- Apply 4 4-jet
+    elif(CutsType == "4Jet-SelPhoPt"):
+        cuts = ["(HGGCandidate_pt>100)"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cutNames = ["4Jet-SelPhoPt"]
+
+    ##-- Apply 4 4-jet
     elif(CutsType == "4Jet-Sel0"):
         # cuts = ["(passPhotonSels==1)"]
         cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
@@ -149,15 +155,20 @@ def CreateYieldsTables(cutBatchTag_pairs,dataNevents_list,MC_names,MC_Nevents_li
     yaxisLabels.append("Data / MC")
     yaxisLabels.append("Data (Blinded)")
     yaxisLabels.append("all_MC")
-    for MC_name in MC_names: yaxisLabels.append(MC_name)
+    for MC_name in MC_names:
+        print "=> ",MC_name
+        yaxisLabels.append(MC_name)
     xaxisLabels = []
-    for cutTagPair in cutBatchTag_pairs: xaxisLabels.append(cutTagPair)
+    for cutTagPair in cutBatchTag_pairs:
+        print "==> ",cutTagPair
+        xaxisLabels.append(cutTagPair)
     firstCutBatch = xaxisLabels[0].split('_')[0]
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
     N_allMC_list = []
     for MC_events_list in MC_Nevents_lists:
         N_allMC = sum(MC_events_list)
+        print "===> ",MC_events_list,"\t",N_allMC
         N_allMC_list.append(N_allMC)
 
     N_allMC_noweight_list = []
