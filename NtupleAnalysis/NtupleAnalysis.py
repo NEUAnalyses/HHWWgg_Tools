@@ -16,7 +16,13 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 #
 # ##-- Data / MC Analysis
-# python NtupleAnalysis.py --DataMC --dataFolder Data --mcFolder Backgrounds --signalFolder Signal --VarBatch mass --CutsType Loose --Lumi 41.5 --Tags HHWWggTag_0 --verbose  --noQCD --testFeatures
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling_ANv3/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 5 --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch RestOfTrainingVars --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch Jet --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale
+#
+# ##-- Gen / Reco Analysis 
+# python NtupleAnalysis.py --GenReco
 #########################################################################################################################################################################################################
 
 ##-- Import python modules
@@ -30,15 +36,19 @@ import os
 args = GetOptions()
 
 if __name__ == '__main__':
-    gROOT.SetBatch(1) # Do not output upon draw statement
+    gROOT.SetBatch(1) # Do not output upon draw statement 
     if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
     elif(args.DataMC):
         if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/DataMC_testFeatures/'
-        else: ol = '/eos/user/r/rasharma/www/doubleHiggs/New_2021/NtupleAnalysis_v1/'
-    # nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/NtupleAnalysis/2017_DataMC_ntuples_moreVars/'
-    # nTupleDirec = '/afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/'
-    nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
-
+        #nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
+        else: 
+            ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
+            if(not os.path.exists(ol)):
+                print"Path %s does not exist, so creating it now"
+                print'mkdir %s'%(ol)
+                os.system('mkdir %s'%(ol))
+                print'cp %s/../index.php %s'%(ol,ol)
+                os.system('cp %s/../index.php %s'%(ol,ol))
     if(args.Efficiency):
         print"Performing cut flow efficiency analysis"
         if(args.ratio):
@@ -382,31 +392,49 @@ if __name__ == '__main__':
     elif(args.DataMC):
         print"Performing Data / MC Analysis"
 
-        ##-- Get Data File(s)
-        dataFolder = str(args.dataFolder)
-        dataDirec = nTupleDirec + dataFolder
-        dataFiles = []
-        for file in os.listdir(dataDirec):
-            dataFiles.append(file)
-        if(args.verbose): print"dataFiles:",dataFiles
+        ##-- Get Data File
+        dataFile = args.dataFile 
 
-        ##-- Get Background MC Files
-        mcFolder = str(args.mcFolder)
-        mcDirec = nTupleDirec + mcFolder
-        mcFiles = []
-        for file in os.listdir(mcDirec):
-            mcFiles.append(file)
-        if(args.verbose): print"mcFiles:",mcFiles
+        ##-- Get Background Files 
+        bkgDirec = args.bkgDirec 
+        bkgFiles = GetFiles(bkgDirec)
+        print"bkgFiles:",bkgFiles
+        # exit(1) 
 
-        ##-- Get Signal File(s)
-        signalFolder = str(args.signalFolder)
-        signalDirec = nTupleDirec + signalFolder
-        signalFiles = []
-        for file in os.listdir(signalDirec):
-            signalFiles.append(file)
-        if(args.verbose): print"signalFiles:",signalFiles
+        ##-- Get Signal File 
+        signalFile = args.signalFile 
 
-        ##-- Run Main Module
-        Tags = args.Tags.split(',')
-        PlotDataMC(dataFiles,mcFiles,signalFiles,dataDirec,mcDirec,signalDirec,args.drawPads,args.Lumi,args.SigScale,ol,args.log,Tags,args.VarBatch,args.CutsType,args.verbose,args.noQCD)
+        ##-- Run Main Module 
+        if(not args.SB and not args.SR):
+            print "No phase space regions selected"
+            print "To run on the signal region pass the flag --SR"
+            print "To run on the signal sidebands region, pass the flag --SB"
+            print "You can pass both flags "
+
+        ##-- Data, MC and Signal Together. Data and MC in sidebands
+        if(args.SB): region = "SB"
+        elif(args.SR): region = "SR"
+        cuts, cutNames = GetCuts(args.CutsType)
+        for i in range(0,len(cuts)):
+            cut_ = cuts[i] ## using only first cut.
+            cutName_ = cutNames[i] ## using only first cut.     
+            print"cut_:",cut_
+            print"cutName_:",cutName_       
+            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax)
+            print "chi2:",chi2
+
+        # ##-- MC and Signal in Signal Region 
+        # if(args.SR): 
+        #     region = "SR"
+        #     cuts, cutNames = GetCuts(args.CutsType)
+        #     for i in range(0,len(cuts)):
+        #         cut_ = cuts[i] ## using only first cut.
+        #         cutName_ = cutNames[i] ## using only first cut.     
+        #         print"cut_:",cut_
+        #         print"cutName_:",cutName_       
+        #         chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_)
+        #         print "chi2:",chi2        
+        # if(args.SR): 
+        #     region = "SR"
+        #     PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region)
         print"DONE"

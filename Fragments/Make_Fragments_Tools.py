@@ -23,7 +23,7 @@ def ArgChecks(args):
         print"[Make_Fragments - ERROR]: Exiting"
         exit(1)         
 
-    if( (args.NMSSM or args.Resonant) and args.masses==""):
+    if( (args.NMSSM or args.Resonant) and args.masses=="" and args.gridpacks==""): # can input gridpacks
         print"[Make_Fragments - ERROR]: If you want to produce Resonant or NMSSM fragments, you need to provide a comma separated list of mass points"
         print"[Make_Fragments - ERROR]: Exiting"
         exit(1) 

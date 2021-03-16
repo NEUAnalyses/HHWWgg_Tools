@@ -16,12 +16,92 @@ def GetVars(VarBatch):
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
+    pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
+    Scaled_Leading_Photon_pt = "(Leading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_pt = "(Subleading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Leading_Photon_E = "(Leading_Photon_E / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"    
+    Leading_Jet_bscore = "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+    Subleading_Jet_bscore = "(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
 
     ##-- Variable batch definitions
 
-    # Just diphoton mass
+    # Just diphoton mass 
+    # make dictionary 
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
+    elif(VarBatch == "DNN"):
+        return ["evalDNN"]        
+
+    elif(VarBatch == "Jet"):
+        return ["Leading_Jet_pt","Leading_Jet_E","Leading_Jet_eta","N_goodJets"]
+
+    elif(VarBatch == "Ngood"):
+        return ["N_goodElectrons","N_goodMuons","N_goodLeptons","N_goodJets"]
+
+    elif(VarBatch == "LeadPhopt"):
+        return ["Leading_Photon_pt"]
+
+    elif(VarBatch == "diphopt"):
+        return [pT_gg]
+
+    elif(VarBatch == "TrainingVariables"):
+        TrainingVars = [
+            "evalDNN",
+            Scaled_Leading_Photon_pt,
+            "goodJets_0_pt",
+            "goodLepton_pt",
+            "Wmass_goodJets12",
+            Scaled_Subleading_Photon_pt,
+            "goodJets_1_E",
+            "goodJets_1_pt",
+            "goodLepton_E",
+            "METCor_pt",
+            "goodJets_0_E",
+            "goodLepton_phi",
+            "Leading_Photon_MVA",
+            "goodLepton_eta",
+            "goodJets_1_eta",
+            "goodJets_1_phi",
+            "Subleading_Photon_eta",
+            Leading_Jet_bscore,
+            Subleading_Jet_bscore,
+            "Subleading_Photon_phi",
+            "N_goodJets",
+            "goodJets_0_phi",
+            Scaled_Leading_Photon_E,
+            Scaled_Subleading_Photon_E,
+            "Leading_Photon_phi",
+            "Subleading_Photon_MVA",
+            "goodJets_0_eta",
+            "Leading_Photon_eta",
+            "Wmt_L"             
+        ]
+        return TrainingVars 
+
+    # elif(VarBatch == "RestOfTrainingVars"):
+    #     RestOfTrainingVars = [
+    #         "goodLepton_phi",
+    #         "Leading_Photon_MVA",
+    #         "goodLepton_eta",
+    #         "goodJets_1_eta",
+    #         "goodJets_1_phi",
+    #         "Subleading_Photon_eta",
+    #         Leading_Jet_bscore,
+    #         Subleading_Jet_bscore,
+    #         "Subleading_Photon_phi",
+    #         "N_goodJets",
+    #         "goodJets_0_phi",
+    #         Scaled_Leading_Photon_E,
+    #         Scaled_Subleading_Photon_E,
+    #         "Leading_Photon_phi",
+    #         "Subleading_Photon_MVA",
+    #         "goodJets_0_eta",
+    #         "Leading_Photon_eta",
+    #         "Wmt_L" 
+
+    #     ]
+    #     return RestOfTrainingVars
 
     # Some potentially useful MVA variables
     elif(VarBatch == "Fully-Hadronic"):
@@ -85,6 +165,22 @@ def GetVars(VarBatch):
             "Subleading_Photon_pt","Subleading_Photon_eta","Subleading_Photon_E","Subleading_Photon_MVA"
         ]
         return PhotonVars
+
+    # Photon variables 
+    elif(VarBatch == "LeadingPhoton"):
+        PhotonVars = [
+            "Leading_Photon_pt","Leading_Photon_eta","Leading_Photon_E","Leading_Photon_MVA"
+        ]
+        return PhotonVars         
+
+    elif(VarBatch =="bScores"):
+        bScores = []
+        scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+        # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
+        # bScores.append(scoresum)
+        for score in scores:
+            bScores.append("goodJets_0_%s"%(score))
+        return bScores 
 
     # Variables that should be combined with Loose cuts. Plots kinematics of leading lepton (which changes event by event)
     elif(VarBatch == "Loose"):
@@ -179,10 +275,19 @@ def GetVars(VarBatch):
     elif(VarBatch == "special"):
         return [dr_jj]
 
-##-- Get bins for a variable
-def GetBins(variable_):
+##-- Get bins for a variable 
+def GetBins(variable_,DNNbinWidth_):
+# def GetBins(variable_,DNNbinWidth_ = 0.1):
 
-    # Specify bins for specific variables
+    # evalDNNmin, evalDNNmax = 0, 1.00001
+    # evalDNNmin, evalDNNmax = 0.9, 1.00001
+    # evalDNNmin, evalDNNmax = 0, 1.00001
+    evalDNNmin, evalDNNmax = 0, 1
+    nDNNbins = int(float((evalDNNmax - evalDNNmin)) / float(DNNbinWidth_))
+
+    if(DNNbinWidth_ != 0.1):
+        print"nDNNbins: ",nDNNbins
+    # Specify bins for specific variables 
     binDict = {
         "Leading_Photon_MVA": [20,-1,1],
         "Subleading_Photon_MVA": [20,-1,1],
@@ -194,10 +299,45 @@ def GetBins(variable_):
         "mu_mT" : [100,0,300],
         "dr_gg" : [60,0,3],
         "dr_jj" : [60,0,3],
+        "pT_gg" : [40,0,400],
+
+        "goodJets_0_pt" : [18,0,360],
+        "goodLepton_pt" : [18,0,360],
+        "Wmass_goodJets12": [25,0,500],
+        # "Subleading_Photon_pt/CMS_hgg_mass",
+        "goodJets_1_E": [18,0,360],
+        "goodJets_1_pt": [18,0,360],
+        "goodLepton_E": [18,0,360],
+        "METCor_pt": [40,0,400],
+        "goodJets_0_E": [18,0,360],
+        "Scaled_Leading_Photon_pt" : [30,0,3],
+        "Scaled_Subleading_Photon_pt" : [15,0,1.5],
+        "Scaled_Leading_Photon_E" : [30,0,3],
+        "Scaled_Subleading_Photon_E" : [15,0,1.5],
+        "Leading_Jet_bscore" : [50,0,1],
+        "Subleading_Jet_bscore" : [50,0,1],
+        "Wmt_L" : [30,0,300],
+
+
+        # "evalDNN" : [20,0,1.00001] # To include value == 1 
+        # "evalDNN" : [10,0,1.00001] # To include value == 1 
+        # "evalDNN" : [25,0,1.00001] # To include value == 1 
+        # "evalDNN" : [100,0,1.00001] # To include value == 1 
+        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1 
+        "Subleading_Photon_pt" : [24,0,120]
+        # "evalDNN" : [10,0,1] # To include value == 1 
         "HWWCandidate_M" : [50,50,1000],
         "HGGCandidate_pt": [25,100,500]
-    }
-    specialVars = ["Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","HWWCandidate_M","HGGCandidate_pt"]
+    }    
+    specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN",
+                    "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E", "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
+                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L","HWWCandidate_M", "HGGCandidate_pt"
+    
+    ]
+
+    scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+    scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
+    if variable_ == scoresum: return [50,0,1]
     if variable_ in specialVars:
         return binDict[variable_]
 
@@ -207,11 +347,14 @@ def GetBins(variable_):
 
     # Specified binning if variable has phi, eta or pt in name
     else:
-        if("phi" in variable_): return [16,-3.14,3.14]
-        elif("eta" in variable_): return [16,-4,4]
-        elif ("pt" in variable_): return [20,0,200]
+        # if("phi" in variable_): return [20,-3.14,3.14]
+        if("phi" in variable_): return [17,-3.14,3.15]
+        # elif("eta" in variable_): return [16,-4,4]
+        elif("eta" in variable_): return [10,-2.5,2.5]
+        elif ("pt" in variable_): return [20,0,200]   
         elif ("_M" in variable_): return [55,0,200]
-        else: return [10,0,100] # if variable name meets none of the above conditions, default to this binning
+        elif("bDiscriminator" in variable_): return [20,0,1]
+        else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning 
 
 ##-- Get x axis title for ratio plot depending on the variable
 def GetXaxisTitle(variable_):
@@ -232,7 +375,17 @@ def GetXaxisTitle(variable_):
         "e_mT" : "GeV",
         "mu_mT" : "GeV",
         "dr_gg" : "rad",
-        "dr_jj" : "rad"
+        "dr_jj" : "rad",
+        "pT_gg" : "GeV",
+        "DeepJetScore" : "unitless",
+        "evalDNN" : "unitless",
+        "Scaled_Leading_Photon_pt" : "unitless",
+        "Scaled_Subleading_Photon_pt" : "unitless",
+        "Leading_Jet_bscore" : "unitless", 
+        "Subleading_Jet_bscore" : "unitless",
+        "Scaled_Leading_Photon_E" : "unitless",
+        "Scaled_Subleading_Photon_E" : "unitless",
+        "Wmt_L" : "GeV"
     }
 
     for varFrag in variableUnitDict:
@@ -245,15 +398,53 @@ def GetXaxisTitle(variable_):
 ##-- Get the name of variable. Useful for variables that have long strings in draw statement. This returns a shortened value to be used for plot title and output file name
 def GetVarTitle(varName):
     varTitle = ""
+    scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
+    # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])    
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"
     dr_gg = "sqrt( fabs(Leading_Photon_eta - Subleading_Photon_eta)**2 + fabs( Leading_Photon_phi - Subleading_Photon_phi )**2  )"
     dr_jj = "sqrt( fabs(allJets_0_eta - allJets_1_eta)**2 + fabs( allJets_0_phi - allJets_1_phi )**2  )"
+    pT_gg = "Leading_Photon_pt + Subleading_Photon_pt"
+    Scaled_Leading_Photon_pt = "(Leading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_pt = "(Subleading_Photon_pt / CMS_hgg_mass)"
+    Scaled_Leading_Photon_E = "(Leading_Photon_E / CMS_hgg_mass)"
+    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"
+    Leading_Jet_bscore = "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+    Subleading_Jet_bscore = "(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
+
     if(varName == mjj): varTitle = "mjj"
     elif(varName == e_mT): varTitle = "e_mT"
     elif(varName == mu_mT): varTitle = "mu_mT"
     elif(varName == dr_gg): varTitle = "dr_gg"
     elif(varName == dr_jj): varTitle = "dr_jj"
-    else: varTitle = varName
-    return varTitle
+    elif(varName == pT_gg): varTitle = "pT_gg"
+    # elif(varName == scoresum): varTitle = "DeepJetScore"
+    elif(varName == Scaled_Leading_Photon_pt): varTitle = "Scaled_Leading_Photon_pt"
+    elif(varName == Scaled_Subleading_Photon_pt): varTitle = "Scaled_Subleading_Photon_pt"
+    elif(varName == Scaled_Leading_Photon_E): varTitle = "Scaled_Leading_Photon_E"
+    elif(varName == Scaled_Subleading_Photon_E): varTitle = "Scaled_Subleading_Photon_E"
+    elif(varName == Leading_Jet_bscore) : varTitle = "Leading_Jet_bscore"
+    elif(varName == Subleading_Jet_bscore): varTitle = "Subleading_Jet_bscore"
+    else: varTitle = varName 
+    return varTitle 
+
+##-- Compute chi squared for a data / mc plot 
+def GetChiSquared(DataHist_,stackSum_):
+    # the two histos should have the same binning 
+    Nbins = DataHist_.GetNbinsX()
+    assert(Nbins == stackSum_.GetNbinsX())
+    chi2_total = 0
+    for bin_i in range(1,Nbins): # skip underflow bin 
+        data_y, MC_sum_y = DataHist_.GetBinContent(bin_i), stackSum_.GetBinContent(bin_i)
+        chi2_num = pow(abs(float(data_y)-float(MC_sum_y)),2)
+        # avoid a denominator of 0 
+        if(data_y == 0.0 and MC_sum_y == 0.0): continue 
+        elif(data_y == 0.0 and MC_sum_y != 0.0): chi2_den = MC_sum_y 
+        else: chi2_den = data_y  
+        # print"data_y:",data_y
+        # print"MC_sum_y:",MC_sum_y
+        chi2 = chi2_num / chi2_den 
+        chi2_total += chi2 
+    chi2_total /= Nbins 
+    return chi2_total 
