@@ -31,7 +31,7 @@ def GetVars(VarBatch):
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
     elif(VarBatch == "DNN"):
-        return ["evalDNN"]        
+        return ["evalDNN_HH"]        
 
     elif(VarBatch == "Jet"):
         return ["Leading_Jet_pt","Leading_Jet_E","Leading_Jet_eta","N_goodJets"]
@@ -47,7 +47,8 @@ def GetVars(VarBatch):
 
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
-            "evalDNN",
+            "evalDNN_HH",
+            # "evalDNN",
             Scaled_Leading_Photon_pt,
             "goodJets_0_pt",
             "goodLepton_pt",
@@ -266,35 +267,67 @@ def GetBins(variable_,DNNbinWidth_):
     if(DNNbinWidth_ != 0.1):
         print"nDNNbins: ",nDNNbins
     # Specify bins for specific variables 
+    nbins_glob = 20
     binDict = {
-        "Leading_Photon_MVA": [20,-1,1],
-        "Subleading_Photon_MVA": [20,-1,1],
-        "CMS_hgg_mass": [30,100,180],
-        "weight":[1000,-10,10],
-        "puweight":[1000,-2,2],
-        "mjj" : [100,0,300],
-        "e_mT" : [100,0,300],
-        "mu_mT" : [100,0,300],
-        "dr_gg" : [60,0,3],
-        "dr_jj" : [60,0,3],
-        "pT_gg" : [40,0,400],
 
-        "goodJets_0_pt" : [18,0,360],
-        "goodLepton_pt" : [18,0,360],
-        "Wmass_goodJets12": [25,0,500],
+        "Leading_Photon_MVA": [nbins_glob,-1,1],
+        "Subleading_Photon_MVA": [nbins_glob,-1,1],
+        "CMS_hgg_mass": [nbins_glob,100,180],
+        "weight":[nbins_glob,-10,10],
+        "puweight":[nbins_glob,-2,2],
+        "mjj" : [nbins_glob,0,300],
+        "e_mT" : [nbins_glob,0,300],
+        "mu_mT" : [nbins_glob,0,300],
+        "dr_gg" : [nbins_glob,0,3],
+        "dr_jj" : [nbins_glob,0,3],
+        "pT_gg" : [nbins_glob,0,400],
+
+        "goodJets_0_pt" : [nbins_glob,0,500],
+        "goodLepton_pt" : [nbins_glob,0,360],
+        "Wmass_goodJets12": [nbins_glob,0,750],
         # "Subleading_Photon_pt/CMS_hgg_mass",
-        "goodJets_1_E": [18,0,360],
-        "goodJets_1_pt": [18,0,360],
-        "goodLepton_E": [18,0,360],
-        "METCor_pt": [40,0,400],
-        "goodJets_0_E": [18,0,360],
-        "Scaled_Leading_Photon_pt" : [30,0,3],
-        "Scaled_Subleading_Photon_pt" : [15,0,1.5],
-        "Scaled_Leading_Photon_E" : [30,0,3],
-        "Scaled_Subleading_Photon_E" : [15,0,1.5],
-        "Leading_Jet_bscore" : [50,0,1],
-        "Subleading_Jet_bscore" : [50,0,1],
-        "Wmt_L" : [30,0,300],
+        "goodJets_1_E": [nbins_glob,0,360],
+        "goodJets_1_pt": [nbins_glob,0,360],
+        "goodLepton_E": [nbins_glob,0,360],
+        "METCor_pt": [nbins_glob,0,400],
+        "goodJets_0_E": [nbins_glob,0,360],
+        "Scaled_Leading_Photon_pt" : [nbins_glob,0,3],
+        "Scaled_Subleading_Photon_pt" : [nbins_glob,0,1.5],
+        "Scaled_Leading_Photon_E" : [nbins_glob,0,3],
+        "Scaled_Subleading_Photon_E" : [nbins_glob,0,1.5],
+        "Leading_Jet_bscore" : [nbins_glob,0,1],
+        "Subleading_Jet_bscore" : [nbins_glob,0,1],
+        "Wmt_L" : [nbins_glob,0,300],
+
+        ##-- Custom binnings 
+        # "Leading_Photon_MVA": [20,-1,1],
+        # "Subleading_Photon_MVA": [20,-1,1],
+        # "CMS_hgg_mass": [30,100,180],
+        # "weight":[1000,-10,10],
+        # "puweight":[1000,-2,2],
+        # "mjj" : [100,0,300],
+        # "e_mT" : [100,0,300],
+        # "mu_mT" : [100,0,300],
+        # "dr_gg" : [60,0,3],
+        # "dr_jj" : [60,0,3],
+        # "pT_gg" : [40,0,400],
+
+        # "goodJets_0_pt" : [18,0,360],
+        # "goodLepton_pt" : [18,0,360],
+        # "Wmass_goodJets12": [25,0,500],
+        # # "Subleading_Photon_pt/CMS_hgg_mass",
+        # "goodJets_1_E": [18,0,360],
+        # "goodJets_1_pt": [18,0,360],
+        # "goodLepton_E": [18,0,360],
+        # "METCor_pt": [40,0,400],
+        # "goodJets_0_E": [18,0,360],
+        # "Scaled_Leading_Photon_pt" : [30,0,3],
+        # "Scaled_Subleading_Photon_pt" : [15,0,1.5],
+        # "Scaled_Leading_Photon_E" : [30,0,3],
+        # "Scaled_Subleading_Photon_E" : [15,0,1.5],
+        # "Leading_Jet_bscore" : [50,0,1],
+        # "Subleading_Jet_bscore" : [50,0,1],
+        # "Wmt_L" : [30,0,300],
 
 
         # "evalDNN" : [20,0,1.00001] # To include value == 1 
@@ -302,10 +335,11 @@ def GetBins(variable_,DNNbinWidth_):
         # "evalDNN" : [25,0,1.00001] # To include value == 1 
         # "evalDNN" : [100,0,1.00001] # To include value == 1 
         "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1 
+        "evalDNN_HH" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1 
         "Subleading_Photon_pt" : [24,0,120]
         # "evalDNN" : [10,0,1] # To include value == 1 
     }    
-    specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN",
+    specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN", "evalDNN_HH",
                     "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E", "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
                     "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L"
     
@@ -324,12 +358,12 @@ def GetBins(variable_,DNNbinWidth_):
     # Specified binning if variable has phi, eta or pt in name 
     else:
         # if("phi" in variable_): return [20,-3.14,3.14]
-        if("phi" in variable_): return [17,-3.14,3.15]
+        if("phi" in variable_): return [nbins_glob,-3.14,3.15]
         # elif("eta" in variable_): return [16,-4,4]
-        elif("eta" in variable_): return [10,-2.5,2.5]
-        elif ("pt" in variable_): return [20,0,200]   
-        elif("bDiscriminator" in variable_): return [20,0,1]
-        else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning 
+        elif("eta" in variable_): return [nbins_glob,-2.5,2.5]
+        elif ("pt" in variable_): return [nbins_glob,0,200]   
+        elif("bDiscriminator" in variable_): return [nbins_glob,0,1]
+        else: return [nbins_glob,0,300] # if variable name meets none of the above conditions, default to this binning 
 
 ##-- Get x axis title for ratio plot depending on the variable 
 def GetXaxisTitle(variable_):
@@ -354,6 +388,7 @@ def GetXaxisTitle(variable_):
         "pT_gg" : "GeV",
         "DeepJetScore" : "unitless",
         "evalDNN" : "unitless",
+        "evalDNN_HH" : "unitless",
         "Scaled_Leading_Photon_pt" : "unitless",
         "Scaled_Subleading_Photon_pt" : "unitless",
         "Leading_Jet_bscore" : "unitless", 
