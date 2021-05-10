@@ -6,7 +6,8 @@ def GetVarParams(var_,args__):
         ##-- nbins, xmin, xmax
         "qq_invmass" : [30,0,100,"GeV"],
         "qq_DeltaR" : [20,0,5,"radians"],
-        "HH_invmass" : [100,0,1000,"GeV"],
+        # "HH_invmass" : [100,0,1000,"GeV"],
+        "HH_invmass" : [50,250,1000,"GeV"],
         # "HH_DeltaR" : [20,0,6,"radians"], # Arb 
         # "HH_DeltaR" : [20,0,0.08,"radians"], # 250 GeV 
         "HH_DeltaR" : [30,0,5.5,"radians"], # 850 GeV 
@@ -35,9 +36,9 @@ def GetVarParams(var_,args__):
             elif("Sublead_q_pt" in varName): VarDict[varName] = [25,0,250,"GeV"]
             # if("q_pt" in varName): VarDict[varName] = [50,0,500,"GeV"]
             elif("nu_pt" in varName): VarDict[varName] = [40,0,400,"GeV"]
-            elif("Lead_H_pt" in varName): VarDict[varName] = [40,0,800,"GeV"]
+            elif("Lead_H_pt" in varName): VarDict[varName] = [30,0,600,"GeV"]
             # elif("Sublead_H_pt" in varName): VarDict[varName] = [30,0,500,"GeV"]
-            elif("Sublead_H_pt" in varName): VarDict[varName] = [30,0,800,"GeV"]
+            elif("Sublead_H_pt" in varName): VarDict[varName] = [30,0,600,"GeV"]
             elif("nu_pt" in varName): VarDict[varName] = [20,0,400,"GeV"]
             elif("pz" in v or "px" in v or "py" in v): VarDict[varName] = [100,-2000,2000,"GeV"]
             elif("eta" in v or "phi" in v): VarDict[varName] = [50,-5,5,"radians"]

@@ -83,7 +83,12 @@ def GetDatasets(DatasetBatch):
         ##-- MadGraph 2.6.5 
         "HHWWgg-VBF-nonres-SM":{ 
             "SM-NonRes":"%s/WWgg_qqlnu_nodeSM_100000events/HHWWgg-SM-NonRes-VBF_GEN-SIM/200928_054428/0000/"%(productionLocation)
-        }   
+        },   
+
+        ##-- Phase II private LHE / GEN 
+        "PhaseIIHHWWgg-GF-nonres-SM":{ 
+            "SM-NonRes":"%s/Phase_II/Private_LHEGEN/"%(productionLocation)
+        }           
 
     }
 

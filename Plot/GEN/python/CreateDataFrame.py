@@ -127,8 +127,10 @@ def CreateDataFrame(args_):
         genHandle = Handle('vector<reco::GenParticle>')
         
         ##-- Pandas dataframe lists 
+        doVBF = 0
         d = {}
-        particles = ["Lead_H","Sublead_H","Lead_Pho","Sublead_Pho","Lead_q","Sublead_q","Lead_incVBFq","Sublead_incVBFq","Lead_outVBFq","Sublead_outVBFq","lep","nu"] ##-- qqlnu final state 
+        # if(doVBF): # particles = ["Lead_H","Sublead_H","Lead_Pho","Sublead_Pho","Lead_q","Sublead_q","Lead_incVBFq","Sublead_incVBFq","Lead_outVBFq","Sublead_outVBFq","lep","nu"] ##-- qqlnu final state 
+        particles = ["Lead_H","Sublead_H","Lead_Pho","Sublead_Pho","Lead_q","Sublead_q","lep","nu"] ##-- qqlnu final state 
         if(RES): particles.append("X")
         variables = ["pt","eta","phi","p","px","py","pz","status"]
         for p in particles:
@@ -139,7 +141,8 @@ def CreateDataFrame(args_):
         d["pdgIds"] = [] 
 
         ##-- Initialize Special Variables Lists
-        for p in ["H","Pho","q","incVBFq","outVBFq"]:
+        # if(doVBF): # for p in ["H","Pho","q","incVBFq","outVBFq"]:
+        for p in ["H","Pho","q"]:
             for v in ["invmass","DeltaR"]:
                 exec("d['%s%s_%s'] = []"%(p,p,v))
 
@@ -220,29 +223,31 @@ def CreateDataFrame(args_):
                             q2 = particle 
                     ##-- Incoming quarks recoiling off Vector bosons 
                     else:
-                        # if(debug): 
-                            # print("Mother ID:",motherID)
-                            # print"status:",particle.status()
-                        if(particle.status()==21):
-                            if(not foundFirstIncVBFQuark):
-                                if(debug): print("Found first inc VBF quark")
-                                foundFirstIncVBFQuark = 1
-                                incVBFq1 = particle 
-                            elif(foundFirstIncVBFQuark):
-                                if(debug): print("Found second inc VBF quark")
-                                incVBFq2 = particle     
-                        elif(particle.status()==23):
-                            if(not foundFirstOutVBFQuark):
-                                if(debug): print("Found first out VBF quark")
-                                foundFirstOutVBFQuark = 1
-                                outVBFq1 = particle 
-                            elif(foundFirstOutVBFQuark):
-                                if(debug): print("Found second out VBF quark")
-                                outVBFq2 = particle      
-                        else: 
-                            print("quark status is not 21 or 23:")
-                            print("status:",particle.status())
-                            print("Mother ID:",motherID)
+
+                        if(doVBF):
+                            # if(debug): 
+                                # print("Mother ID:",motherID)
+                                # print"status:",particle.status()
+                            if(particle.status()==21):
+                                if(not foundFirstIncVBFQuark):
+                                    if(debug): print("Found first inc VBF quark")
+                                    foundFirstIncVBFQuark = 1
+                                    incVBFq1 = particle 
+                                elif(foundFirstIncVBFQuark):
+                                    if(debug): print("Found second inc VBF quark")
+                                    incVBFq2 = particle     
+                            elif(particle.status()==23):
+                                if(not foundFirstOutVBFQuark):
+                                    if(debug): print("Found first out VBF quark")
+                                    foundFirstOutVBFQuark = 1
+                                    outVBFq1 = particle 
+                                elif(foundFirstOutVBFQuark):
+                                    if(debug): print("Found second out VBF quark")
+                                    outVBFq2 = particle      
+                            else: 
+                                print("quark status is not 21 or 23:")
+                                print("status:",particle.status())
+                                print("Mother ID:",motherID)
 
                 ##-- Lepton 
                 elif(abs(pdgId_val) == 11 or abs(pdgId_val) == 13 or abs(pdgId_val) == 15): lep = particle 
@@ -250,11 +255,12 @@ def CreateDataFrame(args_):
                 ##-- Neutrino 
                 elif(abs(pdgId_val) == 12 or abs(pdgId_val) == 14 or abs(pdgId_val) == 16): nu = particle  
 
-            if(pdgIds.count(21)>0): 
-                print("pdgId count of 21 > 0")
-                print("pdgIds:",pdgIds)
-                print("Skipping event")
-                continue ## couldn't get VBF quarks in this case 
+            # if(doVBF): 
+                # if(pdgIds.count(21)>0): 
+                #     print("pdgId count of 21 > 0")
+                #     print("pdgIds:",pdgIds)
+                #     print("Skipping event")
+                #     continue ## couldn't get VBF quarks in this case 
 
             if(RES or NONRES):
 
@@ -265,7 +271,8 @@ def CreateDataFrame(args_):
                 # print"neutrino pdgId:",nu.pdgId()
 
                 ##-- Determine Leading, Subleading particles, save variables 
-                for p in ["H","Pho","q","incVBFq","outVBFq"]:
+                # if(doVBF): for p in ["H","Pho","q","incVBFq","outVBFq"]:
+                for p in ["H","Pho","q"]:
                     p1 = eval("%s1"%(p)) 
                     p2 = eval("%s2"%(p))                                       
                     if(p1.pt() > p2.pt()):
@@ -308,7 +315,8 @@ def CreateDataFrame(args_):
                     exec("d['%s_status'].append(%s_status)"%(pName,pName))                    
 
                 ##-- Compute and append special variables   
-                for p in ["H","Pho","q","incVBFq","outVBFq"]:
+                # if(doVBF): for p in ["H","Pho","q","incVBFq","outVBFq"]:
+                for p in ["H","Pho","q"]:
                     for v in ["invmass","DeltaR"]:
                         exec("%s%s_%s = %s(Lead_%s.p4(),Sublead_%s.p4())"%(p,p,v,v,p,p))                                                              
                         exec("d['%s%s_%s'].append(%s%s_%s)"%(p,p,v,p,p,v))                                                              

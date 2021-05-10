@@ -7,6 +7,8 @@
 # Example Usage:
 #
 # ##-- Create pandas dataframe 
+# python GenPlot_PD.py --CreateDataframe --genType NONRES --nEvents 1000  --maxFiles 1 --dfOutName PhaseII_HHWWgg --DatasetBatch PhaseIIHHWWgg-GF-nonres-SM --printerval 100
+# python GenPlot_PD.py --CreateDataframe --genType NONRES --nEvents 1000  --maxFiles 1 --dfOutName PhaseII_HHWWgg_Test --DatasetBatch PhaseIIHHWWgg-GF-nonres-SM --printerval 100
 # python GenPlot_PD.py --CreateDataframe --genType VBFNONRES --nEvents 2000  --maxFiles 1 --dfOutName HHWWgg-SM-NonRes-VBF_WWgg_qqlnu_{node}_df --DatasetBatch HHWWgg-VBF-nonres-SM --printerval 500 
 # python GenPlot_PD.py --CreateDataframe --genType VBFRES --nEvents 10000  --maxFiles 1 --dfOutName VBFToBulkGravitonToHH_WWgg_qqlnu_{node}_df --DatasetBatch VBF-Resonant --printerval 500
 # python GenPlot_PD.py --CreateDataframe --genType RES --nEvents 9000 --requireHardProcess --maxFiles 4 --dfOutName GluGluToHHToRadionTo_WWgg_qqlnu_{node}_df --DatasetBatch Resonant
@@ -15,6 +17,7 @@
 # lowevents: python GenPlot_PD.py --CreateDataframe --genType VBFRES-LowEvents --nEvents 1000  --maxFiles 1 --dfOutName VBFToBulkGravitonToHH_WWgg_qqlnu_{node}_df --DatasetBatch VBF-RES-2-6-5 --printerval 100
 #
 # ##-- Plot dataframe variables 
+# python GenPlot_PD.py --PlotDataFrame --dfTypes NONRES --outDirectory NONRES_PhaseII --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes VBFNONRES --outDirectory VBFNONRES --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes VBFNONRES --outDirectory VBFNONRES --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes VBFRES-Compare-2-4-2-and-2-6-5-X850 --outDirectory Compare-2-4-2-and-2-6-5-X850 --extraVariables HH_DeltaR,qq_invmass,qq_DeltaR,outVBFqoutVBFq_invmass,outVBFqoutVBFq_DeltaR,incVBFqincVBFq_invmass --particles Lead_H,Sublead_H,Lead_q,Sublead_q,nu,Lead_outVBFq,Sublead_outVBFq --variables pt --doRatioHists
