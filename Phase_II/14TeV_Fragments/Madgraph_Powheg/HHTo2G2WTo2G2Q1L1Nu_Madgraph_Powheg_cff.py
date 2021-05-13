@@ -1,13 +1,5 @@
 import FWCore.ParameterSet.Config as cms
 
-externalLHEProducer = cms.EDProducer("ExternalLHEProducer",
-	args = cms.vstring('/cvmfs/cms.cern.ch/phys_generator/gridpacks/slc7_amd64_gcc700/14TeV/powheg/V2/ggHH_NLO_14TeV_POWHEG/ggHH_EWChL_slc7_amd64_gcc700_CMSSW_10_6_0_my_ggHH_EWChL_NLO_cHHH_1.tgz'),
-	nEvents = cms.untracked.uint32(5000),
-    numberOfParameters = cms.uint32(1),
-    outputFile = cms.string('cmsgrid_final.lhe'),
-    scriptName = cms.FileInPath('GeneratorInterface/LHEInterface/data/run_generic_tarball_cvmfs.sh')
-)
-
 #Link to datacards:
 #https://github.com/cms-sw/genproductions/tree/master/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/exo_diboson/
 
@@ -28,7 +20,7 @@ generator = cms.EDFilter("Pythia8HadronizerFilter",
         pythia8PowhegEmissionVetoSettingsBlock,
         processParameters = cms.vstring(
             
-            'POWHEG:nFinal = 2',   ## Number of final state particles
+            'POWHEG:nFinal = 2',   ## Number of final state particles (2 for the two Higgs)
             ## (BEFORE THE DECAYS) in the LHE
             ## other than emitted extra parton
             '15:onMode = on', # allow all tau decays. Leptonic and Hadronic 
