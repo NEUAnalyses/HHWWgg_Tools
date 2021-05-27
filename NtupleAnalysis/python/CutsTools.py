@@ -61,11 +61,18 @@ def GetCuts(CutsType):
         #print"LOOSE cuts:",cuts
         cutNames = ["Loose"]    
 
+    # elif(CutsType == "TrainingSelections"):
+    #     cuts = ["(1)"] # training selections 
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 1/3)*((Subleading_Photon_pt/CMS_hgg_mass) > 1/4))"] # training selections 
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections 
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
+    #     cutNames = ["TrainingSelections"]
+
     elif(CutsType == "TrainingSelections"):
-        cuts = ["(1)"] # training selections 
-        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 1/3)*((Subleading_Photon_pt/CMS_hgg_mass) > 1/4))"] # training selections 
-        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections 
-        # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
+        cuts = ["(evalDNN_HH > 0.1)"]
+        # cuts = ["((fabs(weight*kinWeight) < 10.))"]
+        # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
+        # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
         cutNames = ["TrainingSelections"]
 
     # elif(CutsType == "WithWJetsTraining"):

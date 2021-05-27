@@ -13,8 +13,8 @@ def PlotDataFrames(args_):
         for file_i,file in enumerate(os.listdir(prefix)):
             df_path = "%s/%s"%(prefix,file)
             df_names.append(df_path)
-    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/GEN_PD/"
-    ol = '/eos/user/a/atishelm/www/HHWWgg/GEN_PD/%s'%(args_.outDirectory)
+    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/Phase_II/"
+    ol = '%s/%s'%(beforeOl, args_.outDirectory)
     if(not os.path.exists(ol)):
         print"Creating output directory: %s"%(ol)
         os.system('mkdir %s'%(ol))
@@ -75,11 +75,12 @@ def PlotDataFrames(args_):
                 # outName2 = "%s/%s_%s.pdf"%(ol,dfEndPathName,v)
                 # fig.savefig(outName1)
                 # fig.savefig(outName2) 
-                # plt.close()
+                # plt.close() 
 
                 fig, ax = plt.subplots()
 
-                plotLabel = "%s_%s"%(df_name.split('_')[3],df_name.split('_')[4])
+                # plotLabel = "%s_%s"%(df_name.split('_')[3],df_name.split('_')[4])
+                plotLabel = df_name.split('.')[-1].split('_')[0]
                 plotLabel = plotLabel.replace("_df.p","")
                 stylePair = stylePairs[dfi]
                 thisColor, thisLineStyle = stylePair[0], stylePair[1]              
@@ -113,6 +114,10 @@ def PlotDataFrames(args_):
                         nonNormyvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax))
                         yvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax),density=True)
 
+                entries = len(df[v])
+                average = round(np.mean(df[v]), 3)
+                stdev = round(np.std(df[v]), 3) 
+
                 nonNormYerrors = np.sqrt(nonNormyvals)
                 #print("nonNormyvals:",nonNormyvals)
                 #print("nonNormYerrors:",nonNormYerrors)
@@ -120,12 +125,104 @@ def PlotDataFrames(args_):
                 yerrors = yvals * relErrors
                 bincenters = 0.5*(binedges[1:]+binedges[:-1])
                 width = float(binedges[1])-float(binedges[0])
-                #yerrors = np.sqrt(yvals)
+                #yerrors = np.sqrt(yvals)   
+
                 if(v=='pdgIds'):
-                    for ic,center in enumerate(bincenters):
-                        val = yvals[ic]
-                        if(val!=0): 
-                            print"pdgId:",int(center - width / 2),": ",val
+
+                    ##-- Save a latex style table with the number of particles of interest 
+                    # pdgId_columns = [25, 22, -24, 24, -11, 11, -12, 12, -13, 13, -14, 14, -15, 15, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+
+                    pdgId_column_possibilities = [
+                        [25],
+                        [22],
+                        [-24, 24],
+                        [-11, 11, -13, 13, -15, 15],
+                        [-12, 12, -14, 14, -16, 16],
+                        [-1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+                    ]
+
+                    pdgId_column_labels = [
+                        "Higgs",
+                        "Photons",
+                        "W Bosons",
+                        "Leptons",
+                        "Neutrinos",
+                        "Quarks"
+                    ]                    
+
+                    for pdgId_group, pdgId_columns in enumerate(pdgId_column_possibilities):
+
+                        column_line_label = pdgId_column_labels[pdgId_group]
+
+                        nPdgIds_forTable = len(pdgId_columns)
+                        file_text = """
+                        \\begin{table}[H]
+                            \\begin{center}
+                            \\begin{tabular}{c|{columnStyle}|c}
+                                % \hline
+                                    pdgId        &   {pdgId_columns_line} & all            \\\ \hline
+                                    Total        &   {pdgId_Totals}       & {all_Total}    \\\ \hline
+                                    Per Event    &   {pdgId_perEvent}     & {all_PerEvent}
+                                    \end{tabular}
+                            \end{center}
+                            \caption{{column_line_label}}}
+                            \label{tab:{column_line_label}_pdgIds}
+                        \end{table} 
+                        """     
+
+                        particle_pdgID_dict = {}     
+
+                        for ic,center in enumerate(bincenters):
+                            val = yvals[ic]
+                            if(val!=0): 
+                                pdgId_val = int(center - width / 2)
+                                # print"pdgId:",pdgId_val,": ",val
+                                particle_pdgID_dict[pdgId_val] = val 
+
+                        columnStyle = ""
+                        pdgId_columns_line = ""
+                        pdgId_Totals = ""
+                        pdgId_perEvent = ""
+
+                        NEVENTS = 1000. ##-- Hardcoded :) 
+
+                        for i in range(0, nPdgIds_forTable):
+                            columnStyle += "c"
+
+                        all_Total, all_PerEvent = 0, 0 
+
+                        for pdgId_i, pdgId_val in enumerate(pdgId_columns):
+
+                            ##-- Get values 
+                            N_pdgId = particle_pdgID_dict[pdgId_val]
+                            all_Total += N_pdgId 
+                            N_perEvent = N_pdgId / NEVENTS
+
+                            ##-- Append to strings 
+                            pdgId_columns_line += str(pdgId_val) 
+                            pdgId_Totals += str(N_pdgId)
+                            pdgId_perEvent += str(N_perEvent)
+                            
+                            ##-- if not the final pdgId column, add a table column separator
+                            if(pdgId_i < (nPdgIds_forTable - 1)):
+                                pdgId_columns_line += " & "
+                                pdgId_Totals += " & " 
+                                pdgId_perEvent += " & "
+                        
+                        all_PerEvent = all_Total / NEVENTS
+
+                        file_text = file_text.replace("{columnStyle}", columnStyle)
+                        file_text = file_text.replace("{pdgId_columns_line}", pdgId_columns_line)
+                        file_text = file_text.replace("{pdgId_Totals}", pdgId_Totals)
+                        file_text = file_text.replace("{pdgId_perEvent}", pdgId_perEvent)
+                        file_text = file_text.replace("{all_Total}", str(all_Total))
+                        file_text = file_text.replace("{all_PerEvent}", str(all_PerEvent))
+                        file_text = file_text.replace("{column_line_label}", str(column_line_label))
+
+                        # print "Latex table of PdgIds:"
+                        print 
+                        print file_text
+
                 xerrors = []
                 for i in range(0,nbins): xerrors.append(width/2)
                 xerrors_a = np.array(xerrors) # xerrors array 
@@ -143,10 +240,11 @@ def PlotDataFrames(args_):
                             alpha=0,
                             #  linewidth=linewidth,
                             label=plotLabel,
-                            color=thisColor,
-                            error_kw = dict(
-                                ecolor=thisColor
-                            )
+
+                            # color=thisColor,
+                            # error_kw = dict(
+                            #     ecolor=thisColor
+                            # )
                 )     
 
                 xlabel = "%s [%s]"%(v,unit)
@@ -173,6 +271,23 @@ def PlotDataFrames(args_):
                 #     lh.set_alpha(1)
                 #     lh.set_color(thisColor)
 
+                ##-- Prepare Text Box 
+                textstr = '\n'.join((
+                    "Entries: %s"%(entries),
+                    "Average: %s"%(average),
+                    "St. dev. : %s"%(stdev)
+                    ))   
+                props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)    
+
+                xpos, ypos = 0.7, 0.85
+
+                if(v == "qq_invmass"):
+                    xpos, ypos = 0.3, 0.85 ##-- To avoid on-shell W peak 
+
+                ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=14,
+                        verticalalignment='top', bbox=props) 
+
+                plt.grid()
                 if(args_.nEvents != -1):
                     outName1 = "%s/%s_%s_%s-Events.png"%(ol,dfEndPathName,v,int(args_.nEvents))
                     outName2 = "%s/%s_%s_%s-Events.pdf"%(ol,dfEndPathName,v,int(args_.nEvents))
@@ -217,7 +332,8 @@ def PlotDataFrames(args_):
             ##-- get individual lines 
             for dfi,df_name in enumerate(df_names):
                 print"on dataframe",df_name
-                plotLabel = "%s_%s"%(df_name.split('_')[3],df_name.split('_')[4])
+                # plotLabel = "%s_%s"%(df_name.split('_')[3],df_name.split('_')[4])
+                plotLabel = df_name.split('_')[0]
                 plotLabel = plotLabel.replace("_df.p","")
                 stylePair = stylePairs[dfi]
                 thisColor, thisLineStyle = stylePair[0], stylePair[1]              
@@ -256,11 +372,15 @@ def PlotDataFrames(args_):
                                 #  align='edge',
                                 alpha=0,
                                 #  linewidth=linewidth,
-                                label=plotLabel,
-                                color=thisColor,
-                                error_kw = dict(
-                                    ecolor=thisColor
-                                )
+
+
+                                # label=plotLabel,
+                                # color=thisColor,
+                                # error_kw = dict(
+                                #     ecolor=thisColor
+                                # )
+
+
                     )
                     # if(args_.doRatioHists):
                     #     axarr[0].hist(histtype='step',
@@ -302,10 +422,14 @@ def PlotDataFrames(args_):
                                 alpha=0,
                                 #  linewidth=linewidth, 
                                 label=plotLabel,
-                                color=thisColor,
-                                error_kw = dict(
-                                    ecolor=thisColor
-                                )
+
+
+                                # color=thisColor,
+                                # error_kw = dict(
+                                #     ecolor=thisColor
+                                # )
+
+                                
                     )
 
             ##-- Add subsequent lines and make ratio lines 
@@ -337,11 +461,13 @@ def PlotDataFrames(args_):
                             #  align='edge',
                             alpha=0,
                             ##-- add color and style corresponding to legend 
-                            color=thisColor,
-                            error_kw = dict(
-                                ecolor=thisColor
-                            ),
-                            linestyle=thisLineStyle                         
+
+                            # color=thisColor,
+                            # error_kw = dict(
+                            #     ecolor=thisColor
+                            # ),
+                            # linestyle=thisLineStyle     
+
                             )
 
             xlabel = "%s [%s]"%(v,unit)
@@ -362,11 +488,13 @@ def PlotDataFrames(args_):
             if(args_.upLeftLegend): legLoc = 'upper left'
 
             leg = axarr[0].legend(loc=legLoc,fontsize='x-large')
-            for i,lh in enumerate(leg.legendHandles): 
-                stylePair = stylePairs[i]
-                thisColor, thisLineStyle = stylePair[0], stylePair[1] 
-                lh.set_alpha(1)
-                lh.set_color(thisColor)
+
+
+            # for i,lh in enumerate(leg.legendHandles): 
+            #     stylePair = stylePairs[i]
+            #     thisColor, thisLineStyle = stylePair[0], stylePair[1] 
+            #     lh.set_alpha(1)
+            #     lh.set_color(thisColor)
 
             outName1 = "%s/combined_%s.png"%(ol,v)
             outName2 = "%s/combined_%s.pdf"%(ol,v)

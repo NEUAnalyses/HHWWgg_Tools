@@ -18,7 +18,6 @@ def GetFiles(direc):
     ##-- training
     MCendsTraining = [
 
-
         'DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root',
         'GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root',
         'TTGG_0Jets_HHWWggTag_0_MoreVars.root',
@@ -36,6 +35,24 @@ def GetFiles(direc):
         'WGGJets_HHWWggTag_0_MoreVars.root',
         'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars.root',
         # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file
+        # 'DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+        # 'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
+
+        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file 
         # 'GluGluHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VBFHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VHToGG_2017_HHWWggTag_0_MoreVars.root',
@@ -98,9 +115,9 @@ def GetFiles(direc):
         "GJet_Pt-20toInf_HHWWggTag_0_MoreVars.root",
         "GJet_Pt-40toInf_HHWWggTag_0_MoreVars.root",
         "GluGluHToGG_HHWWggTag_0_MoreVars_noSyst.root",
-        "QCD_Pt-30to40_HHWWggTag_0_MoreVars.root",
-        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root",
-        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root",
+        # "QCD_Pt-30to40_HHWWggTag_0_MoreVars.root",
+        # "QCD_Pt-30toInf_HHWWggTag_0_MoreVars.root",
+        # "QCD_Pt-40toInf_HHWWggTag_0_MoreVars.root",
         "THQ_ctcvcp_HHWWggTag_0_MoreVars.root",
         "TTGG_0Jets_HHWWggTag_0_MoreVars.root",
         "TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root",
@@ -292,7 +309,8 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         print"Exiting"
         exit(1)
 
-    B_WEIGHT = "1*weight"
+    # B_WEIGHT = "1*weight"
+    B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)"
     ZERO_CUT = "ZERO_CUT"
     B_CUT = "%s*(%s)*(%s)"%(B_WEIGHT,REGION_CUT,ZERO_CUT)
     B_CUT += "*(%s)"%(cut)

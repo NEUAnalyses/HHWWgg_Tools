@@ -47,7 +47,8 @@ def GetVars(VarBatch):
 
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
-            "evalDNN",
+            "evalDNN_HH",
+            # "evalDNN",
             Scaled_Leading_Photon_pt,
             "goodJets_0_pt",
             "goodLepton_pt",
@@ -532,6 +533,7 @@ def GetXaxisTitle(variable_):
         "pT_gg" : "GeV",
         "DeepJetScore" : "unitless",
         "evalDNN" : "unitless",
+        "evalDNN_HH" : "unitless",
         "Scaled_Leading_Photon_pt" : "unitless",
         "Scaled_Subleading_Photon_pt" : "unitless",
         "Leading_Jet_bscore" : "unitless",
