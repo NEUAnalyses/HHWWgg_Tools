@@ -68,12 +68,61 @@ def GetCuts(CutsType):
     #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
     #     cutNames = ["TrainingSelections"]
 
-    elif(CutsType == "TrainingSelections"):
+    # elif(CutsType == "TrainingSelections"):
+    #     cuts = ["(evalDNN_HH > 0.1)"]
+    #     # cuts = ["((fabs(weight*kinWeight) < 10.))"]
+    #     # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
+    #     # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
+    #     cutNames = ["TrainingSelections"]
+
+    elif(CutsType == "DataModeling"):
         cuts = ["(evalDNN_HH > 0.1)"]
+        cutNames = ["DataModeling"]    
+
+    elif(CutsType == "DataModelingNoDNNCut"):
+        cuts = ["(1.)"]
+        cutNames = ["DataModelingNoDNNCut"]    
+
+    ##-- With/without DNN cut 
+    elif(CutsType == "NoSidebandScaleNoDNNCut"):
+        cuts = ["(1.)"]
+        cutNames = ["NoSidebandScaleNoDNNCut"]   
+
+    elif(CutsType == "WithSidebandScaleNoDNNCut"):
+        cuts = ["(1.)"]
+        cutNames = ["WithSidebandScaleNoDNNCut"]    
+
+    elif(CutsType == "NoSidebandScaleDNNCut"):
+        cuts = ["(evalDNN_HH > 0.1)"]
+        cutNames = ["NoSidebandScaleDNNCut"]   
+
+    elif(CutsType == "WithSidebandScaleDNNCut"):
+        cuts = ["(evalDNN_HH > 0.1)"]
+        cutNames = ["WithSidebandScaleDNNCut"]           
+
+    ##-- 
+
+    elif(CutsType == "KinWeightsNoGlobalScale"):
+        cuts = ["(1.)"]
+        cutNames = ["KinWeightsNoGlobalScale"]   
+
+    elif(CutsType == "KinWeightsWithGlobalScale"):
+        cuts = ["(1.)"]
+        cutNames = ["KinWeightsWithGlobalScale"]                                
+
+    elif(CutsType == "TrainingSelectionsNoDNNCut"):
+        cuts = ["(1.)"]
         # cuts = ["((fabs(weight*kinWeight) < 10.))"]
         # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
         # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
-        cutNames = ["TrainingSelections"]
+        cutNames = ["TrainingSelectionsNoDNNCut"]  
+
+    elif(CutsType == "TrainingSelectionsNoDNNCutNosidebandscale"):
+        cuts = ["(1.)"]
+        # cuts = ["((fabs(weight*kinWeight) < 10.))"]
+        # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
+        # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
+        cutNames = ["TrainingSelectionsNoDNNCutNosidebandscale"]                
 
     # elif(CutsType == "WithWJetsTraining"):
     #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections 
@@ -165,6 +214,7 @@ def GetCuts(CutsType):
 
 def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,dataNevents,SidebandSF,Bkg_Nevents,ol, Bkg_Nevents_unweighted, S, S_unweighted):
     print'Creating yields table'
+    print'SidebandSF:',SidebandSF
 
     yaxisLabels = []
     if(region == "SB"):
@@ -298,7 +348,7 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
         name = name.replace("_","\_")
         unweighted_val = Unweighted_vals[i]
         weighted_val = Weighted_vals[i]
-        file.write("\t\t\t %s & %s & %s \\\ \n"%(name,int(unweighted_val),round(weighted_val,5)))
+        file.write("\t\t\t %s & %s & %s \\\ \n"%(name,int(unweighted_val),round(float(weighted_val)*float(SidebandSF),5)))
 
     file.write("\t\t\end{tabular}\n")
     file.write("\t\caption{Unweighted and weighted training MC yields}\n")

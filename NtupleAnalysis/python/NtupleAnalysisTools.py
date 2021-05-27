@@ -36,7 +36,8 @@ def GetFiles(direc):
         'WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
         'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
 
-        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file 
+        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##--  which is used for training? check training .py file 
+
         # 'GluGluHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VBFHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VHToGG_2017_HHWWggTag_0_MoreVars.root',
@@ -189,6 +190,13 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     # data_trees.Add("%s/%sData"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
     data_trees.Add("%s/%sData_13TeV_HHWWggTag_0_v1"%(dPath,prefix))
+
+    ##-- Hardcoding the addition of 2016 and 2018 data for AN-20-165 v5 checks
+    # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2016_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
+    # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2018_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
+
+
+
     # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
@@ -239,7 +247,12 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         exit(1)
 
     # B_WEIGHT = "1*weight"
-    B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)"
+    B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)" ##-- Used in training 
+    # B_WEIGHT = "1*weight" ##-- to plot with no kin weight
+
+    print("Background MC weight applied:", B_WEIGHT)
+    print("PLEASE NOTE if you want this weight. Check if it includes kinematic reweighting or not.")
+
     ZERO_CUT = "ZERO_CUT"
     B_CUT = "%s*(%s)*(%s)"%(B_WEIGHT,REGION_CUT,ZERO_CUT)
     B_CUT += "*(%s)"%(cut)  
@@ -965,6 +978,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- Only create yields table for 0th variable because yields are cut dependent, not variable dependent
         if(iv==0): 
+            print"SidebandSF_:",SidebandSF_
             B_vals_ = [] 
             CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_,Bkg_Nevents_unweighted, S_, S_unweighted_) 
         
