@@ -24,10 +24,10 @@ python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --sign
 An explanation of each flag in the command: 
 
 - **DataMC**: Produce Data / MC ratios and yields tables 
-- **dataFolder**: The folder to search for data nTuples. This folder will be looked for in the location of the public nTuples: /afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/, as defined [here](https://github.com/NEUAnalyses/HHWWgg_Tools/blob/master/NtupleAnalysis/NtupleAnalysis.py#L38)
+- **dataFolder**: The folder to search for data nTuples. This folder will be looked for in the location of the public nTuples: /afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/, as defined [here](NtupleAnalysis/NtupleAnalysis.py#L38)
 - **mcFolder**: The folder to search for background nTuples. This folder will also be searched for in /afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/
 - **signalFolder**: The folder to search for signal nTuples. Again searched for in /afs/cern.ch/work/a/atishelm/public/ForJosh/2017_DataMC_ntuples_moreVars/
-- **VarBatch**: The batch of variables to plot. These are defined in [VariableTools](https://github.com/NEUAnalyses/HHWWgg_Tools/blob/master/NtupleAnalysis/python/VariableTools.py#L20-L158). Note that "mass" is the most basic variable batch, as it only includes the diphoton mass. Current VarBatch options include:
+- **VarBatch**: The batch of variables to plot. These are defined in [VariableTools](NtupleAnalysis/python/VariableTools.py#L20-L158). Note that "mass" is the most basic variable batch, as it only includes the diphoton mass. Current VarBatch options include:
     - mass: Only diphoton mass
     - MVA: Variables potentially useful for MVA study
     - MVA2: More potentially useful MVA study variables 

@@ -112,9 +112,14 @@ def GetCuts(CutsType):
 
     ##-- Apply 4 4-jet
     elif(CutsType == "4Jet-SelPhoPt"):
-        cuts = ["(HGGCandidate_pt>100)"]
+        cuts = ["(HGGCandidate_pt>160)"]
         # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
         cutNames = ["4Jet-SelPhoPt"]
+
+    elif(CutsType == "4Jet-SelPhoPtDiPhoMVA"):
+        cuts = ["(HGGCandidate_pt>160)*(dipho_MVA>0.9)"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cutNames = ["4Jet-SelPhoPtDiPhoMVA"]
 
     ##-- Apply 4 4-jet
     elif(CutsType == "4Jet-Sel0"):
@@ -130,18 +135,39 @@ def GetCuts(CutsType):
 
     elif(CutsType == "4Jet-Sel2"):
         # cuts = ["(passPhotonSels==1)"]
-        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(AtLeast4GoodJets0Lep==1)"]
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*((HGGCandidate_pt>160))"]
         cutNames = ["4Jet-Sel2"]
 
     elif(CutsType == "4Jet-Sel3"):
         # cuts = ["(passPhotonSels==1)"]
-        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(AtLeast4GoodJets0Lep==1)*(mW1_65To105==1)"]
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)"]
         cutNames = ["4Jet-Sel3"]
 
     elif(CutsType == "4Jet-Sel4"):
         # cuts = ["(passPhotonSels==1)"]
-        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(AtLeast4GoodJets0Lep==1)*(mW1_65To105==1)*(mH_105To160==1)"]
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)*(mH_105To160==1)"]
         cutNames = ["4Jet-Sel4"]
+
+    elif(CutsType == "4Jet-Sel41"):
+        # cuts = ["(passPhotonSels==1)"]
+        bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
+  
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)*(mH_105To160==1)*"+bDis]
+        cutNames = ["4Jet-Sel41"]
+
+    elif(CutsType == "4Jet-Sel31"):
+        # cuts = ["(passPhotonSels==1)"]
+        bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
+  
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)*"+bDis]
+        cutNames = ["4Jet-Sel31"]
+
+    elif(CutsType == "4Jet-Sel21"):
+        # cuts = ["(passPhotonSels==1)"]
+        bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
+  
+        cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*"+bDis]
+        cutNames = ["4Jet-Sel21"]
 
     elif(CutsType == "4Jet-Sel5"):
         # cuts = ["(passPhotonSels==1)"]
@@ -375,4 +401,18 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
 
     file.close()
 
+    fileName = "Yields-Table.md"
+    file = open(fileName,"w")
+    file.write("|MC Sample | Unweighted Events | Weighted Events | \n")
+    file.write("|---       |---                |---              | \n")
+
+    for i, name in enumerate(names):
+        name = name.replace("_","\_")
+        unweighted_val = Unweighted_vals[i]
+        weighted_val = Weighted_vals[i]
+        file.write("| %s | %s | %s | \n"%(name,int(unweighted_val),round(weighted_val,5)))
+
+    # file.write("\t\caption{Unweighted and weighted training MC yields}\n")
+
+    file.close()
     print"Saving yields table: ",fileName

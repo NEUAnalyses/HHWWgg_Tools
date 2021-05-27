@@ -35,11 +35,14 @@ import os
 ##-- Define flags and variables based on user input
 args = GetOptions()
 
+print("Start of program...")
+
 if __name__ == '__main__':
     gROOT.SetBatch(1) # Do not output upon draw statement 
     if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
     elif(args.DataMC):
-        if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/DataMC_testFeatures/'
+        print("Data/MC comparison...")
+        if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/New_2021/NtupleAnalysis_v1/'
         #nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
         else: 
             ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
@@ -398,7 +401,7 @@ if __name__ == '__main__':
         ##-- Get Background Files 
         bkgDirec = args.bkgDirec 
         bkgFiles = GetFiles(bkgDirec)
-        print"bkgFiles:",bkgFiles
+        print"Background files: ",bkgFiles
         # exit(1) 
 
         ##-- Get Signal File 

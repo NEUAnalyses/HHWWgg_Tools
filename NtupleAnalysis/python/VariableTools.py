@@ -20,18 +20,18 @@ def GetVars(VarBatch):
     Scaled_Leading_Photon_pt = "(Leading_Photon_pt / CMS_hgg_mass)"
     Scaled_Subleading_Photon_pt = "(Subleading_Photon_pt / CMS_hgg_mass)"
     Scaled_Leading_Photon_E = "(Leading_Photon_E / CMS_hgg_mass)"
-    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"    
+    Scaled_Subleading_Photon_E = "(Subleading_Photon_E / CMS_hgg_mass)"
     Leading_Jet_bscore = "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
     Subleading_Jet_bscore = "(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb)"
 
     ##-- Variable batch definitions
 
-    # Just diphoton mass 
-    # make dictionary 
+    # Just diphoton mass
+    # make dictionary
     if(VarBatch == "mass"):
         return ["CMS_hgg_mass"]
     elif(VarBatch == "DNN"):
-        return ["evalDNN"]        
+        return ["evalDNN"]
 
     elif(VarBatch == "Jet"):
         return ["Leading_Jet_pt","Leading_Jet_E","Leading_Jet_eta","N_goodJets"]
@@ -75,9 +75,9 @@ def GetVars(VarBatch):
             "Subleading_Photon_MVA",
             "goodJets_0_eta",
             "Leading_Photon_eta",
-            "Wmt_L"             
+            "Wmt_L"
         ]
-        return TrainingVars 
+        return TrainingVars
 
     # elif(VarBatch == "RestOfTrainingVars"):
     #     RestOfTrainingVars = [
@@ -98,7 +98,7 @@ def GetVars(VarBatch):
     #         "Subleading_Photon_MVA",
     #         "goodJets_0_eta",
     #         "Leading_Photon_eta",
-    #         "Wmt_L" 
+    #         "Wmt_L"
 
     #     ]
     #     return RestOfTrainingVars
@@ -106,9 +106,10 @@ def GetVars(VarBatch):
     # Some potentially useful MVA variables
     elif(VarBatch == "Fully-Hadronic"):
         L2vars =  [
-            "CMS_hgg_mass","Leading_Photon_pt","Subleading_Photon_pt",
+            "CMS_hgg_mass",
+            "Leading_Photon_pt","Subleading_Photon_pt",
             "Leading_Photon_MVA","Subleading_Photon_MVA",
-            "N_allJets","N_goodJets",
+            "N_goodJets",
             "HWWCandidate_M",
             "W2Candidate_M","W1Candidate_M",
             "W1Candidate_pt","W2Candidate_pt",
@@ -120,7 +121,119 @@ def GetVars(VarBatch):
             "Leading_Jet_pt","Subleading_Jet_pt","Sub2leading_Jet_pt","Sub3leading_Jet_pt",
             "Leading_Jet_eta","Subleading_Jet_eta","Sub2leading_Jet_eta","Sub3leading_Jet_eta",
             "Leading_Jet_phi","Subleading_Jet_phi","Sub2leading_Jet_phi","Sub3leading_Jet_phi",
-            # "DeltaEta_HH","DeltaPhi_HH","DeltaR_HH","cosThetaHH",'cosThetaWW'
+            "New_DPhi_gg", "New_DR_gg", "New_DPhi_HH", "New_DR_HH",
+            "PhotonID_min", "PhotonID_max",
+            "a_costheta1", "a_costheta2", "a_costhetastar", "a_Phi", "a_Phi1"
+            ]
+        return L2vars
+
+    elif(VarBatch == "FH_DNN"):
+        L2vars =  [
+            # "evalDNN",
+            "CMS_hgg_mass",
+            Scaled_Leading_Photon_E,
+            Scaled_Subleading_Photon_E,
+            "Leading_Photon_MVA",
+            "Subleading_Photon_MVA",
+            "Leading_Photon_SC_eta",
+            "Leading_Photon_r9",
+            "Leading_Photon_passElectronVeto",
+            "Leading_Photon_hasPixelSeed",
+            "Subleading_Photon_r9",
+            "Subleading_Photon_passElectronVeto"
+            "Subleading_Photon_hasPixelSeed",
+            "Leading_Photon_E",
+            "Leading_Photon_pt",
+            "Leading_Photon_eta",
+            "Leading_Photon_phi",
+            "Subleading_Photon_E",
+            "Subleading_Photon_pt",
+            "Subleading_Photon_eta",
+            "Subleading_Photon_phi",
+            "PhotonID_min",
+            "PhotonID_max",
+            "N_goodJets",
+            "New_Leading_Jet_E",
+            "New_Leading_Jet_pt",
+            "New_Leading_Jet_px",
+            "New_Leading_Jet_py",
+            "New_Leading_Jet_pz",
+            "New_Leading_Jet_eta",
+            "New_Leading_Jet_phi",
+            "New_Subleading_Jet_E",
+            "New_Subleading_Jet_pt",
+            "New_Subleading_Jet_px",
+            "New_Subleading_Jet_py",
+            "New_Subleading_Jet_pz",
+            "New_Subleading_Jet_eta",
+            "New_Subleading_Jet_phi",
+            "New_Sub2leading_Jet_E",
+            "New_Sub2leading_Jet_pt",
+            "New_Sub2leading_Jet_px",
+            "New_Sub2leading_Jet_py",
+            "New_Sub2leading_Jet_pz",
+            "New_Sub2leading_Jet_eta",
+            "New_Sub2leading_Jet_phi",
+            "New_Sub3leading_Jet_E",
+            "New_Sub3leading_Jet_pt",
+            "New_Sub3leading_Jet_px",
+            "New_Sub3leading_Jet_py",
+            "New_Sub3leading_Jet_pz",
+            "New_Sub3leading_Jet_eta",
+            "New_Sub3leading_Jet_phi",
+            "New_OnShellW_LeadingJet_bDis",
+            "New_OnShellW_SubLeadingJet_bDis",
+            "New_OffShellW_LeadingJet_bDis",
+            "New_OffShellW_SubLeadingJet_bDis",
+            "New_OnShellW_E",
+            "New_OnShellW_Mass",
+            "New_OnShellW_pt",
+            "New_OnShellW_px",
+            "New_OnShellW_py",
+            "New_OnShellW_pz",
+            "New_OnShellW_eta",
+            "New_OnShellW_phi",
+            "New_OffShellW_E",
+            "New_OffShellW_Mass",
+            "New_OffShellW_pt",
+            "New_OffShellW_px",
+            "New_OffShellW_py",
+            "New_OffShellW_pz",
+            "New_OffShellW_eta",
+            "New_OffShellW_phi",
+            "New_HWW_E",
+            "New_HWW_Mass",
+            "New_HWW_pt",
+            "New_HWW_px",
+            "New_HWW_py",
+            "New_HWW_pz",
+            "New_HWW_eta",
+            "New_HWW_phi",
+            "New_dR_Hgg_Jet1",
+            "New_dR_Hgg_Jet2",
+            "New_dR_Hgg_Jet3",
+            "New_dR_Hgg_Jet4",
+            "New_dPhi_Hgg_Jet1",
+            "New_dPhi_Hgg_Jet2",
+            "New_dPhi_Hgg_Jet3",
+            "New_dPhi_Hgg_Jet4",
+            "New_DPhi_gg",
+            "New_DR_gg",
+            "New_DPhi_HH",
+            "New_DR_HH",
+            "New_minDeltaR_gg4j",
+            "New_maxDeltaR_gg4j",
+            "New_minDeltaR_4j",
+            "New_maxDeltaR_4j",
+            "a_costheta1",
+            "a_costheta2",
+            "a_costhetastar",
+            "a_Phi",
+            "a_Phi1",
+            "CosThetaStar_CS",
+            "CosThetaStar_CS_old",
+            "HelicityCostheta1",
+            "HelicityCostheta2",
             ]
         return L2vars
 
@@ -166,12 +279,12 @@ def GetVars(VarBatch):
         ]
         return PhotonVars
 
-    # Photon variables 
+    # Photon variables
     elif(VarBatch == "LeadingPhoton"):
         PhotonVars = [
             "Leading_Photon_pt","Leading_Photon_eta","Leading_Photon_E","Leading_Photon_MVA"
         ]
-        return PhotonVars         
+        return PhotonVars
 
     elif(VarBatch =="bScores"):
         bScores = []
@@ -180,7 +293,7 @@ def GetVars(VarBatch):
         # bScores.append(scoresum)
         for score in scores:
             bScores.append("goodJets_0_%s"%(score))
-        return bScores 
+        return bScores
 
     # Variables that should be combined with Loose cuts. Plots kinematics of leading lepton (which changes event by event)
     elif(VarBatch == "Loose"):
@@ -275,7 +388,7 @@ def GetVars(VarBatch):
     elif(VarBatch == "special"):
         return [dr_jj]
 
-##-- Get bins for a variable 
+##-- Get bins for a variable
 def GetBins(variable_,DNNbinWidth_):
 # def GetBins(variable_,DNNbinWidth_ = 0.1):
 
@@ -287,11 +400,11 @@ def GetBins(variable_,DNNbinWidth_):
 
     if(DNNbinWidth_ != 0.1):
         print"nDNNbins: ",nDNNbins
-    # Specify bins for specific variables 
+    # Specify bins for specific variables
     binDict = {
         "Leading_Photon_MVA": [20,-1,1],
         "Subleading_Photon_MVA": [20,-1,1],
-        "CMS_hgg_mass": [30,100,180],
+        "CMS_hgg_mass": [16,100,180],
         "weight":[1000,-10,10],
         "puweight":[1000,-2,2],
         "mjj" : [100,0,300],
@@ -317,22 +430,54 @@ def GetBins(variable_,DNNbinWidth_):
         "Leading_Jet_bscore" : [50,0,1],
         "Subleading_Jet_bscore" : [50,0,1],
         "Wmt_L" : [30,0,300],
-
-
-        # "evalDNN" : [20,0,1.00001] # To include value == 1 
-        # "evalDNN" : [10,0,1.00001] # To include value == 1 
-        # "evalDNN" : [25,0,1.00001] # To include value == 1 
-        # "evalDNN" : [100,0,1.00001] # To include value == 1 
-        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1 
-        "Subleading_Photon_pt" : [24,0,120]
-        # "evalDNN" : [10,0,1] # To include value == 1 
-        "HWWCandidate_M" : [50,50,1000],
-        "HGGCandidate_pt": [25,100,500]
-    }    
+        # "evalDNN" : [20,0,1.00001] # To include value == 1
+        # "evalDNN" : [10,0,1.00001] # To include value == 1
+        # "evalDNN" : [25,0,1.00001] # To include value == 1
+        # "evalDNN" : [100,0,1.00001] # To include value == 1
+        "evalDNN" : [nDNNbins,evalDNNmin,evalDNNmax], # To include value == 1
+        "Subleading_Photon_pt" : [24,0,120],
+        # "evalDNN" : [10,0,1] # To include value == 1
+        "HWWCandidate_M" : [25,50,1000],
+        "HGGCandidate_pt": [25,100,500],
+        "PhotonID_min": [10,-1,1],
+        "PhotonID_max": [10,-1,1],
+        "a_costheta1": [10,-1,1],
+        "a_costheta2": [10,-1,1],
+        "CosThetaStar_CS": [10, -1, 1],
+        "CosThetaStar_CS_old": [10, -1, 1],
+        "HelicityCostheta1": [10, -1, 1],
+        "HelicityCostheta2": [10, -1, 1],
+        "a_costhetastar": [10,-1,1],
+        "a_Phi": [10,-1,1],
+        "a_Phi1": [10,-1,1],
+        "W2Candidate_M": [25,0,300],
+        "W2Candidate_pt": [25,0,400],
+        "New_DPhi_gg": [20,-3.14,3.14],
+        "New_DR_gg": [10,0,4],
+        "New_DPhi_HH": [20,-3.14,3.14],
+        "New_DR_HH": [20,0,6],
+        "New_HWW_E": [50, 80, 1000],
+        "New_HWW_Mass": [50, 80, 1000],
+        "New_OnShellW_E": [50, 0, 700],
+        "New_OnShellW_Mass": [50, 0, 200],
+    }
     specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN",
-                    "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E", "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
-                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L","HWWCandidate_M", "HGGCandidate_pt"
-    
+                    "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E",
+                    "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
+                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L","HWWCandidate_M", "HGGCandidate_pt",
+                    "PhotonID_min", "PhotonID_max",
+                    "a_costheta1", "a_costheta2", "a_Phi", "a_Phi1",
+                    "a_costhetastar", "W2Candidate_M", "W2Candidate_pt",
+                    "New_DPhi_gg", "New_DR_gg",
+                    "New_DPhi_HH", "New_DR_HH",
+                    "CosThetaStar_CS",
+                    "CosThetaStar_CS_old",
+                    "HelicityCostheta1",
+                    "HelicityCostheta2",
+                    "New_HWW_E",
+                    "New_HWW_Mass",
+                    "New_OnShellW_E",
+                    "New_OnShellW_Mass"
     ]
 
     scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
@@ -348,13 +493,21 @@ def GetBins(variable_,DNNbinWidth_):
     # Specified binning if variable has phi, eta or pt in name
     else:
         # if("phi" in variable_): return [20,-3.14,3.14]
-        if("phi" in variable_): return [17,-3.14,3.15]
+        if("phi" in variable_): return [14,-3.14,3.15]
         # elif("eta" in variable_): return [16,-4,4]
         elif("eta" in variable_): return [10,-2.5,2.5]
-        elif ("pt" in variable_): return [20,0,200]   
+        elif ("pt" in variable_): return [30,0,400]
         elif ("_M" in variable_): return [55,0,200]
+        elif ("DPhi" in variable_): return [10,-3.14,3.14]
+        elif ("_dR_" in variable_): return [10,0,10]
+        elif ("DeltaR" in variable_): return [10,0,10]
+        elif ("_r9" in variable_): return [10,0,1.0]
         elif("bDiscriminator" in variable_): return [20,0,1]
-        else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning 
+        elif("bDis" in variable_): return [20,0,1]
+        elif("dPhi_" in variable_): return [10,0,5]
+        elif("hasPixelSeed" in variable_): return [2,0,2]
+        elif("passElectron" in variable_): return [2,0,2]
+        else: return [30,0,300] # if variable name meets none of the above conditions, default to this binning
 
 ##-- Get x axis title for ratio plot depending on the variable
 def GetXaxisTitle(variable_):
@@ -381,7 +534,7 @@ def GetXaxisTitle(variable_):
         "evalDNN" : "unitless",
         "Scaled_Leading_Photon_pt" : "unitless",
         "Scaled_Subleading_Photon_pt" : "unitless",
-        "Leading_Jet_bscore" : "unitless", 
+        "Leading_Jet_bscore" : "unitless",
         "Subleading_Jet_bscore" : "unitless",
         "Scaled_Leading_Photon_E" : "unitless",
         "Scaled_Subleading_Photon_E" : "unitless",
@@ -399,7 +552,7 @@ def GetXaxisTitle(variable_):
 def GetVarTitle(varName):
     varTitle = ""
     scores = ['bDiscriminator_mini_pfDeepFlavourJetTags_probb','bDiscriminator_mini_pfDeepFlavourJetTags_probbb','bDiscriminator_mini_pfDeepFlavourJetTags_problepb']
-    # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])    
+    # scoresum = "(goodJets_0_%s + goodJets_0_%s + goodJets_0_%s)"%(scores[0],scores[1],scores[2])
     mjj = "sqrt(2*goodJets_0_pt*goodJets_1_pt*(cosh(goodJets_0_eta-goodJets_1_eta)-cos(goodJets_0_phi-goodJets_1_phi)))"
     e_mT = "sqrt(2*goodElectrons_0_pt*MET_pt*(1-cos(goodElectrons_0_phi-MET_phi)))"
     mu_mT = "sqrt(2*goodMuons_0_pt*MET_pt*(1-cos(goodMuons_0_phi-MET_phi)))"
@@ -426,25 +579,25 @@ def GetVarTitle(varName):
     elif(varName == Scaled_Subleading_Photon_E): varTitle = "Scaled_Subleading_Photon_E"
     elif(varName == Leading_Jet_bscore) : varTitle = "Leading_Jet_bscore"
     elif(varName == Subleading_Jet_bscore): varTitle = "Subleading_Jet_bscore"
-    else: varTitle = varName 
-    return varTitle 
+    else: varTitle = varName
+    return varTitle
 
-##-- Compute chi squared for a data / mc plot 
+##-- Compute chi squared for a data / mc plot
 def GetChiSquared(DataHist_,stackSum_):
-    # the two histos should have the same binning 
+    # the two histos should have the same binning
     Nbins = DataHist_.GetNbinsX()
     assert(Nbins == stackSum_.GetNbinsX())
     chi2_total = 0
-    for bin_i in range(1,Nbins): # skip underflow bin 
+    for bin_i in range(1,Nbins): # skip underflow bin
         data_y, MC_sum_y = DataHist_.GetBinContent(bin_i), stackSum_.GetBinContent(bin_i)
         chi2_num = pow(abs(float(data_y)-float(MC_sum_y)),2)
-        # avoid a denominator of 0 
-        if(data_y == 0.0 and MC_sum_y == 0.0): continue 
-        elif(data_y == 0.0 and MC_sum_y != 0.0): chi2_den = MC_sum_y 
-        else: chi2_den = data_y  
+        # avoid a denominator of 0
+        if(data_y == 0.0 and MC_sum_y == 0.0): continue
+        elif(data_y == 0.0 and MC_sum_y != 0.0): chi2_den = MC_sum_y
+        else: chi2_den = data_y
         # print"data_y:",data_y
         # print"MC_sum_y:",MC_sum_y
-        chi2 = chi2_num / chi2_den 
-        chi2_total += chi2 
-    chi2_total /= Nbins 
-    return chi2_total 
+        chi2 = chi2_num / chi2_den
+        chi2_total += chi2
+    chi2_total /= Nbins
+    return chi2_total
