@@ -7,17 +7,27 @@
 
 ##-- Note that if you try to produce a gridpack with an existing directory in genproductions/bin/MadGraph5_aMCatNLO/, it won't work 
 
+##-- Templates should be placed in:
+
+##-- genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/VBFToXToHH/VBFToRadionToHH_M
+##-- genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/VBFToXToHH/VBFToRSGravitonToHH_M
+##-- genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/VBFToXToHH/VBFToBulkGravitonToHH_M
+
 ##-- Example Usage:
 #
 ##-- Produce Cards
 # python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --dryRun ##-- Run dryrun first to produce cards 
 #
 ##-- Produce Gridpacks
-# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 ##-- Then run without dryrun to produce gridpacks 
+# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --condor ##-- Then run without dryrun to produce gridpacks 
+
+##-- Not sure if condor actually is setup properly 
 
 ##-- Imports 
 import os 
 import argparse 
+
+# for file in *.eps; do gs -dSAFER -dEPSCrop -r300 -sDEVICE=pngalpha -o "${file%.*}.png" "$file"; done
 
 ##-- Arguments
 parser = argparse.ArgumentParser()
@@ -25,6 +35,7 @@ parser.add_argument("--Prod", type=str, default = "ggF", help = "Production mode
 parser.add_argument("--Spin", type = str, default = "0", help = "Spin of resonant particle. 0 (Radion) or 2 (Bulk Graviton)")
 parser.add_argument("--masses", type=str, default = "250", help = "Comma separated string of Resonant mass points to produce")
 parser.add_argument("--dryRun", action="store_true", default = False, help = "Dry run. Do not produce gridpack.")
+parser.add_argument("--condor", action="store_true", default = False, help = "Submit generation to condor")
 args = parser.parse_args()
 
 ##-- Parameters 
@@ -32,6 +43,7 @@ initialDirec = os.getcwd()
 productionDirectory = "genproductions/bin/MadGraph5_aMCatNLO/" ##-- the directory containing the gridpack generation executable 
 fullProductionDirectory = "%s/%s"%(initialDirec, productionDirectory)
 masses_l = args.masses.split(',')
+condor = args.condor
 print"initialDirec:",initialDirec
 print"Masses:",args.masses
 print"fullProductionDirectory:",fullProductionDirectory
@@ -71,7 +83,9 @@ if(args.Prod == "ggF"):
         else:
             print"Generating gridpack..."
             os.chdir(fullProductionDirectory)
-            GENERATE_COMMAND = "./gridpack_generation.sh %s_M%s cards/production/2017/13TeV/exo_diboson/%s_M%s"%(prefix, mass, finishedSample, mass)
+            if(condor): generateScript = "submit_condor_gridpack_generation.sh"
+            else: generateScript = "gridpack_generation.sh"            
+            GENERATE_COMMAND = "./%s %s_M%s cards/production/2017/13TeV/exo_diboson/%s_M%s"%(generateScript, prefix, mass, finishedSample, mass)
             os.system(GENERATE_COMMAND)            
 
     print"cd %s"%(initialDirec)
@@ -101,6 +115,8 @@ elif(args.Prod == "VBF"):
       else:
         print"Generating gridpack..."
         os.chdir(fullProductionDirectory)
-        GENERATE_COMMAND = "./gridpack_generation.sh %s%s cards/production/2017/13TeV/VBFToXToHH/%s%s"%(sample, mass, sample, mass)
+        if(condor): generateScript = "submit_condor_gridpack_generation.sh"
+        else: generateScript = "gridpack_generation.sh"
+        GENERATE_COMMAND = "./%s %s%s cards/production/2017/13TeV/VBFToXToHH/%s%s"%(generateScript, sample, mass, sample, mass)
         os.system(GENERATE_COMMAND)            
         
