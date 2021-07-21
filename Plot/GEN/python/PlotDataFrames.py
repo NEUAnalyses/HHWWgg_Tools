@@ -115,8 +115,10 @@ def PlotDataFrames(args_):
                         yvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax),density=True)
 
                 entries = len(df[v])
-                average = round(np.mean(df[v]), 3)
-                stdev = round(np.std(df[v]), 3) 
+                # average = round(np.mean(df[v]), 3)
+                # stdev = round(np.std(df[v]), 3) 
+                average = 1
+                stdev = 1
 
                 nonNormYerrors = np.sqrt(nonNormyvals)
                 #print("nonNormyvals:",nonNormyvals)
@@ -133,21 +135,35 @@ def PlotDataFrames(args_):
                     # pdgId_columns = [25, 22, -24, 24, -11, 11, -12, 12, -13, 13, -14, 14, -15, 15, -1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
 
                     pdgId_column_possibilities = [
+                        # [25],
+                        # [22],
+                        # [-24, 24],
+                        # [-11, 11, -13, 13, -15, 15],
+                        # [-12, 12, -14, 14, -16, 16],
+                        # [-1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+
                         [25],
                         [22],
-                        [-24, 24],
+                        [23],
                         [-11, 11, -13, 13, -15, 15],
                         [-12, 12, -14, 14, -16, 16],
-                        [-1, 1, -2, 2, -3, 3, -4, 4, -5, 5]
+                        [-1, 1, -2, 2, -3, 3, -4, 4, -5, 5]                        
                     ]
 
                     pdgId_column_labels = [
+                        # "Higgs",
+                        # "Photons",
+                        # "W Bosons",
+                        # "Leptons",
+                        # "Neutrinos",
+                        # "Quarks"
+
                         "Higgs",
                         "Photons",
-                        "W Bosons",
+                        "Z Bosons",
                         "Leptons",
                         "Neutrinos",
-                        "Quarks"
+                        "Quarks"                        
                     ]                    
 
                     for pdgId_group, pdgId_columns in enumerate(pdgId_column_possibilities):
@@ -174,10 +190,10 @@ def PlotDataFrames(args_):
 
                         for ic,center in enumerate(bincenters):
                             val = yvals[ic]
-                            if(val!=0): 
-                                pdgId_val = int(center - width / 2)
-                                # print"pdgId:",pdgId_val,": ",val
-                                particle_pdgID_dict[pdgId_val] = val 
+                            # if(val!=0): 
+                            pdgId_val = int(center - width / 2)
+                            # print"pdgId:",pdgId_val,": ",val
+                            particle_pdgID_dict[pdgId_val] = val 
 
                         columnStyle = ""
                         pdgId_columns_line = ""
@@ -284,8 +300,8 @@ def PlotDataFrames(args_):
                 if(v == "qq_invmass"):
                     xpos, ypos = 0.3, 0.85 ##-- To avoid on-shell W peak 
 
-                ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=14,
-                        verticalalignment='top', bbox=props) 
+                # ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=14,
+                        # verticalalignment='top', bbox=props) 
 
                 plt.grid()
                 if(args_.nEvents != -1):

@@ -3,22 +3,11 @@
 						"step"      : "MINIAOD",
 						"events"    : 100000,
 						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/GluGluToHHTo_WWgg_lnulnu_nodeSM/HHWWgg_SM2018_100000events_wPU_DR2/200723_091353/0000/", 
+						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/VBFToHHTo_WWgg_qqlnu_nodeSM/HHWWgg_v2-8_100000events_wPU_DR2/200930_103823/0000/", 
 						"pileup"              : "wPU",
 						"localGridpack"                : "0",
-						"Campaign"            : "HHWWgg_SM2018",
-						"Year"                : "2018", 
-						"dryRun"              : "0"
-				},
-				{ 
-						"step"      : "MINIAOD",
-						"events"    : 100000,
-						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/GluGluToHHTo_WWgg_qqqq_nodeSM/HHWWgg_SM2018_100000events_wPU_DR2/200723_091430/0000/", 
-						"pileup"              : "wPU",
-						"localGridpack"                : "0",
-						"Campaign"            : "HHWWgg_SM2018",
-						"Year"                : "2018", 
+						"Campaign"            : "HHWWgg_v2-8",
+						"Year"                : "2017", 
 						"dryRun"              : "0"
 				}
 ]

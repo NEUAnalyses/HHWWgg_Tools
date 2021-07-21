@@ -133,18 +133,31 @@ def CreateDataFrame(args_):
         particles = ["Lead_H","Sublead_H","Lead_Pho","Sublead_Pho","Lead_q","Sublead_q","lep","nu"] ##-- qqlnu final state 
         if(RES): particles.append("X")
         variables = ["pt","eta","phi","p","px","py","pz","status"]
-        for p in particles:
-            for v in variables:
-                columnName = "%s_%s"%(p,v)
-                d[columnName] = [] 
+
+        is_ZZgg = 1 
+
+        if(is_ZZgg):
+            d["invmass_Zqq"] = []
+            d["invmass_Zll"] = []
+            d["invmass_Znunu"] = []
+
+        # for p in particles:
+        #     for v in variables:
+        #         columnName = "%s_%s"%(p,v)
+        #         d[columnName] = [] 
 
         d["pdgIds"] = [] 
 
         ##-- Initialize Special Variables Lists
         # if(doVBF): # for p in ["H","Pho","q","incVBFq","outVBFq"]:
+
+        """
+
         for p in ["H","Pho","q"]:
             for v in ["invmass","DeltaR"]:
                 exec("d['%s%s_%s'] = []"%(p,p,v))
+
+        """
 
         # non4VecVars = ["status","pdgId"]
 
@@ -177,83 +190,144 @@ def CreateDataFrame(args_):
             if(RES or NONRES): foundFirstHiggs = 0
             # phoCount = 0 
 
+            if(is_ZZgg):
+                # foundFirstZ1lep = 0
+                # foundFirstZ1nu = 0
+                # foundFirstZ1q = 0 
+
+                # foundFirstZ2lep = 0
+                # foundFirstZ2nu = 0
+                # foundFirstZ2q = 0       
+
+                foundFirstZ = 0           
+
+
             ##-- For Each Particle Save the genParticle objects of interest 
             nWs = 0
             pdgIds = []
 
             for ip,particle in enumerate(ps):
                 pdgId_val = particle.pdgId() 
+
+                # if(particle.mother(0).pdgId() == 23):
+                    # print("pdgId:",pdgId_val)
                 # if(pdgId_val == 22 and particle.mother(0).pdgId() == 25): phoCount += 1 
-                pdgIds.append(pdgId_val)  
 
-                ##-- Heavy resonance 
-                if(RES): 
-                    if(pdgId_val == 35 or pdgId_val == 39): # Radion, or graviton 
-                        X = particle 
+                ##-- Only save pdgID if Z decay, or H/g
+                if( (particle.mother(0).pdgId() == 23) or pdgId_val == 25 or pdgId_val == 22 or pdgId_val == 23):
+                    pdgIds.append(pdgId_val)   
 
-                ##-- Higgs 
-                if(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and not foundFirstHiggs:
-                    foundFirstHiggs=1
-                    H1 = particle
-                elif(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and foundFirstHiggs:
-                    H2 = particle 
-
-                ##-- Photons 
-                if(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and not foundFirstPhoton:
-                    foundFirstPhoton=1
-                    Pho1 = particle
-                elif(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and foundFirstPhoton:
-                    Pho2 = particle
-
-                ##-- W Bosons
-                if(abs(pdgId_val) == 24) and not foundFirstW:
-                    foundFirstW = 1
-                    W1 = particle 
-                elif(abs(pdgId_val) == 24) and foundFirstW:
-                    W2 = particle 
-
-                ##-- Quarks
-                if(abs(pdgId_val) >=1 and abs(pdgId_val) <= 5): 
-                    motherID = particle.mother(0).pdgId()
-                    if(abs(motherID) == 24): 
-                        if(not foundFirstQuark):
-                            foundFirstQuark = 1
-                            q1 = particle 
-                        elif(foundFirstQuark):
-                            q2 = particle 
-                    ##-- Incoming quarks recoiling off Vector bosons 
+                if(pdgId_val == 23):
+                    if(not foundFirstZ):
+                        foundFirstZ = 1 
+                        Z1_d1 = particle.daughter(0)
+                        Z1_d2 = particle.daughter(1)
                     else:
+                        Z2_d1 = particle.daughter(0)
+                        Z2_d2 = particle.daughter(1) 
 
-                        if(doVBF):
-                            # if(debug): 
-                                # print("Mother ID:",motherID)
-                                # print"status:",particle.status()
-                            if(particle.status()==21):
-                                if(not foundFirstIncVBFQuark):
-                                    if(debug): print("Found first inc VBF quark")
-                                    foundFirstIncVBFQuark = 1
-                                    incVBFq1 = particle 
-                                elif(foundFirstIncVBFQuark):
-                                    if(debug): print("Found second inc VBF quark")
-                                    incVBFq2 = particle     
-                            elif(particle.status()==23):
-                                if(not foundFirstOutVBFQuark):
-                                    if(debug): print("Found first out VBF quark")
-                                    foundFirstOutVBFQuark = 1
-                                    outVBFq1 = particle 
-                                elif(foundFirstOutVBFQuark):
-                                    if(debug): print("Found second out VBF quark")
-                                    outVBFq2 = particle      
-                            else: 
-                                print("quark status is not 21 or 23:")
-                                print("status:",particle.status())
-                                print("Mother ID:",motherID)
 
-                ##-- Lepton 
-                elif(abs(pdgId_val) == 11 or abs(pdgId_val) == 13 or abs(pdgId_val) == 15): lep = particle 
 
-                ##-- Neutrino 
-                elif(abs(pdgId_val) == 12 or abs(pdgId_val) == 14 or abs(pdgId_val) == 16): nu = particle  
+                
+                # ##-- Get Z daughters for invariant mass 
+                # if(particle.mother(0).pdgId() == 23):
+                #     if(abs(pdgId_val) in [11, 13, 15]):
+                #         if(not foundFirstZlep):
+                #             Zlep_1 = particle 
+                #             foundFirstZlep = 1 
+                #         else:
+                #             Zlep_2 = particle 
+                #     elif(abs(pdgId_val) in [12, 14, 16]):
+                #         if(not foundFirstZnu):
+                #             Znu_1 = particle 
+                #             foundFirstZnu = 1 
+                #         else:
+                #             Znu_2 = particle 
+                #     elif(abs(pdgId_val) >=1 and abs(pdgId_val) <= 5):
+                #         if(not foundFirstZq):
+                #             Zq_1 = particle 
+                #             foundFirstZq = 1 
+                #         else:
+                #             Zq_2 = particle 
+
+
+
+
+
+
+
+                # ##-- Heavy resonance 
+                # if(RES): 
+                #     if(pdgId_val == 35 or pdgId_val == 39): # Radion, or graviton 
+                #         X = particle 
+
+                # ##-- Higgs 
+                # if(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and not foundFirstHiggs:
+                #     foundFirstHiggs=1
+                #     H1 = particle
+                # elif(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and foundFirstHiggs:
+                #     H2 = particle 
+
+                # ##-- Photons 
+                # if(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and not foundFirstPhoton:
+                #     foundFirstPhoton=1
+                #     Pho1 = particle
+                # elif(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and foundFirstPhoton:
+                #     Pho2 = particle
+
+                # ##-- W Bosons
+                # if(abs(pdgId_val) == 24) and not foundFirstW:
+                #     foundFirstW = 1
+                #     W1 = particle 
+                # elif(abs(pdgId_val) == 24) and foundFirstW:
+                #     W2 = particle 
+
+                # ##-- Quarks
+                # if(abs(pdgId_val) >=1 and abs(pdgId_val) <= 5): 
+                #     motherID = particle.mother(0).pdgId()
+                #     if(abs(motherID) == 24): 
+                #         if(not foundFirstQuark):
+                #             foundFirstQuark = 1
+                #             q1 = particle 
+                #         elif(foundFirstQuark):
+                #             q2 = particle 
+                #     ##-- Incoming quarks recoiling off Vector bosons 
+                #     else:
+
+                #         if(doVBF):
+                #             # if(debug): 
+                #                 # print("Mother ID:",motherID)
+                #                 # print"status:",particle.status()
+                #             if(particle.status()==21):
+                #                 if(not foundFirstIncVBFQuark):
+                #                     if(debug): print("Found first inc VBF quark")
+                #                     foundFirstIncVBFQuark = 1
+                #                     incVBFq1 = particle 
+                #                 elif(foundFirstIncVBFQuark):
+                #                     if(debug): print("Found second inc VBF quark")
+                #                     incVBFq2 = particle     
+                #             elif(particle.status()==23):
+                #                 if(not foundFirstOutVBFQuark):
+                #                     if(debug): print("Found first out VBF quark")
+                #                     foundFirstOutVBFQuark = 1
+                #                     outVBFq1 = particle 
+                #                 elif(foundFirstOutVBFQuark):
+                #                     if(debug): print("Found second out VBF quark")
+                #                     outVBFq2 = particle      
+                #             else: 
+                #                 print("quark status is not 21 or 23:")
+                #                 print("status:",particle.status())
+                #                 print("Mother ID:",motherID)
+
+                # ##-- Lepton 
+                # elif(abs(pdgId_val) == 11 or abs(pdgId_val) == 13 or abs(pdgId_val) == 15): lep = particle 
+
+                # ##-- Neutrino 
+                # elif(abs(pdgId_val) == 12 or abs(pdgId_val) == 14 or abs(pdgId_val) == 16): nu = particle  
+
+
+
+
 
             # if(doVBF): 
                 # if(pdgIds.count(21)>0): 
@@ -261,6 +335,8 @@ def CreateDataFrame(args_):
                 #     print("pdgIds:",pdgIds)
                 #     print("Skipping event")
                 #     continue ## couldn't get VBF quarks in this case 
+
+            """
 
             if(RES or NONRES):
 
@@ -272,6 +348,8 @@ def CreateDataFrame(args_):
 
                 ##-- Determine Leading, Subleading particles, save variables 
                 # if(doVBF): for p in ["H","Pho","q","incVBFq","outVBFq"]:
+
+
                 for p in ["H","Pho","q"]:
                     p1 = eval("%s1"%(p)) 
                     p2 = eval("%s2"%(p))                                       
@@ -319,10 +397,45 @@ def CreateDataFrame(args_):
                 for p in ["H","Pho","q"]:
                     for v in ["invmass","DeltaR"]:
                         exec("%s%s_%s = %s(Lead_%s.p4(),Sublead_%s.p4())"%(p,p,v,v,p,p))                                                              
-                        exec("d['%s%s_%s'].append(%s%s_%s)"%(p,p,v,p,p,v))                                                              
+                        exec("d['%s%s_%s'].append(%s%s_%s)"%(p,p,v,p,p,v)) 
+            """
+
+            if(is_ZZgg):
+                absIDs = [abs(id_i) for id_i in pdgIds]
+
+                ##-- Z1 mass 
+
+
+                print("absIDs:",absIDs)
+                # if( (absIDs.count(11) + absIDs.count(13) + absIDs.count(15)) == 2 ):
+                #     m = invmass(Zlep_1.p4(), Zlep_2.p4())
+                #     d["invmass_Zll"].append(m)
+                #     d["invmass_Znunu"].append(-99)
+                #     d["invmass_Zqq"].append(-99)
+                # elif( (absIDs.count(12) + absIDs.count(14) + absIDs.count(16)) == 2 ):
+                #     m = invmass(Znu_1.p4(), Znu_2.p4())
+                #     d["invmass_Zll"].append(-99)
+                #     d["invmass_Znunu"].append(m)
+                #     d["invmass_Zqq"].append(-99)   
+                # elif( (absIDs.count(1) + absIDs.count(2) + absIDs.count(3) + absIDs.count(4) + absIDs.count(5)) == 2 ):
+                #     m = invmass(Zq_1.p4(), Zq_2.p4())
+                #     d["invmass_Zll"].append(-99)
+                #     d["invmass_Znunu"].append(-99)
+                #     d["invmass_Zqq"].append(m)                                      
 
             ##- Save pdgIds to dataframe 
+            # if(len(pdgIds) != 10):
+                # print("len(pdgIds):",len(pdgIds))
             d['pdgIds'].append(pdgIds)
+
+            if(is_ZZgg):
+                print("len(d['pdgIds']:",len(d['pdgIds']))
+                print("len(d['invmass_Z1ll']:",len(d['invmass_Z1ll']))
+                print("len(d['invmass_Z1nunu']:",len(d['invmass_Z1nunu']))
+                print("len(d['invmass_Z1qq']:",len(d['invmass_Z1qq']))
+                print("len(d['invmass_Z2ll']:",len(d['invmass_Z2ll']))
+                print("len(d['invmass_Z2nunu']:",len(d['invmass_Z2nunu']))
+                print("len(d['invmass_Z2qq']:",len(d['invmass_Z2qq']))                
 
             #if(debug): 
                 #if(not filledqq): print"---------------------Did not fill mqq"
