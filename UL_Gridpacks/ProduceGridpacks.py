@@ -16,10 +16,10 @@
 ##-- Example Usage:
 #
 ##-- Produce Cards
-# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --dryRun ##-- Run dryrun first to produce cards 
+# ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --dryRun --localDir /afs/cern.ch/work/a/atishelm/private/genproductions_home/
 #
 ##-- Produce Gridpacks
-# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --condor ##-- Then run without dryrun to produce gridpacks 
+# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --condor --localDir ##-- Then run without dryrun to produce gridpacks 
 
 ##-- Not sure if condor actually is setup properly 
 
@@ -34,12 +34,14 @@ parser = argparse.ArgumentParser()
 parser.add_argument("--Prod", type=str, default = "ggF", help = "Production mode. ggF or VBF")
 parser.add_argument("--Spin", type = str, default = "0", help = "Spin of resonant particle. 0 (Radion) or 2 (Bulk Graviton)")
 parser.add_argument("--masses", type=str, default = "250", help = "Comma separated string of Resonant mass points to produce")
+parser.add_argument("--localDir", type=str, default = "NO_Local_Dir", help = "Comma separated string of Resonant mass points to produce")
 parser.add_argument("--dryRun", action="store_true", default = False, help = "Dry run. Do not produce gridpack.")
 parser.add_argument("--condor", action="store_true", default = False, help = "Submit generation to condor")
 args = parser.parse_args()
 
 ##-- Parameters 
-initialDirec = os.getcwd()
+# initialDirec = os.getcwd()
+initialDirec = args.localDir
 productionDirectory = "genproductions/bin/MadGraph5_aMCatNLO/" ##-- the directory containing the gridpack generation executable 
 fullProductionDirectory = "%s/%s"%(initialDirec, productionDirectory)
 masses_l = args.masses.split(',')
@@ -49,11 +51,12 @@ print"Masses:",args.masses
 print"fullProductionDirectory:",fullProductionDirectory
 direcDict = {
     "ggF" : "genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/exo_diboson/",
-    "VBF" : "genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/VBFToXToHH/"
+    "VBF" : "genproductions/bin/MadGraph5_aMCatNLO/cards/production/2017/13TeV/VBFToXToHH_UL/"
 }
 direc = direcDict[args.Prod]
-print"cd %s"%(direc)
-os.chdir(direc)
+fullCardsDirec = "%s/%s"%(initialDirec, direc)
+print"cd %s"%(fullCardsDirec)
+os.chdir(fullCardsDirec)
 
 ##-- Gluon Gluon Fusion 
 if(args.Prod == "ggF"):
@@ -75,7 +78,7 @@ if(args.Prod == "ggF"):
 
     for mass in masses_l:
         print"mass:",mass
-        print"Output cards to: %s/%s_M%s"%(direc, finishedSample, mass)
+        print"Output cards to: %s/%s_M%s"%(fullCardsDirec, finishedSample, mass)
         os.chdir(initialDirec)
         if(args.dryRun):
             print"DRY RUN: Not generating gridpack"
@@ -105,18 +108,20 @@ elif(args.Prod == "VBF"):
       os.system("mkdir -p %s%s"%(sample, mass))
       for i in range(0,4):
         REPLACE_COMMAND = 'sed "s/<MASS>/%s/g" %s/%s%s > %s%s/%s%s%s'%(mass, sample, sample, postfix[i], sample, mass, sample, mass, postfix[i])
-        # print"REPLACE COMMAND: ",REPLACE_COMMAND
         print"Producing %s mass %s %s file..."%(sample, mass, postfix[i])
         os.system(REPLACE_COMMAND)
-      print"Output cards to: %s/%s%s"%(direc, sample, mass)
+      print"Output cards to: %s/%s%s"%(fullCardsDirec, sample, mass)
 
       if(args.dryRun):
         print"DRY RUN: Not generating gridpack"
       else:
         print"Generating gridpack..."
+        print("fullProductionDirectory:",fullProductionDirectory)
         os.chdir(fullProductionDirectory)
         if(condor): generateScript = "submit_condor_gridpack_generation.sh"
         else: generateScript = "gridpack_generation.sh"
-        GENERATE_COMMAND = "./%s %s%s cards/production/2017/13TeV/VBFToXToHH/%s%s"%(generateScript, sample, mass, sample, mass)
+        print("direc:",fullCardsDirec)
+        GENERATE_COMMAND = "./%s %s%s cards/production/2017/13TeV/%s/%s%s"%(generateScript, sample, mass, fullCardsDirec.split('/')[-2], sample, mass)
+        print("GENERATE COMMAND:",GENERATE_COMMAND)
         os.system(GENERATE_COMMAND)            
         

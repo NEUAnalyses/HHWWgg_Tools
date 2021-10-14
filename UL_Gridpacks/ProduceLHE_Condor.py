@@ -1,14 +1,11 @@
-# Abraham Tishelman-Charny 
-# 11 October 2021 
-#
-# The purpose of this script is to avoid running this command locally:
-# python ProduceGridpacks.py --Prod VBF --Spin 0 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000 --condor ##-- Run dryrun first to produce cards 
+# Abraham Tishelman-Charny
+# 12 October 2021 
 # 
-# But rather run a single mass point through its own condor job in order to produce all gridpack mass points in parallel 
+# The purpose of this condor submission script is to parallelize the production of LHE files from gridpacks per mass point. 
 
-# Example usage 
-# python ProduceGridpacks_Condor.py --masses 250,260 
-# condor_submit condor_job.txt
+# Example usage:
+# python ProduceLHE_Condor.py --masses 250,260 
+# python ProduceLHE_Condor.py --prod VBF --spin 2 --masses 250,260,270,280,300,320,350,400,450,500,550,600,650,700,750,800,850,900,1000,1250,1500,1750,2000,2500,3000
 
 #!/usr/bin/python
 import numpy as n
@@ -22,17 +19,16 @@ import os
 
 if __name__ == '__main__':
 
-  parser =  argparse.ArgumentParser(description='cat MVA')
+  parser =  argparse.ArgumentParser()
+  parser.add_argument('--masses',default = "250,260", required=False, type=str, help = "Comma separate list of mass points")
   parser.add_argument('--prod', default = "VBF", required=False, type=str, help = "Production mode. ggF, VBF")
   parser.add_argument('--spin', default = "0", required=False, type=str, help = "Spin of resonant particle")
-  parser.add_argument('--masses', default = "250,260", required=False, type=str, help = "Comma separated list of mass points")
-   
   args = parser.parse_args()
   masses = args.masses.split(',')
 
-  print("masses:",masses)
-
   scriptName = "condor_job.txt"
+
+  print("masses:",masses)
   
   local = os.getcwd()
   if not os.path.isdir('error'): os.mkdir('error') 
@@ -41,15 +37,12 @@ if __name__ == '__main__':
    
   # Prepare condor jobs
   condor = '''executable              = run_script.sh
-output                  = output/strips.$(ClusterId).$(ProcId).out
-error                   = error/strips.$(ClusterId).$(ProcId).err
-log                     = log/strips.$(ClusterId).log
+output                  = output/$(ClusterId).$(ProcId).out
+error                   = error/$(ClusterId).$(ProcId).err
+log                     = log/$(ClusterId).log
 transfer_input_files    = run_script.sh
-# on_exit_remove          = (ExitBySignal == False) && (ExitCode == 0)
-# periodic_release        = (NumJobStarts < 3) && ((CurrentTime - EnteredCurrentStatus) > (60*60))
     
-+JobFlavour             = "microcentury"
-# +AccountingGroup        = "group_u_CMS.CAF.ALCA"
++JobFlavour             = "longlunch"
 queue arguments from arguments.txt
 '''
 
@@ -63,10 +56,8 @@ PROD=$2
 SPIN=$3
 MASS=$4
 
-#eval `scramv1 ru -sh` #cmsenv 
-
-echo -e "Producing gridpack for mass point ${MASS} GeV...";
-python ${LOCAL}/ProduceGridpacks.py --Prod ${PROD} --Spin ${SPIN} --masses ${MASS} --localDir ${LOCAL}
+echo -e "Producing LHE file from gridpack for mass point ${MASS} GeV...";
+python ${LOCAL}/ProduceLHE.py --Prod ${PROD} --Spin ${SPIN} --masses ${MASS} --localDir ${LOCAL}
 
 echo -e "DONE";
 '''
@@ -88,4 +79,4 @@ echo -e "DONE";
   submitCommand = "condor_submit {scriptName}".format(scriptName=scriptName)
   print("$ {submitCommand}".format(submitCommand=submitCommand))
   os.system(submitCommand)
-  print("DONE")  
+  print("DONE")
