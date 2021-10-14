@@ -1,0 +1,1 @@
+# NMSSM validation
