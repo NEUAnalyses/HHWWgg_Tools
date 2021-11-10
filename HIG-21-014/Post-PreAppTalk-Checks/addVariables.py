@@ -2,7 +2,7 @@
 9 November 2021 
 Badder Marzocchi, Abraham Tishelman-Charny 
 
-The purpose of this module is to add variables to root files, to be used as input variables to HIG-21-014 semileptonic DNN.
+The purpose of this module is to add variables to root files, to be used as input variables to the HIG-21-014 semileptonic DNNs.
 """
 
 import ROOT 
@@ -151,7 +151,7 @@ def addVariables(inTree, name, year, lowEvents, Norm):
   inTree.SetBranchStatus('weight',0) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
   outTree = inTree.CloneTree(0)
   inTree.SetBranchStatus('weight',1) # allow access of weight branch so that values from input tree can be used 
-  outTree.SetName("GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year)) # Rename tree to something like "GluGluToHHTo2G2Qlnu_node_All_NLO_2017_NormInWeight_13TeV_HHWWggTag_0", because will manually hadd afterwards.
+  outTree.SetName("GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year)) # Common "ALL NLO" tree name since nodes will be hadded 
   outTree.SetTitle("GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year))     
 
 #   outTree.SetName(name)
