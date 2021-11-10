@@ -6,6 +6,8 @@ The purpose of this module is to combine NLO samples while maintaining normaliza
 
 """
 
+import argparse 
+
 # export PYTHONPATH=$CERNBOX_HOME/.local/lib/python3.8/site-packages:$PYTHONPATH
 
 import ROOT 
@@ -44,46 +46,42 @@ def GetNorm(year, node):
     }
 
     return float(NormVals[year][node]) 
-    # return (1./4.)
-
 
 if __name__ == '__main__':
-    print("Starting module")
+    print("Starting Combine_NLO.py module")
 
-    lowEvents = 0
+    # input arguments 
+    parser =  argparse.ArgumentParser()
+    parser.add_argument('--node', default = "cHHH1", required=False, type=str, help = "Node to run")
+    parser.add_argument('--year', default = "2017", required=False, type=str, help = "Year to run")
+    parser.add_argument('--runLowEvents', action="store_true", required=False, help = "Run on a low number of events (for testing)")
+    args = parser.parse_args()
+    
+    runLowEvents = args.runLowEvents
+    year = args.year 
+    node = args.node
 
-    years = ["2017"]
-    nodes = ["cHHH0", "cHHH1", "cHHH2p45", "cHHH5"]
-    # nodes = ["cHHH2p45", "cHHH5"]
+    print("year:",year)
+    print("node:",node)
+    print("runLowEvents:",runLowEvents)
 
-    for year in years:
-        print("year:",year)
-        d = "/eos/user/p/pmandrik/HHWWgg_central/January_2021_Production_v2/{year}/Signal/SL_NLO_{year}_hadded/".format(year=year)
-        for node in nodes:
-            print("node:",node)
-            # Define file paths 
-            f = "{d}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(d=d, node=node, year=year)
-            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/".format(year=year)
-
-            outName = "{out_d}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(out_d=out_d, node=node, year=year)
-            outFile = ROOT.TFile(outName, "RECREATE")
-            inFile = ROOT.TFile(f,"READ")
-            inDir = inFile.Get("tagsDumper/trees")    
-
-            treeNames = inDir.GetListOfKeys()
-
-            Norm = GetNorm(year, node)
-            print("Norm:",Norm)
-
-            for t_i, treeName in enumerate(treeNames): 
-                if(t_i > 0): 
-                    print("STOPPING after one tree on purpose")
-                    break 
-
-                kname = treeName.GetName() 
-                fullTreePath = "tagsDumper/trees/%s"%(kname)
-                inTree = inFile.Get(fullTreePath)        
-                outFile.cd()
-                addVariables(inTree, kname, year, lowEvents, Norm)
-
-            outFile.Close()        
+    d = "/eos/user/p/pmandrik/HHWWgg_central/January_2021_Production_v2/{year}/Signal/SL_NLO_{year}_hadded/".format(year=year)
+    f = "{d}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(d=d, node=node, year=year)
+    out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/".format(year=year)
+    outName = "{out_d}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(out_d=out_d, node=node, year=year)
+    outFile = ROOT.TFile(outName, "RECREATE")
+    inFile = ROOT.TFile(f,"READ")
+    inDir = inFile.Get("tagsDumper/trees")    
+    treeNames = inDir.GetListOfKeys()
+    Norm = GetNorm(year, node)
+    print("Norm:",Norm)
+    for t_i, treeName in enumerate(treeNames): 
+        if(t_i > 0): 
+            print("STOPPING after one tree on purpose")
+            break 
+        kname = treeName.GetName() 
+        fullTreePath = "tagsDumper/trees/%s"%(kname)
+        inTree = inFile.Get(fullTreePath)        
+        outFile.cd()
+        addVariables(inTree, kname, year, runLowEvents, Norm)
+    outFile.Close()        
