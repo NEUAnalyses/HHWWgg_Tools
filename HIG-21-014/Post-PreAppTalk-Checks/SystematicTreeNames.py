@@ -7,7 +7,7 @@ The purpose of this python module is to define the systematic labels used for HI
 
 def GetSystLabels(year):
 
-    systLabels = []
+    systLabels = ["Nominal"] # begin with Nominal 
 
     # Different names per year 
     listOfSources_2016 = [

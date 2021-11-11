@@ -153,13 +153,16 @@ def addVariables(inTree, name, year, lowEvents, Norm):
   inTree.SetBranchStatus('weight',1) # allow access of weight branch so that values from input tree can be used 
 
   # define combined NLO name (need common tree names to hadd afterwards)
-  originalName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
+  combinedName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
 
   # replace node string 
-  combinedName = name.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = name.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = name.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = name.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = combinedName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = combinedName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = combinedName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = combinedName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+
+  # print("originalName:",originalName)
+  print("combinedName:",combinedName)
 
   outTree.SetName(combinedName) # Common "ALL NLO" tree name since nodes will be hadded 
   outTree.SetTitle(combinedName)     

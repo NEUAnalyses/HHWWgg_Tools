@@ -94,11 +94,6 @@ if __name__ == '__main__':
         if(kname == treeToProcess):
             print("Found tree to process: {kname}".format(kname=kname))
 
-            # if((t_i > 0) and (not runSystematicsTrees)):
-            #     print("input argument runSystematicsTrees set to:",runSystematicsTrees)
-            #     print("STOPPING after one input tree")
-            #     break 
-
             treeInfo = kname.split('_')
             NumTreeKeys = len(treeInfo)
             if(NumTreeKeys == 6):
