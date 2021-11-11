@@ -151,11 +151,18 @@ def addVariables(inTree, name, year, lowEvents, Norm):
   inTree.SetBranchStatus('weight',0) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
   outTree = inTree.CloneTree(0)
   inTree.SetBranchStatus('weight',1) # allow access of weight branch so that values from input tree can be used 
-  outTree.SetName("GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year)) # Common "ALL NLO" tree name since nodes will be hadded 
-  outTree.SetTitle("GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year))     
 
-#   outTree.SetName(name)
-#   outTree.SetTitle(name)  
+  # define combined NLO name (need common tree names to hadd afterwards)
+  originalName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
+
+  # replace node string 
+  combinedName = name.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = name.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = name.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  combinedName = name.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+
+  outTree.SetName(combinedName) # Common "ALL NLO" tree name since nodes will be hadded 
+  outTree.SetTitle(combinedName)     
 
   # _kinWeight = outTree.Branch('kinWeight', kinWeight, 'kinWeight/F')  
   # _weight_NLO_node = outTree.Branch('weight_NLO_node', weight_NLO_node, 'weight_NLO_node/F')   

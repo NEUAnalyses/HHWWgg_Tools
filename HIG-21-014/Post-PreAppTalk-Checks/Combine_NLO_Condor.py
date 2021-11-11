@@ -6,12 +6,12 @@ The purpose of this module is to parallelize the combination of 4 NLO nodes for 
 
 Example usage:
 python Combine_NLO_Condor.py --nodes cHHH1 --years 2016
+python Combine_NLO_Condor.py --nodes cHHH0,cHHH1,cHHH2p45,cHHH5 --years 2016,2017,2018
 
 """
 
 #!/usr/bin/python
-import numpy as n
-from ROOT import *
+from SystematicTreeNames import GetSystLabels
 import sys, getopt
 import itertools
 import argparse
@@ -57,9 +57,10 @@ queue arguments from arguments.txt
 LOCAL=$1
 NODE=$2
 YEAR=$3
+SYST=$4
 
-echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}..."
-python ${LOCAL}/Combine_NLO.py --node ${NODE} --year ${YEAR}
+echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}, systematic ${SYST}..."
+python ${LOCAL}/Combine_NLO.py --node ${NODE} --year ${YEAR} --syst ${SYST}
 
 echo -e "DONE";
 '''
@@ -67,8 +68,13 @@ echo -e "DONE";
   arguments = []
   
   for year in years:
+    print("year:",year)
+    systLabels = GetSystLabels(year)
+    print("systematic labels:",systLabels)
     for node in nodes:
-      arguments.append("{} {} {}".format(local, node, year))
+      print("node:",node)
+      for systLabel in systLabels:
+        arguments.append("{} {} {} {}".format(local, node, year, systLabel))
 
   # Save arguments to text file to be input for condor jobs 
   with open("arguments.txt", "w") as args:
