@@ -2,13 +2,30 @@
 9 November 2021 
 Badder Marzocchi, Abraham Tishelman-Charny 
 
-The purpose of this module is to add variables to root files, to be used as input variables to the HIG-21-014 semileptonic DNNs.
+The purpose of this module is to perform various actions on ntuples, including adding variables and reweighting, for HIG-21-014.
 """
 
 import ROOT 
 from array import array 
 from METCorrections import correctedMET
 import math
+
+def SetBranchStatuses(inTree, status, reweightNode):
+  if(reweightNode != ""):
+    orders = ["LO", "NLO"]
+    nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
+    for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
+      nodeNames.append(val)
+    for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
+      nodeNames.append(val)      
+    
+    for order in orders:
+      for nodeName in nodeNames:
+        weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
+        inTree.SetBranchStatus(weightBranch, status)
+
+  inTree.SetBranchStatus('weight',status) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
+  # allow access of weight branch so that values from input tree can be used 
 
 def computeMt(part1_px, part1_py, part1_mass, part2_px, part2_py, part2_mass):
   Mt = -99.
@@ -59,7 +76,136 @@ def selectJets(jet0, jet0_pt, jet1, jet1_pt, jet2, jet2_pt, jet3, jet3_pt, jet4,
   elif index == 8: return [2,4]
   elif index == 9: return [3,4]
 
-def addVariables(inTree, name, year, lowEvents, Norm):
+def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
+
+  boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN 
+  catLabels = ["3", "2", "1", "0"]
+
+  for b_i, boundary in enumerate(boundaries):
+
+    if(b_i == (len(boundaries) - 1)): continue 
+    catLabel = catLabels[b_i]
+    b_min, b_max = boundary, boundaries[b_i+1]
+    print("min:",b_min)
+    print("max:",b_max)
+
+    outTree = inTree.CloneTree(0) # might be able to also just copytree and add selection as argument 
+
+    # name tree based on category number 
+    outTreeName = name 
+    outTreeName = outTreeName.replace("HHWWggTag_0", "HHWWggTag_SL_{catLabel}".format(catLabel=catLabel))
+
+    print("outTreeName:",outTreeName)
+
+    outTree.SetName(outTreeName) 
+    outTree.SetTitle(outTreeName)     
+
+    nentries = inTree.GetEntries()
+
+    if(lowEvents): 
+        print("Running on low number of events")
+        nentries = 1000
+
+    for i in range(0, nentries):
+      inTree.GetEntry(i)
+      if i%10000==0: print "Entry:",i
+
+      # if final category, include upper bound
+      if(b_i == (len(boundaries) - 1)):
+        DNNscore = inTree.evalDNN_HH
+        if((DNNscore >= b_min) and (DNNscore <= b_max) ):
+          outTree.Fill()
+        else:
+          continue 
+      else:
+        DNNscore = inTree.evalDNN_HH
+        if((DNNscore >= b_min) and (DNNscore < b_max) ):
+          outTree.Fill()
+        else:
+          continue         
+
+      # only save an event in the output tree if its DNN score is in this category 
+
+
+    outTree.Write()  
+
+def Reweight(inTree, name, year, lowEvents, Norm, reweightNode):
+  
+  SetBranchStatuses(inTree, 0, reweightNode) # don't clone all weight branches to output file to make it clear no reweighting needs to be done anymore 
+  outTree = inTree.CloneTree(0)
+  SetBranchStatuses(inTree, 1, reweightNode) # allow access of weight branches so that values from input tree can be used 
+
+  # define combined NLO name (need common tree names to hadd afterwards)
+  outTreeName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
+
+  # replace node string 
+  outTreeName = outTreeName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+
+  # If reweighting to a node, put node name in tree 
+  if(reweightNode != ""):
+    outTreeName = outTreeName.replace("node_All_NLO_{year}_Normalized_13TeV".format(year=year),"node_{reweightNode}_{year}_13TeV".format(reweightNode=reweightNode, year=year))
+
+  print("outTreeName:",outTreeName)
+
+  outTree.SetName(outTreeName) # Common "ALL NLO" tree name since nodes will be hadded 
+  outTree.SetTitle(outTreeName)     
+
+  nentries = inTree.GetEntries()
+
+  if(lowEvents): 
+      print("Running on low number of events")
+      nentries = 10
+
+  weight = array('f', [0])
+  weight[0] = -99.
+  _weight = outTree.Branch('weight', weight, 'weight/F')   
+
+  for i in range(0, nentries):
+    inTree.GetEntry(i)
+   
+    if i%10000==0: print "Entry:",i
+
+    # Update weight branch based on normalization factor for file, or node you want to reweight to 
+    Updated_weight = float(inTree.weight) * float(Norm)
+    if(reweightNode != ""):
+      nodeBranchDict = {
+          "cHHH0" : "weight_NLO_cHHH0",
+          "cHHH1" : "weight_NLO_SM",
+          "cHHH2p45" : "weight_NLO_cHHH2", # typo in reweight branch names. "weight_NLO_cHHH2" corresponds to cHHH2p45 
+          "cHHH5" : "weight_NLO_cHHH5",
+          "cttHH3" : "weight_NLO_cttHH3",
+          "cttHH0p35" : "weight_NLO_cttHH0p35",
+          "3D3" : "weight_NLO_3D3",
+          "8a" : "weight_NLO_8a",
+          "1b" : "weight_NLO_1b",
+          "2b" : "weight_NLO_2b",
+          "3b" : "weight_NLO_3b",
+          "4b" : "weight_NLO_4b",
+          "5b" : "weight_NLO_5b",
+          "6b" : "weight_NLO_6b",
+          "7b" : "weight_NLO_7b",
+      }      
+
+      reweightNodeBranch = nodeBranchDict[reweightNode]
+
+      exec("node_weight = float(inTree.{reweightNodeBranch})".format(reweightNodeBranch=reweightNodeBranch))
+      Updated_weight = Updated_weight * node_weight 
+    weight[0] = Updated_weight
+
+    outTree.Fill() 
+  outTree.Write()
+
+
+
+# === # 
+
+
+
+
+def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
 
   # inTree.SetBranchStatus('kinWeight',0)
   # inTree.SetBranchStatus('weight_NLO_node',0)
@@ -149,23 +295,57 @@ def addVariables(inTree, name, year, lowEvents, Norm):
   Wmass_goodJets12[0] = -99.
   
   inTree.SetBranchStatus('weight',0) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
+
+  # don't clone all weight branches to output file to make it clear no reweighting needs to be done anymore 
+  if(reweightNode != ""):
+    orders = ["LO", "NLO"]
+    nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
+    for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
+      nodeNames.append(val)
+    for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
+      nodeNames.append(val)      
+    
+    for order in orders:
+      for nodeName in nodeNames:
+        weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
+        inTree.SetBranchStatus(weightBranch, 0)
+
+
   outTree = inTree.CloneTree(0)
   inTree.SetBranchStatus('weight',1) # allow access of weight branch so that values from input tree can be used 
 
+  # allow access of weight branches so that values from input tree can be used 
+  if(reweightNode != ""):
+    orders = ["LO", "NLO"]
+    nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
+    for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
+      nodeNames.append(val)
+    for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
+      nodeNames.append(val)      
+    
+    for order in orders:
+      for nodeName in nodeNames:
+        weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
+        inTree.SetBranchStatus(weightBranch, 1)  
+
   # define combined NLO name (need common tree names to hadd afterwards)
-  combinedName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
+  outTreeName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
 
   # replace node string 
-  combinedName = combinedName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = combinedName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = combinedName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  combinedName = combinedName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  outTreeName = outTreeName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+
+  # If reweighting to a node, put node name in tree 
+  if(reweightNode != ""):
+    outTreeName = outTreeName.replace("node_All_NLO_{year}_Normalized_13TeV".format(year=year),"node_{reweightNode}_{year}_13TeV".format(reweightNode=reweightNode, year=year))
 
   # print("originalName:",originalName)
-  print("combinedName:",combinedName)
+  print("outTreeName:",outTreeName)
 
-  outTree.SetName(combinedName) # Common "ALL NLO" tree name since nodes will be hadded 
-  outTree.SetTitle(combinedName)     
+  outTree.SetName(outTreeName) # Common "ALL NLO" tree name since nodes will be hadded 
+  outTree.SetTitle(outTreeName)     
 
   # _kinWeight = outTree.Branch('kinWeight', kinWeight, 'kinWeight/F')  
   # _weight_NLO_node = outTree.Branch('weight_NLO_node', weight_NLO_node, 'weight_NLO_node/F')   
@@ -421,9 +601,32 @@ def addVariables(inTree, name, year, lowEvents, Norm):
       Wmt_H[0] = computeMt(jet3.Px(), jet3.Py(), jet3.M(), jet4.Px(), jet4.Py(), jet4.M())
       Wmass_H[0] = (jet3+jet4).M()   
 
-    # Update weight branch based on normalization factor for file 
-    Normed_weight = float(inTree.weight) * float(Norm)
-    weight[0] = Normed_weight
+    # Update weight branch based on normalization factor for file, or node you want to reweight to 
+    Updated_weight = float(inTree.weight) * float(Norm)
+    if(reweightNode != ""):
+      nodeBranchDict = {
+          "cHHH0" : "weight_NLO_cHHH0",
+          "cHHH1" : "weight_NLO_SM",
+          "cHHH2p45" : "weight_NLO_cHHH2", # typo in reweight branch names. "weight_NLO_cHHH2" corresponds to cHHH2p45 
+          "cHHH5" : "weight_NLO_cHHH5",
+          "cttHH3" : "weight_NLO_cttHH3",
+          "cttHH0p35" : "weight_NLO_cttHH0p35",
+          "3D3" : "weight_NLO_3D3",
+          "8a" : "weight_NLO_8a",
+          "1b" : "weight_NLO_1b",
+          "2b" : "weight_NLO_2b",
+          "3b" : "weight_NLO_3b",
+          "4b" : "weight_NLO_4b",
+          "5b" : "weight_NLO_5b",
+          "6b" : "weight_NLO_6b",
+          "7b" : "weight_NLO_7b",
+      }      
+
+      reweightNodeBranch = nodeBranchDict[reweightNode]
+
+      exec("node_weight = float(inTree.{reweightNodeBranch})".format(reweightNodeBranch=reweightNodeBranch))
+      Updated_weight = Updated_weight * node_weight 
+    weight[0] = Updated_weight
 
     outTree.Fill() 
   outTree.Write()
