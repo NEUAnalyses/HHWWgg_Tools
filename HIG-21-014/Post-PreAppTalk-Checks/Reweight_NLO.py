@@ -72,9 +72,10 @@ if __name__ == '__main__':
     parser.add_argument('--syst', default = "Nominal", required=False, type=str, help = "Systematic tree to process")
     parser.add_argument('--reweightNode', default = "", required=False, type=str, help = "Node to reweight to, e.g. (updates weight branch)")
     parser.add_argument('--TDirec', default = "tagsDumper/trees", required=False, type=str, help = "TDirectory strucuture of input root file")
+    parser.add_argument('--DNN_direc', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
     parser.add_argument('--GENnorm', action="store_true", required=False, help = "Normalize weight branch based on relative GEN sums")
     args = parser.parse_args()
-    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize"]
+    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "DNN_direc"]
     print("=====")
     for a in arguments: 
         exec("{a} = args.{a}".format(a=a))
@@ -95,8 +96,8 @@ if __name__ == '__main__':
         if(reweightNode != ""):
             node = reweightNode
             # Start with file which is already a combination of the 4 NLO nodes 
-            d = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/"
-            f = "{d}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(d=d, year=year)
+            # DNN_direc 
+            f = "{DNN_direc}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(DNN_direc=DNN_direc, year=year)
             out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
             if(not os.path.isdir(out_d)):
                 print("Creating output directory:",out_d)
@@ -141,7 +142,10 @@ if __name__ == '__main__':
             treeNode = node
     
     if(categorize):
-        treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_{year}_13TeV_HHWWggTag_0".format(treeNode=treeNode, year=year)
+        if(syst == "Nominal"):
+            treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_{year}_13TeV_HHWWggTag_0".format(treeNode=treeNode, year=year)
+        else: 
+            treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_{year}_13TeV_HHWWggTag_0_{syst}".format(treeNode=treeNode, year=year, syst=syst)
     else:
         if(syst == "Nominal"):
             treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_13TeV_HHWWggTag_0".format(treeNode=treeNode)

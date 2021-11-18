@@ -7,12 +7,15 @@ The purpose of this module is to parallelize the combination of 4 NLO nodes for 
 Example usage:
 
 # Combine NLO samples 
+python Reweight_NLO_Condor.py --nodes cHHH1 --years 2016 --NominalOnly
+
 python Reweight_NLO_Condor.py --nodes cHHH1 --years 2016
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH1,cHHH2p45,cHHH5 --years 2016,2017,2018
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH2p45,cHHH5 --years 2017
 
 # Reweight combined NLO sample to another node 
-python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 
+python Reweight_NLO_Condor.py --reweightNodes 8a --years 2017 --DNN_direc /eos/user/a/atishelm/ntuples/HHWWgg_DNN/BinaryDNN/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM_withKinWeight_weightSel/ --NominalOnly
+python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3  --years 2016,2018 
 python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3,8a,1b,2b,3b,4b,5b,6b,7b
 
 # Categorize 
@@ -36,12 +39,14 @@ if __name__ == '__main__':
   parser.add_argument('--years',default = "2017", required=False, type=str, help = "Comma separated list of years to run")
   parser.add_argument('--NominalOnly',action="store_true",help = "Only run on nominal tree")
   parser.add_argument('--categorize', action="store_true", required=False, help = "Split trees into categories based on DNN score")
+  parser.add_argument('--DNN_direc', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
   args = parser.parse_args()
 
   nodes = args.nodes.split(',')
   reweightNodes = args.reweightNodes.split(',')
   years = args.years.split(',')
   categorize = args.categorize
+  DNN_direc = args.DNN_direc
 
   print("categorize:",categorize)
 
@@ -77,6 +82,7 @@ reweightNode=$2
 YEAR=$3
 SYST=$4
 CATEGORIZE=$5
+DNN_direc=$6
 
 #echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}, systematic ${SYST}..."
 #python ${LOCAL}/Reweight_NLO.py --node ${NODE} --year ${YEAR} --syst ${SYST}
@@ -89,37 +95,40 @@ if [ "$CATEGORIZE" = True ]; then
   echo "Categorizing"
   python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize
 else 
-  echo "Not categorizing"
-  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec ""
+  # Reweight to a node 
+  #echo "Not categorizing" 
+  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --DNN_direc ${DNN_direc}
+  
+  # combine samples 
+  #python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
 fi  
-
-
 
 echo -e "DONE";
 '''
 
   arguments = []
   
-  # For combining input NLO files 
+  # # For combining input NLO files 
   # for year in years:
   #   print("year:",year)
   #   systLabels = GetSystLabels(year)
+  #   if(args.NominalOnly): systLabels = ["Nominal"]
   #   print("systematic labels:",systLabels)
   #   for node in nodes:
   #     print("node:",node)
   #     for systLabel in systLabels:
-  #       arguments.append("{} {} {} {}".format(local, node, year, systLabel))
+  #       arguments.append("{} {} {} {} {}".format(local, node, year, systLabel, "false"))
 
-  # For reweighting already combined file with DNN score 
+  # For reweighting already combined file with DNN score, or categorizing 
   for year in years:
     print("year:",year)
     systLabels = GetSystLabels(year)
-    print("systematic labels:",systLabels)
     if(args.NominalOnly): systLabels = ["Nominal"]
+    print("systematic labels:",systLabels)
     for reweightNode in reweightNodes:
       print("reweightNode:",reweightNode)
       for systLabel in systLabels:
-        arguments.append("{} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize))
+        arguments.append("{} {} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize, DNN_direc))
 
   # Save arguments to text file to be input for condor jobs 
   with open("arguments.txt", "w") as args:
