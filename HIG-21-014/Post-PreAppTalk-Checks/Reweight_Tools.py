@@ -129,7 +129,7 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
 
     outTree.Write()  
 
-def Reweight(inTree, name, year, lowEvents, Norm, reweightNode):
+def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
   
   SetBranchStatuses(inTree, 0, reweightNode) # don't clone all weight branches to output file to make it clear no reweighting needs to be done anymore 
   outTree = inTree.CloneTree(0)
@@ -163,6 +163,11 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode):
   weight[0] = -99.
   _weight = outTree.Branch('weight', weight, 'weight/F')   
 
+  if(addNodeBranch):
+    Node_Number = array('f', [0])
+    Node_Number[0] = -99
+    _Node_Number = outTree.Branch('Node_Number', Node_Number, 'Node_Number/F')
+
   for i in range(0, nentries):
     inTree.GetEntry(i)
    
@@ -179,6 +184,18 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode):
           "cttHH3" : "weight_NLO_cttHH3",
           "cttHH0p35" : "weight_NLO_cttHH0p35",
           "3D3" : "weight_NLO_3D3",
+          "1"  : "weight_NLO_1",
+          "2"  : "weight_NLO_2",
+          "3"  : "weight_NLO_3",
+          "4"  : "weight_NLO_4",
+          "5"  : "weight_NLO_5",
+          "6"  : "weight_NLO_6",
+          "7"  : "weight_NLO_7",
+          "8"  : "weight_NLO_8",
+          "9"  : "weight_NLO_9",
+          "10"  : "weight_NLO_10",
+          "11"  : "weight_NLO_11",
+          "12"  : "weight_NLO_12",   
           "8a" : "weight_NLO_8a",
           "1b" : "weight_NLO_1b",
           "2b" : "weight_NLO_2b",
@@ -186,15 +203,44 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode):
           "4b" : "weight_NLO_4b",
           "5b" : "weight_NLO_5b",
           "6b" : "weight_NLO_6b",
-          "7b" : "weight_NLO_7b",
+          "7b" : "weight_NLO_7b",                 
       }      
+
+      # arbitrarily name the 20 nodes 1-20 for parametric DNN training. 
+      nodeNumberDict = {
+        "1" : "1",
+        "2" : "2",
+        "3" : "3",
+        "4" : "4",
+        "5" : "5",
+        "6" : "6",
+        "7" : "7",
+        "8" : "8",
+        "9" : "9",
+        "10" : "10",
+        "11" : "11",
+        "12" : "12",
+        "8a" : "13",
+        "1b" : "14",
+        "2b" : "15",
+        "3b" : "16",
+        "4b" : "17",
+        "5b" : "18",
+        "6b" : "19",
+        "7b" : "20",
+      } 
 
       reweightNodeBranch = nodeBranchDict[reweightNode]
 
       exec("node_weight = float(inTree.{reweightNodeBranch})".format(reweightNodeBranch=reweightNodeBranch))
       Updated_weight = Updated_weight * node_weight 
-    weight[0] = Updated_weight
 
+      if(addNodeBranch):
+        nodeVal = float(nodeNumberDict[reweightNode])
+        Node_Number[0] = nodeVal
+
+    weight[0] = Updated_weight
+    
     outTree.Fill() 
   outTree.Write()
 

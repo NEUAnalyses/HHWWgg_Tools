@@ -7,14 +7,13 @@ The purpose of this module is to combine NLO samples while maintaining normaliza
 Example Commands:
 
 # Combine NLO samples 
-python Reweight_NLO.py --node cHHH1 --year 2017 --runLowEvents --syst Nominal 
-python Reweight_NLO.py --node cHHH1 --year 2017 --runLowEvents --syst MvaShiftUp01sigma
 
 # Reweight to a node 
-python Reweight_NLO.py --reweightNode cttHH3 --syst Nominal --runLowEvents --TDirec ""
+
+# Reweight to a node and include node branch
+python Reweight_NLO.py --reweightNode 1 --syst Nominal --runLowEvents --TDirec "" --addNodeBranch --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/
 
 # Categorize by DNN score 
-python Reweight_NLO.py --reweightNode cttHH0p35 --syst Nominal  --TDirec "" --runLowEvents --categorize
 
 """
 
@@ -69,13 +68,14 @@ if __name__ == '__main__':
     parser.add_argument('--year', default = "2017", required=False, type=str, help = "Year to run")
     parser.add_argument('--runLowEvents', action="store_true", required=False, help = "Run on a low number of events (for testing)")
     parser.add_argument('--categorize', action="store_true", required=False, help = "Split trees into categories based on DNN score")
+    parser.add_argument('--addNodeBranch', action="store_true", required=False, help = "Add branch Node_Number to be used for parametric DNN training")
     parser.add_argument('--syst', default = "Nominal", required=False, type=str, help = "Systematic tree to process")
     parser.add_argument('--reweightNode', default = "", required=False, type=str, help = "Node to reweight to, e.g. (updates weight branch)")
     parser.add_argument('--TDirec', default = "tagsDumper/trees", required=False, type=str, help = "TDirectory strucuture of input root file")
-    parser.add_argument('--DNN_direc', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
+    parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
     parser.add_argument('--GENnorm', action="store_true", required=False, help = "Normalize weight branch based on relative GEN sums")
     args = parser.parse_args()
-    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "DNN_direc"]
+    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "inDir", "addNodeBranch"]
     print("=====")
     for a in arguments: 
         exec("{a} = args.{a}".format(a=a))
@@ -96,8 +96,7 @@ if __name__ == '__main__':
         if(reweightNode != ""):
             node = reweightNode
             # Start with file which is already a combination of the 4 NLO nodes 
-            # DNN_direc 
-            f = "{DNN_direc}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(DNN_direc=DNN_direc, year=year)
+            f = "{inDir}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(inDir=inDir, year=year)
             out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
             if(not os.path.isdir(out_d)):
                 print("Creating output directory:",out_d)
@@ -198,7 +197,7 @@ if __name__ == '__main__':
                 Categorize(inTree, kname, year, runLowEvents, Norm, reweightNode)
             else:
                 if(reweightNode != ""):
-                    Reweight(inTree, kname, year, runLowEvents, Norm, reweightNode)    
+                    Reweight(inTree, kname, year, runLowEvents, Norm, reweightNode, addNodeBranch)    
                 else: 
                     addVariables(inTree, kname, year, runLowEvents, Norm, reweightNode)                 
                 
