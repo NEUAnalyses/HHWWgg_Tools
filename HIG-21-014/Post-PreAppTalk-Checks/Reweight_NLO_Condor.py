@@ -14,9 +14,8 @@ python Reweight_NLO_Condor.py --nodes cHHH0,cHHH1,cHHH2p45,cHHH5 --years 2016,20
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH2p45,cHHH5 --years 2017
 
 # Reweight combined NLO sample to another node 
-python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,8a,1b,2b,3b,4b,5b,6b,7b --years 2017 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/  --addNodeBranch
+python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,8a,1b,2b,3b,4b,5b,6b,7b --years 2017 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/ --addNodeBranch
 python Reweight_NLO_Condor.py --reweightNodes 2 --years 2017 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/ --NominalOnly --addNodeBranch
-
 
 python Reweight_NLO_Condor.py --reweightNodes 8a --years 2017 --inDir /eos/user/a/atishelm/ntuples/HHWWgg_DNN/BinaryDNN/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM_withKinWeight_weightSel/ --NominalOnly
 python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3  --years 2016,2018 
@@ -24,6 +23,9 @@ python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3,8a,1b,2b,3b,4
 
 # Categorize 
 python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 --categorize
+
+# Split into even / odd weights 
+python Reweight_NLO_Condor.py --reweightNodes 2 --years 2017 --NominalOnly --evenOddSplit 
 
 """
 
@@ -44,6 +46,7 @@ if __name__ == '__main__':
   parser.add_argument('--NominalOnly',action="store_true",help = "Only run on nominal tree")
   parser.add_argument('--categorize', action="store_true", required=False, help = "Split trees into categories based on DNN score")
   parser.add_argument('--addNodeBranch', action="store_true", required=False, help = "Add branch with node number for parametric DNN training")
+  parser.add_argument('--evenOddSplit', action="store_true", required=False, help = "Split events into even and odd for DNN training")
   parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing file to begin with, at least for reweighting")
   args = parser.parse_args()
 
@@ -53,6 +56,7 @@ if __name__ == '__main__':
   categorize = args.categorize
   inDir = args.inDir
   addNodeBranch = args.addNodeBranch
+  evenOddSplit = args.evenOddSplit
 
   print("categorize:",categorize)
 
@@ -62,6 +66,7 @@ if __name__ == '__main__':
   print("reweightNodes:",reweightNodes)
   print("years:",years)
   print("addNodeBranch:",addNodeBranch)
+  print("evenOddSplit:",evenOddSplit)
 
   local = os.getcwd()
   if not os.path.isdir('error'): os.mkdir('error') 
@@ -91,6 +96,7 @@ SYST=$4
 CATEGORIZE=$5
 inDir=$6
 addNodeBranch=$7
+evenOddSplit=$8
 
 #echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}, systematic ${SYST}..."
 #python ${LOCAL}/Reweight_NLO.py --node ${NODE} --year ${YEAR} --syst ${SYST}
@@ -104,16 +110,21 @@ if [ "$addNodeBranch" = True ]; then
   addNodeBranchstr="--addNodeBranch"
 fi
 
+evenOddSplitStr=""
+if [ "$evenOddSplit" = True ]; then 
+  evenOddSplitstr="--evenOddSplit"
+fi
+
 if [ "$CATEGORIZE" = True ]; then 
   echo "Categorizing"
   python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize
 else 
   # Reweight to a node 
   #echo "Not categorizing" 
-  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir} ${addNodeBranchstr}
+  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}
   
   # combine samples 
-  #python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
+  # python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
 fi  
 
 echo -e "DONE";
@@ -141,7 +152,7 @@ echo -e "DONE";
     for reweightNode in reweightNodes:
       print("reweightNode:",reweightNode)
       for systLabel in systLabels:
-        arguments.append("{} {} {} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize, inDir, addNodeBranch))
+        arguments.append("{} {} {} {} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize, inDir, addNodeBranch, evenOddSplit))
 
   # Save arguments to text file to be input for condor jobs 
   with open("arguments.txt", "w") as args:

@@ -76,6 +76,39 @@ def selectJets(jet0, jet0_pt, jet1, jet1_pt, jet2, jet2_pt, jet3, jet3_pt, jet4,
   elif index == 8: return [2,4]
   elif index == 9: return [3,4]
 
+# split file into even and odd events 
+def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePath):
+  print("on File:",inFile)
+
+  # Split into even and odd 
+
+  print("Even events:",fullTreePath)
+  tree = inFile.Get(fullTreePath)
+  outFile_even.cd()
+  outtree_even = tree.CloneTree(0)
+  if(lowEvents): nentries = 10
+  else: nentries = tree.GetEntries()
+  for i in range(0, nentries):
+      tree.GetEntry(i) 
+      if (i%2 == 0): outtree_even.Fill() 
+  outtree_even.Write(fullTreePath)
+
+  outFile_even.Close()
+
+  # odd events 
+  print("Odd events:",fullTreePath)
+  tree = inFile.Get(fullTreePath)
+  outFile_odd.cd()
+  outtree_odd = tree.CloneTree(0)
+  if(lowEvents): nentries = 10
+  else: nentries = tree.GetEntries()
+  for i in range(0, nentries):
+      tree.GetEntry(i) 
+      if (i%2 != 0): outtree_odd.Fill() 
+  outtree_odd.Write(fullTreePath)
+    
+  outFile_odd.Close()  
+
 def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
 
   boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN 
@@ -108,7 +141,7 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
 
     for i in range(0, nentries):
       inTree.GetEntry(i)
-      if i%10000==0: print "Entry:",i
+      if i%10000==0: print("Entry:",i)
 
       # if final category, include upper bound
       if(b_i == (len(boundaries) - 1)):
@@ -171,7 +204,7 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
   for i in range(0, nentries):
     inTree.GetEntry(i)
    
-    if i%10000==0: print "Entry:",i
+    if i%10000==0: print("Entry:",i)
 
     # Update weight branch based on normalization factor for file, or node you want to reweight to 
     Updated_weight = float(inTree.weight) * float(Norm)
@@ -196,14 +229,14 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
           "10"  : "weight_NLO_10",
           "11"  : "weight_NLO_11",
           "12"  : "weight_NLO_12",   
-          "8a" : "weight_NLO_8a",
-          "1b" : "weight_NLO_1b",
-          "2b" : "weight_NLO_2b",
-          "3b" : "weight_NLO_3b",
-          "4b" : "weight_NLO_4b",
-          "5b" : "weight_NLO_5b",
-          "6b" : "weight_NLO_6b",
-          "7b" : "weight_NLO_7b",                 
+          "13" : "weight_NLO_8a",
+          "14" : "weight_NLO_1b",
+          "15" : "weight_NLO_2b",
+          "16" : "weight_NLO_3b",
+          "17" : "weight_NLO_4b",
+          "18" : "weight_NLO_5b",
+          "19" : "weight_NLO_6b",
+          "20" : "weight_NLO_7b",                 
       }      
 
       # arbitrarily name the 20 nodes 1-20 for parametric DNN training. 
@@ -220,14 +253,14 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
         "10" : "10",
         "11" : "11",
         "12" : "12",
-        "8a" : "13",
-        "1b" : "14",
-        "2b" : "15",
-        "3b" : "16",
-        "4b" : "17",
-        "5b" : "18",
-        "6b" : "19",
-        "7b" : "20",
+        "13" : "13",
+        "14" : "14",
+        "15" : "15",
+        "16" : "16",
+        "17" : "17",
+        "18" : "18",
+        "19" : "19",
+        "20" : "20",
       } 
 
       reweightNodeBranch = nodeBranchDict[reweightNode]
@@ -432,7 +465,7 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   for i in range(0, nentries):
     inTree.GetEntry(i)
    
-    if i%10000==0: print "Entry:",i
+    if i%10000==0: print("Entry:",i)
     #if i>10000: continue 
    
     # eftWeight_val = 1.
@@ -513,9 +546,9 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
       Wmt_goodJets12[0] = computeMt(jet0.Px(), jet0.Py(), jet0.M(), jet1.Px(), jet1.Py(), jet1.M())
       Wmass_goodJets12[0] = (jet0+jet1).M() 
       if (jet0+jet1).M()<-99.: 
-        print "Wmass_goodJets12[0]:",(jet0+jet1).M()  
-        print "jet0:",inTree.goodJets_0_pt, inTree.goodJets_0_eta, inTree.goodJets_0_phi, inTree.goodJets_0_E
-        print "jet1:",inTree.goodJets_1_pt, inTree.goodJets_1_eta, inTree.goodJets_1_phi, inTree.goodJets_1_E    
+        print("Wmass_goodJets12[0]:",(jet0+jet1).M())  
+        print("jet0:",inTree.goodJets_0_pt, inTree.goodJets_0_eta, inTree.goodJets_0_phi, inTree.goodJets_0_E)
+        print("jet1:",inTree.goodJets_1_pt, inTree.goodJets_1_eta, inTree.goodJets_1_phi, inTree.goodJets_1_E)    
           
     WJets_indices = selectJets(jet0, inTree.goodJets_0_pt, jet1, inTree.goodJets_1_pt, jet2, inTree.goodJets_3_pt, jet3, inTree.goodJets_3_pt, jet4, inTree.goodJets_4_pt)
     if WJets_indices[0]==-1 or WJets_indices[1]==-1: 
