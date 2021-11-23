@@ -9,6 +9,7 @@ import ROOT
 from array import array 
 from METCorrections import correctedMET
 import math
+import pickle 
 
 def SetBranchStatuses(inTree, status, reweightNode):
   if(reweightNode != ""):
@@ -77,34 +78,77 @@ def selectJets(jet0, jet0_pt, jet1, jet1_pt, jet2, jet2_pt, jet3, jet3_pt, jet4,
   elif index == 9: return [3,4]
 
 # split file into even and odd events 
-def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePath):
+def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePath, additionalSF, reweightNode, syst):
   print("on File:",inFile)
+  SFfile_dir = "/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
+  if(additionalSF):
+    SF_Dictionary = pickle.load( open( "{SFfile_dir}/EvenOddScaleFactors_2017_Nodes_1to20.p".format(SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
 
   # Split into even and odd 
 
   print("Even events:",fullTreePath)
   tree = inFile.Get(fullTreePath)
+  tree.SetBranchStatus("pdfWeights",0)
+  tree.SetBranchStatus("scaleWeights",0)
+
+  if(additionalSF):
+    tree.SetBranchStatus("weight", 0) # remove weight branch from cloning so that updated weight branch can be added 
   outFile_even.cd()
   outtree_even = tree.CloneTree(0)
+
+  if(additionalSF):
+    tree.SetBranchStatus("weight", 1) # allow access of weight branch so that value from input tree can be used
+    weight = array('f', [0])
+    weight[0] = -99.
+    _weight = outtree_even.Branch('weight', weight, 'weight/F')       
+
   if(lowEvents): nentries = 10
   else: nentries = tree.GetEntries()
   for i in range(0, nentries):
       tree.GetEntry(i) 
-      if (i%2 == 0): outtree_even.Fill() 
-  outtree_even.Write(fullTreePath)
+      if i%10000==0: print("Entry:",i)
+      if (i%2 == 0): 
+        if(additionalSF):
+          SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="even")
+          SF = SF_Dictionary[SF_key]
+          Updated_weight = float(tree.weight) * float(SF) 
+          weight[0] = Updated_weight              
 
+        outtree_even.Fill() 
+      
+  outtree_even.Write(fullTreePath)
   outFile_even.Close()
 
   # odd events 
   print("Odd events:",fullTreePath)
   tree = inFile.Get(fullTreePath)
+  tree.SetBranchStatus("pdfWeights",0)
+  tree.SetBranchStatus("scaleWeights",0)  
+
+  if(additionalSF):
+    tree.SetBranchStatus("weight", 0) # remove weight branch from cloning so that updated weight branch can be added 
+
   outFile_odd.cd()
   outtree_odd = tree.CloneTree(0)
+
+  if(additionalSF):
+    tree.SetBranchStatus("weight", 1) # allow access of weight branch so that value from input tree can be used
+    weight = array('f', [0])
+    weight[0] = -99.
+    _weight = outtree_odd.Branch('weight', weight, 'weight/F')   
+
   if(lowEvents): nentries = 10
   else: nentries = tree.GetEntries()
   for i in range(0, nentries):
+      if i%10000==0: print("Entry:",i)
       tree.GetEntry(i) 
-      if (i%2 != 0): outtree_odd.Fill() 
+      if (i%2 != 0): 
+        if(additionalSF):
+          SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="odd")
+          SF = SF_Dictionary[SF_key]
+          Updated_weight = float(tree.weight) * float(SF) 
+          weight[0] = Updated_weight         
+        outtree_odd.Fill() 
   outtree_odd.Write(fullTreePath)
     
   outFile_odd.Close()  

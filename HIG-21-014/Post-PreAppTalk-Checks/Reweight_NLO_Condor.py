@@ -27,6 +27,10 @@ python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 --categorize
 # Split into even / odd weights 
 python Reweight_NLO_Condor.py --reweightNodes 2 --years 2017 --NominalOnly --evenOddSplit 
 
+# Split into even / odd weights, additional additional SF to scale back to full sample yield 
+python3 Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --years 2017 --evenOddSplit --additionalSF
+python Reweight_NLO_Condor.py --reweightNodes 1 --years 2017 --NominalOnly --evenOddSplit --additionalSF
+
 """
 
 #!/usr/bin/python
@@ -47,6 +51,7 @@ if __name__ == '__main__':
   parser.add_argument('--categorize', action="store_true", required=False, help = "Split trees into categories based on DNN score")
   parser.add_argument('--addNodeBranch', action="store_true", required=False, help = "Add branch with node number for parametric DNN training")
   parser.add_argument('--evenOddSplit', action="store_true", required=False, help = "Split events into even and odd for DNN training")
+  parser.add_argument('--additionalSF', action="store_true", required=False, help = "Apply SF to scale yield back to nominal")
   parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing file to begin with, at least for reweighting")
   args = parser.parse_args()
 
@@ -57,6 +62,7 @@ if __name__ == '__main__':
   inDir = args.inDir
   addNodeBranch = args.addNodeBranch
   evenOddSplit = args.evenOddSplit
+  additionalSF = args.additionalSF
 
   print("categorize:",categorize)
 
@@ -67,6 +73,7 @@ if __name__ == '__main__':
   print("years:",years)
   print("addNodeBranch:",addNodeBranch)
   print("evenOddSplit:",evenOddSplit)
+  print("additionalSF:",additionalSF)
 
   local = os.getcwd()
   if not os.path.isdir('error'): os.mkdir('error') 
@@ -97,6 +104,7 @@ CATEGORIZE=$5
 inDir=$6
 addNodeBranch=$7
 evenOddSplit=$8
+additionalSF=$9
 
 #echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}, systematic ${SYST}..."
 #python ${LOCAL}/Reweight_NLO.py --node ${NODE} --year ${YEAR} --syst ${SYST}
@@ -115,13 +123,18 @@ if [ "$evenOddSplit" = True ]; then
   evenOddSplitstr="--evenOddSplit"
 fi
 
+additionalSFStr=""
+if [ "$additionalSF" = True ]; then
+  additionalSFStr="--additionalSF"
+fi
+
 if [ "$CATEGORIZE" = True ]; then 
   echo "Categorizing"
   python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize
 else 
   # Reweight to a node 
   #echo "Not categorizing" 
-  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}
+  python3 ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}  ${additionalSFStr}
   
   # combine samples 
   # python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
@@ -152,7 +165,7 @@ echo -e "DONE";
     for reweightNode in reweightNodes:
       print("reweightNode:",reweightNode)
       for systLabel in systLabels:
-        arguments.append("{} {} {} {} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize, inDir, addNodeBranch, evenOddSplit))
+        arguments.append("{} {} {} {} {} {} {} {} {}".format(local, reweightNode, year, systLabel, categorize, inDir, addNodeBranch, evenOddSplit, additionalSF))
 
   # Save arguments to text file to be input for condor jobs 
   with open("arguments.txt", "w") as args:

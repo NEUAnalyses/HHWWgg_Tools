@@ -16,6 +16,7 @@ python Reweight_NLO.py --reweightNode 1 --syst Nominal --runLowEvents --TDirec "
 # Categorize by DNN score 
 
 # Split into even/odd events for DNN training 
+python3 Reweight_NLO.py --reweightNode 6 --syst MCSmearHighR9EBPhiDown01sigma --TDirec "" --evenOddSplit
 python Reweight_NLO.py --reweightNode 2 --syst Nominal --runLowEvents --TDirec "" --evenOddSplit
 
 """
@@ -73,13 +74,14 @@ if __name__ == '__main__':
     parser.add_argument('--categorize', action="store_true", required=False, help = "Split trees into categories based on DNN score")
     parser.add_argument('--evenOddSplit', action="store_true", required=False, help = "Split trees into two files: One with even event IDs, one with odd event IDs")
     parser.add_argument('--addNodeBranch', action="store_true", required=False, help = "Add branch Node_Number to be used for parametric DNN training")
+    parser.add_argument('--additionalSF', action="store_true", required=False, help = "Apply SFs when producing even / odd trees in order to rescale to nominal yield")
     parser.add_argument('--syst', default = "Nominal", required=False, type=str, help = "Systematic tree to process")
     parser.add_argument('--reweightNode', default = "", required=False, type=str, help = "Node to reweight to, e.g. (updates weight branch)")
     parser.add_argument('--TDirec', default = "tagsDumper/trees", required=False, type=str, help = "TDirectory strucuture of input root file")
     parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
     parser.add_argument('--GENnorm', action="store_true", required=False, help = "Normalize weight branch based on relative GEN sums")
     args = parser.parse_args()
-    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "inDir", "addNodeBranch", "evenOddSplit"]
+    arguments = ["node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "inDir", "addNodeBranch", "evenOddSplit", "additionalSF"]
     print("=====")
     for a in arguments: 
         exec("{a} = args.{a}".format(a=a))
@@ -97,10 +99,12 @@ if __name__ == '__main__':
             os.system("mkdir -p {out_d}".format(out_d=out_d))
         outName = "{out_d}GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}_{syst}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year, syst=syst) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards          
     elif(evenOddSplit):
+        if(additionalSF): additionalSF_str = "_withAdditionalScaling"
+        else: additionalSF_str = ""
         d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}/".format(year=year, reweightNode=reweightNode)
         f = "{d}/GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}.root".format(d=d, year=year, reweightNode=reweightNode, syst=syst)  
-        out_d_even = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees_even/".format(year=year, reweightNode=reweightNode)
-        out_d_odd = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees_odd/".format(year=year, reweightNode=reweightNode)
+        out_d_even = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees_even{additionalSF_str}/".format(year=year, reweightNode=reweightNode, additionalSF_str=additionalSF_str)
+        out_d_odd = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees_odd{additionalSF_str}/".format(year=year, reweightNode=reweightNode, additionalSF_str=additionalSF_str)
         
         for out_d in [out_d_even, out_d_odd]:
             if(not os.path.isdir(out_d)):
@@ -221,7 +225,7 @@ if __name__ == '__main__':
             if(categorize):
                 Categorize(inTree, kname, year, runLowEvents, Norm, reweightNode)
             elif(evenOddSplit):
-                EvenOddSplit(inFile, year, runLowEvents, outFile_even, outFile_odd, fullTreePath) # split events into even and odd 
+                EvenOddSplit(inFile, year, runLowEvents, outFile_even, outFile_odd, fullTreePath, additionalSF, reweightNode, syst) # split events into even and odd 
             else:
                 if(reweightNode != ""):
                     Reweight(inTree, kname, year, runLowEvents, Norm, reweightNode, addNodeBranch)    

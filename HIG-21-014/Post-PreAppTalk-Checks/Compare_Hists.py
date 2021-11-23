@@ -23,10 +23,12 @@ from matplotlib.patches import Rectangle
 parser = argparse.ArgumentParser()
 parser.add_argument("--years", type = str, default = "2017", help = "Comma separated list of years to run ")
 parser.add_argument("--nodes", type = str, default = "cHHH1", help = "Comma separated list of nodes to run ")
+parser.add_argument("--systLabels", type = str, default = "Nominal", help = "Systematic trees to run over")
 parser.add_argument("--variables", type = str, default = "evalDNN_HH", help = "Comma separated list of variables to plot")
 parser.add_argument("--AddRatioErrors", action="store_true", default = True, help = "Add error bars on ratio values")
 parser.add_argument("--compareFullandCategorized", action="store_true", help = "Compare full reweighted sample to categorized reweighted sample to verify categorization worked")
 parser.add_argument("--compareFullandGenerated", action="store_true", help = "compare full NLO (all samples) reweighted to a generated node's DNN score")
+parser.add_argument("--compareEvenOddAndTotal", action="store_true", help = "compare full NLO (all samples) reweighted to a generated node's, to even and odd split which should each be scaled back to total")
 parser.add_argument("--plotReweighted", action="store_true", help = "Plot reweighted DNN score")
 parser.add_argument("--EFT_DNN", action="store_true", help = "When plotting DNN score, use files with DNN score from EFT binary DNN")
 parser.add_argument("--Selections", type = str, default="None", help = "Comma separated list of selections to apply")
@@ -37,9 +39,11 @@ nodes = args.nodes.split(',')
 AddRatioErrors = args.AddRatioErrors
 compareFullandCategorized = args.compareFullandCategorized
 compareFullandGenerated = args.compareFullandGenerated
+compareEvenOddAndTotal = args.compareEvenOddAndTotal
 plotReweighted = args.plotReweighted
 EFT_DNN = args.EFT_DNN
 variables = args.variables.split(',') 
+systLabels = args.systLabels.split(',')
 
 def make_error_boxes(ax, xdata, ydata, xerror, yerror, facecolor='r',
                      edgecolor='None', alpha=0.5):
@@ -119,7 +123,7 @@ if (__name__ == '__main__'):
         "evalDNN_HH_1" : [0.82, 0.935714285714, 10],
         "evalDNN_HH_2" : [0.64, 0.82, 10],
         "evalDNN_HH_3" : [0.1, 0.64, 10],
-        "CMS_hgg_mass" : [105, 140, 35],
+        "CMS_hgg_mass" : [115, 135, 40],
         "Leading_Photon_pt" : [0, 100, 20]
     }
 
@@ -587,95 +591,147 @@ if (__name__ == '__main__'):
                     fig.savefig("{ol}/{node}_{variable}_{year}.png".format(ol=ol, node=node, variable=variable, year=year))
                     plt.close()
 
-"""
 
-    # Make validation plots for each cHHH point 
-    # years = ["2017"]
-    years = ["2016", "2017", "2018"]
-    # nodes = ["cttHH3", "cttHH0p35", "3D3"]
-    nodes = ["8a", "1b", "2b", "3b", "4b", "5b", "6b", "7b"]
+    if(compareEvenOddAndTotal):
+        d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/"
+        for variable in variables:
+            print("On variable:",variable)
+            for node in nodes:
+                print("On node:",node)
+                for year_i, year in enumerate(years):
+                    print("On year:",year)  
+                    for systLabel in systLabels:
+                        print("On systLabel:",systLabel)
+                        xmin, xmax, xbins = varBinDict[variable]
+                        bins = np.linspace(xmin, xmax, xbins + 1)
+                        binWidth = (xmax - xmin) / xbins
+                        fileTypes = ["allEvents", "even", "odd"]
 
-    for year_i, year in enumerate(years):
-        print("On year:",year)
-        fig_all, ax_all = plt.subplots()
-        fig_all.set_dpi(100)
-        fig_all.set_size_inches(10, 7.5)  
-                
-        for node_i, node in enumerate(nodes):
-            print("On node:",node)
+                        # files 
+                        allEvents_f = "{d}/{node}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(d=d, node=node, year=year)
+                        even_f = "{d}/{node}_even/GluGluToHHTo2G2Qlnu_node_{node}_{year}_even.root".format(d=d, node=node, year=year)
+                        odd_f = "{d}/{node}_odd/GluGluToHHTo2G2Qlnu_node_{node}_{year}_odd.root".format(d=d, node=node, year=year)
 
-            xmin, xmax, xbins = varBinDict[variable]
-            bins = np.linspace(xmin, xmax, xbins + 1)
-            binWidth = (xmax - xmin) / xbins
+                        # Create histogram for each of three file types 
+                        if(systLabel == "Nominal"): systStr = ""
+                        else: systStr = "_%s"%(systLabel)
+                        for fileType in fileTypes:
+                            exec("{fileType}_ntuple = uproot.open({fileType}_f)".format(fileType=fileType))
+                            exec("{fileType}_tree = {fileType}_ntuple['GluGluToHHTo2G2Qlnu_node_{node}_{year}_13TeV_HHWWggTag_0{systStr}']".format(fileType=fileType, node=node, year=year, systStr=systStr))
+                            exec("{fileType}_variable = {fileType}_tree[variable].array()".format(fileType=fileType))
+                            exec("{fileType}_weights = {fileType}_tree['weight'].array()".format(fileType=fileType))
+                            exec("{fileType}_binVals, {fileType}_edges, _ = plt.hist({fileType}_variable, bins = bins, weights = {fileType}_weights)".format(fileType=fileType))
+                            plt.close() # to avoid showing intermediate histogram
+                            
+                            # uncertainties 
+                            exec("{fileType}_binned_uncertainties = hist_bin_uncertainty({fileType}_variable, {fileType}_weights, bins)".format(fileType=fileType))
 
-            NLO_Reweighted_f = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(year=year)
-            NLO_Reweighted_ntuple = uproot.open(NLO_Reweighted_f)
-            NLO_Reweighted_tree = NLO_Reweighted_ntuple["GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year)]
-            NLO_Reweighted_variable = NLO_Reweighted_tree[variable].array()
-            reweightName = reweightDict[node]
-            NLO_weight = NLO_Reweighted_tree["weight"].array()
-            NLO_weight_NLO_Node = NLO_Reweighted_tree[reweightName].array()
+                        # Create plot 
+                        fig, axarr = plt.subplots(2, sharex=True, gridspec_kw={ 'hspace': 0.15, 'height_ratios': (0.7,0.3) } )
+                        fig.set_dpi(100)
+                        fig.set_size_inches(10, 7.5)
+                        upper = axarr[0]
+                        lower = axarr[1]
 
-            fig_tmp, ax_tmp = plt.subplots()
-            NLO_Reweighted_binVals, NLO_Reweighted_edges, _ = plt.hist(NLO_Reweighted_variable, bins = bins, weights = np.multiply(NLO_weight, NLO_weight_NLO_Node)) 
-            plt.close() # to avoid showing intermediate histogram
+                        ratio_even = np.true_divide(even_binVals, allEvents_binVals, out = np.zeros_like(allEvents_binVals), where = allEvents_binVals != 0)
+                        ratio_odd = np.true_divide(odd_binVals, allEvents_binVals, out = np.zeros_like(allEvents_binVals), where = allEvents_binVals != 0)
 
-            binCenters = [float(a) + (float(binWidth)/2.) for a in NLO_Reweighted_edges[:-1]] # use one histogram's since they should all be the same anyway --- this assumes equally distanced bins 
-            zero_errors = [0 for entry in binCenters]
+                        binCenters = [float(a) + (float(binWidth)/2.) for a in allEvents_edges[:-1]] # use one histogram's since they should all be the same anyway --- this assumes equally distanced bins 
+                        zero_errors = [0 for entry in binCenters]
 
-            # get uncertainties
-            Reweighted_binned_MC_stat_uncertainties = hist_bin_uncertainty(NLO_Reweighted_variable, np.multiply(NLO_weight, NLO_weight_NLO_Node), bins)
+                        capthick = 0
+                        capsize = 0
+                        elinewidth = 3
 
-            ax_all.hist(bins[:-1], bins = bins, weights = NLO_Reweighted_binVals, histtype = 'step', linewidth = 2, label = node, color = 'C%s'%(node_i))
-            # ax_all.hist(bins[:-1], bins = bins, weights = NLO_Reweighted_binVals, histtype = 'step', linewidth = 2, label = "{year}: All NLO Reweighted to {node}".format(year=year, node=node), color = 'C%s'%(year_i))
-            # upper.hist(bins[:-1], bins = bins, weights = NLO_Reweighted_binVals, histtype = 'step', linewidth = 2, label = "All NLO Reweighted to {node}".format(node=node), color = 'C0')
+                        # plot upper
+                        for ftype_i, fileType in enumerate(fileTypes):
+                            exec("upper.hist(bins[:-1], bins = bins, weights = {fileType}_binVals, histtype = 'step', linewidth = 2, label = '{node}: {fileType}', color = 'C{ftype_i}')".format(fileType=fileType, node=node, ftype_i = ftype_i))
+                            exec("upper.errorbar(x = binCenters, y = {fileType}_binVals, yerr = {fileType}_binned_uncertainties, color = 'C{ftype_i}', fmt = ' ', capthick = capthick, capsize = capsize, elinewidth=elinewidth)".format(fileType=fileType, ftype_i=ftype_i))
 
-            capthick = 0
-            capsize = 0
-            elinewidth = 3
+                        # reweighted_sum = np.sum(NLO_Reweighted_binVals)
+                        # node_sum = np.sum(Node_binVals)
 
-            ax_all.errorbar(x = binCenters, 
-                        y = NLO_Reweighted_binVals, 
-                        yerr = Reweighted_binned_MC_stat_uncertainties, 
-                        #    color = 'C%s'%(year_i), 
-                        color = 'C%s'%(node_i), 
-                        fmt = " ", 
-                        capthick = capthick, 
-                        capsize = capsize, 
-                        elinewidth = elinewidth
+                        # print("reweighted_sum:",reweighted_sum)
+                        # print("node_sum:",node_sum)
+                        # print("ratio: ",float(reweighted_sum/node_sum))
+
+                        # reweighted_sum = round(reweighted_sum, 3)
+                        # node_sum = round(node_sum, 3)
+                        # sum_ratio = round(float(reweighted_sum/node_sum), 3)
+
+                        # Decorate 
+                        lower.tick_params(axis = 'x', labelsize = 13)
+                        upper.tick_params(axis = 'y', labelsize = 13)
+                        upper.set_ylabel("Yield", fontsize = 20)
+                        upper.ticklabel_format(style='plain') ##-- Remove scientific notation
+                        lower.set_xlabel(variable, fontsize = 20)
+                        lower.set_ylabel("Half file / Total", fontsize = 15)
+                        plt.yticks(fontsize=15)
+                        plt.xticks(fontsize=15)        
+                        lower.set_ylim(0.5, 1.5)
+                        lower.plot([xmin, xmax],[1,1],linestyle=':', color = 'black')
+
+                        # plot ratios 
+                        for fileType_i, fileType in enumerate(["even", "odd"]):
+                            c = int(fileType_i + 1)
+                            exec("ratio = ratio_{fileType}".format(fileType=fileType))
+                            exec("Numerator_binVals = {fileType}_binVals".format(fileType=fileType))
+                            exec("Numerator_uncertainties = {fileType}_binned_uncertainties".format(fileType=fileType))
+                            exec("Denominator_binVals = allEvents_binVals")
+                            exec("Denominator_uncertainties = allEvents_binned_uncertainties")
+                            # Stat errors 
+                            errors = []
+                            for val_i, Numerator_val in enumerate(Numerator_binVals): # numerator 
+                                Denominator_val = Denominator_binVals[val_i]
+                                r_val = ratio[val_i]
+                                if(Denominator_val <= 0): 
+                                    errors.append(0.)
+                                else:
+
+                                    # Taking weights into account
+                                    Numerator_w2 = Numerator_uncertainties[val_i]
+                                    Denominator_w2 = Denominator_uncertainties[val_i]
+                                    rel_err = np.sqrt( (Denominator_w2 / Denominator_val ) + (Numerator_w2 / Numerator_val)**2 ) # sqrt(sum(w^2)) per bin for MC stack uncertainty 
+                                    
+                                    err = float(rel_err) * r_val 
+
+                                    errors.append(err)
+
+                            if(AddRatioErrors): yErrors = errors 
+                            else: yErrors = zero_errors
+
+                            lower.errorbar(binCenters, ratio, xerr = zero_errors , yerr = yErrors , marker = '.', color = 'C{c}'.format(c=c), ls = '')  
+
+                        # Decorate 
+                        upper.set_title(year, fontsize = 30)
+                        upper.text(
+                            0., 1., r"HH$\rightarrow$WW$\gamma\gamma$",
+                            fontsize=20, fontweight='bold',
+                            horizontalalignment='left',
+                            verticalalignment='bottom',
+                            transform=upper.transAxes
                         )
 
+                        # upper.text(
+                        #     0.5, 0.2, "\n".join((
+                        #             r"$\int$ reweight = %s"%(reweighted_sum),
+                        #             r"$\int$ %s = %s"%(node, node_sum),
+                        #             "ratio = %s"%(sum_ratio)    
+                        #         ),                        
+                        #     ),
+                        #     fontsize=15, fontweight='bold',
+                        #     horizontalalignment='center',
+                        #     verticalalignment='bottom',
+                        #     transform=upper.transAxes                 
+                        # )
 
-        # Decorate 
-        ax_all.set_title(year, fontsize = 30)
-        ax_all.text(
-            0., 1., r"HH$\rightarrow$WW$\gamma\gamma$",
-            fontsize=20, fontweight='bold',
-            horizontalalignment='left',
-            verticalalignment='bottom',
-            transform=ax_all.transAxes
-        )      
+                        # upper.legend(loc = 'best', fontsize = 18, title = "Comparison", title_fontsize = 20) # with title 
+                        upper.legend(loc = 'upper right', fontsize = 18)
+                        upper.grid()
 
-        ax_all.tick_params(axis = 'x', labelsize = 13)
-        ax_all.tick_params(axis = 'y', labelsize = 13)
-        ax_all.set_ylabel("Yield", fontsize = 20)
-        ax_all.ticklabel_format(style='plain') ##-- Remove scientific notation
-        ax_all.set_xlabel(variable, fontsize = 20)
-        # ax_all.set_ylabel("Reweight / %s"%(node), fontsize = 15)
-        plt.yticks(fontsize=15)
-        plt.xticks(fontsize=15)        
-
-        # plt.legend(title = "Mass [GeV]", bbox_to_anchor=(1.01, 1.05), loc='upper left')
-        ax_all.legend(loc = 'upper left', fontsize = 18, bbox_to_anchor=(1.01, 1.05))
-        ax_all.grid()
-
-        ol = "/eos/user/a/atishelm/www/HHWWgg/HIG-21-014/PostPreAppTalkChecks/SemileptonicEFTReweighting/"
-        fig_all.savefig("{ol}/8BM_{year}.pdf".format(ol=ol, year=year))
-        fig_all.savefig("{ol}/8BM_{year}.png".format(ol=ol, year=year))
-        plt.close()
-
-    print("DONE")
-
-"""
+                        ol = "/eos/user/a/atishelm/www/HHWWgg/HIG-21-014/PostPreAppTalkChecks/SemileptonicEFTReweighting/OddEvenCompare/"
+                        plt.savefig("{ol}/{node}_{year}_{variable}_{systLabel}_evenOddCompare.pdf".format(ol=ol, node=node, year=year, variable=variable, systLabel=systLabel))
+                        plt.savefig("{ol}/{node}_{year}_{variable}_{systLabel}_evenOddCompare.png".format(ol=ol, node=node, year=year, variable=variable, systLabel=systLabel))
+                        plt.close()
 
 print("DONE")
