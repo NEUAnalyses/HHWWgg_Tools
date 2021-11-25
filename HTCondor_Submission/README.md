@@ -4,6 +4,19 @@ This directory contains example files for running python modules over condor. Th
 
 ## Example usage 
 
+After moving to your desired working directory, the cloning should be done with:
+
+Via HTTPS:
+
+    git clone https://github.com/NEUAnalyses/HHWWgg_Tools.git 
+
+or via SSH:
+
+    git clone git@github.com:NEUAnalyses/HHWWgg_Tools.git
+
+then:
+
 ```
-  python Condor_Submission.py --outDir /eos/user/<lxplusUsernameLetter>/<lxplusUsername>/ntuples
+  cd HHWWgg_Tools/HTCondor_Submission
+  python Condor_Submission.py --outDir <outputDirectory> 
 ```
