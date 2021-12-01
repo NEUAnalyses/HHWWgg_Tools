@@ -37,9 +37,9 @@ echo "+ PWD         = $PWD"
 # $1: jobId 
 # $2: first argument from inParams
 
-python3 DummyPythonModule.py --InputParameter $2 --condor # command to run in condor directory 
+# command to run in condor directory 
+python3 DummyPythonModule.py --InputParameter $2 --condor 
 
-echo "----- directory after running :"
 """
 
 # create a template for a condor submission file 
@@ -55,12 +55,17 @@ error                 = $(ClusterId).$(ProcId).err
 log                   = $(ClusterId).$(ProcId).log
 initialdir            = {jobdir}
 
-transfer_output_remaps = "DummyValue.p={output_dir}/DummyValue_$(ProcId).p" # take pickle file output from process and transfer it from the condor scratch directory to a desired output directory 
+# take pickle file output from process and transfer it from the condor scratch directory to a desired output directory 
+transfer_output_remaps = "DummyValue.p={output_dir}/DummyValue_$(ProcId).p" 
 
-+JobFlavour           = "{queue}" # job flavour from command line argument. see: https://twiki.cern.ch/twiki/bin/view/ABPComputing/LxbatchHTCondor#Queue_Flavours
-universe = vanilla # htcondor universe type 
+# job flavour from command line argument. see: https://twiki.cern.ch/twiki/bin/view/ABPComputing/LxbatchHTCondor#Queue_Flavours
++JobFlavour           = "{queue}" 
 
-queue InputParameter from {jobdir}/inputParams.dat # input file to obtain per job parameters from. For ETT studies, this .dat file could contain for example a lambda signal, lambda spike value per line (per job)
+# HTCondor universe type 
+universe = vanilla 
+
+# input file to obtain per job parameters from. For ETT studies, this .dat file could contain for example a lambda signal, lambda spike value per line (per job)
+queue InputParameter from {jobdir}/inputParams.dat 
 """
 
 def main():
