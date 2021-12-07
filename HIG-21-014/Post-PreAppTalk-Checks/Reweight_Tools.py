@@ -28,6 +28,22 @@ def SetBranchStatuses(inTree, status, reweightNode):
   inTree.SetBranchStatus('weight',status) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
   # allow access of weight branch so that values from input tree can be used 
 
+def SetWeightStatus(inTree, status):
+  orders = ["LO", "NLO"]
+  nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
+  for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
+    nodeNames.append(val)
+  for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
+    nodeNames.append(val)      
+  
+  for order in orders:
+    for nodeName in nodeNames:
+      weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
+      inTree.SetBranchStatus(weightBranch, status)
+
+  inTree.SetBranchStatus('weight',status) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
+  # allow access of weight branch so that values from input tree can be used   
+
 def computeMt(part1_px, part1_py, part1_mass, part2_px, part2_py, part2_mass):
   Mt = -99.
   m1 = part1_mass
@@ -82,7 +98,7 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
   print("on File:",inFile)
   SFfile_dir = "/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
   if(additionalSF):
-    SF_Dictionary = pickle.load( open( "{SFfile_dir}/EvenOddScaleFactors_2017_Nodes_1to20.p".format(SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
+    SF_Dictionary = pickle.load( open( "{SFfile_dir}/EvenOddScaleFactors_{year}_Nodes_1to20.p".format(year=year, SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
 
   # Split into even and odd 
 
@@ -202,13 +218,71 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
           continue         
 
       # only save an event in the output tree if its DNN score is in this category 
-
-
     outTree.Write()  
 
 def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
   
-  SetBranchStatuses(inTree, 0, reweightNode) # don't clone all weight branches to output file to make it clear no reweighting needs to be done anymore 
+  Minimum_Variables = [
+        'dZ',
+        'centralObjectWeight',
+        'candidate_id',
+        'sigmaMoM_decorr',
+        'LooseMvaSFCentral',
+        'PreselSFCentral',
+        'TriggerWeightCentral',
+        'electronVetoSFCentral',
+        'ElectronIDWeightCentral',
+        'ElectronRecoWeightCentral',
+        'JetBTagCutWeightCentral',
+        'JetBTagReshapeWeightCentral',
+        'MuonIDWeightCentral',
+        'MuonIsoWeightCentral',
+        'prefireWeightCentral',
+        'genMhh',
+        #'weight', # add afterwards. Don't copy from in tree 
+        'puweight',
+        'CMS_hgg_mass',
+        'goodJets_0_E', 
+        'goodLepton_phi', 
+        'Subleading_Photon_E',
+        'Leading_Photon_pt', 
+        'Leading_Photon_MVA', 
+        'goodLepton_eta', #5
+        'goodJets_1_E', #6
+        'Wmass_goodJets12', #7
+        'goodLepton_E', #8
+        'goodJets_1_eta', #9
+        'goodJets_1_phi', #10
+        'Subleading_Photon_eta', #11
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb',
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb',
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb', #12
+        'goodLepton_pt', #13
+        'goodJets_0_pt', #14
+        'Node_Number', #15
+        'Subleading_Photon_pt', #16
+        'Subleading_Photon_phi', #17
+        'goodJets_1_pt', #18
+        'N_goodJets', #19
+        'goodJets_0_phi', #20
+        'METCor_pt', #21
+        'METCor_phi', # just saving as a handle to check the correction 
+        'Leading_Photon_E', #22
+        'Leading_Photon_phi', #23
+        'Subleading_Photon_MVA', #24
+        'goodJets_0_eta', #25
+        'Leading_Photon_eta', #26
+        'Wmt_L', #27
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb',
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb',
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb' #28
+  ]
+
+  inTree.SetBranchStatus("*",0); # disable all branches
+
+  for var in Minimum_Variables: # only want to clone necessary variables to save space. 
+    inTree.SetBranchStatus(var, 1)
+
   outTree = inTree.CloneTree(0)
   SetBranchStatuses(inTree, 1, reweightNode) # allow access of weight branches so that values from input tree can be used 
 
@@ -321,43 +395,8 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
     outTree.Fill() 
   outTree.Write()
 
-def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
+def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
 
-  # inTree.SetBranchStatus('kinWeight',0)
-  # inTree.SetBranchStatus('weight_NLO_node',0)
-  #inTree.SetBranchStatus('weight_NLO_SM',0)
-
-#   inTree.SetBranchStatus('METCor_pt',0)
-#   inTree.SetBranchStatus('METCor_eta',0)
-#   inTree.SetBranchStatus('METCor_phi',0)
-#   inTree.SetBranchStatus('METCor_E',0)
-#   inTree.SetBranchStatus('METCor_px',0)
-#   inTree.SetBranchStatus('METCor_py',0) 
-#   inTree.SetBranchStatus('METCor_pz',0)
-#   inTree.SetBranchStatus('goodLepton_pt',0)
-#   inTree.SetBranchStatus('goodLepton_eta',0)
-#   inTree.SetBranchStatus('goodLepton_phi',0)
-#   inTree.SetBranchStatus('goodLepton_E',0)
-#   inTree.SetBranchStatus('goodLepton_px',0)
-#   inTree.SetBranchStatus('goodLepton_py',0) 
-#   inTree.SetBranchStatus('goodLepton_pz',0)
-#   inTree.SetBranchStatus('WJet1_pt',0)
-#   inTree.SetBranchStatus('WJet1_eta',0)
-#   inTree.SetBranchStatus('WJet1_phi',0)
-#   inTree.SetBranchStatus('WJet1_E',0)
-#   inTree.SetBranchStatus('WJet2_pt',0)
-#   inTree.SetBranchStatus('WJet2_eta',0)
-#   inTree.SetBranchStatus('WJet2_phi',0)
-#   inTree.SetBranchStatus('WJet2_E',0)
-#   inTree.SetBranchStatus('Wmt_L',0)
-#   inTree.SetBranchStatus('Wmt_H',0)
-#   inTree.SetBranchStatus('Wmt_goodJets12',0)
-#   inTree.SetBranchStatus('Wmass_H',0)
-#   inTree.SetBranchStatus('Wmass_goodJets12',0)
-  
-  # kinWeight = array('f', [0])
-  # weight_NLO_node = array('f', [0])
-  #weight_NLO_SM = array('f', [0])
   METCor_pt = array('f', [0])
   METCor_eta = array('f', [0])
   METCor_phi = array('f', [0])
@@ -386,9 +425,6 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   Wmass_H = array('f', [0])
   Wmass_goodJets12 = array('f', [0])
 
-  # kinWeight[0] = 1.
-  # weight_NLO_node[0] = 1. 
-  #weight_NLO_SM[0] = 1.
   goodLepton_pt[0] = -99.
   goodLepton_eta[0] = -99.
   goodLepton_phi[0] = -99.
@@ -410,39 +446,111 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   Wmass_H[0] = -99.
   Wmass_goodJets12[0] = -99.
   
-  inTree.SetBranchStatus('weight',0) # disable weight branch when cloning so that a new normed weight branch can be created with the same name 
+  Minimum_Variables = [
+        'dZ',
+        'centralObjectWeight',
+        'candidate_id',
+        'sigmaMoM_decorr',
+        'LooseMvaSFCentral',
+        'PreselSFCentral',
+        'TriggerWeightCentral',
+        'electronVetoSFCentral',
+        'ElectronIDWeightCentral',
+        'ElectronRecoWeightCentral',
+        'JetBTagCutWeightCentral',
+        'JetBTagReshapeWeightCentral',
+        'MuonIDWeightCentral',
+        'MuonIsoWeightCentral',
+        'prefireWeightCentral',
+        'genMhh',
+        # 'weight', # remove weight in this case because going to rewrite 
+        'puweight',
+        'CMS_hgg_mass',
+        'goodJets_0_E', 
+        'goodLepton_phi', 
+        'Subleading_Photon_E',
+        'Leading_Photon_pt', 
+        'Leading_Photon_MVA', 
+        'goodLepton_eta', #5
+        'goodJets_1_E', #6
+        'Wmass_goodJets12', #7
+        'goodLepton_E', #8
+        'goodJets_1_eta', #9
+        'goodJets_1_phi', #10
+        'Subleading_Photon_eta', #11
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb',
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb',
+        'goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb', #12
+        'goodLepton_pt', #13
+        'goodJets_0_pt', #14
+        'Node_Number', #15
+        'Subleading_Photon_pt', #16
+        'Subleading_Photon_phi', #17
+        'goodJets_1_pt', #18
+        'N_goodJets', #19
+        'goodJets_0_phi', #20
+        'METCor_pt', #21
+        'Leading_Photon_E', #22
+        'Leading_Photon_phi', #23
+        'Subleading_Photon_MVA', #24
+        'goodJets_0_eta', #25
+        'Leading_Photon_eta', #26
+        'Wmt_L', #27
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb',
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb',
+        'goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb',
+        
+        # The below are needed for addVariables for defining things like good lepton and dijet quantities  
+        'nvtx',
+        'MET_pt',
+        'MET_phi',
+        'run',
+        'goodMuons_0_pt',
+        'goodMuons_0_eta',
+        'goodMuons_0_phi',
+        'goodMuons_0_E',
+        'goodMuons_0_px',
+        'goodMuons_0_py',
+        'goodMuons_0_pz',
+        'goodElectrons_0_pt',
+        'goodElectrons_0_eta',
+        'goodElectrons_0_phi',
+        'goodElectrons_0_E',
+        'goodElectrons_0_px',
+        'goodElectrons_0_py',
+        'goodElectrons_0_pz',
+        'goodJets_0_pt',
+        'goodJets_0_eta',
+        'goodJets_0_phi',
+        'goodJets_0_E',
+        'goodJets_1_pt',
+        'goodJets_1_eta',
+        'goodJets_1_phi',
+        'goodJets_1_E',
+        'goodJets_2_pt',
+        'goodJets_2_eta',
+        'goodJets_2_phi',
+        'goodJets_2_E',
+        'goodJets_3_pt',
+        'goodJets_3_eta',
+        'goodJets_3_phi',
+        'goodJets_3_E',   
+        'goodJets_4_pt',
+        'goodJets_4_eta',
+        'goodJets_4_phi',
+        'goodJets_4_E',                                
+  ]
 
-  # don't clone all weight branches to output file to make it clear no reweighting needs to be done anymore 
-  if(reweightNode != ""):
-    orders = ["LO", "NLO"]
-    nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
-    for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
-      nodeNames.append(val)
-    for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
-      nodeNames.append(val)      
-    
-    for order in orders:
-      for nodeName in nodeNames:
-        weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
-        inTree.SetBranchStatus(weightBranch, 0)
+  inTree.SetBranchStatus("*",0) # disable all branches
+  SetWeightStatus(inTree, 1) # set branch status of all weights for reweighting
 
+  for var in Minimum_Variables: # only want to clone necessary variables to save space. 
+    inTree.SetBranchStatus(var, 1)
 
+  inTree.SetBranchStatus("weight",0) # 
   outTree = inTree.CloneTree(0)
-  inTree.SetBranchStatus('weight',1) # allow access of weight branch so that values from input tree can be used 
-
-  # allow access of weight branches so that values from input tree can be used 
-  if(reweightNode != ""):
-    orders = ["LO", "NLO"]
-    nodeNames = ["cttHH0", "cttHH3", "cttHH0p35", "3D1", "3D2", "3D3", "SM", "cHHH0", "cHHH2", "cHHH5", "8a"]
-    for val in [str(v) for v in range(1, 13)]: # 12 EFT benchmark nodes 
-      nodeNames.append(val)
-    for val in ["%sb"%(str(v)) for v in range(1, 8)]: # additional benchmarks 
-      nodeNames.append(val)      
-    
-    for order in orders:
-      for nodeName in nodeNames:
-        weightBranch = "weight_{order}_{nodeName}".format(order=order, nodeName=nodeName)
-        inTree.SetBranchStatus(weightBranch, 1)  
+  inTree.SetBranchStatus("weight",1)
+  #SetBranchStatuses(inTree, 1, reweightNode) # allow access of weight branches so that values from input tree can be used 
 
   # define combined NLO name (need common tree names to hadd afterwards)
   outTreeName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
@@ -457,15 +565,11 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   if(reweightNode != ""):
     outTreeName = outTreeName.replace("node_All_NLO_{year}_Normalized_13TeV".format(year=year),"node_{reweightNode}_{year}_13TeV".format(reweightNode=reweightNode, year=year))
 
-  # print("originalName:",originalName)
   print("outTreeName:",outTreeName)
 
   outTree.SetName(outTreeName) # Common "ALL NLO" tree name since nodes will be hadded 
   outTree.SetTitle(outTreeName)     
 
-  # _kinWeight = outTree.Branch('kinWeight', kinWeight, 'kinWeight/F')  
-  # _weight_NLO_node = outTree.Branch('weight_NLO_node', weight_NLO_node, 'weight_NLO_node/F')   
-  #_weight_NLO_SM = outTree.Branch('weight_NLO_SM', weight_NLO_SM, 'weight_NLO_SM/F')  
   _METCor_pt = outTree.Branch('METCor_pt', METCor_pt, 'METCor_pt/F')   
   _METCor_eta = outTree.Branch('METCor_eta', METCor_eta, 'METCor_eta/F')   
   _METCor_phi = outTree.Branch('METCor_phi', METCor_phi, 'METCor_phi/F')   
@@ -494,7 +598,6 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   _Wmass_H = outTree.Branch('Wmass_H', Wmass_H, 'Wmass_H/F')    
   _Wmass_goodJets12 = outTree.Branch('Wmass_goodJets12', Wmass_goodJets12, 'Wmass_goodJets12/F')  
 
-
   nentries = inTree.GetEntries()
 
   if(lowEvents): 
@@ -505,33 +608,12 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode):
   weight[0] = -99.
   _weight = outTree.Branch('weight', weight, 'weight/F')   
 
-  #print nentries
   for i in range(0, nentries):
     inTree.GetEntry(i)
    
     if i%10000==0: print("Entry:",i)
-    #if i>10000: continue 
-   
-    # eftWeight_val = 1.
-    # if eftWeight=="weight_NLO_1": eftWeight_val = inTree.weight_NLO_1
-    # elif eftWeight=="weight_NLO_2": eftWeight_val = inTree.weight_NLO_2
-    # elif eftWeight=="weight_NLO_3": eftWeight_val = inTree.weight_NLO_3
-    # elif eftWeight=="weight_NLO_4": eftWeight_val = inTree.weight_NLO_4
-    # elif eftWeight=="weight_NLO_5": eftWeight_val = inTree.weight_NLO_5
-    # elif eftWeight=="weight_NLO_6": eftWeight_val = inTree.weight_NLO_6
-    # elif eftWeight=="weight_NLO_7": eftWeight_val = inTree.weight_NLO_7
-    # elif eftWeight=="weight_NLO_8": eftWeight_val = inTree.weight_NLO_8
-    # elif eftWeight=="weight_NLO_9": eftWeight_val = inTree.weight_NLO_9
-    # elif eftWeight=="weight_NLO_10": eftWeight_val = inTree.weight_NLO_10
-    # elif eftWeight=="weight_NLO_11": eftWeight_val = inTree.weight_NLO_11
-    # elif eftWeight=="weight_NLO_12": eftWeight_val = inTree.weight_NLO_12
-    # elif eftWeight=="weight_NLO_SM": eftWeight_val = inTree.weight_NLO_SM
-
-    # kinWeight[0] = 1.
-    # weight_NLO_node[0] = eftWeight_val
-    #weight_NLO_SM[0] = 1.
     
-    met = correctedMET(inTree.MET_pt, inTree.MET_phi, inTree.nvtx, inTree.run, False, 2017)   
+    met = correctedMET(inTree.MET_pt, inTree.MET_phi, inTree.nvtx, inTree.run, bool(isMC), int(year))   
     METCor_pt[0] = met[2]
     METCor_eta[0] = 0.
     METCor_phi[0] = met[3]

@@ -4,16 +4,22 @@ Abraham Tishelman-Charny
 
 The purpose of this module is to parallelize the combination of 4 NLO nodes for HIG-21-014 reweighting, running over 4 NLO nodes (cHHH0, cHHH1, cHHH2p45, cHHH5) and 3 years (2016, 2017, 2018) at once. 
 
+Debugging:
+- python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --years 2016 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2016/Signal/SL_allNLO_Reweighted/combined_allNodes/ --addNodeBranch
+- python3 Reweight_NLO.py --reweightNode 1 --syst Nominal --runLowEvents --TDirec "" --addNodeBranch --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/
+- python3 /afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/Reweight_NLO.py --reweightNode 1 --year 2016 --syst MCSmearHighR9EBRhoUp01sigma --TDirec ""  --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2016/Signal/SL_allNLO_Reweighted/combined_allNodes/   --addNodeBranch
+
 Example usage:
 
 # Combine NLO samples 
 python Reweight_NLO_Condor.py --nodes cHHH1 --years 2016 --NominalOnly
-
 python Reweight_NLO_Condor.py --nodes cHHH1 --years 2016
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH1,cHHH2p45,cHHH5 --years 2016,2017,2018
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH2p45,cHHH5 --years 2017
 
 # Reweight combined NLO sample to another node 
+python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --years 2016 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2016/Signal/SL_allNLO_Reweighted/combined_allNodes/ --addNodeBranch
+python Reweight_NLO_Condor.py --reweightNodes 1 --years 2016 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2016/Signal/SL_allNLO_Reweighted/combined_allNodes/ --addNodeBranch --NominalOnly
 python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,8a,1b,2b,3b,4b,5b,6b,7b --years 2017 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/ --addNodeBranch
 python Reweight_NLO_Condor.py --reweightNodes 2 --years 2017 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/combined_allNodes/ --NominalOnly --addNodeBranch
 
@@ -106,10 +112,6 @@ addNodeBranch=$7
 evenOddSplit=$8
 additionalSF=$9
 
-#echo -e "Combining NLO samples for node ${NODE}, year ${YEAR}, systematic ${SYST}..."
-#python ${LOCAL}/Reweight_NLO.py --node ${NODE} --year ${YEAR} --syst ${SYST}
-#echo -e "Starting with combined NLO samples and reweighting to ${reweightNode}, year ${YEAR}, systematic ${SYST}..."
-
 echo "CATEGORIZE: $CATEGORIZE"
 echo "addNodeBranch: $addNodeBranch"
 
@@ -133,8 +135,7 @@ if [ "$CATEGORIZE" = True ]; then
   python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize
 else 
   # Reweight to a node 
-  #echo "Not categorizing" 
-  python3 ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}  ${additionalSFStr}
+  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}  ${additionalSFStr}
   
   # combine samples 
   # python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
@@ -154,7 +155,7 @@ echo -e "DONE";
   #   for node in nodes:
   #     print("node:",node)
   #     for systLabel in systLabels:
-  #       arguments.append("{} {} {} {} {}".format(local, node, year, systLabel, "false"))
+  #       arguments.append("{} {} {} {} {} {} {} {} {}".format(local, node, year, systLabel, "false", "", "false", "false", "false"))
 
   # For reweighting already combined file with DNN score, or categorizing 
   for year in years:

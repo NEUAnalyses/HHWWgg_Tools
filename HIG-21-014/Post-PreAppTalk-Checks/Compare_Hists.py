@@ -4,17 +4,17 @@ Abraham Tishelman-Charny
 
 The purpose of this python module is to compare histograms, including their per bin agreement. 
 
-Example command: 
+Example commands:
+python3 Compare_Hists.py --years 2017 --nodes 5 --systLabels Nominal --variables genMhh --CompareGenAndReweight
+python3 Compare_Hists.py --years 2017 --nodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --systLabels Nominal --variables genMhh --plotReweighted --legendOutside
 python3 Compare_Hists.py --years 2017 --plotReweighted --nodes 8a --EFT_DNN
 python3 Compare_Hists.py --years 2017 --plotReweighted --nodes 8a --EFT_DNN --variable CMS_hgg_mass
 
 """
 
-import uproot 
-from matplotlib import pyplot as plt 
-import numpy as np
-import pandas as pd
 import argparse 
+
+from python.Compare_Hists_Tools import CompareGenAndReweightSamples, hist_bin_uncertainty
 
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
@@ -31,7 +31,10 @@ parser.add_argument("--compareFullandGenerated", action="store_true", help = "co
 parser.add_argument("--compareEvenOddAndTotal", action="store_true", help = "compare full NLO (all samples) reweighted to a generated node's, to even and odd split which should each be scaled back to total")
 parser.add_argument("--plotReweighted", action="store_true", help = "Plot reweighted DNN score")
 parser.add_argument("--EFT_DNN", action="store_true", help = "When plotting DNN score, use files with DNN score from EFT binary DNN")
+parser.add_argument("--legendOutside", action="store_true", help = "Show legend outside of axes - useful when legend has many entries")
 parser.add_argument("--Selections", type = str, default="None", help = "Comma separated list of selections to apply")
+parser.add_argument("--CompareGenAndReweight", action="store_true", help = "Compare generated sample and reweighted smmple")
+
 args = parser.parse_args()
 
 years = args.years.split(',')
@@ -44,6 +47,8 @@ plotReweighted = args.plotReweighted
 EFT_DNN = args.EFT_DNN
 variables = args.variables.split(',') 
 systLabels = args.systLabels.split(',')
+legendOutside = args.legendOutside
+CompareGenAndReweight = args.CompareGenAndReweight
 
 def make_error_boxes(ax, xdata, ydata, xerror, yerror, facecolor='r',
                      edgecolor='None', alpha=0.5):
@@ -65,55 +70,6 @@ def make_error_boxes(ax, xdata, ydata, xerror, yerror, facecolor='r',
 
     return artists
 
-def hist_bin_uncertainty(data, weights, bin_edges):
-    """
-    The statistical uncertainity per bin of the binned data.
-    If there are weights then the uncertainity will be the root of the
-    sum of the weights squared.
-    If there are no weights (weights = 1) this reduces to the root of
-    the number of events.
-
-    Args:
-        data: `array`, the data being histogrammed.
-        weights: `array`, the associated weights of the `data`.
-        bin_edges: `array`, the edges of the bins of the histogram.
-
-    Returns:
-        bin_uncertainties: `array`, the statistical uncertainity on the bins.
-
-    Example:
-    >>> x = np.array([2,9,4,8])
-    >>> w = np.array([0.1,0.2,0.3,0.4])
-    >>> edges = [0,5,10]
-    >>> hist_bin_uncertainty(x, w, edges)
-    array([ 0.31622777,  0.4472136 ])
-    >>> hist_bin_uncertainty(x, None, edges)
-    array([ 1.41421356,  1.41421356])
-    >>> hist_bin_uncertainty(x, np.ones(len(x)), edges)
-    array([ 1.41421356,  1.41421356])
-    """
-    # Bound the data and weights to be within the bin edges
-    in_range_index = [idx for idx in range(len(data))
-                      if data[idx] > min(bin_edges) and data[idx] < max(bin_edges)]
-    in_range_data = np.asarray([data[idx] for idx in in_range_index])
-
-    if weights is None or np.array_equal(weights, np.ones(len(weights))):
-        # Default to weights of 1 and thus uncertainty = sqrt(N)
-        in_range_weights = np.ones(len(in_range_data))
-    else:
-        in_range_weights = np.asarray([weights[idx] for idx in in_range_index])
-
-    # Bin the weights with the same binning as the data
-    bin_index = np.digitize(in_range_data, bin_edges)
-    # N.B.: range(1, bin_edges.size) is used instead of set(bin_index) as if
-    # there is a gap in the data such that a bin is skipped no index would appear
-    # for it in the set
-    binned_weights = np.asarray(
-        [in_range_weights[np.where(bin_index == idx)[0]] for idx in range(1, len(bin_edges))])
-    bin_uncertainties = np.asarray(
-        [np.sqrt(np.sum(np.square(w))) for w in binned_weights])
-    return bin_uncertainties
-
 if (__name__ == '__main__'):
 
     varBinDict = {
@@ -124,7 +80,10 @@ if (__name__ == '__main__'):
         "evalDNN_HH_2" : [0.64, 0.82, 10],
         "evalDNN_HH_3" : [0.1, 0.64, 10],
         "CMS_hgg_mass" : [115, 135, 40],
-        "Leading_Photon_pt" : [0, 100, 20]
+        "Leading_Photon_pt" : [0, 100, 20],
+        #"genMhh" : [250,2000,80]
+        "genMhh" : (250.,    270.,    290.,    310., 330.,    350.,    370.,    390.,    410.,    430.,    450., 470.,    490.,    510.,    530.,    550.,    570.,    590., 640.,    680.,    720.,    760.,    800.,    900.,   1000., 1200.,  1400.,    1800.)
+        #"genMhh" : (250.,    270.,    290.,    310., 330.,    350.,    370.,    390.,    410.,    430.,    450., 470.,    490.,    510.,    530.,    550.,    570.,    590., 640.,    680.,    720.,    760.,    800.,    900.,   1000., 1200.,  1400.,    1800.,   2500.,   5000.)
     }
 
     reweightDict = {
@@ -135,14 +94,6 @@ if (__name__ == '__main__'):
         "cttHH3" : "weight_NLO_cttHH3",
         "cttHH0p35" : "weight_NLO_cttHH0p35",
         "3D3" : "weight_NLO_3D3",
-        "8a" : "weight_NLO_8a",
-        "1b" : "weight_NLO_1b",
-        "2b" : "weight_NLO_2b",
-        "3b" : "weight_NLO_3b",
-        "4b" : "weight_NLO_4b",
-        "5b" : "weight_NLO_5b",
-        "6b" : "weight_NLO_6b",
-        "7b" : "weight_NLO_7b",
         "1"  : "weight_NLO_1",
         "2"  : "weight_NLO_2",
         "3"  : "weight_NLO_3",
@@ -155,7 +106,17 @@ if (__name__ == '__main__'):
         "10"  : "weight_NLO_10",
         "11"  : "weight_NLO_11",
         "12"  : "weight_NLO_12",
+        "8a" : "weight_NLO_8a",
+        "1b" : "weight_NLO_1b",
+        "2b" : "weight_NLO_2b",
+        "3b" : "weight_NLO_3b",
+        "4b" : "weight_NLO_4b",
+        "5b" : "weight_NLO_5b",
+        "6b" : "weight_NLO_6b",
+        "7b" : "weight_NLO_7b",        
     }
+
+    if(CompareGenAndReweight): CompareGenAndReweightSamples(variables, nodes, years, varBinDict, AddRatioErrors)
 
     cats = ["0", "1", "2", "3"]    
 
@@ -510,46 +471,81 @@ if (__name__ == '__main__'):
                     plt.savefig("{ol}/{node}_{year}_{variable}.pdf".format(ol=ol, node=node, year=year, variable=variable))
                     plt.savefig("{ol}/{node}_{year}_{variable}.png".format(ol=ol, node=node, year=year, variable=variable))
                     plt.close()
-                
 
     if(plotReweighted):
         for variable in variables:
-            for node in nodes:
+            colors = [  "red", "darkred", "orange", "lightsalmon", "yellow", "olive", 
+                        "green", "blue", "aqua", "midnightblue", "royalblue", "violet",
+                        "indigo", "fuchsia", "crimson", "teal", "lime", "purple", "black", "dimgrey"
+                        ]
+            # one canvas for all nodes 
+            fig, ax = plt.subplots()
+            fig.set_dpi(100)
+            fig.set_size_inches(10, 7.5)            
+            for node_i, node in enumerate(nodes):
                 print("On node:",node)
+                color = colors[node_i]
                 for year_i, year in enumerate(years):
                     print("On year:",year)
 
-                    xmin, xmax, xbins = varBinDict[variable]
-                    bins = np.linspace(xmin, xmax, xbins + 1)
-                    binWidth = (xmax - xmin) / xbins
+                    fig_tmp, ax_tmp = plt.subplots()
 
-                    fig, ax = plt.subplots()
-                    fig.set_dpi(100)
-                    fig.set_size_inches(10, 7.5)
+                    if(len(varBinDict[variable]) == 3):
+                        xmin, xmax, xbins = varBinDict[variable]
+                        bins = np.linspace(xmin, xmax, xbins + 1)
+                        binWidth = (xmax - xmin) / xbins
+                        binCenters = np.array([float(a) + (float(binWidth)/2.) for a in NLO_Reweighted_edges[:-1]], dtype = float) # use one histogram's since they should all be the same anyway --- this assumes equally distanced bins 
+                    else:
+                        bins = varBinDict[variable]
+                        binCenters = np.array( [ ((bins[i+1] - bins[i])/2.) + bins[i] for i,bin_edge in enumerate(bins) if i < (len(bins) - 1)]  , dtype=float)   # (bin_i+1 - bin_i) / 2 + bin_i
 
                     if(EFT_DNN):
                         d = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/BinaryDNN/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_LOSignals_noPtOverM_withKinWeight_weightSel/"
                     else:
-                        d = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/"
+                        d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/"
+                    #else:
+                    #    d = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/"
 
-                    NLO_Reweighted_f = "{d}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(d=d, year=year)
+                    NLO_Reweighted_f = "{d}/{node}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(d=d, year=year, node=node)
                     NLO_Reweighted_ntuple = uproot.open(NLO_Reweighted_f)
-                    NLO_Reweighted_tree = NLO_Reweighted_ntuple["GluGluToHHTo2G2Qlnu_node_All_NLO_{year}_Normalized_13TeV_HHWWggTag_0".format(year=year)]
+                    NLO_Reweighted_tree = NLO_Reweighted_ntuple["GluGluToHHTo2G2Qlnu_node_{node}_{year}_13TeV_HHWWggTag_0".format(year=year, node=node)]
                     NLO_Reweighted_variable = NLO_Reweighted_tree[variable].array()
-                    reweightName = reweightDict[node]
+                    #reweightName = reweightDict[node]
                     NLO_weight = NLO_Reweighted_tree["weight"].array()
-                    NLO_weight_NLO_Node = NLO_Reweighted_tree[reweightName].array()
+                    #NLO_weight_NLO_Node = NLO_Reweighted_tree[reweightName].array()
 
-                    NLO_Reweighted_binVals, NLO_Reweighted_edges, _ = plt.hist(NLO_Reweighted_variable, bins = bins, weights = np.multiply(NLO_weight, NLO_weight_NLO_Node)) 
-                    plt.close() # to avoid showing intermediate histogram
+                    NLO_Reweighted_binVals, NLO_Reweighted_edges, _ = ax_tmp.hist(NLO_Reweighted_variable, bins = bins, weights = NLO_weight) #NLO_weight_NLO_Node)) 
+                    #plt.close() # to avoid showing intermediate histogram
 
-                    binCenters = [float(a) + (float(binWidth)/2.) for a in NLO_Reweighted_edges[:-1]] # use one histogram's since they should all be the same anyway --- this assumes equally distanced bins 
+                    
                     zero_errors = [0 for entry in binCenters]
 
                     # get uncertainties
-                    Reweighted_binned_MC_stat_uncertainties = hist_bin_uncertainty(NLO_Reweighted_variable, np.multiply(NLO_weight, NLO_weight_NLO_Node), bins)
-
-                    ax.hist(bins[:-1], bins = bins, weights = NLO_Reweighted_binVals, histtype = 'step', linewidth = 2, label = "{year}: All NLO Reweighted to {node}".format(year=year, node=node), color = 'C%s'%(year_i))
+                    Reweighted_binned_MC_stat_uncertainties = hist_bin_uncertainty(NLO_Reweighted_variable, NLO_weight, bins)
+                    nodeLabelDict = {
+                        "1" : "1",
+                        "2" : "2",
+                        "3" : "3",
+                        "4" : "4",
+                        "5" : "5",
+                        "6" : "6",
+                        "7" : "7",
+                        "8" : "8",
+                        "9" : "9",
+                        "10" : "10",
+                        "11" : "11",
+                        "12" : "12",
+                        "13" : "8a",
+                        "14" : "1b",
+                        "15" : "2b",
+                        "16" : "3b",
+                        "17" : "4b",
+                        "18" : "5b",
+                        "19" : "6b",
+                        "20" : "7b",
+                    }
+                    nodeLabel = nodeLabelDict[node]
+                    ax.hist(bins[:-1], bins = bins, weights = NLO_Reweighted_binVals, histtype = 'step', linewidth = 2, label = nodeLabel, color = color)
 
                     capthick = 0
                     capsize = 0
@@ -558,7 +554,8 @@ if (__name__ == '__main__'):
                     ax.errorbar(x = binCenters, 
                                 y = NLO_Reweighted_binVals, 
                                 yerr = Reweighted_binned_MC_stat_uncertainties, 
-                                color = 'C%s'%(year_i), 
+                                # color = 'C%s'%(year_i), 
+                                color = color,
                                 fmt = " ", 
                                 capthick = capthick, 
                                 capsize = capsize, 
@@ -566,31 +563,35 @@ if (__name__ == '__main__'):
                                 )
 
 
-                    # Decorate 
-                    ax.set_title(node, fontsize = 30)
-                    ax.text(
-                        0., 1., r"HH$\rightarrow$WW$\gamma\gamma$",
-                        fontsize=20, fontweight='bold',
-                        horizontalalignment='left',
-                        verticalalignment='bottom',
-                        transform=ax.transAxes
-                    )      
+            # Decorate 
+            ax.set_title(r"NLO$\rightarrow$NLO Reweighted", fontsize = 18)
+            ax.text(
+                0., 1., r"HH$\rightarrow$WW$\gamma\gamma$",
+                fontsize=20, fontweight='bold',
+                horizontalalignment='left',
+                verticalalignment='bottom',
+                transform=ax.transAxes
+            )      
 
-                    ax.tick_params(axis = 'x', labelsize = 13)
-                    ax.tick_params(axis = 'y', labelsize = 13)
-                    ax.set_ylabel("Yield", fontsize = 20)
-                    ax.ticklabel_format(style='plain') ##-- Remove scientific notation
-                    ax.set_xlabel(variable, fontsize = 20)
-                    plt.yticks(fontsize=15)
-                    plt.xticks(fontsize=15)        
+            ax.tick_params(axis = 'x', labelsize = 13)
+            ax.tick_params(axis = 'y', labelsize = 13)
+            ax.set_ylabel("Yield", fontsize = 20)
+            ax.ticklabel_format(style='plain') ##-- Remove scientific notation
+            ax.set_xlabel(variable, fontsize = 20)
+            plt.yticks(fontsize=15)
+            plt.xticks(fontsize=15)   
+            if(legendOutside):
+                ax.legend(title = "Node", bbox_to_anchor=(1.01, 1.05), loc='upper left')
+                fig.set_size_inches(13, 6)
+            else:
+                ax.legend()     
 
-                    ax.grid()
+            ax.grid()
 
-                    ol = "/eos/user/a/atishelm/www/HHWWgg/HIG-21-014/PostPreAppTalkChecks/SemileptonicEFTReweighting/"
-                    fig.savefig("{ol}/{node}_{variable}_{year}.pdf".format(ol=ol, node=node, variable=variable, year=year))
-                    fig.savefig("{ol}/{node}_{variable}_{year}.png".format(ol=ol, node=node, variable=variable, year=year))
-                    plt.close()
-
+            ol = "/eos/user/a/atishelm/www/HHWWgg/HIG-21-014/PostPreAppTalkChecks/SemileptonicEFTReweighting/"
+            fig.savefig("{ol}/allNodes_{variable}_{year}.pdf".format(ol=ol, node=node, variable=variable, year=year))
+            fig.savefig("{ol}/allNodes_{variable}_{year}.png".format(ol=ol, node=node, variable=variable, year=year))
+            plt.close()
 
     if(compareEvenOddAndTotal):
         d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/"
