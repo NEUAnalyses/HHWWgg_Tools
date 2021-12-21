@@ -17,17 +17,6 @@ import os
 import pickle 
 from SystematicTreeNames import GetSystLabels
 
-### redo nodes 12 and 20
-
-# 1 nominal even: 2.0027056619889056
-# 1 MCSmearHighR9EERhoUp01sigma even: 1.9975022412378427
-
-# 1 nominal all : 0.18346618
-# 1 MCSmearHighR9EERhoUp01sigma all: 0.18489809
-
-# 1 nominal even: 0.091609366
-# 1 MCSmearHighR9EERhoUp01sigma even: 0.092564918
-
 # Cannot Find: /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted//12_trees_even/GluGluToHHTo2G2Qlnu_node_12_2017_SigmaEOverEShiftUp01sigma_Even.root
 # Cannot Find: /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted//12_trees_odd/GluGluToHHTo2G2Qlnu_node_12_2017_SigmaEOverEShiftUp01sigma_Odd.root
 # Cannot Find: /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted//20_trees_odd/GluGluToHHTo2G2Qlnu_node_20_2017_Nominal_Odd.root

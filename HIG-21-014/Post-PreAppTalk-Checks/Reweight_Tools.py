@@ -94,12 +94,23 @@ def selectJets(jet0, jet0_pt, jet1, jet1_pt, jet2, jet2_pt, jet3, jet3_pt, jet4,
   elif index == 9: return [3,4]
 
 # split file into even and odd events 
-def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePath, additionalSF, reweightNode, syst):
+def EvenOddSplit(inFile, lowEvents, outFile_even, outFile_odd, fullTreePath, additionalSF, reweightNode, syst, Single_Higgs, year, Single_Higgs_File):
   print("on File:",inFile)
-  SFfile_dir = "/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
-  if(additionalSF):
-    SF_Dictionary = pickle.load( open( "{SFfile_dir}/EvenOddScaleFactors_{year}_Nodes_1to20.p".format(year=year, SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
+  print("fullTreePath:",fullTreePath)
+  print("Single_Higgs:",Single_Higgs)
 
+  if(Single_Higgs):
+    SFYear = year
+    SFfile_dir = "/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
+    if(additionalSF):
+      SF_Dictionary = pickle.load( open( "{SFfile_dir}/SingleHiggsEvenOddScaleFactors_20161718.p".format(SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
+
+  else:
+    SFYear = year
+    SFfile_dir = "/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
+    if(additionalSF):
+      SF_Dictionary = pickle.load( open( "{SFfile_dir}/EvenOddScaleFactors_{SFYear}_Nodes_1to20.p".format(SFYear=SFYear, SFfile_dir=SFfile_dir), "rb" ) ) # open pickle file with scale factors to apply per: node x syst x (even/odd)
+  
   # Split into even and odd 
 
   print("Even events:",fullTreePath)
@@ -118,6 +129,16 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
     weight[0] = -99.
     _weight = outtree_even.Branch('weight', weight, 'weight/F')       
 
+
+  weight_NLO_SM = array('f', [0]) # set to 1 if doesn't exist 
+  kinWeight = array('f', [0]) # set to 1 if doesn't exist
+
+  weight_NLO_SM[0] = 1. 
+  kinWeight[0] = 1.   
+
+  _weight_NLO_SM = outtree_even.Branch('weight_NLO_SM', weight_NLO_SM, 'weight_NLO_SM/F') 
+  _kinWeight = outtree_even.Branch('kinWeight', kinWeight, 'kinWeight/F') 
+
   if(lowEvents): nentries = 10
   else: nentries = tree.GetEntries()
   for i in range(0, nentries):
@@ -125,7 +146,11 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
       if i%10000==0: print("Entry:",i)
       if (i%2 == 0): 
         if(additionalSF):
-          SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="even")
+          if(Single_Higgs):
+            #print("Single Higgs Even")
+            SF_key = "{Single_Higgs_File}_{syst}_{div}".format(Single_Higgs_File=Single_Higgs_File, syst=syst, div="even")
+          else: 
+            SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="even")
           SF = SF_Dictionary[SF_key]
           Updated_weight = float(tree.weight) * float(SF) 
           weight[0] = Updated_weight              
@@ -153,6 +178,16 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
     weight[0] = -99.
     _weight = outtree_odd.Branch('weight', weight, 'weight/F')   
 
+
+  weight_NLO_SM = array('f', [0]) # set to 1 if doesn't exist 
+  kinWeight = array('f', [0]) # set to 1 if doesn't exist
+
+  weight_NLO_SM[0] = 1. 
+  kinWeight[0] = 1.   
+
+  _weight_NLO_SM = outtree_odd.Branch('weight_NLO_SM', weight_NLO_SM, 'weight_NLO_SM/F') 
+  _kinWeight = outtree_odd.Branch('kinWeight', kinWeight, 'kinWeight/F') 
+
   if(lowEvents): nentries = 10
   else: nentries = tree.GetEntries()
   for i in range(0, nentries):
@@ -160,7 +195,11 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
       tree.GetEntry(i) 
       if (i%2 != 0): 
         if(additionalSF):
-          SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="odd")
+          if(Single_Higgs):
+            #print("Single Higgs Odd")
+            SF_key = "{Single_Higgs_File}_{syst}_{div}".format(Single_Higgs_File=Single_Higgs_File, syst=syst, div="odd")
+          else: 
+            SF_key = "{reweightNode}_{syst}_{div}".format(reweightNode=reweightNode, syst=syst, div="odd")          
           SF = SF_Dictionary[SF_key]
           Updated_weight = float(tree.weight) * float(SF) 
           weight[0] = Updated_weight         
@@ -169,10 +208,92 @@ def EvenOddSplit(inFile, year, lowEvents, outFile_even, outFile_odd, fullTreePat
     
   outFile_odd.Close()  
 
-def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
+def Categorize(inTree, name, lowEvents, reweightNode):
 
-  boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN 
+  Minimum_Variables = [
+        "CMS_hgg_mass",
+        "weight",
+        "dZ",
+        "centralObjectWeight",
+        "genMhh",
+        "LooseMvaSFUp01sigma",
+        "LooseMvaSFDown01sigma",
+        "PreselSFUp01sigma",
+        "PreselSFDown01sigma",
+        "electronVetoSFUp01sigma",
+        "electronVetoSFDown01sigma",
+        "TriggerWeightUp01sigma",
+        "TriggerWeightDown01sigma",
+        "FracRVWeightUp01sigma",
+        "FracRVWeightDown01sigma",
+        "MuonIDWeightUp01sigma",
+        "MuonIDWeightDown01sigma",
+        "ElectronIDWeightUp01sigma",
+        "ElectronIDWeightDown01sigma",
+        "ElectronRecoWeightUp01sigma",
+        "ElectronRecoWeightDown01sigma",
+        "MuonIsoWeightUp01sigma",
+        "MuonIsoWeightDown01sigma",
+        "JetBTagCutWeightUp01sigma",
+        "JetBTagCutWeightDown01sigma",
+        "JetBTagReshapeWeightUp01sigma",
+        "JetBTagReshapeWeightDown01sigma",
+        "scaleWeights",
+        "pdfWeights",
+        "alphaSWeights",
+        "puweight",
+        "lumi",
+        "prefireWeightUp01sigma",
+        "prefireWeightDown01sigma",
+
+        'dZ',
+        'centralObjectWeight',
+        'candidate_id',
+        'sigmaMoM_decorr',
+        'LooseMvaSFCentral',
+        'PreselSFCentral',
+        'TriggerWeightCentral',
+        'electronVetoSFCentral',
+        'ElectronIDWeightCentral',
+        'ElectronRecoWeightCentral',
+        'JetBTagCutWeightCentral',
+        'JetBTagReshapeWeightCentral',
+        'MuonIDWeightCentral',
+        'MuonIsoWeightCentral',
+        'prefireWeightCentral',
+        'weight', 
+        'puweight',
+        'CMS_hgg_mass',
+        'evalDNN'
+  ]
+
+  BoundaryDict = {
+    "1" : [0.1, 0.959736842105, 0.992894736842, 0.997631578947, 1.0],
+    "2" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "3" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
+    "4" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
+    "5" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "6" : [0.1, 0.585526315789, 0.990526315789, 0.997631578947, 1.0],
+    "7" : [0.1, 0.542894736842, 0.978684210526, 0.997631578947, 1.0],
+    "8" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "9" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "10" : [0.1, 0.561842105263, 0.978684210526, 0.997631578947, 1.0],
+    "11" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
+    "12" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
+    "13" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+    "14" : [0.1, 0.573684210526, 0.990526315789, 0.997631578947, 1.0],
+    "15" : [0.1, 0.576052631579, 0.988157894737, 0.997631578947, 1.0],
+    "16" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+    "17" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "18" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+    "19" : [0.1, 0.547631578947, 0.990526315789, 0.997631578947, 1.0],
+    "20" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+  }
+
+  # boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN 
   catLabels = ["3", "2", "1", "0"]
+
+  boundaries = BoundaryDict[reweightNode]
 
   for b_i, boundary in enumerate(boundaries):
 
@@ -181,6 +302,10 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
     b_min, b_max = boundary, boundaries[b_i+1]
     print("min:",b_min)
     print("max:",b_max)
+
+    inTree.SetBranchStatus("*",0); # disable all branches
+    for var in Minimum_Variables: # only want to clone necessary variables to save space. 
+      inTree.SetBranchStatus(var, 1)
 
     outTree = inTree.CloneTree(0) # might be able to also just copytree and add selection as argument 
 
@@ -205,13 +330,15 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
 
       # if final category, include upper bound
       if(b_i == (len(boundaries) - 1)):
-        DNNscore = inTree.evalDNN_HH
+        DNNscore = inTree.evalDNN
+        #DNNscore = inTree.evalDNN_HH
         if((DNNscore >= b_min) and (DNNscore <= b_max) ):
           outTree.Fill()
         else:
           continue 
       else:
-        DNNscore = inTree.evalDNN_HH
+        DNNscore = inTree.evalDNN # binary DNN score 
+        #DNNscore = inTree.evalDNN_HH # evalDNN_HH from multiclass 
         if((DNNscore >= b_min) and (DNNscore < b_max) ):
           outTree.Fill()
         else:
@@ -222,7 +349,45 @@ def Categorize(inTree, name, year, lowEvents, Norm, reweightNode):
 
 def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
   
+  print("in reweight")
+
   Minimum_Variables = [
+
+        "CMS_hgg_mass",
+        "weight",
+        "dZ",
+        "centralObjectWeight",
+        "genMhh",
+        "LooseMvaSFUp01sigma",
+        "LooseMvaSFDown01sigma",
+        "PreselSFUp01sigma",
+        "PreselSFDown01sigma",
+        "electronVetoSFUp01sigma",
+        "electronVetoSFDown01sigma",
+        "TriggerWeightUp01sigma",
+        "TriggerWeightDown01sigma",
+        "FracRVWeightUp01sigma",
+        "FracRVWeightDown01sigma",
+        "MuonIDWeightUp01sigma",
+        "MuonIDWeightDown01sigma",
+        "ElectronIDWeightUp01sigma",
+        "ElectronIDWeightDown01sigma",
+        "ElectronRecoWeightUp01sigma",
+        "ElectronRecoWeightDown01sigma",
+        "MuonIsoWeightUp01sigma",
+        "MuonIsoWeightDown01sigma",
+        "JetBTagCutWeightUp01sigma",
+        "JetBTagCutWeightDown01sigma",
+        "JetBTagReshapeWeightUp01sigma",
+        "JetBTagReshapeWeightDown01sigma",
+        "scaleWeights",
+        "pdfWeights",
+        "alphaSWeights",
+        "puweight",
+        "lumi",
+        "prefireWeightUp01sigma",
+        "prefireWeightDown01sigma",
+
         'dZ',
         'centralObjectWeight',
         'candidate_id',
@@ -319,6 +484,15 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
     Node_Number[0] = -99
     _Node_Number = outTree.Branch('Node_Number', Node_Number, 'Node_Number/F')
 
+  weight_NLO_SM = array('f', [0]) # set to 1 if doesn't exist 
+  kinWeight = array('f', [0]) # set to 1 if doesn't exist
+
+  weight_NLO_SM[0] = 1. 
+  kinWeight[0] = 1.   
+
+  _weight_NLO_SM = outTree.Branch('weight_NLO_SM', weight_NLO_SM, 'weight_NLO_SM/F') 
+  _kinWeight = outTree.Branch('kinWeight', kinWeight, 'kinWeight/F') 
+
   for i in range(0, nentries):
     inTree.GetEntry(i)
    
@@ -397,6 +571,10 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
 
 def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
 
+
+  #weight_NLO_SM = array('f', [0]) # set to 1 if doesn't exist 
+  #kinWeight = array('f', [0]) # set to 1 if doesn't exist
+
   METCor_pt = array('f', [0])
   METCor_eta = array('f', [0])
   METCor_phi = array('f', [0])
@@ -445,8 +623,47 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
   Wmt_goodJets12[0] = -99.
   Wmass_H[0] = -99.
   Wmass_goodJets12[0] = -99.
+
+  #weight_NLO_SM[0] = 1. 
+  #kinWeight[0] = 1. 
   
   Minimum_Variables = [
+
+        "CMS_hgg_mass",
+        "weight",
+        "dZ",
+        "centralObjectWeight",
+        "genMhh",
+        "LooseMvaSFUp01sigma",
+        "LooseMvaSFDown01sigma",
+        "PreselSFUp01sigma",
+        "PreselSFDown01sigma",
+        "electronVetoSFUp01sigma",
+        "electronVetoSFDown01sigma",
+        "TriggerWeightUp01sigma",
+        "TriggerWeightDown01sigma",
+        "FracRVWeightUp01sigma",
+        "FracRVWeightDown01sigma",
+        "MuonIDWeightUp01sigma",
+        "MuonIDWeightDown01sigma",
+        "ElectronIDWeightUp01sigma",
+        "ElectronIDWeightDown01sigma",
+        "ElectronRecoWeightUp01sigma",
+        "ElectronRecoWeightDown01sigma",
+        "MuonIsoWeightUp01sigma",
+        "MuonIsoWeightDown01sigma",
+        "JetBTagCutWeightUp01sigma",
+        "JetBTagCutWeightDown01sigma",
+        "JetBTagReshapeWeightUp01sigma",
+        "JetBTagReshapeWeightDown01sigma",
+        "scaleWeights",
+        "pdfWeights",
+        "alphaSWeights",
+        "puweight",
+        "lumi",
+        "prefireWeightUp01sigma",
+        "prefireWeightDown01sigma",
+
         'dZ',
         'centralObjectWeight',
         'candidate_id',
@@ -597,6 +814,9 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
   _Wmt_goodJets12 = outTree.Branch('Wmt_goodJets12', Wmt_goodJets12, 'Wmt_goodJets12/F')     
   _Wmass_H = outTree.Branch('Wmass_H', Wmass_H, 'Wmass_H/F')    
   _Wmass_goodJets12 = outTree.Branch('Wmass_goodJets12', Wmass_goodJets12, 'Wmass_goodJets12/F')  
+
+  #_weight_NLO_SM = outTree.Branch('weight_NLO_SM', weight_NLO_SM, 'weight_NLO_SM/F') 
+  #_kinWeight = outTree.Branch('kinWeight', kinWeight, 'kinWeight/F') 
 
   nentries = inTree.GetEntries()
 

@@ -5,6 +5,9 @@ Abraham Tishelman-Charny
 The purpose of this python module is to compare histograms, including their per bin agreement. 
 
 Example commands:
+
+python3 Compare_Hists.py --years 2017 --nodes 1 --systLabels Nominal --variables CMS_hgg_mass --compareEvenOddAndTotal # compare even odd and total
+
 python3 Compare_Hists.py --years 2017 --nodes 5 --systLabels Nominal --variables genMhh --CompareGenAndReweight
 python3 Compare_Hists.py --years 2017 --nodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --systLabels Nominal --variables genMhh --plotReweighted --legendOutside
 python3 Compare_Hists.py --years 2017 --plotReweighted --nodes 8a --EFT_DNN
@@ -15,7 +18,9 @@ python3 Compare_Hists.py --years 2017 --plotReweighted --nodes 8a --EFT_DNN --va
 import argparse 
 
 from python.Compare_Hists_Tools import CompareGenAndReweightSamples, hist_bin_uncertainty
-
+import numpy as np 
+import uproot 
+from matplotlib import pyplot as plt 
 from matplotlib.collections import PatchCollection
 from matplotlib.patches import Rectangle
 
@@ -594,7 +599,8 @@ if (__name__ == '__main__'):
             plt.close()
 
     if(compareEvenOddAndTotal):
-        d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/"
+        # d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/"
+        d = "/eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/2017/"
         for variable in variables:
             print("On variable:",variable)
             for node in nodes:
