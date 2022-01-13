@@ -27,7 +27,7 @@ python3 Reweight_NLO.py  --syst Nominal  --TDirec "" --evenOddSplit --Single_Hig
 
 python3 Reweight_NLO.py  --syst Nominal  --TDirec "" --evenOddSplit --Single_Higgs --Single_Higgs_File ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2
 
-python3 Reweight_NLO.py --reweightNode 6 --syst MCSmearHighR9EBPhiDown01sigma --TDirec "" --evenOddSplit --additionalSF
+python3 Reweight_NLO.py --reweightNode 6 --syst MCSmearHighR9EBPhiDown01sigma --TDirec "" --evenOddSplit --additionalSF --fromTree
 python Reweight_NLO.py --reweightNode 2 --syst Nominal --runLowEvents --TDirec "" --evenOddSplit
 
 # Categorize by DNN score
@@ -101,6 +101,7 @@ if __name__ == '__main__':
     parser.add_argument('--isHH', action="store_true", required=False, help = "Run over HH")
     parser.add_argument('--isData', action="store_true", required=False, help = "Run over Data")
     parser.add_argument('--Single_Higgs', action="store_true", required=False, help = "Run over single higgs")
+    parser.add_argument('--fromTree', action="store_true", required=False, help = "Start with one tree as input rather than a file")
     parser.add_argument('--Single_Higgs_File', default = "", required=False, type=str, help = "Single higgs file")
 
     # Categorization 
@@ -109,7 +110,7 @@ if __name__ == '__main__':
     args = parser.parse_args()
     arguments = [
             "node", "year", "runLowEvents", "syst", "reweightNode", "TDirec", "GENnorm", "categorize", "inDir", "addNodeBranch", 
-            "evenOddSplit", "additionalSF", "isMC", "Single_Higgs", "Single_Higgs_File", "isHH", "isData"
+            "evenOddSplit", "additionalSF", "isMC", "Single_Higgs", "Single_Higgs_File", "isHH", "isData", "fromTree"
     ]
     
     print("=====")
@@ -263,7 +264,10 @@ if __name__ == '__main__':
         # HH 
         else:
             d = "/eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/{year}/".format(year=year, reweightNode=reweightNode)
-            f = "{d}/{reweightNode}/GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}.root".format(d=d, year=year, reweightNode=reweightNode, syst=syst)  
+            if(fromTree):   
+                f = "{d}/{reweightNode}_trees/GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}_{syst}.root".format(d=d, year=year, reweightNode=reweightNode, syst=syst)  
+            else:
+                f = "{d}/{reweightNode}/GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}.root".format(d=d, year=year, reweightNode=reweightNode, syst=syst)  
             out_d_even = "{d}/{reweightNode}_trees_even{additionalSF_str}/".format(d=d, year=year, reweightNode=reweightNode, additionalSF_str=additionalSF_str)
             out_d_odd = "{d}/{reweightNode}_trees_odd{additionalSF_str}/".format(d=d, year=year, reweightNode=reweightNode, additionalSF_str=additionalSF_str)
             
@@ -271,7 +275,7 @@ if __name__ == '__main__':
                 if(not os.path.isdir(out_d)):
                     print("Creating output directory:",out_d)
                     os.system("mkdir {out_d}".format(out_d=out_d)) # if you only have write access to the final directory 
-                    # os.system("mkdir -p {out_d}".format(out_d=out_d)) # if you have write access to the full directory 
+                    #os.system("mkdir -p {out_d}".format(out_d=out_d)) # if you have write access to the full directory 
             
             outName_even = "{out_d_even}GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}_{syst}_Even.root".format(out_d_even=out_d_even, reweightNode=reweightNode, year=year, syst=syst) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards          
             outName_odd = "{out_d_odd}GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}_{syst}_Odd.root".format(out_d_odd=out_d_odd, reweightNode=reweightNode, year=year, syst=syst) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards          

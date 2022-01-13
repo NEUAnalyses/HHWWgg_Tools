@@ -354,7 +354,7 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
   Minimum_Variables = [
 
         "CMS_hgg_mass",
-        "weight",
+        #"weight", # do not save weight if you are reweighting 
         "dZ",
         "centralObjectWeight",
         "genMhh",
