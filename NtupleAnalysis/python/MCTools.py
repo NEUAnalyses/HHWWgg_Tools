@@ -103,98 +103,103 @@ def GetMCTreeNameOld(fileName_):
 
 def GetMCTreeName(fileName_):
     MCTreesDict = {
-        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhotonJetsBox_M40_80_Sherpa",
-        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhotonJets_MGG_80toInf_13TeV_amcatnloFXFX_pythia8",
-        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WW_TuneCP5_13TeV_pythia8",
-        "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GluGluHToGG_M_125_13TeV_powheg_pythia8",
+        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhotonJetsBox_M40_80_Sherpa",
+        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhotonJets_MGG_80toInf_13TeV_amcatnloFXFX_pythia8",
+        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW_TuneCP5_13TeV_pythia8",
+        "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluHToGG_M_125_13TeV_powheg_pythia8",
         # "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8", 
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ggh_125", 
-        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125", 
+        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125", 
         # "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
-        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tth_125",
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tth_125",
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "tth_125",
-        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa",
+        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa",
         
-        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_Pt_20to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_Pt_20toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
         
-        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
-        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
-        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_Pt_30to40_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_Pt_30toInf_DoubleEMEnriched_MGG_40to80_TuneCP5_13TeV_Pythia8",
+        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_Pt_40toInf_DoubleEMEnriched_MGG_80toInf_TuneCP5_13TeV_Pythia8",
         
         "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "wzh_125",
-        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125",
+        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
         # "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
-        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8",
-        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8",
-        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "VBFHToGG_M_125_13TeV_powheg_pythia8",
-        # "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8",
-        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8",
-        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTGJets_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8",
+        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DYJetsToLL_M_50_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VBFHToGG_M_125_13TeV_powheg_pythia8",
+        # "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_TuneCP5_13TeV_amcatnloFXFX_pythia8",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTGJets_TuneCP5_13TeV_amcatnloFXFX_madspin_pythia8",
 
-        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
-        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
 
         # HHWWgg_bkg_v2 
-        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT_2500toInf_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT_600to800_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT_800to1200_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT_1200to2500_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTToHadronic_TuneCP5_13TeV_powheg_pythia8",
+        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT_2500toInf_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT_600to800_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT_800to1200_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT_1200to2500_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTToHadronic_TuneCP5_13TeV_powheg_pythia8",
 
         # HHWWgg_bkg_v3 
-        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8", 
-        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8", 
+        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
 
         # HHWWgg_bkg_v4 
-        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W3JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W4JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
-        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_50_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W3JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W4JetsToLNu_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_0_50_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_250_400_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_400_inf_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_100_150_TuneCP5_13TeV_amcnloFXFX_pythia8",
+        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu_LHEWpT_150_250_TuneCP5_13TeV_amcnloFXFX_pythia8",
 
         # HHWWgg_bkg_v5
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8",
-        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
-        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNu_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8",
-        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8",
+        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNu_EWK_QCD_TuneCP5_13TeV_madgraph_pythia8",
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        # "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
+        # "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
+
+
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
-        # "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1",
-        # "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"ggF_SM_WWgg_qqlnugg",
-        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
-        # "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
-        # "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
-        # "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
-        # "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
-        # "output_numEvent500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1",
+
+
+        # "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1",
+        # "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"ggF_SM_WWgg_qqlnugg",
+        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
+        # "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
+        # "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        # "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        # "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+        # "output_numEvent500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
     
         ##-- Single Higgs
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "vbf_125",
-        "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "vbf_125",
-        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "vbf_125",
-        "GluGluHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125",
-        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125",
-        # "VHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125",
+        "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        # "VHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
         "VHToGG_2017_HHWWggTag_0.root" : "wzh_125",
-        "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "vbf_125",
-        "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125",
-        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125"
+        "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125"
     }
 
     return MCTreesDict[fileName_]
@@ -288,87 +293,87 @@ def GetMCTreeName(fileName_):
 
 def GetMCName(fileName_):
     MCNameDict = {
-        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox_M40_80",
-        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJets_MGG-80toInf",
-        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WW",
+        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox_M40_80",
+        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJets_MGG-80toInf",
+        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW",
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "GluGluHToGG",
-        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GluGluHToGG",
-        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ttHJetToGG",         
+        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluHToGG",
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",         
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG",
-        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox_MGG-80toInf",
+        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox_MGG-80toInf",
         
-        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_20to40",
-        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_40toInf",
-        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet_20toInf",
+        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_20to40",
+        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_40toInf",
+        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet_20toInf",
         
-        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_30to40",
-        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_30toInf",
-        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD_40toInf",
+        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_30to40",
+        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_30toInf",
+        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD_40toInf",
         
         "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "wzh_125",
-        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125",
+        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
         # "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
-        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTGG_0Jets",
-        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DYJetsToLL_M_50",
-        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "VBFHToGG",
-        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets",
-        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets",
-        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTGJets",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTGG_0Jets",
+        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DYJetsToLL_M_50",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VBFHToGG",
+        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTGJets",
 
-        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
-        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "THQ",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ_ctcvcp_HToGG_M125_13TeV_madgraph_pythia8_TuneCP5",
+        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ",
 
         # HHWWgg_bkg_v2 
-        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT-2500toInf",
-        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT-600to800",
-        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT-800to1200",
-        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTJets_HT-1200to2500",
-        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "TTToHadronic", ##-- bbWW --> bbqqqq
+        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT-2500toInf",
+        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT-600to800",
+        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT-800to1200",
+        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTJets_HT-1200to2500",
+        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "TTToHadronic", ##-- bbWW --> bbqqqq
 
         # HHWWgg_bkg_v3 
-        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_0-50",
-        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_50-150",
-        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_400-inf",
-        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_250-400",
-        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_150-250", 
-        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1Jets_pT_100-150",
+        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_0-50",
+        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_50-150",
+        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_400-inf",
+        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_250-400",
+        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_150-250", 
+        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1Jets_pT_100-150",
 
         # HHWWgg_bkg_v4 
-        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_50-150",
-        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W3Jets",
-        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W4Jets",
-        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_0-50",
-        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_250-400",
-        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_400-inf",
-        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_100-150",
-        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2Jets_pT_150-250",
+        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_50-150",
+        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W3Jets",
+        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W4Jets",
+        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_0-50",
+        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_250-400",
+        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_400-inf",
+        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_100-150",
+        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2Jets_pT_150-250",
 
         # HHWWgg_bkg_v5
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets",
-        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WWTo1L1Nu2Q",
-        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"ttWJets",
-        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNuGJJ_EWK_aQGC",
-        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNu_EWK_QCD",
-        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
+        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
+        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WWTo1L1Nu2Q",
+        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"ttWJets",
+        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNuGJJ_EWK_aQGC",
+        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNu_EWK_QCD",
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"ggF_SM_WWgg_qqlnugg",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
-        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
-        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
-        "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
-        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
-        "output_numEvent500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
+        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"ggF_SM_WWgg_qqlnugg",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
+        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
+        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2017-HggVtx-Trees_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2017_1_10_6_4_v0_RunIIFall17MiniAODv2_PU2017_12Apr2018_94X_mc2017_realistic_v14_v1_1c4bfc6d0b8215cc31448570160b99fdUSER",
+        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER",
+        "output_numEvent500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8",
     
         ##-- Single Higgs
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "vbf_125",
-        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "vbf_125",
-        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125",
-        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125",
-        "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "vbf_125",
-        "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggh_125",
-        "VHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "wzh_125",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
+        "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "VHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
 
 
 
@@ -453,7 +458,7 @@ def GetMCName(fileName_):
         # "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
         # "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
         # "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg.root" : "HHWWgg_SM"
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM"
     }
 
     return MCNameDict[fileName_]
@@ -566,127 +571,129 @@ def GetMCNameOld(fileName_):
 def GetMCCategory(fileName_):
     MCCategoryDict = {
         ##-- QCD
-        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD",
-        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD",
-        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "QCD",
+        "QCD_Pt-30to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD",
+        "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD",
+        "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD",
 
         
 
         # ##-- SM Hgg
-        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "SMhgg",
-        # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "SMhgg", 
-        # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "SMhgg",
-        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "SMhgg",
-        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "THQ",
+        # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
+        # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg", 
+        # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
+        # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
+        "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ",
 
         ##-- SM Hgg
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ggH",
-        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggH",
-        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ggH",
+        "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggH",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggH",
         # "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ggH", 
         "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VH",
-        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "VH",
-        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "VH",
+        "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VH",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VH",
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VBFH",
-        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "VBFH",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VBFH",
         "VBFHToGG_2017_HHWWggTag.root" : "VBFH",
-        "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ttHJetToGG",        
+        "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",        
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG",
-        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "ttHJetToGG",
-        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "SMhgg",
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",
+        # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
 
         ##-- GJet
-        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet",
-        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet",
-        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJet",
+        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
+        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
+        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
 
         ##-- GJets 
-        # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJets",
-        # "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "GJets", 
+        # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJets",
+        # "GJets_HT-600ToInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJets", 
 
         ##-- DiPhotonJets 
-        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJets",
+        "DiPhotonJets_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJets",
          
 
         ##-- DiPhotonJetsBox
-        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
-        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
+        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
+        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
 
         # HHWWgg_bkg_v2 
-        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
+        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
 
 
         # ##-- HHWWgg_bkg_v3 
-        # "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":  "W1JetsToLNu",
-        # "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu",
-        # "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu",
-        # "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu", 
-        # "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W1JetsToLNu",        
+        # "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu",
+        # "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu", 
+        # "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W1JetsToLNu",        
 
         # ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
-        # "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
-        # "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W3JetsToLNu",
-        # "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W4JetsToLNu",
-        # "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
-        # "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
-        # "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
-        # "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
-        # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
+        # "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W3JetsToLNu",
+        # "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W4JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
+        # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
 
         ##-- HHWWgg_bkg_v3 
-        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets", 
-        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",        
+        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "WJets",
+        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "WJets",
+        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets", 
+        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",        
 
         ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
-        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
-        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WJets",
+        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
 
         ##-- HHWWgg_bkg_v5 
-        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJ",
-        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WGJJ",
+        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJ",
+        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJ",
 
         ##-- Other 
-        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WW", # non exclusive with WWTo... ?
-        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "WW",
+        "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW", # non exclusive with WWTo... ?
+        "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW",
 
-        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
 
-        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DY",
+        "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DY",
 
         ##-- HHWWgg_bkg_v5 
-        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets",
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "WGGJets",
-        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root": "ttW",
+        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
+        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "ttW",
 
         ##-- HHWWgg Signal
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg.root" : "HHWWgg_SM",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "HHWWgg_SM",
 
-        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg.root":"HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"HHWWgg_SM",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM",
 
 
     }
