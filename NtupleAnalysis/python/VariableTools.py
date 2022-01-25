@@ -48,35 +48,36 @@ def GetVars(VarBatch):
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
             "evalDNN_HH",
+            "METCor_phi", # just to check 
             # "evalDNN",
             Scaled_Leading_Photon_pt,
             "goodJets_0_pt",
-            # "goodLepton_pt",
-            # "Wmass_goodJets12",
-            # Scaled_Subleading_Photon_pt,
-            # "goodJets_1_E",
-            # "goodJets_1_pt",
-            # "goodLepton_E",
-            # "METCor_pt",
-            # "goodJets_0_E",
-            # "goodLepton_phi",
-            # "Leading_Photon_MVA",
-            # "goodLepton_eta",
-            # "goodJets_1_eta",
-            # "goodJets_1_phi",
-            # "Subleading_Photon_eta",
-            # Leading_Jet_bscore,
-            # Subleading_Jet_bscore,
-            # "Subleading_Photon_phi",
-            # "N_goodJets",
-            # "goodJets_0_phi",
-            # Scaled_Leading_Photon_E,
-            # Scaled_Subleading_Photon_E,
-            # "Leading_Photon_phi",
-            # "Subleading_Photon_MVA",
-            # "goodJets_0_eta",
-            # "Leading_Photon_eta",
-            # "Wmt_L"             
+            "goodLepton_pt",
+            "Wmass_goodJets12",
+            Scaled_Subleading_Photon_pt,
+            "goodJets_1_E",
+            "goodJets_1_pt",
+            "goodLepton_E",
+            "METCor_pt",
+            "goodJets_0_E",
+            "goodLepton_phi",
+            "Leading_Photon_MVA",
+            "goodLepton_eta",
+            "goodJets_1_eta",
+            "goodJets_1_phi",
+            "Subleading_Photon_eta",
+            Leading_Jet_bscore,
+            Subleading_Jet_bscore,
+            "Subleading_Photon_phi",
+            "N_goodJets",
+            "goodJets_0_phi",
+            Scaled_Leading_Photon_E,
+            Scaled_Subleading_Photon_E,
+            "Leading_Photon_phi",
+            "Subleading_Photon_MVA",
+            "goodJets_0_eta",
+            "Leading_Photon_eta",
+            "Wmt_L"             
         ]
         return TrainingVars 
 
@@ -283,6 +284,7 @@ def GetBins(variable_,DNNbinWidth_):
         "pT_gg" : [nbins_glob,0,400],
 
         "goodJets_0_pt" : [nbins_glob,0,500],
+        "METCor_phi" : [nbins_glob, -3.15, 3.15],
         "goodLepton_pt" : [nbins_glob,0,360],
         "Wmass_goodJets12": [nbins_glob,0,750],
         # "Subleading_Photon_pt/CMS_hgg_mass",
@@ -341,7 +343,7 @@ def GetBins(variable_,DNNbinWidth_):
     }    
     specialVars = ["Subleading_Photon_pt","Leading_Photon_MVA","Subleading_Photon_MVA","CMS_hgg_mass","weight","puweight","mjj","e_mT","mu_mT","dr_gg","dr_jj","pT_gg","evalDNN", "evalDNN_HH",
                     "goodJets_0_pt", "goodLepton_pt", "Wmass_goodJets12", "goodJets_1_E", "goodJets_1_pt", "goodLepton_E", "METCor_pt", "goodJets_0_E", "Scaled_Leading_Photon_pt", "Scaled_Subleading_Photon_pt",
-                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L"
+                    "Leading_Jet_bscore", "Subleading_Jet_bscore", "Scaled_Leading_Photon_E", "Scaled_Subleading_Photon_E", "Wmt_L", "METCor_phi"
     
     ]
 

@@ -611,16 +611,37 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         #stackSum.SetFillStyle(0)
         #stackSum.SetLineStyle(7) # to distinguish from data uncertainty 
 
-        # the purpose of this clone is to try and plot shaded error bands on the background stack sum 
+        # # the purpose of this clone is to try and plot shaded error bands on the background stack sum 
+        # stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
+
+        # #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
+        # #print("binWidth:",int(binWidth))
+
+        # stackSum_clone_forError.SetFillStyle(0)
+        # stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
+        # stackSum_clone_forError.SetLineStyle(2)
+        # stackSum_clone_forError.SetLineWidth(10)
+
         stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
 
         #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
         #print("binWidth:",int(binWidth))
+        #nhatchsp = gStyle.GetHatchesSpacing()
+        #print("nhatchsp:",nhatchsp)
+        gStyle.SetHatchesSpacing(0.5)
+        # stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
+        stackSum_clone_forError.SetFillStyle(3353)
+        stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
+        # stackSum_clone_forError.SetLineStyle(0.)
+        stackSum_clone_forError.SetLineWidth(0)
+        stackSum_clone_forError.SetMarkerSize(0)
 
-        stackSum_clone_forError.SetFillStyle(0)
-        stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
-        stackSum_clone_forError.SetLineStyle(2)
-        stackSum_clone_forError.SetLineWidth(10)
+        # for i,bin in enumerate(stackSum_clone_forError):
+            # stackSum_clone_forError.SetBinError(i,0.000001)
+        #print("stack type:",type(stackSum_clone_forError))
+        #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
+        #stackSum_clone_forError.SetLineStyle(2)
+        #stackSum_clone_forError.SetLineWidth(10)        
 
         stackSum_clone = stackSum.Clone("stackSum_clone")
         stackSum_clone.SetDirectory(0)
@@ -680,10 +701,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             for i,bin in enumerate(DataHist):
                 if(i == 0): continue # skip underflow bin 
                 if(i == (nBins + 1)): continue # skip overflow bin 
-                print("i:",i)
-                print("bin:",bin)       
+                #print("i:",i)
+                #print("bin:",bin)       
                 #print("center_value:",DataHist.GetBinCenter(i))
-                print("yerr:",DataHist.GetBinError(i))   
+                #print("yerr:",DataHist.GetBinError(i))   
                 center_value = DataHist.GetBinCenter(i)
                 yerr = DataHist.GetBinError(i)
 
@@ -727,9 +748,15 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 #nhatchsp = gStyle.GetHatchesSpacing()
                 #print("nhatchsp:",nhatchsp)
                 gStyle.SetHatchesSpacing(0.5)
-                stackSum_clone_forError.SetLineWidth(0)
+                #stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
                 stackSum_clone_forError.SetFillStyle(3353)
                 stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
+                # stackSum_clone_forError.SetLineStyle(0.)
+                #stackSum_clone_forError.SetLineWidth(10)
+                stackSum_clone_forError.SetMarkerSize(0)
+
+                # for i,bin in enumerate(stackSum_clone_forError):
+                    # stackSum_clone_forError.SetBinError(i,0.000001)
                 #print("stack type:",type(stackSum_clone_forError))
                 #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
                 #stackSum_clone_forError.SetLineStyle(2)
@@ -743,8 +770,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             chi2Text = TLatex(0.129,0.75,"#Chi^{2} = %.5g"%(chi2))       
             chi2Text.SetNDC(1)
             chi2Text.SetTextSize(0.04)    
-            for i,bin in enumerate(stackSum):
-                binUnc = bin**(1/2)
+            #for i,bin in enumerate(stackSum):
+                #binUnc = bin**(1/2)
                 #print("bin %s: yield equals: %s"%(i,bin))
                 #print("contained uncertainty: ",stackSum.GetBinError(i))
                 #print("uncer from sqrt:",binUnc)
@@ -794,8 +821,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
                 bkgStack.Draw("same")
-                stackSum.Draw("same") # error option for sum of backgrounds stack 
-                stackSum_clone_forError.Draw("sameE2")
+                #stackSum.Draw("same") # error option for sum of backgrounds stack 
+                stackSum_clone_forError.SetLineWidth(0)
+                stackSum_clone_forError.Draw("sameE0E2")
 
                 #stackSum.DrawCopy("hist")
                 #stackSum.SetFillColor(kBlue)
