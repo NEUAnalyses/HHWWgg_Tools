@@ -264,36 +264,39 @@ def Categorize(inTree, name, lowEvents, reweightNode):
         'weight', 
         'puweight',
         'CMS_hgg_mass',
-        'evalDNN'
+        'evalDNN',
+        'evalDNN_HH',
   ]
 
-  BoundaryDict = {
-    "1" : [0.1, 0.959736842105, 0.992894736842, 0.997631578947, 1.0],
-    "2" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "3" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
-    "4" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
-    "5" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "6" : [0.1, 0.585526315789, 0.990526315789, 0.997631578947, 1.0],
-    "7" : [0.1, 0.542894736842, 0.978684210526, 0.997631578947, 1.0],
-    "8" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "9" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "10" : [0.1, 0.561842105263, 0.978684210526, 0.997631578947, 1.0],
-    "11" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
-    "12" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
-    "13" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
-    "14" : [0.1, 0.573684210526, 0.990526315789, 0.997631578947, 1.0],
-    "15" : [0.1, 0.576052631579, 0.988157894737, 0.997631578947, 1.0],
-    "16" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
-    "17" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "18" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
-    "19" : [0.1, 0.547631578947, 0.990526315789, 0.997631578947, 1.0],
-    "20" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
-  }
+  # For parametric DNN for 20 EFT benchmarks 
+  # BoundaryDict = {
+  #   "1" : [0.1, 0.959736842105, 0.992894736842, 0.997631578947, 1.0],
+  #   "2" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "3" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
+  #   "4" : [0.1, 0.526315789474, 0.990526315789, 0.997631578947, 1.0],
+  #   "5" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "6" : [0.1, 0.585526315789, 0.990526315789, 0.997631578947, 1.0],
+  #   "7" : [0.1, 0.542894736842, 0.978684210526, 0.997631578947, 1.0],
+  #   "8" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "9" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "10" : [0.1, 0.561842105263, 0.978684210526, 0.997631578947, 1.0],
+  #   "11" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
+  #   "12" : [0.1, 0.583157894737, 0.990526315789, 0.997631578947, 1.0],
+  #   "13" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+  #   "14" : [0.1, 0.573684210526, 0.990526315789, 0.997631578947, 1.0],
+  #   "15" : [0.1, 0.576052631579, 0.988157894737, 0.997631578947, 1.0],
+  #   "16" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+  #   "17" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "18" : [0.1, 0.962105263158, 0.992894736842, 0.997631578947, 1.0],
+  #   "19" : [0.1, 0.547631578947, 0.990526315789, 0.997631578947, 1.0],
+  #   "20" : [0.1, 0.971578947368, 0.995263157895, 0.997631578947, 1.0],
+  # }
 
-  # boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN 
+  #boundaries = BoundaryDict[reweightNode]
+
+  # boundaries = [0.1, 0.64, 0.82, 0.935714285714, 1.] # SM DNN: AN_20_165_v6
+  boundaries = [0.1, 0.63, 0.84, 0.89, 1.] # SM DNN after MET fix: Should be for AN_20_165_v7
   catLabels = ["3", "2", "1", "0"]
-
-  boundaries = BoundaryDict[reweightNode]
 
   for b_i, boundary in enumerate(boundaries):
 
@@ -330,15 +333,15 @@ def Categorize(inTree, name, lowEvents, reweightNode):
 
       # if final category, include upper bound
       if(b_i == (len(boundaries) - 1)):
-        DNNscore = inTree.evalDNN
-        #DNNscore = inTree.evalDNN_HH
+        # DNNscore = inTree.evalDNN
+        DNNscore = inTree.evalDNN_HH
         if((DNNscore >= b_min) and (DNNscore <= b_max) ):
           outTree.Fill()
         else:
           continue 
       else:
-        DNNscore = inTree.evalDNN # binary DNN score 
-        #DNNscore = inTree.evalDNN_HH # evalDNN_HH from multiclass 
+        # DNNscore = inTree.evalDNN # binary DNN score 
+        DNNscore = inTree.evalDNN_HH # evalDNN_HH from multiclass 
         if((DNNscore >= b_min) and (DNNscore < b_max) ):
           outTree.Fill()
         else:
@@ -569,8 +572,9 @@ def Reweight(inTree, name, year, lowEvents, Norm, reweightNode, addNodeBranch):
     outTree.Fill() 
   outTree.Write()
 
-def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
+def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC, changeTreeName):
 
+  print("changeTreeName:",changeTreeName)
 
   #weight_NLO_SM = array('f', [0]) # set to 1 if doesn't exist 
   #kinWeight = array('f', [0]) # set to 1 if doesn't exist
@@ -772,15 +776,17 @@ def addVariables(inTree, name, year, lowEvents, Norm, reweightNode, isMC):
   # define combined NLO name (need common tree names to hadd afterwards)
   outTreeName = name # Format: GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_0_<systematic> 
 
-  # replace node string 
-  outTreeName = outTreeName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  outTreeName = outTreeName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  outTreeName = outTreeName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
-  outTreeName = outTreeName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+  if(changeTreeName):
 
-  # If reweighting to a node, put node name in tree 
-  if(reweightNode != ""):
-    outTreeName = outTreeName.replace("node_All_NLO_{year}_Normalized_13TeV".format(year=year),"node_{reweightNode}_{year}_13TeV".format(reweightNode=reweightNode, year=year))
+    # replace node string 
+    outTreeName = outTreeName.replace("node_cHHH0_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+    outTreeName = outTreeName.replace("node_cHHH1_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+    outTreeName = outTreeName.replace("node_cHHH2p45_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+    outTreeName = outTreeName.replace("node_cHHH5_13TeV","node_All_NLO_{year}_Normalized_13TeV".format(year=year))
+
+    # If reweighting to a node, put node name in tree 
+    if(reweightNode != ""):
+      outTreeName = outTreeName.replace("node_All_NLO_{year}_Normalized_13TeV".format(year=year),"node_{reweightNode}_{year}_13TeV".format(reweightNode=reweightNode, year=year))
 
   print("outTreeName:",outTreeName)
 

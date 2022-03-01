@@ -17,6 +17,7 @@ python Hadd_withUpdatedNominal_Condor.py --nodes 2,3,4,5,6,7,8,9,10,11,12,13,14,
 
 import os 
 import argparse 
+from SystematicTreeNames import GetSystLabels
 
 parser =  argparse.ArgumentParser()
 parser.add_argument('--nodes',default = "NO_NODES", required=True, type=str, help = "Comma separated list of nodes to run on")
@@ -51,8 +52,9 @@ script = '''#!/bin/sh -e
 LOCAL="/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/HIG-21-014/Post-PreAppTalk-Checks/"
 NODE=$1
 YEAR=$2
+SYSTLABEL=$3
 cd ${LOCAL}
-python Hadd_withUpdatedNominal.py --node ${NODE} --year ${YEAR} --verbose 
+python Hadd_withUpdatedNominal.py --node ${NODE} --year ${YEAR} --verbose --syst ${SYSTLABEL}
 echo -e "DONE";
 '''
 
@@ -60,7 +62,12 @@ arguments = []
 
 for node in nodes:
   for year in years:
-    arguments.append("{} {}".format(node, year))
+    systLabels = GetSystLabels(year)
+    print("systematic labels:",systLabels)    
+    for systLabel in systLabels:
+      # Skip nominal tree for this process
+      if(systLabel == "Nominal"): continue 
+      arguments.append("{} {} {}".format(node, year, systLabel))
 
 with open("arguments.txt", "w") as args:
   args.write("\n".join(arguments))

@@ -18,11 +18,19 @@ Debugging:
 
 Example usage:
 
+# reweight samples for AN_20_165_v7 
+
+python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 --years 2016 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2016/Signal/SL_allNLO_Reweighted/combined_allNodes/ --NominalOnly
+python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 --years 2017 --inDir /eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/2017/combined_allNodes/ --NominalOnly
+python Reweight_NLO_Condor.py --reweightNodes cttHH3,cttHH0p35,3D3 --years 2018 --inDir /eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2018/Signal/SL_allNLO_Reweighted/combined_allNodes/ --NominalOnly
+
 # Combine NLO samples 
 
 # Nominal only (originally added ad hoc to add up/down systematic branches to nominal tree only)
 
 python Reweight_NLO_Condor.py --nodes cHHH0,cHHH1,cHHH2p45,cHHH5 --years 2016,2017,2018 --NominalOnly
+
+# first get cHHH0, cHHH2p45, cHHH5 without changing tree name, then set flag back to allowing tree name changes and reweight to cttHH3,cttHH0p35,3D3
 
 # Other
 
@@ -74,7 +82,21 @@ python3 Reweight_NLO_Condor.py --reweightNodes 1 --years 2017 --NominalOnly --ev
 python3 Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --years 2017 --evenOddSplit --additionalSF
 python Reweight_NLO_Condor.py --reweightNodes 1 --years 2017 --NominalOnly --evenOddSplit --additionalSF
 
-# Categorize by DNN score 
+## Categorize by DNN score 
+
+# SM DNN:
+
+# HH
+python Reweight_NLO_Condor.py --reweightNodes cHHH1 --years 2016,2017,2018 --categorize --isHH
+
+# H
+
+python Reweight_NLO_Condor.py --reweightNodes cHHH1 --years 2016,2017,2018 --categorize --Single_Higgs --Single_Higgs_File GluGluHToGG
+python Reweight_NLO_Condor.py --reweightNodes cHHH1 --years 2016,2017,2018 --categorize --Single_Higgs --Single_Higgs_File VBFHToGG
+python Reweight_NLO_Condor.py --reweightNodes cHHH1 --years 2016,2017,2018 --categorize --Single_Higgs --Single_Higgs_File VHToGG
+python Reweight_NLO_Condor.py --reweightNodes cHHH1 --years 2016,2017,2018 --categorize --Single_Higgs --Single_Higgs_File ttHJetToGG
+
+# 20 nodes:
 
 # HH 
 python Reweight_NLO_Condor.py --reweightNodes 1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20 --years 2016,2017,2018 --categorize --isHH
@@ -109,7 +131,7 @@ if __name__ == '__main__':
   parser.add_argument('--addNodeBranch', action="store_true", required=False, help = "Add branch with node number for parametric DNN training")
   parser.add_argument('--evenOddSplit', action="store_true", required=False, help = "Split events into even and odd for DNN training")
   parser.add_argument('--additionalSF', action="store_true", required=False, help = "Apply SF to scale yield back to nominal")
-  parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing file to begin with, at least for reweighting")
+  parser.add_argument('--inDir', default = "NOINDIR", type=str, help = "Directory containing file to begin with, at least for reweighting")
   parser.add_argument('--Single_Higgs', action="store_true", required=False, help = "Run over single higgs")
   parser.add_argument('--Single_Higgs_File', default = "NoSingleHiggsFile", required=False, type=str, help = "Single higgs file")  
 
@@ -218,15 +240,18 @@ echo "Defining command now"
 
 if [ "$CATEGORIZE" = True ]; then 
   echo "Categorizing"
-  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize  ${isHHStr}  ${Single_HiggsStr} --Single_Higgs_File ${Single_Higgs_File}
+  python ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --categorize  ${isHHStr}  ${Single_HiggsStr} --Single_Higgs_File ${Single_Higgs_File} --inDir ${inDir}
 else 
   # Reweight to a node 
-  ${pythonString} ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}   ${addNodeBranchstr}  ${evenOddSplitstr}  ${additionalSFStr}  ${Single_HiggsStr} --Single_Higgs_File ${Single_Higgs_File}  ${fromTreeStr}
+  ${pythonString} ${LOCAL}/Reweight_NLO.py --reweightNode ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "" --inDir ${inDir}  ${addNodeBranchstr}  ${evenOddSplitstr}  ${additionalSFStr}  ${Single_HiggsStr} --Single_Higgs_File ${Single_Higgs_File}  ${fromTreeStr}
   
-  # combine samples 
-  #echo "In combine samples part"
+  # combine or gennorm samples 
+  
+  # without GEN norm 
+  #python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" 
+  
+  # with GEN norm 
   #python ${LOCAL}/Reweight_NLO.py --node ${reweightNode} --year ${YEAR} --syst ${SYST} --TDirec "tagsDumper/trees" --GENnorm
-  #echo "Just ran combine samples command" 
 fi  
 
 echo -e "DONE";
@@ -236,7 +261,7 @@ echo -e "DONE";
   
   # Choose what you want to do 
 
-  # # For combining input NLO files 
+  # # For combining input NLO files or adding variables
   # for year in years:
   #   print("year:",year)
   #   systLabels = GetSystLabels(year)

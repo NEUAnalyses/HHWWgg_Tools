@@ -6,6 +6,8 @@ The purpose of this module is to combine NLO samples while maintaining normaliza
 
 Example Commands:
 
+# add variables no GEN norm 
+
 # Combine NLO samples 
 python Reweight_NLO.py --syst Nominal  --TDirec "tagsDumper/trees" --GENnorm --year 2016 --node cHHH1
 
@@ -95,7 +97,7 @@ if __name__ == '__main__':
     parser.add_argument('--syst', default = "Nominal", required=False, type=str, help = "Systematic tree to process")
     parser.add_argument('--reweightNode', default = "", required=False, type=str, help = "Node to reweight to, e.g. (updates weight branch)")
     parser.add_argument('--TDirec', default = "tagsDumper/trees", required=False, type=str, help = "TDirectory strucuture of input root file")
-    parser.add_argument('--inDir', default = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/", type=str, help = "Directory containing output files with DNN scores.")
+    parser.add_argument('--inDir', default = "NO_INPUT_DIRECTORY", type=str, required=True, help = "Directory containing output files (not used for all methods)")
     parser.add_argument('--GENnorm', action="store_true", required=False, help = "Normalize weight branch based on relative GEN sums")
     parser.add_argument('--isMC', default = 1, required=False, type=int, help = "Flag if the sample is MC or not. Matters when applying MET correction")
     parser.add_argument('--isHH', action="store_true", required=False, help = "Run over HH")
@@ -120,6 +122,8 @@ if __name__ == '__main__':
     print("=====")
     
     if(categorize):
+        EFT = 0 # EFT results for 20 nodes 
+        print("EFT:",EFT)
         node = reweightNode
 
         print("isData:",isData)
@@ -158,6 +162,36 @@ if __name__ == '__main__':
         SingleHiggsProcessStrDict = {
 
             "2016" : {
+                "GluGluHToGG" : "GluGluHToGG_M125_2016_HHWWggTag_0_MoreVars_v2.root",
+                "VBFHToGG" :    "VBFHToGG_M125_2016_HHWWggTag_0_MoreVars_v2.root",
+                "VHToGG" :      "VHToGG_M125_2016_HHWWggTag_0_MoreVars_v2.root",
+                "ttHJetToGG" :  "ttHJetToGG_M125_2016_HHWWggTag_0_MoreVars_v2.root"                
+                # "VHToGG" :      "VH_2016_odd.root",
+                # "ttHJetToGG" :  "ttH_2016_odd.root" # categorizing on ODD samples 
+            },
+
+            "2017" : {
+                "GluGluHToGG" : "GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root",
+                "VBFHToGG" :    "VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root",
+                "VHToGG" :      "VHToGG_2017_HHWWggTag_0_MoreVars_v2.root",
+                "ttHJetToGG" :  "ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root"                    
+                # "VHToGG" :      "VH_2017_odd.root",
+                # "ttHJetToGG" :  "ttH_2017_odd.root"
+            }, 
+
+            "2018" : {
+                "GluGluHToGG" : "GluGluHToGG_M125_2018_HHWWggTag_0_MoreVars_v2.root",
+                "VBFHToGG" :    "VBFHToGG_M125_2018_HHWWggTag_0_MoreVars_v2.root",
+                "VHToGG" :      "VHToGG_M125_2018_HHWWggTag_0_MoreVars_v2.root",
+                "ttHJetToGG" :  "ttHJetToGG_2018_M125_HHWWggTag_0_MoreVars_v2.root"                    
+                # "VHToGG" :      "VH_2018_odd.root",
+                # "ttHJetToGG" :  "ttH_2018_odd.root"
+            } 
+        }
+
+        SingleHiggsProcessStrDict_EFT = {
+
+            "2016" : {
                 "GluGluHToGG" : "GluGluHToGG_M125_2016_HHWWggTag_0_MoreVars_v2_nodeNumber{reweightNode}.root".format(reweightNode=reweightNode),
                 "VBFHToGG" :    "VBFHToGG_M125_2016_HHWWggTag_0_MoreVars_v2_nodeNumber{reweightNode}.root".format(reweightNode=reweightNode),
                 "VHToGG" :      "VHToGG_M125_2016_HHWWggTag_0_MoreVars_v2_nodeNumber{reweightNode}.root".format(reweightNode=reweightNode),
@@ -191,37 +225,60 @@ if __name__ == '__main__':
         elif(Single_Higgs): 
             outSubDir = "Semileptonic_SingleHiggs/{Single_Higgs_File}/".format(Single_Higgs_File=Single_Higgs_File)
             processStr = Single_Higgs_File
-            processStrInFile = SingleHiggsProcessStrDict[year][Single_Higgs_File]
+            if(EFT): processStrInFile = SingleHiggsProcessStrDict_EFT[year][Single_Higgs_File]
+            else: processStrInFile = SingleHiggsProcessStrDict[year][Single_Higgs_File]
         else: raise Exception("ERROR - Need to select isData, isHH or isH if categorizing")
 
         signalEndStr = ""
         if( (year == "2017") and (isHH)): signalEndStr = "_odd"
 
-        # parametric DNN output location 
-        d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/EFT_DNN_Training/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized_CorMET/"
-        
-        if(Single_Higgs):
-            f = "{d}/{processStrInFile}".format(d=d, processStrInFile=processStrInFile)
-        elif(isData):
-            f = "{d}/Data_{year}_HHWWggTag_0_MoreVars_v2_nodeNumber{reweightNode}.root".format(d=d, year=year, reweightNode=reweightNode)
+        # parametric DNN output location -- after nominal tree fix 
+        #d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/DNN_Score_Evaluated/".format(year=year)
+        #d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/2017/Signal/SL_allNLO_Reweighted/EFT_DNN_Training/HHWWyyDNN_binary_EFT_noHgg_noNegWeights_BalanceYields_allBkgs_NLO_Reweighted_20nodes_noPtOverM_withKinWeight_weightSel_Parametrized_CorMET/"
+
+        # SM DNN output location 
+        d = "/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/"
+
+        if(EFT):
+            if(Single_Higgs):
+                f = "{d}/{processStrInFile}".format(d=d, processStrInFile=processStrInFile)
+            elif(isData):
+                f = "{d}/Data_{year}_HHWWggTag_0_MoreVars_v2_nodeNumber{reweightNode}.root".format(d=d, year=year, reweightNode=reweightNode)
+            else:
+                f = "{d}/{processStrInFile}_node_{reweightNode}_{year}{signalEndStr}.root".format(d=d, year=year, reweightNode=reweightNode, signalEndStr=signalEndStr, processStrInFile=processStrInFile)          
         else:
-            f = "{d}/{processStrInFile}_node_{reweightNode}_{year}{signalEndStr}.root".format(d=d, year=year, reweightNode=reweightNode, syst=syst, signalEndStr=signalEndStr, processStrInFile=processStrInFile)  
+            if(Single_Higgs):
+                f = "{d}/{processStrInFile}".format(d=d, processStrInFile=processStrInFile)
+            elif(isData):
+                f = "{d}/Data_{year}_HHWWggTag_0_MoreVars_v2.root".format(d=d, year=year)
+            else:
+                f = "{d}/{processStrInFile}_node_{reweightNode}_{year}.root".format(d=d, year=year, reweightNode=reweightNode, processStrInFile=processStrInFile)              
 
         #out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees_categorized/".format(year=year, reweightNode=reweightNode)
+        if(isHH): # has node 
+            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_SMResults/{year}/{outSubDir}/{reweightNode}_trees_categorized/".format(year=year, outSubDir=outSubDir, reweightNode=reweightNode)            
+        elif(Single_Higgs):
+            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_SMResults/FullSingleHiggsSamples/{year}/{outSubDir}/trees_categorized/".format(year=year, outSubDir=outSubDir)
+        else: # does not have node 
+            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_SMResults/{year}/{outSubDir}/".format(year=year, outSubDir=outSubDir)
         
-
-        if(not isData): out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_EFTResults/20_Benchmark_Results/{year}/{outSubDir}/{reweightNode}_trees_categorized/".format(year=year, outSubDir=outSubDir, reweightNode=reweightNode)
-        else: out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_EFTResults/20_Benchmark_Results/{year}/{outSubDir}/".format(year=year, outSubDir=outSubDir)
+        # if(not isData): out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_EFTResults/20_Benchmark_Results/{year}/{outSubDir}/{reweightNode}_trees_categorized/".format(year=year, outSubDir=outSubDir, reweightNode=reweightNode)
+        # else: out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_EFTResults/20_Benchmark_Results/{year}/{outSubDir}/".format(year=year, outSubDir=outSubDir)
 
         if(not os.path.isdir(out_d)):
             print("Creating output directory:",out_d)
             os.system("mkdir -p {out_d}".format(out_d=out_d))
 
-        if(not isData): outName = "{out_d}{processStr}_node_{reweightNode}_{year}_{syst}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year, syst=syst, processStr=processStr) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards  
-        else: outName = "{out_d}/Data_node_{reweightNode}_{year}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year) # no systematics for data 
-
-               
-
+        if(EFT):
+            if(not isData): outName = "{out_d}{processStr}_node_{reweightNode}_{year}_{syst}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year, syst=syst, processStr=processStr) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards  
+            else: outName = "{out_d}/Data_node_{reweightNode}_{year}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year) # no systematics for data 
+        else:
+            if(isHH):
+                outName = "{out_d}{processStr}_node_{reweightNode}_{year}_{syst}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year, syst=syst, processStr=processStr)
+            elif(Single_Higgs):
+                outName = "{out_d}{processStr}_{year}_{syst}_Categorized.root".format(out_d=out_d, year=year, syst=syst, processStr=processStr)
+            else:
+                outName = "{out_d}/Data_{year}_Categorized.root".format(out_d=out_d, reweightNode=reweightNode, year=year) # no systematics for data 
     elif(evenOddSplit):
         if(additionalSF): additionalSF_str = "_withAdditionalScaling"
         else: additionalSF_str = ""
@@ -287,19 +344,21 @@ if __name__ == '__main__':
             f = "{inDir}/GluGluToHHTo2G2Qlnu_node_All_NLO_{year}.root".format(inDir=inDir, year=year)
             #out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
             # out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
-            out_d = "/eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/{year}/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
+            #out_d = "/eos/user/c/chuw/ForAbe/HIG-21-014_Reweighting_Semileptonic/{year}/{reweightNode}_trees/".format(year=year, reweightNode=reweightNode)
+            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_SMResults/{year}/Signal/{node}/".format(year=year, node=node)
 
             if(not os.path.isdir(out_d)):
                 print("Creating output directory:",out_d)
-                os.system("mkdir {out_d}".format(out_d=out_d))
-                # os.system("mkdir -p {out_d}".format(out_d=out_d))
+                #os.system("mkdir {out_d}".format(out_d=out_d))
+                os.system("mkdir -p {out_d}".format(out_d=out_d))
             outName = "{out_d}/GluGluToHHTo2G2Qlnu_node_{reweightNode}_{year}_{syst}.root".format(out_d=out_d, reweightNode=reweightNode, year=year, syst=syst) # save a file per systematic tree so that you can run them all in parallel and just hadd them all afterwards    
 
         else:
             # Start with files with reweight branches for combining 
             d = "/eos/user/p/pmandrik/HHWWgg_central/January_2021_Production_v2/{year}/Signal/SL_NLO_{year}_hadded/".format(year=year)
             f = "{d}/GluGluToHHTo2G2Qlnu_node_{node}_{year}.root".format(d=d, node=node, year=year)
-            out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{node}/".format(year=year, node=node)
+            #out_d = "/eos/cms/store/group/phys_higgs/cmshgg/atishelm/flashgg/HIG-21-014/January_2021_Production/{year}/Signal/SL_allNLO_Reweighted/{node}/".format(year=year, node=node)
+            out_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/HIG_21_014_PostPreApprovalTalk_SMResults/{year}/Signal/{node}/".format(year=year, node=node)
             if(not os.path.isdir(out_d)):
                 print("Creating output directory:",out_d)
                 os.system("mkdir -p {out_d}".format(out_d=out_d))            
@@ -383,10 +442,22 @@ if __name__ == '__main__':
                 treeNode = node
         
         if(categorize or evenOddSplit):
+
+            # From non-combined sample (different tree name)
+
+            # if(syst == "Nominal"):
+            #     treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_13TeV_HHWWggTag_0".format(treeNode=treeNode, year=year)
+            # else: 
+            #     treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_13TeV_HHWWggTag_0_{syst}".format(treeNode=treeNode, year=year, syst=syst)      
+
+            # From combined 
+                     
             if(syst == "Nominal"):
                 treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_{year}_13TeV_HHWWggTag_0".format(treeNode=treeNode, year=year)
             else: 
                 treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_{year}_13TeV_HHWWggTag_0_{syst}".format(treeNode=treeNode, year=year, syst=syst)   
+
+
         else:
             if(syst == "Nominal"):
                 treeToProcess = "GluGluToHHTo2G2Qlnu_node_{treeNode}_13TeV_HHWWggTag_0".format(treeNode=treeNode)
@@ -411,12 +482,24 @@ if __name__ == '__main__':
                 # already combined files have a different number of underscores in the tree name 
                 if(categorize or evenOddSplit):
                     if(reweightNode != ""):
+
+                        # From non-combined sample (different tree name)
+                        # if(NumTreeKeys == 6):
+                        #     syst = "Nominal"
+                        # elif(NumTreeKeys == 7):
+                        #     syst = treeInfo[-1]
+                        # else:
+                        #     raise Exception("Number of keys in tree name is {NumTreeKeys} -- do not know how to handle that.".format(NumTreeKeys=NumTreeKeys))          
+                        
+                        # From combined                   
                         if(NumTreeKeys == 7):
                             syst = "Nominal"
                         elif(NumTreeKeys == 8):
                             syst = treeInfo[-1]
                         else:
-                            raise Exception("Number of keys in tree name is {NumTreeKeys} -- do not know how to handle that.".format(NumTreeKeys=NumTreeKeys))                
+                            raise Exception("Number of keys in tree name is {NumTreeKeys} -- do not know how to handle that.".format(NumTreeKeys=NumTreeKeys))        
+
+
                 else:
                     if(reweightNode != ""):
                         if(NumTreeKeys == 9):
@@ -447,7 +530,9 @@ if __name__ == '__main__':
                 if(reweightNode != ""):
                     Reweight(inTree, kname, year, runLowEvents, Norm, reweightNode, addNodeBranch) # reweight already combined sample 
                 else: # add variables 
-                    addVariables(inTree, kname, year, runLowEvents, Norm, reweightNode, isMC)                
+                    changeTreeName = 1
+                    print("changeTreeName",changeTreeName)
+                    addVariables(inTree, kname, year, runLowEvents, Norm, reweightNode, isMC, changeTreeName)                
                 
         else: continue # do not process this tree 
     if(not evenOddSplit): outFile.Close()        
