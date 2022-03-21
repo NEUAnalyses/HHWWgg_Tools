@@ -155,7 +155,7 @@ def GetFiles(direc):
     FHMC = [
         # "allData_QCD_2017.root",
         # "Data_2017.root",
-        # "datadrivenQCD_v2.root",
+        "datadrivenQCD_v2.root",
         "DYJetsToLL_M-50_TuneCP5_13TeV.root",
 
         "GluGluHToGG_M125_TuneCP5_13TeV.root",
@@ -258,7 +258,8 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     data_trees = TChain('data_trees')
     # data_trees.Add("%s/%sData"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
-    data_trees.Add("%s/%s/tagsDumper/trees/Data_13TeV_HHWWggTag_1"%(dPath,prefix))
+    # data_trees.Add("%s/%s/tagsDumper/trees/Data_13TeV_HHWWggTag_1"%(dPath,prefix))
+    data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
@@ -310,7 +311,8 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         exit(1)
 
     # B_WEIGHT = "1*weight"
-    B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)"
+    # B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)"
+    B_WEIGHT = "1*weight"
     ZERO_CUT = "ZERO_CUT"
     B_CUT = "%s*(%s)*(%s)"%(B_WEIGHT,REGION_CUT,ZERO_CUT)
     B_CUT += "*(%s)"%(cut)
@@ -361,7 +363,8 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         ##-- Get Background Trees
         Bkg_Trees = TChain("Bkg_Trees")
         # mc_ch = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
-        Bkg_Trees.Add("%s/tagsDumper/trees/%s%s"%(mcPath,prefix,treeName))
+        # Bkg_Trees.Add("%s/tagsDumper/trees/%s%s"%(mcPath,prefix,treeName))
+        Bkg_Trees.Add("%s/%s%s"%(mcPath,prefix,treeName))
         # Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(mcPath,prefix,treeName))
         # Bkg_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(mcPath,prefix,treeName))
 
@@ -521,7 +524,8 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # Signal_Trees = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
         Signal_Trees = TChain("Signal_Trees")
         if(verbose): print("Tree name: %s/tagsDumper/trees/%s%s"%(sigPath,prefix,treeName))
-        Signal_Trees.Add("%s/tagsDumper/trees/%s%s"%(sigPath,prefix,treeName))
+        # Signal_Trees.Add("%s/tagsDumper/trees/%s%s"%(sigPath,prefix,treeName))
+        Signal_Trees.Add("%s/%s%s"%(sigPath,prefix,treeName))
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_1"%(sigPath,prefix,treeName))
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_2"%(sigPath,prefix,treeName))
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_3"%(sigPath,prefix,treeName))

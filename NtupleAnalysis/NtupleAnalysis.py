@@ -199,7 +199,8 @@ if __name__ == '__main__':
 
                     elif(args.NMSSM): treeEnd = 'NMSSM_XYHWWggqqlnu_%s_13TeV_HHWWggTag_%s'%(massPair,tag)
 
-                    sig_tree = signal_file.Get('tagsDumper/trees/' + treeEnd)
+                    # sig_tree = signal_file.Get('tagsDumper/trees/' + treeEnd)
+                    sig_tree = signal_file.Get(treeEnd)
 
                     # outputName = mass + '_CutFlow_efficiencies.txt' # output text file path
                     # EfficienciesTxt = "bthresh\tsigeff\tttHeff\n"

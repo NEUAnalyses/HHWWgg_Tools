@@ -105,32 +105,10 @@ def GetVars(VarBatch):
     #     return RestOfTrainingVars
 
     # Some potentially useful MVA variables
-    elif(VarBatch == "Fully-Hadronic"):
-        L2vars =  [
-            "CMS_hgg_mass",
-            "Leading_Photon_pt","Subleading_Photon_pt",
-            "Leading_Photon_MVA","Subleading_Photon_MVA",
-            "N_goodJets",
-            "HWWCandidate_M",
-            "W2Candidate_M","W1Candidate_M",
-            "W1Candidate_pt","W2Candidate_pt",
-            "W2Candidate_eta","W1Candidate_eta",
-            "W1Candidate_phi","W2Candidate_phi",
-            "HGGCandidate_pt","HGGCandidate_eta",
-            "HGGCandidate_phi","HWWCandidate_pt",
-            "HWWCandidate_eta","HWWCandidate_phi",
-            "Leading_Jet_pt","Subleading_Jet_pt","Sub2leading_Jet_pt","Sub3leading_Jet_pt",
-            "Leading_Jet_eta","Subleading_Jet_eta","Sub2leading_Jet_eta","Sub3leading_Jet_eta",
-            "Leading_Jet_phi","Subleading_Jet_phi","Sub2leading_Jet_phi","Sub3leading_Jet_phi",
-            "New_DPhi_gg", "New_DR_gg", "New_DPhi_HH", "New_DR_HH",
-            "PhotonID_min", "PhotonID_max",
-            "a_costheta1", "a_costheta2", "a_costhetastar", "a_Phi", "a_Phi1"
-            ]
-        return L2vars
 
     elif(VarBatch == "FH_DNN"):
         L2vars =  [
-            # "evalDNN",
+            "evalDNN",
             "CMS_hgg_mass",
             Scaled_Leading_Photon_E,
             Scaled_Subleading_Photon_E,
@@ -210,6 +188,7 @@ def GetVars(VarBatch):
             "New_HWW_pz",
             "New_HWW_eta",
             "New_HWW_phi",
+            "HGGCandidate_pt", "HGGCandidate_eta", "HGGCandidate_phi",
             "New_dR_Hgg_Jet1",
             "New_dR_Hgg_Jet2",
             "New_dR_Hgg_Jet3",
@@ -235,6 +214,7 @@ def GetVars(VarBatch):
             "CosThetaStar_CS_old",
             "HelicityCostheta1",
             "HelicityCostheta2",
+            "MET_pt","MET_phi"
             ]
         return L2vars
 
