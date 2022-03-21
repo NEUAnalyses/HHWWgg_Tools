@@ -48,6 +48,7 @@ def GetVars(VarBatch):
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
             "evalDNN_HH",
+            "METCor_phi", # just to check
             # "evalDNN",
             Scaled_Leading_Photon_pt,
             "goodJets_0_pt",

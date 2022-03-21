@@ -4,7 +4,8 @@
 #                                                            #
 # The purpose of this module is to define datasets.          #
 #                                                            #
-##############################################################
+#####:wq
+#########################################################
 
 def GetDatasets(DatasetBatch):
 
@@ -30,6 +31,10 @@ def GetDatasets(DatasetBatch):
             "X850":"%s/ggF_X850_HHWWgg_qqlnu/HHWWgg_v2-7_100000events_GEN-SIM/200616_200442/0000/"%(productionLocation),
             "X900":"%s/ggF_X900_HHWWgg_qqlnu/HHWWgg_v2-7_100000events_GEN-SIM/200616_200500/0000/"%(productionLocation),
             "X1000":"%s/ggF_X1000_HHWWgg_qqlnu/HHWWgg_v2-7_100000events_GEN-SIM/200616_200519/0000/"%(productionLocation)
+        },
+
+        "ZZgg-Check":{
+	     "ZZgg" : "%s/Phase_II/ZZgg/"%(productionLocation)
         },
 
         "Resonant-Short": {

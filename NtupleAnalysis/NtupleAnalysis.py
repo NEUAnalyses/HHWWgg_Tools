@@ -16,15 +16,34 @@
 # python NtupleAnalysis.py --Efficiency --folders HHWWgg_v2-3_Trees_Hadded_some/,HHWWgg_v2-6_Trees_Hadded/ --campaigns HHWWgg_v2-3,HHWWgg_v2-6 --massPoints X1000 --Res --ratio
 #
 # ##-- Data / MC Analysis
+
+##-- Plot with and without sideband scale to compare
+
+##-- For HIG-21-014 AN_20_165_v7 ---- post pre-approval talk checks
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v7/Data_MC_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables --CutsType DataModeling --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v7/Data_MC_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch mass --CutsType NoSidebandScaleDNNCut --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333  --ratioMin 0.5 --ratioMax 1.5
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch mass --CutsType NoSidebandScaleDNNCut --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333  --ratioMin 0.5 --ratioMax 1.5
+
+##-- Pre AN_20_165_v7:
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch mass --CutsType NoSidebandScaleDNNCut --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333  --ratioMin 0.5 --ratioMax 1.5
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch mass --CutsType KinWeightsWithGlobalScale --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333 --log --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch mass --CutsType KinWeightsNoGlobalScale --Lumi 0.3029197 --verbose--SigScale 1 --SB --DNNbinWidth 0.0333 --log --ratioMin 0.5 --ratioMax 1.5
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch mass --CutsType TrainingSelectionsNoDNNCut --Lumi 41.5 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333 --log --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch DNN --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB --DNNbinWidth 0.0333 --log --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch DNN --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.1 --log --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/ --VarBatch TrainingVariables --CutsType testingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling_ANv3/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType testingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale --log
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling_ANv3/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling_ANv3/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 2 --SidebandScale --log
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/WithHggTraining_withSidebandScaling/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch TrainingVariables --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --log --ratioMin 0.1 --ratioMax 5 --SidebandScale
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch RestOfTrainingVars --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale --log 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch RestOfTrainingVars --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale --log
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/January2021-Production/ --dataFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/Data_2017_HHWWggTag_0_MoreVars.root --signalFile /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_noHgg_BalanceYields_allBkgs_oddSignal_v3/GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root --bkgDirec /eos/user/b/bmarzocc/HHWWgg/January_2021_Production/HHWWyyDNN_binary_withHgg_BalanceYields_allBkgs_LOSignals_noPtOverM/ --VarBatch Jet --CutsType TrainingSelections --Lumi 41.5 --verbose --SigScale 1 --SB  --DNNbinWidth 0.0333 --SidebandScale
 #
-# ##-- Gen / Reco Analysis 
+# ##-- Gen / Reco Analysis
 # python NtupleAnalysis.py --GenReco
 #########################################################################################################################################################################################################
 
@@ -41,22 +60,22 @@ args = GetOptions()
 print("Start of program...")
 
 if __name__ == '__main__':
-    gROOT.SetBatch(1) # Do not output upon draw statement 
+    gROOT.SetBatch(1) # Do not output upon draw statement
     if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
     elif(args.DataMC):
         print("Data/MC comparison...")
         if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/New_2021/NtupleAnalysis_v1/'
         #nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
-        else: 
-            ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'    
+        else:
+            ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'
             if(not os.path.exists(ol)):
-                print"Path %s does not exist, so creating it now"
-                print'mkdir %s'%(ol)
+                print("Path %s does not exist, so creating it now")
+                print('mkdir %s'%(ol))
                 os.system('mkdir %s'%(ol))
-                print'cp %s/../index.php %s'%(ol,ol)
+                print('cp %s/../index.php %s'%(ol,ol))
                 os.system('cp %s/../index.php %s'%(ol,ol))
     if(args.Efficiency):
-        print"Performing cut flow efficiency analysis"
+        print("Performing cut flow efficiency analysis")
         if(args.ratio):
             nMassPoints = len(args.massPoints.split(','))
             ratio_x_vals = []
@@ -98,14 +117,14 @@ if __name__ == '__main__':
 
             # print"files:",files
             orderedFiles = []
-            print"orderedFiles:",orderedFiles_
+            print("orderedFiles:",orderedFiles_)
             for i in orderedFiles_:
                 # print"i:",i
                 i = i.replace(",","")
                 i = i.replace("[","")
                 i = i.replace("]","")
                 i = i.replace("'","")
-                print"i:",i
+                print("i:",i)
                 orderedFiles.append(i)
 
             # print"orderedFiles:",orderedFiles
@@ -117,12 +136,12 @@ if __name__ == '__main__':
             # for fi,file in enumerate(os.listdir(direc)):
             # for fi,path in enumerate(files):
             for fi,path in enumerate(orderedFiles):
-                print"path:",path
+                print("path:",path)
                 Npass_0_tot, Npass_1_tot, Npass_2_tot, Npass_3_tot, Npass_4_tot = 0,0,0,0,0
                 badmass = 0
                 if(args.Res):
                     mass = path.split('_')[1]
-                    print'On mass:',mass
+                    print('On mass:',mass)
                     for bM in badMasses:
                         if mass == bM: badmass = 1
                     if (badmass): continue
@@ -135,7 +154,7 @@ if __name__ == '__main__':
 
                 elif(args.EFT):
                     SM_point = 0
-                    print "thing:",path.split('_')[0]
+                    print("thing:",path.split('_')[0])
                     if path.split('_')[0] == "SM":
                         SM_point = 1
                         x_values.append(fi)
@@ -145,7 +164,7 @@ if __name__ == '__main__':
                     else:
                         BM = path.split('_')[3][4]
                         print("BM:",BM)
-                        print"appending:",float(BM) + 1
+                        print("appending:",float(BM) + 1 )
                         # x_values.append(float(BM) + 1)
                         x_values.append(fi)
                         nodeStr = "node%s"%(float(BM)+1)
@@ -159,7 +178,7 @@ if __name__ == '__main__':
                     mx = path.split('_')[2]
                     my = path.split('_')[3]
                     massPair = "%s_%s"%(mx,my)
-                    print"massPair:",massPair
+                    print("massPair:",massPair)
                     x_values.append(fi) # file i
                     nTotEvents = GetEvents(massPair)
                     massPairString = massPair.replace("_",", ")
@@ -175,7 +194,7 @@ if __name__ == '__main__':
                 if(campaign=="HHWWgg_v2-3"): ntags = 3
                 elif(campaign=="HHWWgg_v2-6"): ntags = 3
 
-                print"ntags:",ntags
+                print("ntags:",ntags)
 
                 # if(args.SumTags): ntags = 3
                 # if(args.SumTags): ntags = 2
@@ -188,7 +207,7 @@ if __name__ == '__main__':
                     # if fi == len(orderedFiles) - 2: continue
                     color = colors[fi]
 
-                    print'Num events in MicroAOD:',nTotEvents
+                    print('Num events in MicroAOD:',nTotEvents)
 
                     signal_path = direc + '/' + str(path)
                     signal_file = TFile.Open(signal_path)
@@ -319,13 +338,13 @@ if __name__ == '__main__':
                 Draw_Histogram(mg,"APL",outName,args.log)
 
         if(args.ratio):
-            print"Plotting ratio of efficiencies"
-            print"ratio_x_vals:"
-            print ratio_x_vals
+            print("Plotting ratio of efficiencies")
+            print("ratio_x_vals:")
+            print(ratio_x_vals)
             for i in range(5):
-                print"c1_y_vals_%s"%(i)
+                print("c1_y_vals_%s"%(i))
                 exec("print c1_y_vals_%s"%(i))
-                print"c2_y_vals_%s"%(i)
+                print("c2_y_vals_%s"%(i))
                 exec("print c2_y_vals_%s"%(i))
 
             x_values = array( 'd' )
@@ -397,26 +416,26 @@ if __name__ == '__main__':
 
     ##-- Perform Data / MC analysis
     elif(args.DataMC):
-        print"Performing Data / MC Analysis"
+        print("Performing Data / MC Analysis")
 
         ##-- Get Data File
-        dataFile = args.dataFile 
+        dataFile = args.dataFile
 
-        ##-- Get Background Files 
-        bkgDirec = args.bkgDirec 
+        ##-- Get Background Files
+        bkgDirec = args.bkgDirec
         bkgFiles = GetFiles(bkgDirec)
-        print"Background files: ",bkgFiles
-        # exit(1) 
+        print("bkgFiles:",bkgFiles)
+        # exit(1)
 
-        ##-- Get Signal File 
-        signalFile = args.signalFile 
+        ##-- Get Signal File
+        signalFile = args.signalFile
 
-        ##-- Run Main Module 
+        ##-- Run Main Module
         if(not args.SB and not args.SR):
-            print "No phase space regions selected"
-            print "To run on the signal region pass the flag --SR"
-            print "To run on the signal sidebands region, pass the flag --SB"
-            print "You can pass both flags "
+            print ("No phase space regions selected")
+            print ("To run on the signal region pass the flag --SR")
+            print ("To run on the signal sidebands region, pass the flag --SB")
+            print ("You can pass both flags ")
 
         ##-- Data, MC and Signal Together. Data and MC in sidebands
         if(args.SB): region = "SB"
@@ -424,24 +443,24 @@ if __name__ == '__main__':
         cuts, cutNames = GetCuts(args.CutsType)
         for i in range(0,len(cuts)):
             cut_ = cuts[i] ## using only first cut.
-            cutName_ = cutNames[i] ## using only first cut.     
-            print"cut_:",cut_
-            print"cutName_:",cutName_       
+            cutName_ = cutNames[i] ## using only first cut.
+            print("cut_:",cut_)
+            print("cutName_:",cutName_)
             chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax)
-            print "chi2:",chi2
+            print("chi2:",chi2)
 
-        # ##-- MC and Signal in Signal Region 
-        # if(args.SR): 
+        # ##-- MC and Signal in Signal Region
+        # if(args.SR):
         #     region = "SR"
         #     cuts, cutNames = GetCuts(args.CutsType)
         #     for i in range(0,len(cuts)):
         #         cut_ = cuts[i] ## using only first cut.
-        #         cutName_ = cutNames[i] ## using only first cut.     
+        #         cutName_ = cutNames[i] ## using only first cut.
         #         print"cut_:",cut_
-        #         print"cutName_:",cutName_       
+        #         print"cutName_:",cutName_
         #         chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_)
-        #         print "chi2:",chi2        
-        # if(args.SR): 
+        #         print "chi2:",chi2
+        # if(args.SR):
         #     region = "SR"
         #     PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region)
-        print"DONE"
+        print("DONE")

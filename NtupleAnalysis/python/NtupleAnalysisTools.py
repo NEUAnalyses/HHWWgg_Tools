@@ -6,12 +6,13 @@
 #
 ###########################################################################################################################
 
-from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning
+from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
 import os
 from MCTools import *
 from VariableTools import *
 from PlotTools import *
 from CutsTools import *
+from array import array
 
 def GetFiles(direc):
     files = []
@@ -52,7 +53,7 @@ def GetFiles(direc):
         # 'WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
         # 'WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg.root',
 
-        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file 
+        # 'GluGluHToGG_HHWWggTag_0_MoreVars.root', ##-- messed up? not sure. which is used for training? check training .py file
         # 'GluGluHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VBFHToGG_2017_HHWWggTag_0_MoreVars.root',
         # 'VHToGG_2017_HHWWggTag_0_MoreVars.root',
@@ -580,7 +581,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     print"background files: ",bkgFiles_
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)
-    gStyle.SetErrorX(0.0001)
+    #gStyle.SetErrorX(0.0001)
     chi2 = 0
 
     ##-- Output
@@ -699,7 +700,41 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio
         stackSum.Sumw2()
         stackSum.SetLineColor(kBlack)
-        stackSum.SetLineStyle(7) # to distinguish from data uncertainty
+        #stackSum.SetLineWidth(3)
+        #stackSum.SetFillStyle(0)
+        #stackSum.SetLineStyle(7) # to distinguish from data uncertainty
+
+        # # the purpose of this clone is to try and plot shaded error bands on the background stack sum
+        # stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
+
+        # #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
+        # #print("binWidth:",int(binWidth))
+
+        # stackSum_clone_forError.SetFillStyle(0)
+        # stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
+        # stackSum_clone_forError.SetLineStyle(2)
+        # stackSum_clone_forError.SetLineWidth(10)
+
+        stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
+
+        #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
+        #print("binWidth:",int(binWidth))
+        #nhatchsp = gStyle.GetHatchesSpacing()
+        #print("nhatchsp:",nhatchsp)
+        gStyle.SetHatchesSpacing(0.5)
+        # stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
+        stackSum_clone_forError.SetFillStyle(3353)
+        stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
+        # stackSum_clone_forError.SetLineStyle(0.)
+        stackSum_clone_forError.SetLineWidth(0)
+        stackSum_clone_forError.SetMarkerSize(0)
+
+        # for i,bin in enumerate(stackSum_clone_forError):
+            # stackSum_clone_forError.SetBinError(i,0.000001)
+        #print("stack type:",type(stackSum_clone_forError))
+        #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
+        #stackSum_clone_forError.SetLineStyle(2)
+        #stackSum_clone_forError.SetLineWidth(10)
 
         stackSum_clone = stackSum.Clone("stackSum_clone")
         stackSum_clone.SetDirectory(0)
@@ -734,6 +769,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             DataHist.Sumw2()
             xTitle = GetXaxisTitle(varTitle)
             DataHist.GetXaxis().SetTitle(xTitle)
+
+            DataHist.SetLineColorAlpha(kBlack, 0)
+
             if(args_.log):
                 if(args_.verbose): print "Setting histogram minimums"
                 print"Setting histogram minimums"
@@ -744,6 +782,40 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 #bkgStack.SetMinimum(0.0001)
                 #stackSum.SetMinimum(0.0001)
                 #bkgStack.SetMinimum(0.0001)
+
+            # Convert DataHist into TGraphErrors in order to remove x errors
+            nBins = DataHist.GetNbinsX()
+            print("nBins:",nBins)
+            x_ = []
+            ex_= []
+            y_ = []
+            ey_ = []
+
+            for i,bin in enumerate(DataHist):
+                if(i == 0): continue # skip underflow bin
+                if(i == (nBins + 1)): continue # skip overflow bin
+                #print("i:",i)
+                #print("bin:",bin)
+                #print("center_value:",DataHist.GetBinCenter(i))
+                #print("yerr:",DataHist.GetBinError(i))
+                center_value = DataHist.GetBinCenter(i)
+                yerr = DataHist.GetBinError(i)
+
+                x_.append(center_value)
+                ex_.append(0.0001)
+                y_.append(bin)
+                ey_.append(yerr)
+
+            x  = array( 'f', x_ )
+            ex = array( 'f', ex_ )
+            y  = array( 'f', y_ )
+            ey = array( 'f', ey_ )
+
+            Data_gr = TGraphErrors( nBins, x, y, ex, ey )
+            Data_gr.SetMarkerStyle(8)
+            Data_gr.SetMarkerSize(1)
+
+            ##
 
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1
@@ -760,6 +832,29 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 for background in bkgStack.GetStack():
                     background.Scale(SidebandSF_)
                 stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio
+
+                # the purpose of this clone is to try and plot shaded error bands on the background stack sum
+                stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
+
+                #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
+                #print("binWidth:",int(binWidth))
+                #nhatchsp = gStyle.GetHatchesSpacing()
+                #print("nhatchsp:",nhatchsp)
+                gStyle.SetHatchesSpacing(0.5)
+                #stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
+                stackSum_clone_forError.SetFillStyle(3353)
+                stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
+                # stackSum_clone_forError.SetLineStyle(0.)
+                #stackSum_clone_forError.SetLineWidth(10)
+                stackSum_clone_forError.SetMarkerSize(0)
+
+                # for i,bin in enumerate(stackSum_clone_forError):
+                    # stackSum_clone_forError.SetBinError(i,0.000001)
+                #print("stack type:",type(stackSum_clone_forError))
+                #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
+                #stackSum_clone_forError.SetLineStyle(2)
+                #stackSum_clone_forError.SetLineWidth(10)
+
                 # stackSum.Scale(SidebandSF)
 
             ##-- Compute chi squared
@@ -768,16 +863,22 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             chi2Text = TLatex(0.129,0.75,"#Chi^{2} = %.5g"%(chi2))
             chi2Text.SetNDC(1)
             chi2Text.SetTextSize(0.04)
-            for i,bin in enumerate(stackSum):
-                binUnc = bin**(1/2)
-                # print"bin %s: yield equals: %s"%(i,bin)
-                # print"uncertainty: ",stackSum.GetBinError(i)
-                stackSum.SetBinError(i,binUnc)
+            #for i,bin in enumerate(stackSum):
+                #binUnc = bin**(1/2)
+                #print("bin %s: yield equals: %s"%(i,bin))
+                #print("contained uncertainty: ",stackSum.GetBinError(i))
+                #print("uncer from sqrt:",binUnc)
+                #stackSum.SetBinError(i,binUnc)
+
+            # print bin errors:
+
+            #for i, bin in enumerate(stackSum)
 
             ##-- Define ratio plot for computing Data / MC ratio
             rp = TRatioPlot(DataHist,stackSum)
-            rp.SetH1DrawOpt("P")
+            #rp.SetH1DrawOpt("") # whether or not to draw data from datahist object
             rp.SetH2DrawOpt("hist")
+            # rp.SetH2DrawOpt("PE2")
             # rp.SetGraphDrawOpt("PE2")
             dMax = DataHist.GetMaximum()
             bMax = stackSum.GetMaximum()
@@ -786,7 +887,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot
             for fileType in ["pdf"]:
-                gStyle.SetErrorX(0.0001)
+                #gStyle.SetErrorX(0.0001)
                 # varTitle = GetVarTitle(v)
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
@@ -813,8 +914,24 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
                 bkgStack.Draw("same")
-                stackSum.Draw("sameE")
-                DataHist.Draw("samePE")
+                #stackSum.Draw("same") # error option for sum of backgrounds stack
+                stackSum_clone_forError.SetLineWidth(0)
+                stackSum_clone_forError.Draw("sameE0E2")
+
+                #stackSum.DrawCopy("hist")
+                #stackSum.SetFillColor(kBlue)
+                #stackSum.SetFillStyle(3018)
+                #stackSum.Draw("e2same")
+                #gStyle.SetErrorX(0.0001)
+                #beforeSetError = gStyle.GetErrorX()
+                #gStyle.SetErrorX(0.0001)
+
+                Data_gr.Draw("samePE1")
+                #DataHist.Draw("samePE")
+
+
+                #DataHist.Draw("samePE")
+                #gStyle.SetErrorX(beforeSetError)
 
                 ##-- Does this work?
 
@@ -956,7 +1073,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot
             for fileType in ["pdf"]:
-                gStyle.SetErrorX(0.0001)
+                #gStyle.SetErrorX(0.0001)
                 # varTitle = GetVarTitle(v)
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(plotLog): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
@@ -1071,6 +1188,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- Only create yields table for 0th variable because yields are cut dependent, not variable dependent
         if(iv==0):
+            print"SidebandSF_:",SidebandSF_
             B_vals_ = []
             CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_,Bkg_Nevents_unweighted, S_, S_unweighted_)
 
