@@ -189,7 +189,7 @@ def GetBinVals(h_):
         binVals_.append(bin_val)
     return binVals_
 
-def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWidth_):
+def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWidth_,region_):
     print "Getting data histogram" 
     dFile = TFile.Open(dPath)
     # print "Data file path: ",dPath
@@ -213,7 +213,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     MASS_RANGE_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
     ZERO_CUT = "ZERO_CUT" ## to cut empty entries 
 
-    if(cutName == "Unblinded"):
+    if(region_ == "FullRegion"):
         DATA_CUT = "%s*(%s)"%(MASS_RANGE_CUT, ZERO_CUT) # unblinded - do not apply sideband cut 
     else:
         DATA_CUT = "%s*(%s)"%(SB_CUT,ZERO_CUT) # not unblinded - should apply sideband cut 
@@ -695,7 +695,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         if(region_ == "SB" or region_ == "FullRegion"):
             # define selections 
             # just use combined tag always. Define a category or look at cut based analysis categories by making selections 
-            DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose,DNNbinWidth_) ## assuming one data file!
+            DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose,DNNbinWidth_,region_) ## assuming one data file!
             dataNevents = DataHist.GetEntries()
             # legend.AddEntry(DataHist,"Data","P")
             DataHist.SetLineColor(kBlack)
@@ -944,8 +944,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
             if(args_.SidebandScale):
-                DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose, DNNbinWidth_) ## assuming one data file!
-                data_sidebands_sum = DataHist.Integral() ##-- data hist is already in sidebands only 
+                DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose, DNNbinWidth_,region_) ## assuming one data file!
+                data_sidebands_sum = DataHist.Integral() ##-- data hist is already in sidebands only..or not, depending on the region.
 
                 ##-- If region is SR, need to draw background in SB in order to obtain proper SF 
                 bkgStack_sidebands = THStack("bkgStack_sidebands","bkgStack_sidebands")
