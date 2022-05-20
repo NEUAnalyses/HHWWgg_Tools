@@ -20,7 +20,7 @@
 ##-- Plot with and without sideband scale to compare 
 
 ##-- For HIG-21-014 AN_20_165_v8 ---- Fully unblinded 
-# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v8/Data_MC_Unblinded_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch mass --CutsType Unblinded --Lumi 0.3029197 --verbose --SigScale 1 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v8/Data_MC_Unblinded_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables  --CutsType Unblinded --Lumi 0.3029197 --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale --log
 
 ##-- For HIG-21-014 AN_20_165_v7 ---- post pre-approval talk checks 
 
