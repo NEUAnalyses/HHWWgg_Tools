@@ -19,6 +19,9 @@
 
 ##-- Plot with and without sideband scale to compare 
 
+##-- For HIG-21-014 AN_20_165_v8 ---- Fully unblinded 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v8/Data_MC_Unblinded_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch mass --CutsType Unblinded --Lumi 0.3029197 --verbose --SigScale 1 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale 
+
 ##-- For HIG-21-014 AN_20_165_v7 ---- post pre-approval talk checks 
 
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v7/Data_MC_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables --CutsType DataModeling --Lumi 0.3029197 --verbose --SigScale 1 --SB --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale
@@ -413,11 +416,11 @@ if __name__ == '__main__':
         ##-- Get Data File
         dataFile = args.dataFile 
 
-        ##-- Get Background Files 
-        bkgDirec = args.bkgDirec 
-        bkgFiles = GetFiles(bkgDirec)
-        print("bkgFiles:",bkgFiles)
-        # exit(1) 
+        # ##-- Get Background Files 
+        # bkgDirec = args.bkgDirec 
+        # bkgFiles = GetFiles(bkgDirec)
+        # print("bkgFiles:",bkgFiles)
+        # # exit(1) 
 
         ##-- Get Signal File 
         signalFile = args.signalFile 
@@ -432,12 +435,20 @@ if __name__ == '__main__':
         ##-- Data, MC and Signal Together. Data and MC in sidebands
         if(args.SB): region = "SB"
         elif(args.SR): region = "SR"
+        elif(args.FullRegion): region = "FullRegion"
         cuts, cutNames = GetCuts(args.CutsType)
         for i in range(0,len(cuts)):
             cut_ = cuts[i] ## using only first cut.
             cutName_ = cutNames[i] ## using only first cut.     
             print("cut_:",cut_)
             print("cutName_:",cutName_)  
+
+            ##-- Get Background Files - if unblinded, include single higgs and HH 
+            bkgDirec = args.bkgDirec 
+            bkgFiles = GetFiles(bkgDirec, cutName_)
+            print("bkgFiles:",bkgFiles)
+            # exit(1) 
+
             chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax)
             print("chi2:",chi2)
 

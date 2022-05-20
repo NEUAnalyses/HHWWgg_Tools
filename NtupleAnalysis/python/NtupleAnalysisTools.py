@@ -14,7 +14,7 @@ from PlotTools import *
 from CutsTools import * 
 from array import array
 
-def GetFiles(direc):
+def GetFiles(direc, cutName):
     files = [] 
     ##-- training 
     MCendsTraining = [
@@ -92,6 +92,14 @@ def GetFiles(direc):
         # # "ttWJets_HHWWggTag_0_MoreVars.root"
 
     ]
+
+
+    if(cutName == "Unblinded"):
+        MCendsTraining.append("GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
+        MCendsTraining.append("VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
+        MCendsTraining.append("VHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
+        MCendsTraining.append("ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root")
+        MCendsTraining.append("GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root")
 
     MCends = [
         "DYJetsToLL_M-50_HHWWggTag_0_MoreVars.root",
@@ -202,8 +210,15 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
     SB_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
+    MASS_RANGE_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
     ZERO_CUT = "ZERO_CUT" ## to cut empty entries 
-    DATA_CUT = "%s*(%s)"%(SB_CUT,ZERO_CUT)
+
+    if(cutName == "Unblinded"):
+        DATA_CUT = "%s*(%s)"%(MASS_RANGE_CUT, ZERO_CUT) # unblinded - do not apply sideband cut 
+    else:
+        DATA_CUT = "%s*(%s)"%(SB_CUT,ZERO_CUT) # not unblinded - should apply sideband cut 
+
+    
     DATA_CUT += "*(%s)"%(cut)  
 
     ##-- Replace zero cut with variable name 
@@ -235,17 +250,21 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
 
     return DataHist_
 
-def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut,DNNbinWidth_):
+def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut,cutName,DNNbinWidth_):
     print "Getting background stack"
 
     ##-- Define cut 
     REGION_CUT = ""
     if(region == "SB"): REGION_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
     elif(region == "SR"): REGION_CUT = "(CMS_hgg_mass > 115 && CMS_hgg_mass < 135)"
+    elif(region == "FullRegion"): REGION_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
     else: 
         print"Input region ",region,"is not defined"
         print"Exiting"
         exit(1)
+
+    if(cutName == "Unblinded"):
+        REGION_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
 
     # B_WEIGHT = "1*weight"
     B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)" ##-- Used in training 
@@ -411,6 +430,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
     REGION_CUT = ""
     if(region == "SB"): REGION_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
     elif(region == "SR"): REGION_CUT = "(CMS_hgg_mass > 115 && CMS_hgg_mass < 135)"
+    elif(region == "FullRegion"): REGION_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
     else: 
         print"Input region ",region,"is not defined"
         print"Exiting"
@@ -532,7 +552,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- In either case, SB or SR, get backgrounds and signal(s)
         bkgStack = THStack("bkgStack","bkgStack")
-        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut,DNNbinWidth_)         
+        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut,cutName,DNNbinWidth_)         
         sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFile_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut,DNNbinWidth_)
 
         # MC_AddedtoLegend = {
@@ -567,7 +587,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
            "VH" : 0,
            "VBFH" : 0,
            "ttHJetToGG" : 0,
-           "THQ" : 0
+           "THQ" : 0,
+           "HHWWgg_SM" : 0
         }
    
 
@@ -585,6 +606,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             bkgStack.Add(h,'hist')
             bkgName = h.GetTitle()
             added = MC_AddedtoLegend[bkgName]
+            if(bkgName == "HHWWgg_SM"): continue 
             if(added): continue 
             else:
                 legend.AddEntry(h,bkgName,"F")
@@ -593,7 +615,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         ##-- Add text box with selection type 
         region_labels = {
             "SB" : "Sidebands",
-            "SR" : "Signal Region"
+            "SR" : "Signal Region",
+            "FullRegion" : "FullRegion"
         }
 
         region_label = region_labels[region_]
@@ -663,10 +686,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,region_)
         SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)
         bkgOutName = bkgOutName.replace(".png",".pdf")
-        SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle)  
+        SimpleDrawHisto(bkgStack,"PADS",bkgOutName,varTitle) 
 
-        ##-- If Plotting in the Sidebands, Get Data and combine plots 
-        if(region_ == "SB"):
+
+        drawLabels = 0  
+
+        ##-- If Plotting in the Sidebands or full region, Get Data and combine plots 
+        if(region_ == "SB" or region_ == "FullRegion"):
             # define selections 
             # just use combined tag always. Define a category or look at cut based analysis categories by making selections 
             DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose,DNNbinWidth_) ## assuming one data file!
@@ -763,6 +789,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 #stackSum_clone_forError.SetLineWidth(10)
 
                 # stackSum.Scale(SidebandSF)     
+
+            # # if plotting full region unblinded, add signal
+            # if(region_ == "FullRegion"):
+
 
             ##-- Compute chi squared 
             chi2 = GetChiSquared(DataHist,stackSum)
@@ -876,9 +906,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                     sig_hist.Draw("samehist")
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
-                selText.Draw("same")
-                CatText.Draw("same")
-                chi2Text.Draw("same")
+                if(drawLabels):
+                    selText.Draw("same")
+                    CatText.Draw("same")
+                    chi2Text.Draw("same")
                 rp.GetLowerRefGraph().SetMinimum(ratioMin)
                 rp.GetLowerRefGraph().SetMaximum(ratioMax)     
                 Npoints = rp.GetLowerRefGraph().GetN()
@@ -918,7 +949,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 ##-- If region is SR, need to draw background in SB in order to obtain proper SF 
                 bkgStack_sidebands = THStack("bkgStack_sidebands","bkgStack_sidebands")
-                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut,DNNbinWidth_) ##-- Sidebands     
+                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut,cutName,DNNbinWidth_) ##-- Sidebands     
                 orderedHistos_sidebands = OrderHistos(bkgHistos_sidebands,bkgHistCategories_sidebands)
                 for h in orderedHistos_sidebands:
                     h.Sumw2()
@@ -1036,8 +1067,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                     sig_hist.Draw("same hist")
                 # legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
-                selText.Draw("same")
-                CatText.Draw("same")
+                if(drawLabels):
+                    selText.Draw("same")
+                    CatText.Draw("same")
                 # chi2Text.Draw("same")
 
                 Npoints = rp.GetLowerRefGraph().GetN()

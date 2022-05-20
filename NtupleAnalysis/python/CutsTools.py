@@ -79,6 +79,11 @@ def GetCuts(CutsType):
         cuts = ["(evalDNN_HH > 0.1)"]
         cutNames = ["DataModeling"]    
 
+    elif(CutsType == "Unblinded"):
+        cuts = ["(evalDNN_HH > 0.1)"]
+        # cuts = ["(evalDNN_HH > 0.4)"]
+        cutNames = ["Unblinded"]            
+
     elif(CutsType == "DataModelingNoDNNCut"):
         cuts = ["(1.)"]
         cutNames = ["DataModelingNoDNNCut"]    
@@ -231,6 +236,14 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
         yaxisLabels.append("B")
         yaxisLabels.append("S")
         dataNevents = 0 
+
+    elif(region == "FullRegion"):
+        yaxisLabels.append("S / sqrt(B)")
+        yaxisLabels.append("sqrt(B)")
+        yaxisLabels.append("B")
+        yaxisLabels.append("S")
+        dataNevents = 0         
+
     else: 
         print "[ERROR] - In CutsTools.py:CreateYieldsTable"
         print "Don't know what to do for region:",region

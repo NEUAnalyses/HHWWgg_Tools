@@ -112,6 +112,7 @@ def GetMCTreeName(fileName_):
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125", 
         # "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8",
         "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tth_125",
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "tth_125",
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "tth_125",
         "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhotonJetsBox_MGG_80toInf_13TeV_Sherpa",
         
@@ -193,10 +194,13 @@ def GetMCTreeName(fileName_):
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "vbf_125",
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
         "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "vbf_125",
         "GluGluHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
         "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "ggh_125",
         # "VHToGG_M125_13TeV_2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
         "VHToGG_2017_HHWWggTag_0.root" : "wzh_125",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "wzh_125",
         "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
         "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
         "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125"
@@ -298,7 +302,8 @@ def GetMCName(fileName_):
         "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW",
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "GluGluHToGG",
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GluGluHToGG",
-        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",         
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",    
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "ttHJetToGG",     
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG",
         "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox_MGG-80toInf",
         
@@ -369,8 +374,11 @@ def GetMCName(fileName_):
         ##-- Single Higgs
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "vbf_125",
         "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "vbf_125",
         "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "ggh_125",
         "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "wzh_125",
         "VBFHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "vbf_125",
         "GluGluHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggh_125",
         "VHToGG_M125_13TeV_2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "wzh_125",
@@ -458,7 +466,8 @@ def GetMCName(fileName_):
         # "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
         # "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
         # "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM"
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM"
     }
 
     return MCNameDict[fileName_]
@@ -588,16 +597,20 @@ def GetMCCategory(fileName_):
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ggH",
         "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggH",
         "GluGluHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ggH",
+        "GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "ggH",
         # "GluGluHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ggH", 
         "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VH",
         "VHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VH",
         "VHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VH",
+        "VHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "VH",
         "VBFHToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "VBFH",
         "VBFHToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "VBFH",
+        "VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "VBFH",
         "VBFHToGG_2017_HHWWggTag.root" : "VBFH",
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",        
         "ttHJetToGG_HHWWggTag_0_MoreVars_kinWeight_noHgg_noSyst.root" : "ttHJetToGG",
         "ttHJetToGG_2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "ttHJetToGG",
+        "ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "ttHJetToGG",
         # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
 
         ##-- GJet
@@ -685,6 +698,7 @@ def GetMCCategory(fileName_):
 
         ##-- HHWWgg Signal
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM",
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "HHWWgg_SM",
 
         "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"HHWWgg_SM",
