@@ -13,7 +13,8 @@ def PlotDataFrames(args_):
         for file_i,file in enumerate(os.listdir(prefix)):
             df_path = "%s/%s"%(prefix,file)
             df_names.append(df_path)
-    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/Phase_II/"
+    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/"
+    # beforeOl = "/eos/user/a/atishelm/www/HHWWgg/Phase_II/"
     ol = '%s/%s'%(beforeOl, args_.outDirectory)
     if(not os.path.exists(ol)):
         print"Creating output directory: %s"%(ol)
@@ -57,6 +58,8 @@ def PlotDataFrames(args_):
                 varName = "%s_%s"%(p,v)
                 allVariables.append(varName)  
 
+    print("In PlotDataFrames.py")
+
     for v in allVariables:
         print"On variable:",v
         nbins, xmin, xmax, unit = GetVarParams(v,args_)
@@ -70,7 +73,7 @@ def PlotDataFrames(args_):
                 # df = pickle.load( open( "%s"%(df_name), "rb" ) )                
                 # plot = df.plot.hist(y=v,bins=nbins,alpha=0.5,color=thisColor,linestyle=('dashed'))
                 # fig = plot.get_figure()
-                dfEndPathName = df_name.split('/')[2]
+                dfEndPathName = df_name.split('/')[2].split('.')[0]
                 # outName1 = "%s/%s_%s.png"%(ol,dfEndPathName,v)
                 # outName2 = "%s/%s_%s.pdf"%(ol,dfEndPathName,v)
                 # fig.savefig(outName1)
@@ -111,14 +114,18 @@ def PlotDataFrames(args_):
                         nonNormyvals, binedges = np.histogram(df[v][:nEvents], bins=nbins, range=(xmin,xmax))
                         yvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax),density=True)                    
                     else: 
-                        nonNormyvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax))
-                        yvals, binedges = np.histogram(df[v], bins=nbins, range=(xmin,xmax),density=True)
+                        allVals_ = df[v]
+                        allVals = np.array(allVals_)
+                        MASK = [allVals != -99]     
+                        allVals = allVals[MASK]                   
+                        nonNormyvals, binedges = np.histogram(allVals, bins=nbins, range=(xmin,xmax))
+                        yvals, binedges = np.histogram(allVals, bins=nbins, range=(xmin,xmax),density=True)
 
-                entries = len(df[v])
-                # average = round(np.mean(df[v]), 3)
-                # stdev = round(np.std(df[v]), 3) 
-                average = 1
-                stdev = 1
+                entries = len(allVals)
+                average = round(np.mean(allVals), 3)
+                stdev = round(np.std(allVals), 3) 
+                # average = 1
+                # stdev = 1
 
                 nonNormYerrors = np.sqrt(nonNormyvals)
                 #print("nonNormyvals:",nonNormyvals)
@@ -247,6 +254,7 @@ def PlotDataFrames(args_):
                 # for yval in yvals: yvals_1.append(yval)
                 # for error in yerrors: yerrors_1.append(error)
 
+                # ax.hist(bincenters, weights = yvals)
                 ax.bar(bincenters,
                             yvals,
                             width=width,
@@ -267,6 +275,7 @@ def PlotDataFrames(args_):
                 ax.set_ylabel("Entries [A.U.]")
                 ax.set_title(v)
                 ax.set_xlabel(xlabel)
+                ax.set_xlim(xmin, xmax)
                 # axarr[1].plot([xmin,xmax],[1,1],linestyle=':')
                 # axarr[1].set_ylim(ymin=0.8,ymax=1.2)
                 ax.tick_params(direction='in')
@@ -295,13 +304,14 @@ def PlotDataFrames(args_):
                     ))   
                 props = dict(boxstyle='round', facecolor='wheat', alpha=0.5)    
 
-                xpos, ypos = 0.7, 0.85
+                # xpos, ypos = 0.7, 0.85
+                xpos, ypos = 0.3, 0.85
 
                 if(v == "qq_invmass"):
                     xpos, ypos = 0.3, 0.85 ##-- To avoid on-shell W peak 
 
-                # ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=14,
-                        # verticalalignment='top', bbox=props) 
+                ax.text(xpos, ypos, textstr, transform=ax.transAxes, fontsize=14,
+                        verticalalignment='top', bbox=props) 
 
                 plt.grid()
                 if(args_.nEvents != -1):

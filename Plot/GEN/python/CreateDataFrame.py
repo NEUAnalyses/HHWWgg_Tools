@@ -81,6 +81,7 @@ def SkipPhoRadVtxs(particle0,debug):
 
 def CreateDataFrame(args_):
     debug = args_.debug     
+    is_ZZgg = args_.debug 
     datasets = GetDatasets(args_.DatasetBatch)
     printerval = args_.printerval
     for dsetKey in datasets:
@@ -115,7 +116,7 @@ def CreateDataFrame(args_):
             exit(1)
         if("NMSSM" in genType): NMSSM = 1 
         elif("EFT" in genType): EFT = 1 
-        # elif("RES" in genType): RES = 1 
+        elif("RES" in genType): RES = 1 
         elif("NONRES" in genType): NONRES = 1 
 
         dfOutDirec = "Dataframes/%s"%(genType)
@@ -134,30 +135,27 @@ def CreateDataFrame(args_):
         if(RES): particles.append("X")
         variables = ["pt","eta","phi","p","px","py","pz","status"]
 
-        is_ZZgg = 1 
-
         if(is_ZZgg):
-            d["invmass_Zqq"] = []
-            d["invmass_Zll"] = []
-            d["invmass_Znunu"] = []
+            d["invmass_LeadZ_qq"] = []
+            d["invmass_SubleadZ_qq"] = []
+            d["invmass_LeadZ_ll"] = []
+            d["invmass_SubleadZ_ll"] = []
+            d["invmass_LeadZ_nunu"] = []
+            d["invmass_SubleadZ_nunu"] = []
 
-        # for p in particles:
-        #     for v in variables:
-        #         columnName = "%s_%s"%(p,v)
-        #         d[columnName] = [] 
+        for p in particles:
+            for v in variables:
+                columnName = "%s_%s"%(p,v)
+                d[columnName] = [] 
 
         d["pdgIds"] = [] 
 
         ##-- Initialize Special Variables Lists
         # if(doVBF): # for p in ["H","Pho","q","incVBFq","outVBFq"]:
 
-        """
-
         for p in ["H","Pho","q"]:
             for v in ["invmass","DeltaR"]:
                 exec("d['%s%s_%s'] = []"%(p,p,v))
-
-        """
 
         # non4VecVars = ["status","pdgId"]
 
@@ -208,23 +206,26 @@ def CreateDataFrame(args_):
 
             for ip,particle in enumerate(ps):
                 pdgId_val = particle.pdgId() 
+                pdgIds.append(pdgId_val) 
 
                 # if(particle.mother(0).pdgId() == 23):
                     # print("pdgId:",pdgId_val)
                 # if(pdgId_val == 22 and particle.mother(0).pdgId() == 25): phoCount += 1 
 
-                ##-- Only save pdgID if Z decay, or H/g
-                if( (particle.mother(0).pdgId() == 23) or pdgId_val == 25 or pdgId_val == 22 or pdgId_val == 23):
-                    pdgIds.append(pdgId_val)   
-
-                if(pdgId_val == 23):
-                    if(not foundFirstZ):
-                        foundFirstZ = 1 
-                        Z1_d1 = particle.daughter(0)
-                        Z1_d2 = particle.daughter(1)
-                    else:
-                        Z2_d1 = particle.daughter(0)
-                        Z2_d2 = particle.daughter(1) 
+                if(is_ZZgg):
+                    ##-- Only save pdgID if Z decay, or H/g
+                    # if( (particle.mother(0).pdgId() == 23) or pdgId_val == 25 or pdgId_val == 22 or pdgId_val == 23):
+                    
+                    if(pdgId_val == 23):
+                        if(not foundFirstZ):
+                            foundFirstZ = 1 
+                            Z1 = particle 
+                            # Z1_d1 = particle.daughter(0)
+                            # Z1_d2 = particle.daughter(1)
+                        else:
+                            Z2 = particle 
+                            # Z2_d1 = particle.daughter(0)
+                            # Z2_d2 = particle.daughter(1) 
 
 
 
@@ -256,74 +257,74 @@ def CreateDataFrame(args_):
 
 
 
-                # ##-- Heavy resonance 
-                # if(RES): 
-                #     if(pdgId_val == 35 or pdgId_val == 39): # Radion, or graviton 
-                #         X = particle 
+                ##-- Heavy resonance 
+                if(RES): 
+                    if(pdgId_val == 35 or pdgId_val == 39): # Radion, or graviton 
+                        X = particle 
 
-                # ##-- Higgs 
-                # if(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and not foundFirstHiggs:
-                #     foundFirstHiggs=1
-                #     H1 = particle
-                # elif(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and foundFirstHiggs:
-                #     H2 = particle 
+                ##-- Higgs 
+                if(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and not foundFirstHiggs:
+                    foundFirstHiggs=1
+                    H1 = particle
+                elif(pdgId_val==25) and (particle.status() >=21 and particle.status() <= 24) and foundFirstHiggs:
+                    H2 = particle 
 
-                # ##-- Photons 
-                # if(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and not foundFirstPhoton:
-                #     foundFirstPhoton=1
-                #     Pho1 = particle
-                # elif(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and foundFirstPhoton:
-                #     Pho2 = particle
+                ##-- Photons 
+                if(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and not foundFirstPhoton:
+                    foundFirstPhoton=1
+                    Pho1 = particle
+                elif(pdgId_val==22) and (particle.mother(0).pdgId() == 25) and foundFirstPhoton:
+                    Pho2 = particle
 
-                # ##-- W Bosons
-                # if(abs(pdgId_val) == 24) and not foundFirstW:
-                #     foundFirstW = 1
-                #     W1 = particle 
-                # elif(abs(pdgId_val) == 24) and foundFirstW:
-                #     W2 = particle 
+                ##-- W Bosons
+                if(abs(pdgId_val) == 24) and not foundFirstW:
+                    foundFirstW = 1
+                    W1 = particle 
+                elif(abs(pdgId_val) == 24) and foundFirstW:
+                    W2 = particle 
 
-                # ##-- Quarks
-                # if(abs(pdgId_val) >=1 and abs(pdgId_val) <= 5): 
-                #     motherID = particle.mother(0).pdgId()
-                #     if(abs(motherID) == 24): 
-                #         if(not foundFirstQuark):
-                #             foundFirstQuark = 1
-                #             q1 = particle 
-                #         elif(foundFirstQuark):
-                #             q2 = particle 
-                #     ##-- Incoming quarks recoiling off Vector bosons 
-                #     else:
+                ##-- Quarks
+                if(abs(pdgId_val) >=1 and abs(pdgId_val) <= 5): 
+                    motherID = particle.mother(0).pdgId()
+                    if(abs(motherID) == 24): 
+                        if(not foundFirstQuark):
+                            foundFirstQuark = 1
+                            q1 = particle 
+                        elif(foundFirstQuark):
+                            q2 = particle 
+                    ##-- Incoming quarks recoiling off Vector bosons 
+                    else:
 
-                #         if(doVBF):
-                #             # if(debug): 
-                #                 # print("Mother ID:",motherID)
-                #                 # print"status:",particle.status()
-                #             if(particle.status()==21):
-                #                 if(not foundFirstIncVBFQuark):
-                #                     if(debug): print("Found first inc VBF quark")
-                #                     foundFirstIncVBFQuark = 1
-                #                     incVBFq1 = particle 
-                #                 elif(foundFirstIncVBFQuark):
-                #                     if(debug): print("Found second inc VBF quark")
-                #                     incVBFq2 = particle     
-                #             elif(particle.status()==23):
-                #                 if(not foundFirstOutVBFQuark):
-                #                     if(debug): print("Found first out VBF quark")
-                #                     foundFirstOutVBFQuark = 1
-                #                     outVBFq1 = particle 
-                #                 elif(foundFirstOutVBFQuark):
-                #                     if(debug): print("Found second out VBF quark")
-                #                     outVBFq2 = particle      
-                #             else: 
-                #                 print("quark status is not 21 or 23:")
-                #                 print("status:",particle.status())
-                #                 print("Mother ID:",motherID)
+                        if(doVBF):
+                            # if(debug): 
+                                # print("Mother ID:",motherID)
+                                # print"status:",particle.status()
+                            if(particle.status()==21):
+                                if(not foundFirstIncVBFQuark):
+                                    if(debug): print("Found first inc VBF quark")
+                                    foundFirstIncVBFQuark = 1
+                                    incVBFq1 = particle 
+                                elif(foundFirstIncVBFQuark):
+                                    if(debug): print("Found second inc VBF quark")
+                                    incVBFq2 = particle     
+                            elif(particle.status()==23):
+                                if(not foundFirstOutVBFQuark):
+                                    if(debug): print("Found first out VBF quark")
+                                    foundFirstOutVBFQuark = 1
+                                    outVBFq1 = particle 
+                                elif(foundFirstOutVBFQuark):
+                                    if(debug): print("Found second out VBF quark")
+                                    outVBFq2 = particle      
+                            else: 
+                                print("quark status is not 21 or 23:")
+                                print("status:",particle.status())
+                                print("Mother ID:",motherID)
 
-                # ##-- Lepton 
-                # elif(abs(pdgId_val) == 11 or abs(pdgId_val) == 13 or abs(pdgId_val) == 15): lep = particle 
+                ##-- Lepton 
+                elif(abs(pdgId_val) == 11 or abs(pdgId_val) == 13 or abs(pdgId_val) == 15): lep = particle 
 
-                # ##-- Neutrino 
-                # elif(abs(pdgId_val) == 12 or abs(pdgId_val) == 14 or abs(pdgId_val) == 16): nu = particle  
+                ##-- Neutrino 
+                elif(abs(pdgId_val) == 12 or abs(pdgId_val) == 14 or abs(pdgId_val) == 16): nu = particle  
 
 
 
@@ -335,8 +336,6 @@ def CreateDataFrame(args_):
                 #     print("pdgIds:",pdgIds)
                 #     print("Skipping event")
                 #     continue ## couldn't get VBF quarks in this case 
-
-            """
 
             if(RES or NONRES):
 
@@ -398,15 +397,56 @@ def CreateDataFrame(args_):
                     for v in ["invmass","DeltaR"]:
                         exec("%s%s_%s = %s(Lead_%s.p4(),Sublead_%s.p4())"%(p,p,v,v,p,p))                                                              
                         exec("d['%s%s_%s'].append(%s%s_%s)"%(p,p,v,p,p,v)) 
-            """
 
             if(is_ZZgg):
-                absIDs = [abs(id_i) for id_i in pdgIds]
+                for p in ["Z"]:
+                    p1 = eval("%s1"%(p)) 
+                    p2 = eval("%s2"%(p))                                       
+                    if(p1.pt() > p2.pt()):
+                        exec("Lead_%s = p1"%(p))
+                        exec("Sublead_%s = p2"%(p))
+                    elif(p2.pt() > p1.pt()):
+                        exec("Lead_%s = p2"%(p))
+                        exec("Sublead_%s = p1"%(p))   
+                    else:
+                        exec("Lead_%s = p1"%(p))
+                        exec("Sublead_%s = p2"%(p)) 
+
+                ##-- Fill invariant masses for Lead and Sublead Z 
+                Lead_Z_daughter_ID = abs(Lead_Z.daughter(0).pdgId())
+                Sublead_Z_daughter_ID = abs(Sublead_Z.daughter(0).pdgId())
+
+                Zs = ["Lead", "Sublead"]
+                for Z_type in Zs:
+                    exec("Z_daughter_ID = abs(%s_Z.daughter(0).pdgId())"%(Z_type))
+                    exec("d0 = %s_Z.daughter(0)"%(Z_type)) 
+                    exec("d1 = %s_Z.daughter(1)"%(Z_type)) 
+                    m = invmass(d0.p4(), d1.p4())                    
+                    if(Z_daughter_ID in [11, 13, 15]):
+                        exec("d['invmass_%sZ_ll'].append(m)"%(Z_type))
+                        exec("d['invmass_%sZ_qq'].append(-99)"%(Z_type))
+                        exec("d['invmass_%sZ_nunu'].append(-99)"%(Z_type))
+                    elif(Z_daughter_ID in [1, 2, 3, 4, 5]):
+                        exec("d['invmass_%sZ_ll'].append(-99)"%(Z_type))
+                        exec("d['invmass_%sZ_qq'].append(m)"%(Z_type))
+                        exec("d['invmass_%sZ_nunu'].append(-99)"%(Z_type))                        
+                    elif(Z_daughter_ID in [12, 14, 16]):
+                        exec("d['invmass_%sZ_ll'].append(-99)"%(Z_type))
+                        exec("d['invmass_%sZ_qq'].append(-99)"%(Z_type))
+                        exec("d['invmass_%sZ_nunu'].append(m)"%(Z_type))                              
+
+
+                # print("d:",d)
+
+                # if(Lead_Z_daughter_ID in [11, 13, 15]):
+                # elif()
+
+                # absIDs = [abs(id_i) for id_i in pdgIds]
 
                 ##-- Z1 mass 
 
 
-                print("absIDs:",absIDs)
+                # print("absIDs:",absIDs)
                 # if( (absIDs.count(11) + absIDs.count(13) + absIDs.count(15)) == 2 ):
                 #     m = invmass(Zlep_1.p4(), Zlep_2.p4())
                 #     d["invmass_Zll"].append(m)
@@ -428,14 +468,14 @@ def CreateDataFrame(args_):
                 # print("len(pdgIds):",len(pdgIds))
             d['pdgIds'].append(pdgIds)
 
-            if(is_ZZgg):
-                print("len(d['pdgIds']:",len(d['pdgIds']))
-                print("len(d['invmass_Z1ll']:",len(d['invmass_Z1ll']))
-                print("len(d['invmass_Z1nunu']:",len(d['invmass_Z1nunu']))
-                print("len(d['invmass_Z1qq']:",len(d['invmass_Z1qq']))
-                print("len(d['invmass_Z2ll']:",len(d['invmass_Z2ll']))
-                print("len(d['invmass_Z2nunu']:",len(d['invmass_Z2nunu']))
-                print("len(d['invmass_Z2qq']:",len(d['invmass_Z2qq']))                
+            # if(is_ZZgg):
+            #     print("len(d['pdgIds']:",len(d['pdgIds']))
+            #     print("len(d['invmass_Z1ll']:",len(d['invmass_Z1ll']))
+            #     print("len(d['invmass_Z1nunu']:",len(d['invmass_Z1nunu']))
+            #     print("len(d['invmass_Z1qq']:",len(d['invmass_Z1qq']))
+            #     print("len(d['invmass_Z2ll']:",len(d['invmass_Z2ll']))
+            #     print("len(d['invmass_Z2nunu']:",len(d['invmass_Z2nunu']))
+            #     print("len(d['invmass_Z2qq']:",len(d['invmass_Z2qq']))                
 
             #if(debug): 
                 #if(not filledqq): print"---------------------Did not fill mqq"

@@ -13,7 +13,8 @@ def PlotDataFrame(args_):
         for file_i,file in enumerate(os.listdir(prefix)):
             df_path = "%s/%s"%(prefix,file)
             df_names.append(df_path)
-    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/Phase_II/"
+    # beforeOl = "/eos/user/a/atishelm/www/HHWWgg/Phase_II/"
+    beforeOl = "/eos/user/a/atishelm/www/HHWWgg/"
     ol = '%s/%s'%(beforeOl, args_.outDirectory)
     if(not os.path.exists(ol)):
         print"Creating output directory: %s"%(ol)

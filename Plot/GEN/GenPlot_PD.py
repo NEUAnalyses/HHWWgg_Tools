@@ -7,6 +7,8 @@
 # Example Usage:
 #
 # ##-- Create pandas dataframe 
+# python GenPlot_PD.py --CreateDataframe --genType UL_RES_Check --nEvents 10 --maxFiles 1 --dfOutName UL_RES_Check --DatasetBatch UL-ResonantCheck --printerval 1
+# python GenPlot_PD.py --CreateDataframe --genType NONRES_Phase_II --nEvents 10 --maxFiles 1 --dfOutName NONRES_Phase_II --DatasetBatch ZZgg-Check --printerval 1
 # python GenPlot_PD.py --CreateDataframe --genType NONRES --nEvents 1000  --maxFiles 1 --dfOutName PhaseII_HHWWgg --DatasetBatch PhaseIIHHWWgg-GF-nonres-SM --printerval 100
 # python GenPlot_PD.py --CreateDataframe --genType NONRES --nEvents 1000  --maxFiles 1 --dfOutName PhaseII_HHWWgg_Test --DatasetBatch PhaseIIHHWWgg-GF-nonres-SM --printerval 100
 # python GenPlot_PD.py --CreateDataframe --genType VBFNONRES --nEvents 2000  --maxFiles 1 --dfOutName HHWWgg-SM-NonRes-VBF_WWgg_qqlnu_{node}_df --DatasetBatch HHWWgg-VBF-nonres-SM --printerval 500 
@@ -17,6 +19,8 @@
 # lowevents: python GenPlot_PD.py --CreateDataframe --genType VBFRES-LowEvents --nEvents 1000  --maxFiles 1 --dfOutName VBFToBulkGravitonToHH_WWgg_qqlnu_{node}_df --DatasetBatch VBF-RES-2-6-5 --printerval 100
 #
 # ##-- Plot dataframe variables 
+#
+# python GenPlot_PD.py --PlotDataFrame --dfTypes NONRES_Phase_II --outDirectory NONRES_Phase_II --extraVariables invmass_LeadZ_qq,invmass_SubleadZ_qq,invmass_LeadZ_ll,invmass_SubleadZ_ll,invmass_LeadZ_nunu,invmass_SubleadZ_nunu  --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes NONRES --outDirectory NONRES_PhaseII --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes VBFNONRES --outDirectory VBFNONRES --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
 # python GenPlot_PD.py --PlotDataFrame --dfTypes VBFNONRES --outDirectory VBFNONRES --extraVariables HH_invmass --particles Lead_H,Sublead_H --variables pt --plotSingles
@@ -60,6 +64,7 @@ parser.add_argument('--maxEvents', type=int, default=999999999, help="Max number
 parser.add_argument("--upLeftLegend", action="store_true", default=False, help="Place legend on upper left", required=False)
 
 ##-- Misc
+parser.add_argument("--ZZgg", action="store_true", default=False, help="Look for HH->ZZgg decays", required=False)
 parser.add_argument("--debug", action="store_true", default=False, help="Extra print statements for debugging", required=False)
 parser.add_argument("--condor", action="store_true", default=False, help="Change handling of outputs when running on condor", required=False)
 parser.add_argument('--printerval', type=int, default=1000, help="Print event info every X events", required=False)

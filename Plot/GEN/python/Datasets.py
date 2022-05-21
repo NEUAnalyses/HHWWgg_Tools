@@ -33,6 +33,10 @@ def GetDatasets(DatasetBatch):
             "X1000":"%s/ggF_X1000_HHWWgg_qqlnu/HHWWgg_v2-7_100000events_GEN-SIM/200616_200519/0000/"%(productionLocation)
         },
 
+        "UL-ResonantCheck":{
+	     "ULRes" : "%s/UL/"%(productionLocation)
+        },
+
         "ZZgg-Check":{
 	     "ZZgg" : "%s/Phase_II/ZZgg/"%(productionLocation)
         },

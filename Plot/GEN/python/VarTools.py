@@ -4,6 +4,12 @@
 def GetVarParams(var_,args__):
     VarDict = {
         ##-- nbins, xmin, xmax
+        "invmass_LeadZ_ll" : [100, 0, 100, "GeV"],        
+        "invmass_LeadZ_qq" : [100, 0, 100, "GeV"],        
+        "invmass_LeadZ_nunu" : [100, 0, 100, "GeV"],        
+        "invmass_SubleadZ_ll" : [100, 0, 100, "GeV"],        
+        "invmass_SubleadZ_qq" : [100, 0, 100, "GeV"],        
+        "invmass_SubleadZ_nunu" : [100, 0, 100, "GeV"],        
         "qq_invmass" : [30,0,100,"GeV"],
         "qq_DeltaR" : [20,0,5,"radians"],
         # "HH_invmass" : [100,0,1000,"GeV"],
@@ -22,7 +28,7 @@ def GetVarParams(var_,args__):
         "Sublead_incVBFq_pt" : [30,0,250,"GeV"],
         "Lead_outVBFq_pt" : [60,0,1200,"GeV"],
         "Sublead_outVBFq_pt" : [30,0,250,"GeV"],
-        "pdgIds" : [60,-30,30,"unitless"]
+        "pdgIds" : [100,-50,50,"unitless"]
     }
 
     ps = args__.particles.split(',') 
