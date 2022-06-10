@@ -15,9 +15,11 @@ import numpy as np
 Parameters
 """
 verbose = 0
-round_digits = 3
+round_digits = 4
 Min_MC_Events = 100
 bkg_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/"
+process_types = ["HH"]
+# process_types = ["Continuum_Background", "Single_Higgs", "HH"]
 
 Continuum_Background_Files = [
     "DiPhotonJetsBox_M40_80.root",     
@@ -69,9 +71,6 @@ HH_Files = [
     "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/FH_NLO_2017_hadded/GluGluToHHTo2G4Q_node_cHHH1_2017.root",
     "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Signal/FL_NLO_2017_hadded/GluGluToHHTo2G2l2nu_node_cHHH1_2017.root",
 ]
-
-# process_types = ["Continuum_Background", "Single_Higgs", "HH"]
-process_types = ["HH"]
 
 for process_type in process_types:
     print("On process type:",process_type)
