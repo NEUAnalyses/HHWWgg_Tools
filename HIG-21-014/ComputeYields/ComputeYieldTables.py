@@ -539,13 +539,15 @@ for process_type in process_types:
                 else:
                     finalLineStr = ""
 
-                file.write("\t\t\t {MCGroup} & {MiniAOD_Yield_Total}\% & {Preselection_Weighted_Yield_Total_0}\% & {Preselection_Weighted_Yield_Total_1}\% & {Preselection_Weighted_Yield_Total_2}\% \\\ \n".format(
+                file.write("\t\t\t {MCGroup} & {MiniAOD_Yield_Total}\% & {Preselection_Weighted_Yield_Total_0}\% & {Preselection_Weighted_Yield_Total_1}\% & {Preselection_Weighted_Yield_Total_2}\% \\\ {finalLineStr} \n".format(
                     MCGroup = MCGroup,MiniAOD_Yield_Total=MiniAOD_Yield_Total,
                     Preselection_Weighted_Yield_Total_0 = Preselection_Weighted_Yield_Total_0,
                     Preselection_Weighted_Yield_Total_1 = Preselection_Weighted_Yield_Total_1,
                     Preselection_Weighted_Yield_Total_2 = Preselection_Weighted_Yield_Total_2,
+                    finalLineStr=finalLineStr
                     ))
 
+        file.write("\t\t\t Total & 100\% & 100\% & 100\% & 100\% \\\ \\hline \n")
         file.write("\t\t\end{tabular}}\n")
         process_type_caption = process_type.replace("_", " ")
         file.write("\t\caption{Contribution w.r.t total 2017 %s MC for various phase spaces: Before and after preselections for each final state. Note that for processes with less than %s unweighted MC events after a selection (%s for the fully-leptonic preselections), a null value is shown.}\n"%(process_type_caption, Min_MC_Events, Min_MC_Events_FL))
