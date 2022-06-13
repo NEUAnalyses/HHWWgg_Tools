@@ -201,10 +201,9 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     data_trees.Add("%s/%sData_13TeV_HHWWggTag_0_v1"%(dPath,prefix))
 
     ##-- Hardcoding the addition of 2016 and 2018 data for AN-20-165 v5 checks
+
     # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2016_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
     # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2018_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
-
-
 
     # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
     # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
@@ -229,9 +228,21 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
 
     ##-- Fill histogram with data  
-    Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
+
+    # special binning for evalDNN_HH
+
+    edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+    
+    if(varTitle == "evalDNN_HH"): 
+        Data_h_tmp = TH1F('Data_h_tmp',varTitle,4,edges)
+    else: Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
+
+    # Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
     Data_h_tmp.SetTitle("%s"%(varTitle))
     Data_h_tmp.SetMarkerStyle(8)
+
+    print("xnax:",Data_h_tmp.GetXaxis().GetXmax())
+
     print"v:",v
     print"DATA_CUT:",DATA_CUT
     exec('data_trees.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
@@ -300,8 +311,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         # treeName += "_13TeV_HHWWggTag_0_v1"
         MC_Category = GetMCCategory(mcEnd)
         print("MC_Category:",MC_Category)
-     
-        v1_mcs = ["VBFH","ttHJetToGG","ggH","VH"]
+        v1_mcs = ["VBFH","ttHJetToGG","ggH","VH", "H$\gamma\gamma$", "H\\rightarrow\gamma\gamma"]   
         if(MC_Category in v1_mcs):
             treeName += "_v1"
         MCname = GetMCName(mcEnd)
@@ -335,11 +345,24 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         xbins, xmin, xmax = GetBins(varTitle, DNNbinWidth_)
         # exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         # exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
-        exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+
+        # exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+
+        edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+
+        if(varTitle == "evalDNN_HH"): 
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,4,edges)"%(i,i)) # histogram specifically for computing B in signal region
+        else: 
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+
         # exec("B_h_noweight_%s = TH1F('B_h_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
+        # print("xmax_bkg:",Data_h_tmp.GetXaxis().GetXmax())
+
         ##-- no weights 
-        exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+        if(varTitle == "evalDNN_HH"): 
+            exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,4,edges)"%(i,i)) # histogram specifically for computing B in signal region
+        else: exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
         
         # thisHist = eval("MC_h_tmp_%s"%(i))
         thisHist = eval("B_h_%s"%(i))
@@ -375,23 +398,6 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
         # eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i))
         eval("B_h_%s.Scale(float(Lumi))"%(i))
-        ##-- If required, scale by fraction of events to total due to flashgg submission 
-        # need for 
-        # W1JetsToLNu_LHEWpT_150-250 
-        #
-        # W1JetsToLNu_LHEWpT_150-250 ext1 258842513
-        # W1JetsToLNu_LHEWpT_150-250 new_pmx 108925160
-        #
-        # W1JetsToLNu_LHEWpT_400-inf
-        #
-        # W1JetsToLNu_LHEWpT_400-inf v2 4465538
-        # W1JetsToLNu_LHEWpT_400-inf ext1 9066797
-        # 
-        # W2JetsToLNu_LHEWpT_100-150
-        # W2JetsToLNu_LHEWpT_150-250
-        # W2JetsToLNu_LHEWpT_50-150
-
-        
 
         Bkg_Nevents_.append(eval("B_h_%s.Integral()"%(i))) 
 
@@ -473,8 +479,19 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
 
         xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
-        exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
-        exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
+        # exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
+        # exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
+
+        edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+
+        if(varTitle == "evalDNN_HH"):
+            exec("S_h_%s = TH1F('S_h_%s',v,4,edges)"%(i,i)) 
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,4,edges)"%(i,i))             
+        else:
+            exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))             
+
+
         thisHist = eval("S_h_%s"%(i))
         mcColor = GetMCColor(MC_Category) 
         ##-- Style options for signal to distinguish from Data, Background 
@@ -750,6 +767,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             y  = array( 'f', y_ )
             ey = array( 'f', ey_ )
 
+            print("Data x:",x)
+
             Data_gr = TGraphErrors( nBins, x, y, ex, ey )
             Data_gr.SetMarkerStyle(8)
             Data_gr.SetMarkerSize(1)
@@ -816,6 +835,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             #for i, bin in enumerate(stackSum)
 
             ##-- Define ratio plot for computing Data / MC ratio 
+            print("")
+            print("~~~~~~~~~~~~~~DataHist:",DataHist)
+            print("~~~~~~~~~~~~~~stackSum:",stackSum)
+            print("DataHist xmax:",DataHist.GetXaxis().GetXmax())
+            print("stackSum xmax:",stackSum.GetXaxis().GetXmax())
+            print("")
             rp = TRatioPlot(DataHist,stackSum)
             #rp.SetH1DrawOpt("") # whether or not to draw data from datahist object 
             rp.SetH2DrawOpt("hist")
@@ -834,55 +859,43 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)                        
                 DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
+
                 rp.Draw("nogrid")
+                
                 rp.GetLowYaxis().SetNdivisions(5)
+
                 DataMCRatio_c.Update()
 
                 ratioGraph = rp.GetCalculationOutputGraph()
                 ratioGraph.SetMarkerStyle(8)
                 ratioGraph.SetMarkerSize(0.5)
 
-                # rp.SetGraphDrawOpt("EP")
-                # rp.SetGraphDrawOpt("EPZ2")
-                # rp.GetLowerRefYaxis().SetTitle("Data / MC")
-
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
                 rp.GetLowerPad().Update()
-                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)   
+                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.01,maxHeight*100.)   
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
 
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
+
+                #"""
+                # print("   ")
+                # print("~~~~~~~~~~~~~~~bkgStack xmax:",bkgStack.GetXaxis().GetXmax())
+                # print("   ")
+
                 bkgStack.Draw("same")
-                #stackSum.Draw("same") # error option for sum of backgrounds stack 
                 stackSum_clone_forError.SetLineWidth(0)
-                stackSum_clone_forError.Draw("sameE0E2")
+                stackSum_clone_forError.Draw("sameE0E2")                
+                #"""
 
-                #stackSum.DrawCopy("hist")
-                #stackSum.SetFillColor(kBlue)
-                #stackSum.SetFillStyle(3018)
-                #stackSum.Draw("e2same")                   
-                #gStyle.SetErrorX(0.0001)
-                #beforeSetError = gStyle.GetErrorX()
-                #gStyle.SetErrorX(0.0001)
+                print("   ")
+                print("~~~~~~~~~~~~~~~Data_gr xmax:",Data_gr.GetXaxis().GetXmax())
+                print("   ")
 
-                Data_gr.Draw("samePE1")
-                #DataHist.Draw("samePE")
-
-
-                #DataHist.Draw("samePE")
-                #gStyle.SetErrorX(beforeSetError)
-
-                ##-- Does this work?
-
-                #DataHist.SetMinimum(1.)
-                #stackSum.SetMinimum(1.)
-                #bkgStack.SetMinimum(1.)
-                
-                #DataHist.SetMaximum(6000.)
-                #stackSum.SetMaximum(6000.)
-                #bkgStack.SetMaximum(6000.)
+                #"""
+                Data_gr.Draw("samePE1") 
+                #"""
 
                 for sig_hist in sig_histos:
                     sigMax = sig_hist.GetMaximum()
@@ -906,8 +919,17 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                         if(added): continue 
                         else:
                             legend.AddEntry(sig_h,"%s * %.5g"%(sig_h.GetTitle(),sigScale),"FL")
-                            Signals_AddedtoLegend[sigName]                            
+                            Signals_AddedtoLegend[sigName]  
+
+                    print("   ")
+                    print("~~~~~~~~~~~~~~~sig_hist xmax:",sig_hist.GetXaxis().GetXmax())
+                    print("   ")
+                    
+
+                    #"""
                     sig_hist.Draw("samehist")
+                    #"""
+
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
                 if(drawLabels):
@@ -917,14 +939,65 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerRefGraph().SetMinimum(ratioMin)
                 rp.GetLowerRefGraph().SetMaximum(ratioMax)     
                 Npoints = rp.GetLowerRefGraph().GetN()
+                print(" ")
+                print("~~~~~~~~~~~~~~Npoints:",Npoints)
+                print(" " )
+                #"""
                 for ip in range(0,Npoints):
                     rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
                     rp.GetLowerRefGraph().SetPointEXlow(ip,0)  
+                #"""
+
                 if(args_.log): 
                     UpperPad.SetLogy()
                     UpperPad.Update() 
+
+                UpperPad.cd()
+                UpperPad.Update()
+
+                # Add TLines if plotting DNN score
+                if(varTitle == "evalDNN_HH"):
+
+                        # exec("ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)")
+                        # ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)
+                        # ThisLine.SetLineStyle(3)
+                        # ThisLine.Draw("same")
+
+                        BoundaryLine_1 = TLine(0.63,UpperPad.GetUymin(),0.63,maxHeight*100.)
+                        BoundaryLine_2 = TLine(0.84,UpperPad.GetUymin(),0.84,maxHeight*100.)
+                        BoundaryLine_3 = TLine(0.89,UpperPad.GetUymin(),0.89,maxHeight*100.)
+
+                        BoundaryLine_1.SetLineStyle(3)
+                        BoundaryLine_2.SetLineStyle(3)
+                        BoundaryLine_3.SetLineStyle(3)
+
+                        BoundaryLine_1.Draw("same")
+                        BoundaryLine_2.Draw("same")
+                        BoundaryLine_3.Draw("same")
+
+                    # Boundaries = [0.63, 0.84, 0.89,1.0]
+                    # for Boundary in Boundaries:
+                    #     exec("ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)")
+                    #     ThisLine.SetLineStyle(3)
+                    #     ThisLine.Draw("same")
+
+
+                # rp.GetUpperRefXaxis().SetRangeUser(0.1,1)
+
                 rp.GetLowerPad().cd()
+
+                # lowerPad.SetUxmax(1)
+                # rp.GetLowerRefXaxis().SetRangeUser(0.1,1)
+
                 lowerPad = rp.GetLowerPad()
+                # lowerPad.GetXAxis().SetRangeUser(0.1,1)
+                # lowerPad.
+                lowerPad.Update()
+                lowerPad.cd()
+
+                print("lowerPad.GetUxmin():",lowerPad.GetUxmin())
+                print("lowerPad.GetUxmax():",lowerPad.GetUxmax())
+
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
                 lineAtOne = TLine(lowerPad.GetUxmin(),1,lowerPad.GetUxmax(),1)
                 lineAtOne.SetLineStyle(3)
@@ -934,6 +1007,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 DataMCRatio_c.SaveAs(outName) 
                 outName = outName.replace(".pdf",".png")                    
                 DataMCRatio_c.SaveAs(outName)   
+                outName = outName.replace(".png",".C")          
+                DataMCRatio_c.SaveAs("out.C")          
 
         ##-- If plotting in the signal region, Combine Background and Signal(s)
         elif(region_ == "SR"):
@@ -997,6 +1072,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             #     # if(B_val != 0.0): B_vals_.append(B_val)
 
             for i,bin in enumerate(stackSum):
+                print("")
+                print("~~~~~~~~~On stack sum bin:",i)
+                print("")
+                
                 binUnc = bin**(1/2)
                 # print"bin %s: yield equals: %s"%(i,bin) 
                 # print"uncertainty: ",stackSum.GetBinError(i)
