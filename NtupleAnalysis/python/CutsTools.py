@@ -82,7 +82,12 @@ def GetCuts(CutsType):
     elif(CutsType == "Unblinded"):
         cuts = ["(evalDNN_HH > 0.1)"]
         # cuts = ["(evalDNN_HH > 0.4)"]
-        cutNames = ["Unblinded"]            
+        cutNames = ["Unblinded"]     
+
+    # hardcoding stuff for ARC checks
+    elif(CutsType == "Unblinded_noDNNCut"):
+        cuts = ["(1.)"]
+        cutNames = ["Unblinded_noDNNCut"]
 
     elif(CutsType == "DataModelingNoDNNCut"):
         cuts = ["(1.)"]

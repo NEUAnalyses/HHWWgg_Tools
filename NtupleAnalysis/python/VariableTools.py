@@ -45,10 +45,24 @@ def GetVars(VarBatch):
     elif(VarBatch == "diphopt"):
         return [pT_gg]
 
+    elif(VarBatch == "KinReweightVars"):
+        TrainingVars = [
+            Scaled_Leading_Photon_pt,
+            Scaled_Subleading_Photon_pt,
+            "goodJets_0_pt",
+            "goodJets_1_pt",
+            "METCor_pt",
+            "goodLepton_pt"
+        ]
+        return TrainingVars
+
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
             "evalDNN_HH",
             "METCor_phi", # just to check 
+            "goodJets_0_pt",
+            "goodJets_1_pt",
+            # "Subleading_Jet_pt",
             # "evalDNN",
             Scaled_Leading_Photon_pt,
             "goodJets_0_pt",
@@ -405,6 +419,8 @@ def GetXaxisTitle(variable_):
         if varFrag in variableName: variableUnit = varUnit
 
     xAxisTitle = "%s [%s]"%(variableName,variableUnit)
+    if(variableUnit == "unitless"):
+        xAxisTitle = xAxisTitle.replace("[unitless]", "") # if unitless, remove x axis label
     return xAxisTitle           
 
 ##-- Get the name of variable. Useful for variables that have long strings in draw statement. This returns a shortened value to be used for plot title and output file name 

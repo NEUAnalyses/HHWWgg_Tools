@@ -94,7 +94,7 @@ def GetFiles(direc, cutName):
     ]
 
 
-    if(cutName == "Unblinded"):
+    if((cutName == "Unblinded") or (cutName == "Unblinded_noDNNCut")):
         MCendsTraining.append("GluGluHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
         MCendsTraining.append("VBFHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
         MCendsTraining.append("VHToGG_2017_HHWWggTag_0_MoreVars_v2.root")
@@ -218,7 +218,6 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     else:
         DATA_CUT = "%s*(%s)"%(SB_CUT,ZERO_CUT) # not unblinded - should apply sideband cut 
 
-    
     DATA_CUT += "*(%s)"%(cut)  
 
     ##-- Replace zero cut with variable name 
@@ -250,7 +249,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
 
     return DataHist_
 
-def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut,cutName,DNNbinWidth_):
+def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut,cutName,DNNbinWidth_,withKinWeight_):
     print "Getting background stack"
 
     ##-- Define cut 
@@ -267,7 +266,12 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         REGION_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
 
     # B_WEIGHT = "1*weight"
-    B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)" ##-- Used in training 
+    if(withKinWeight_): 
+        print("Including semileptonic kinematic weights into MC weighting")
+        B_WEIGHT = "1*weight*kinWeight*(fabs(weight*kinWeight) < 10.)" ##-- Used in training 
+    else: 
+        print("NOT Including semileptonic kinematic weights into MC weighting")
+        B_WEIGHT = "1*weight*(fabs(weight*kinWeight) < 10.)" 
     # B_WEIGHT = "1*weight" ##-- to plot with no kin weight
 
     print("Background MC weight applied:", B_WEIGHT)
@@ -509,7 +513,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
 
 ##-- Main Data / MC module 
 # def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
-def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_, ratioMin, ratioMax):
+def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_, ratioMin, ratioMax, withKinWeight_):
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
@@ -552,7 +556,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- In either case, SB or SR, get backgrounds and signal(s)
         bkgStack = THStack("bkgStack","bkgStack")
-        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut,cutName,DNNbinWidth_)         
+        bkgHistos, bkgHistCategories, Bkg_Names, Bkg_Nevents, Bkg_Nevents_unweighted = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,region_,v,args_.Lumi,cut,cutName,DNNbinWidth_,withKinWeight_)         
         sig_histos, sig_histCategories,  S_, S_unweighted_ = GetSignalHists(signalFile_,args_.prefix,v,region_,varTitle,args_.Lumi,args_.verbose,cut,DNNbinWidth_)
 
         # MC_AddedtoLegend = {
@@ -588,12 +592,14 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
            "VBFH" : 0,
            "ttHJetToGG" : 0,
            "THQ" : 0,
-           "HHWWgg_SM" : 0
+           "HHWWgg_SM" : 0, # if "1", do not add to legend (this is a hardcoded hack :) )
+           "H$\gamma\gamma$" : 0,
+           "H\\rightarrow\gamma\gamma": 0
         }
-   
 
         Signals_AddedtoLegend = {
-            "HHWWgg_SM" : 0
+            "HHWWgg_SM" : 0 # if "1", do not add to legend
+            # "HHWWgg_SM" : 1 # if "1", do not add to legend
         }
 
         ##-- Order histograms by MC category 
@@ -747,8 +753,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             Data_gr = TGraphErrors( nBins, x, y, ex, ey )
             Data_gr.SetMarkerStyle(8)
             Data_gr.SetMarkerSize(1)
-
-            ##
 
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
             SidebandSF_ = 1 
@@ -949,7 +953,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 ##-- If region is SR, need to draw background in SB in order to obtain proper SF 
                 bkgStack_sidebands = THStack("bkgStack_sidebands","bkgStack_sidebands")
-                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut,cutName,DNNbinWidth_) ##-- Sidebands     
+                bkgHistos_sidebands, bkgHistCategories_sidebands, Bkg_Names_sidebands, Bkg_Nevents_sidebands, Bkg_Nevents_unweighted_sidebands = GetBackgroundHists(bkgFiles_,args_.noQCD,args_.verbose,args_.prefix,varTitle,"SB",v,args_.Lumi,cut,cutName,DNNbinWidth_,withKinWeight_) ##-- Sidebands     
                 orderedHistos_sidebands = OrderHistos(bkgHistos_sidebands,bkgHistCategories_sidebands)
                 for h in orderedHistos_sidebands:
                     h.Sumw2()

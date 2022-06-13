@@ -19,6 +19,15 @@
 
 ##-- Plot with and without sideband scale to compare 
 
+##-- For HIG-21-014 AN_20_165_v9 - ARC follow-ups
+# Note: 0.3029197 = 1/137
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables  --CutsType Unblinded_noDNNCut_withKinWeight --Lumi 0.3029197  --verbose --SigScale 0 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5  --log --withKinWeight
+
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables  --CutsType Unblinded_noDNNCut --Lumi 0.3029197  --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5  --log --withKinWeight --SidebandScale
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch mass  --CutsType Unblinded_noDNNCut --Lumi 0.3029197  --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5  --log
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables  --CutsType Unblinded --Lumi 0.3029197 --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale --log
+
 ##-- For HIG-21-014 AN_20_165_v8 ---- Fully unblinded 
 # python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v8/Data_MC_Unblinded_SL/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_2017_HHWWggTag_0_MoreVars_v2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch TrainingVariables  --CutsType Unblinded --Lumi 0.3029197 --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 1.5 --SidebandScale --log
 
@@ -426,7 +435,7 @@ if __name__ == '__main__':
         signalFile = args.signalFile 
 
         ##-- Run Main Module 
-        if(not args.SB and not args.SR):
+        if(not args.SB and not args.SR and not args.FullRegion):
             print ("No phase space regions selected")
             print ("To run on the signal region pass the flag --SR")
             print ("To run on the signal sidebands region, pass the flag --SB")
@@ -449,7 +458,7 @@ if __name__ == '__main__':
             print("bkgFiles:",bkgFiles)
             # exit(1) 
 
-            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax)
+            chi2 = PlotDataMC(dataFile,bkgFiles,signalFile,ol,args,region,cut_,cutName_,args.DNNbinWidth, args.ratioMin, args.ratioMax, args.withKinWeight)
             print("chi2:",chi2)
 
         # ##-- MC and Signal in Signal Region 
