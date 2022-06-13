@@ -231,10 +231,11 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
 
     # special binning for evalDNN_HH
 
-    edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+    edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
+    N_bins_special = len(edges) -1 
     
     if(varTitle == "evalDNN_HH"): 
-        Data_h_tmp = TH1F('Data_h_tmp',varTitle,4,edges)
+        Data_h_tmp = TH1F('Data_h_tmp',varTitle,N_bins_special,edges)
     else: Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
 
     # Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
@@ -348,10 +349,11 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
         # exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
-        edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+        edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
+        N_bins_special = len(edges) - 1  
 
         if(varTitle == "evalDNN_HH"): 
-            exec("B_h_%s = TH1F('B_h_%s',varTitle,4,edges)"%(i,i)) # histogram specifically for computing B in signal region
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region
         else: 
             exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
@@ -361,7 +363,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
         ##-- no weights 
         if(varTitle == "evalDNN_HH"): 
-            exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,4,edges)"%(i,i)) # histogram specifically for computing B in signal region
+            exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region
         else: exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
         
         # thisHist = eval("MC_h_tmp_%s"%(i))
@@ -482,11 +484,12 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
         # exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
 
-        edges = array('d',[0.1000,0.630000,0.84000,0.89000,1.0001])
+        edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
+        N_bins_special = len(edges) - 1
 
         if(varTitle == "evalDNN_HH"):
-            exec("S_h_%s = TH1F('S_h_%s',v,4,edges)"%(i,i)) 
-            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,4,edges)"%(i,i))             
+            exec("S_h_%s = TH1F('S_h_%s',v,N_bins_special,edges)"%(i,i)) 
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,N_bins_special,edges)"%(i,i))             
         else:
             exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
             exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))             
@@ -868,7 +871,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 ratioGraph = rp.GetCalculationOutputGraph()
                 ratioGraph.SetMarkerStyle(8)
-                ratioGraph.SetMarkerSize(0.5)
+                ratioGraph.SetMarkerSize(1)
 
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
