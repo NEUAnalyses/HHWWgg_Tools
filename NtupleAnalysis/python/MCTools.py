@@ -863,7 +863,7 @@ def OrderHistos(histos_,categories_):
                 # "HHWWgg_SM"
                 # ]                 
     MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
-               "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ", "H\\rightarrow\gamma\gamma"
+               "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ", "H\\rightarrow\gamma\gamma", "Other"
                ]                   
 
     orderedHistos = []
