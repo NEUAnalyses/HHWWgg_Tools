@@ -56,6 +56,13 @@ def GetVars(VarBatch):
         ]
         return TrainingVars
 
+    elif(VarBatch == "LeadingImportance"):
+        return [
+            Scaled_Leading_Photon_pt,
+            Scaled_Subleading_Photon_pt,
+            "goodLepton_E"
+        ]
+
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
             "evalDNN_HH",
@@ -279,8 +286,8 @@ def GetBins(variable_,DNNbinWidth_):
     evalDNNmin, evalDNNmax = 0, 1
     nDNNbins = int(float((evalDNNmax - evalDNNmin)) / float(DNNbinWidth_))
 
-    if(DNNbinWidth_ != 0.1):
-        print"nDNNbins: ",nDNNbins
+    # if(DNNbinWidth_ != 0.1):
+        # print"nDNNbins: ",nDNNbins
     # Specify bins for specific variables 
     nbins_glob = 20
     binDict = {
@@ -418,7 +425,14 @@ def GetXaxisTitle(variable_):
         varUnit = variableUnitDict[varFrag]
         if varFrag in variableName: variableUnit = varUnit
 
-    xAxisTitle = "%s [%s]"%(variableName,variableUnit)
+    if(variableName == "Scaled_Leading_Photon_pt"): variableNameLabel = "p_{T}^{\gamma_{lead}}/m_{\gamma\gamma}"
+    elif(variableName == "Scaled_Subleading_Photon_pt"): variableNameLabel = "p_{T}^{\gamma_{sublead}}/m_{\gamma\gamma}"
+    elif(variableName == "evalDNN_HH"): variableNameLabel = "DNN score"
+    elif(variableName == "goodLepton_E"): variableNameLabel = "E_{lepton}"
+    else: variableNameLabel = variableName
+        
+    xAxisTitle = "%s [%s]"%(variableNameLabel,variableUnit)
+
     if(variableUnit == "unitless"):
         xAxisTitle = xAxisTitle.replace("[unitless]", "") # if unitless, remove x axis label
     return xAxisTitle           

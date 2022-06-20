@@ -355,7 +355,7 @@ def GetMCName(fileName_):
 
         # HHWWgg_bkg_v5
         # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8",
-        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
+        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
         "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WWTo1L1Nu2Q",
         "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"ttWJets",
         "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJToLNuGJJ_EWK_aQGC",
@@ -412,8 +412,8 @@ def GetMCName(fileName_):
          
 
         # ##-- DiPhotonJetsBox
-        # # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
-        # # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
+        # # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
         # "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-40_80",
         # "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-80toInf",
 
@@ -455,19 +455,19 @@ def GetMCName(fileName_):
         # # "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
 
         # ##-- HHWWgg_bkg_v5 
-        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
-        # "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "WGGJets",
-        # # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets",
-        # "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
+        # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "W\gamma(s)+jets",
+        # "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "W\gamma(s)+jets",
+        # # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "W\gamma(s)+jets",
+        # "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "tt\gamma(s)+jets",
 
         # ##-- HHWWgg Signal
-        # "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
-        # "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
-        # "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
-        # "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM"
+        # "ggF_SM_WWgg_qqlnugg_Hadded.root":"Signal",
+        # "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"Signal",
+        # "HHWWgg-SL-SM-NLO-2016.root" : "Signal",
+        # "HHWWgg-SL-SM-NLO-2017.root" : "Signal",
+        # "HHWWgg-SL-SM-NLO-2018.root" : "Signal"
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "Signal",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "Signal"
     }
 
     return MCNameDict[fileName_]
@@ -501,8 +501,8 @@ def GetMCNameOld(fileName_):
          
 
         ##-- DiPhotonJetsBox
-        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
-        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
+        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
         "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-40_80",
         "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox_MGG-80toInf",
 
@@ -561,17 +561,17 @@ def GetMCNameOld(fileName_):
         # "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
 
         ##-- HHWWgg_bkg_v5 
-        "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
-        "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "WGGJets",
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets",
-        "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
+        "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "W\gamma(s)+jets",
+        "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "W\gamma(s)+jets",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "W\gamma(s)+jets",
+        "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "tt\gamma(s)+jets",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"Signal",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"Signal",
+        "HHWWgg-SL-SM-NLO-2016.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2017.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2018.root" : "Signal"
 
     }
 
@@ -584,15 +584,12 @@ def GetMCCategory(fileName_):
         "QCD_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD",
         "QCD_Pt-30toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "QCD",
 
-        
-
         # ##-- SM Hgg
         # "GluGluHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
         # "GluGluHToGG_M125_13TeV_amcatnloFXFX_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg", 
         # "VHToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
         # "VBFHToGG_M-125_13TeV_powheg_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "SMhgg",
         "THQ_ctcvcp_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "THQ",
-
 
         # Label per H process:
         ##-- SM Hgg
@@ -635,11 +632,10 @@ def GetMCCategory(fileName_):
         "ttHJetToGG_2017_HHWWggTag_0_MoreVars_v2.root" : "H\\rightarrow\gamma\gamma",
         "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "H\\rightarrow\gamma\gamma",
 
-
         ##-- GJet
-        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
-        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
-        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJet",
+        "GJet_Pt-20to40_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma+jet",
+        "GJet_Pt-20toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma+jet",
+        "GJet_Pt-40toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma+jet",
 
         ##-- GJets 
         # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "GJets",
@@ -650,17 +646,17 @@ def GetMCCategory(fileName_):
          
 
         ##-- DiPhotonJetsBox
-        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
-        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma\gamma+jets",
+        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma\gamma+jets",
+        "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma\gamma+jets",
+        "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "\gamma\gamma+jets",
 
         # HHWWgg_bkg_v2 
-        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
 
 
         # ##-- HHWWgg_bkg_v3 
@@ -681,56 +677,56 @@ def GetMCCategory(fileName_):
         # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W2JetsToLNu",
 
         ##-- HHWWgg_bkg_v3 
-        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets", 
-        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",        
+        "W1JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":  "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets", 
+        "W1JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",        
 
         ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
-        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
-        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WJets",
+        "W2JetsToLNu_LHEWpT_50-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W3JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W4JetsToLNu_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_0-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_250-400_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_400-inf_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_100-150_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_150-250_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
 
         ##-- HHWWgg_bkg_v5 
-        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJ",
-        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WGJJ",
+        "WGJJToLNuGJJ_EWK_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "W\gamma(s)+jets",
+        "WGJJToLNu_EWK_QCD_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "W\gamma(s)+jets",
 
         ##-- Other 
         "WW_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW", # non exclusive with WWTo... ?
         "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "WW",
 
-        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
-        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "tt\gamma(s)+jets",
 
         "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DY",
 
         ##-- HHWWgg_bkg_v5 
-        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "WGGJets",
-        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "ttW",
+        "WGGJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "W\gamma(s)+jets",
+        "ttWJets_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root": "tt\gamma(s)+jets",
 
         ##-- HHWWgg Signal
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM",
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "HHWWgg_SM",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "Signal",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "Signal",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "Signal",
 
-        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
+        "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"Signal",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root":"Signal",
+        "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2017_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2018_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "Signal",
 
-        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "HHWWgg_SM",
+        "GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root" : "Signal",
 
 
     }
@@ -762,9 +758,9 @@ def GetMCCategoryOld(fileName_):
         # "THQ_ctcvcp_HToGG_M125_13TeV-madgraph-pythia8_TuneCP5_Hadded.root" : "SMhgg",
 
         ##-- GJet
-        "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet",
-        "GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet",
-        "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "GJet",
+        "GJet_Pt-20to40_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "\gamma+jet",
+        "GJet_Pt-20toInf_DoubleEMEnriched_MGG-40to80_TuneCP5_13TeV_Pythia8_Hadded.root" : "\gamma+jet",
+        "GJet_Pt-40toInf_DoubleEMEnriched_MGG-80toInf_TuneCP5_13TeV_Pythia8_Hadded.root" : "\gamma+jet",
 
         ##-- GJets 
         # "GJets_HT-40To100_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "GJets",
@@ -775,17 +771,17 @@ def GetMCCategoryOld(fileName_):
          
 
         ##-- DiPhotonJetsBox
-        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
-        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "DiPhoJetsBox",
-        "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
+        # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
+        # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
+        "DiPhotonJetsBox_M40_80-Sherpa_Hadded.root" : "\gamma\gamma+jets",
+        "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "\gamma\gamma+jets",
 
         # HHWWgg_bkg_v2 
-        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8_Hadded.root" : "tt",
+        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8_Hadded.root" : "tt\gamma(s)+jets",
 
 
         # ##-- HHWWgg_bkg_v3 
@@ -806,48 +802,48 @@ def GetMCCategoryOld(fileName_):
         # "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W2JetsToLNu",
 
         ##-- HHWWgg_bkg_v3 
-        "W1JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "WJets",
-        "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets", 
-        "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",        
+        "W1JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root":  "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W1JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets", 
+        "W1JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",        
 
         ##-- HHWWgg_bkg_v4 (W2Jets, W3Jets, W4Jets)
-        "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "WJets",
-        "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "WJets",
-        "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
-        "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "WJets",
+        "W2JetsToLNu_LHEWpT_50-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W3JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W4JetsToLNu_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_0-50_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_250-400_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_400-inf_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_100-150_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
+        "W2JetsToLNu_LHEWpT_150-250_TuneCP5_13TeV-amcnloFXFX-pythia8_Hadded.root": "W\gamma(s)+jets",
 
         ##-- HHWWgg_bkg_v5 
-        "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJ",
+        "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "W\gamma(s)+jets",
 
         ##-- Other 
         "WW_TuneCP5_13TeV-pythia8_Hadded.root" : "WW", # non exclusive with WWTo... ?
         "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "WW",
 
-        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt",
-        "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "tt",
-        "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "tt",
-        "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt\gamma(s)+jets",
 
         "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
 
         ##-- HHWWgg_bkg_v5 
-        "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "WGGJets",
-        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "WGGJets",
-        "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "ttW",
+        "WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "W\gamma(s)+jets",
+        # "output_WGGJets_TuneCP5_13TeV_madgraphMLM_pythia8_bmarzocc-HHWWgg_bkg_v5-94X_mc2017-RunIIFall18-v0-RunIIFall17MiniAODv2-PU2017_12Apr2018_94X_mc2017_realistic_v14-v1-db49498e7dc78d32430682b35e9cae55_USER_0.root": "W\gamma(s)+jets",
+        "ttWJets_TuneCP5_13TeV_madgraphMLM_pythia8_Hadded.root": "tt\gamma(s)+jets",
 
         ##-- HHWWgg Signal
-        "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
-        "HHWWgg-SL-SM-NLO-2018.root" : "HHWWgg_SM"
+        "ggF_SM_WWgg_qqlnugg_Hadded.root":"Signal",
+        "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"Signal",
+        "HHWWgg-SL-SM-NLO-2016.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2017.root" : "Signal",
+        "HHWWgg-SL-SM-NLO-2018.root" : "Signal"
 
 
     }
@@ -855,16 +851,15 @@ def GetMCCategoryOld(fileName_):
     return MCCategoryDict[fileName_]
 
 def OrderHistos(histos_,categories_):
-    # print"histos_:",histos_
-    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox","W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu", "WW", "tt", "DY", "WGGJets", "ttW",
-    #             "HHWWgg_SM"
-    #             ] 
-    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
-                # "HHWWgg_SM"
-                # ]                 
-    MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
-               "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ", "H\\rightarrow\gamma\gamma", "Other"
-               ]                   
+
+    MC_Cats = [
+           "H\\rightarrow\gamma\gamma",
+           "\gamma+jet", 
+           "W\gamma(s)+jets", 
+           "tt\gamma(s)+jets", 
+           "\gamma\gamma+jets", 
+           "Signal"
+    ]
 
     orderedHistos = []
     for cat in MC_Cats:
@@ -877,54 +872,16 @@ def OrderHistos(histos_,categories_):
 
 def GetMCColor(MC_Category_):
 
-    # MCColorsDict = {
-    #     "QCD" : "8",
-    #     "SMhgg" : "9",
-    #     "GJet" : "46",
-    #     # "GJets" : "7",
-    #     "DiPhoJets" : "6",
-    #     "DiPhoJetsBox" : "42",
-    #     # "W1JetsToLNu" : "70",
-    #     # "W2JetsToLNu" : "38",
-    #     # "W3JetsToLNu" : "208",
-    #     # "W4JetsToLNu" : "222",
-    #     "WJets" : "70",
-    #     "WW":"47",
-    #     "tt":"51",
-    #     "DY":"28",
-    #     "WGGJets":"2",
-    #     "ttW":"30",
-    #     "WGJJ":"12",
-    #     "HHWWgg_SM": "56"
-    #     # "other" : "47"
-    # }
-
     MCColorsDict = {
-        "QCD" : "8",
-        # "SMhgg" : "9",
-        "GJet" : "46",
-        # "GJets" : "7",
-        "DiPhoJets" : "6",
-        "DiPhoJetsBox" : "42",
-        # "W1JetsToLNu" : "70",
-        # "W2JetsToLNu" : "38",
-        # "W3JetsToLNu" : "208",
-        # "W4JetsToLNu" : "222",
-        "WJets" : "70",
+        # 5 = yellow, 70 = cyanish, 800 = kOrange, 51 = purple
+        "\gamma+jet" : "6",
+        "\gamma\gamma+jets" : "70", 
+        "W\gamma(s)+jets" : "4",
         "WW":"47",
-        "tt":"51",
-        "DY":"28",
-        "WGGJets":"2",
-        "ttW":"30",
-        "WGJJ":"11",
-        "HHWWgg_SM": "56",
-        # "other" : "47",
-        # "ggH" : "12",
-        # "VH" : "28",
-        # "VBFH" : "70",
-        "ttHJetToGG" : "41",
-        "THQ" : "9",
-        "H\\rightarrow\gamma\gamma": "28"
+        "tt\gamma(s)+jets":"28",
+        "W\gamma(s)+jets":"800",
+        "Signal": "9",
+        "H\\rightarrow\gamma\gamma": "4"
     }    
 
     return MCColorsDict[MC_Category_]
@@ -1015,7 +972,7 @@ def GetXScale(sigCampaign_):
         HH_ProdXS = 33.49 # 33.49 fb 
         BR_HH_WWgg = 0.001 
         BR_WWgg_finalState = 0.002864 # qqlnu, no taus ## - is this right?  
-    elif(sigCampaign_ == "HHWWgg_SM"):
+    elif(sigCampaign_ == "Signal"):
         HH_ProdXS = 33.49
         BR_HH_WWgg = 0.00097
         BR_WWgg_finalState = 0.441 # qqlnu, e mu tau included 
