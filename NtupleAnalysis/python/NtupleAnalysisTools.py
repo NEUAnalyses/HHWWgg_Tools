@@ -1,10 +1,9 @@
-###########################################################################################################################
-# Abraham Tishelman-Charny
-# 13 May 2020
-#
-# The purpose of this module is to provide variables and definitions for NtupleAnalysis.py 
-#
-###########################################################################################################################
+"""
+Abraham Tishelman-Charny
+13 May 2020
+
+The purpose of this module is to provide variables and definitions for NtupleAnalysis.py 
+"""
 
 from ROOT import TCanvas, TColor, TStyle, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
 import ROOT 
@@ -16,6 +15,15 @@ from CutsTools import *
 from array import array
 from tdrstyle import * 
 from CMS_lumi import * 
+
+
+"""
+Custom colors 
+
+thank you to the following pages:
+https://github.com/yhaddad/Heppi/blob/master/images/colors.png
+https://root-forum.cern.ch/t/how-to-form-a-color-t-from-a-tcolor/25013/2
+"""
 
 class Color(int):
     """Create a new ROOT.TColor object with an associated index"""
