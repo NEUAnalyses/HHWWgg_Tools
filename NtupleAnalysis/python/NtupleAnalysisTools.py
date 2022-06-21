@@ -6,13 +6,51 @@
 #
 ###########################################################################################################################
 
-from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
+from ROOT import TCanvas, TColor, TStyle, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
+import ROOT 
 import os 
 from MCTools import * 
 from VariableTools import * 
 from PlotTools import * 
 from CutsTools import * 
 from array import array
+from tdrstyle import * 
+from CMS_lumi import * 
+
+class Color(int):
+    """Create a new ROOT.TColor object with an associated index"""
+    __slots__ = ["object", "name"]
+
+    def __new__(cls, r, g, b, name=""):
+        self = int.__new__(cls, ROOT.TColor.GetFreeColorIndex())
+        self.object = ROOT.TColor(self, r, g, b, name, 1.0)
+        self.name = name
+        return self
+
+colors = [Color(0, 0, 0, "black"),
+          Color(26/255., 188/255., 156/255., "turqoise"),
+          Color( 46/255., 204/255., 113/255.,"emerland"      ),
+          Color( 52/255., 152/255., 219/255.,"peterriver"   ),
+          Color(155/255.,  89/255., 182/255.,"amethyst"      ),
+          Color( 52/255.,  73/255.,  94/255.,"wet-asphalt"   ),
+          Color( 22/255., 160/255., 133/255.,"green-sea"     ),
+          Color( 39/255., 174/255.,  96/255.,"nephritis"     ),
+          Color( 41/255., 128/255., 185/255.,"belize-hole"   ),
+          Color(142/255.,  68/255., 173/255.,"wisteria"      ),
+          Color( 44/255.,  62/255.,  80/255.,"midnight-blue" ),
+          Color(241/255., 196/255.,  15/255.,"sunflower"    ),
+          Color(230/255., 126/255.,  34/255.,"carrot"        ),
+          Color(231/255.,  76/255.,  60/255.,"alizarin"      ),
+          Color(236/255., 240/255., 241/255.,"clouds"        ),
+          Color(149/255., 165/255., 166/255.,"concrete"      ),
+          Color(243/255., 156/255.,  18/255.,"orange"        ),
+          Color(211/255.,  84/255.,   0/255.,"pumpkin"       ),
+          Color(192/255.,  57/255.,  43/255.,"pomegranate"   ),
+          Color(189/255., 195/255., 199/255.,"silver"        ),
+          Color(127/255., 140/255., 141/255.,"asbestos"      ),          
+          ]
+for color in colors:
+    setattr(ROOT, color.name, color)
 
 def GetFiles(direc, cutName):
     files = [] 
@@ -303,6 +341,13 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
     Bkg_Nevents_ = [] 
     Bkg_Nevents_unweighted_ = [] 
     # for i,mcF_ in enumerate(mcFiles):
+
+    # YacineStyle = TStyle("YacineStyle", "Yacine Style")
+    # NRGBs = 3 
+    # NCont = 255 
+    # TColor.CreateGradientColorTable(NRGBs, stops, red, green, blue, NCont)
+    # ci = TColor.GetFreeColorIndex()
+
     for i,mcPath in enumerate(bkgFiles_):
         # mcPath = "%s/%s"%(mcDirec,mcF_)
         mcEnd = mcPath.split('/')[-1]
@@ -370,6 +415,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         # thisHist = eval("MC_h_tmp_%s"%(i))
         thisHist = eval("B_h_%s"%(i))
         thisHist.Sumw2()
+        # declare_colors()
         mcColor = GetMCColor(MC_Category)
 
         ##-- If GJet or QCD sample, need to remove prompt-prompt events 
@@ -387,7 +433,10 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         # eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
 
         eval("B_h_%s.SetFillColor(eval(mcColor))"%(i))
-        eval("B_h_%s.SetLineColor(eval(mcColor))"%(i))        
+        eval("B_h_%s.SetLineColor(eval(mcColor))"%(i))       
+        # 
+        # eval("B_h_%s.SetFillColor(mcColor)"%(i))
+        # eval("B_h_%s.SetLineColor(mcColor)"%(i))                 
 
         if(MC_Category == "GJet" or MC_Category == "QCD"): 
             # exec('mc_ch.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,this_MC_CUT))
@@ -539,7 +588,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     ##-- Misc 
     print"Plotting Data / MC and Signal"
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
-    gStyle.SetOptStat(0)    
+    gStyle.SetOptStat(0)     
+
+
+    # turqoise = TColor(9999, 26/255., 188/255., 156/255.)
+    # gROOT.ForceStyle() 
+    # gStyle.ls()
+
     #gStyle.SetErrorX(0.0001)  
     chi2 = 0
 
@@ -1000,7 +1055,23 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 lineAtOne = TLine(lowerPad.GetUxmin(),1,lowerPad.GetUxmax(),1)
                 lineAtOne.SetLineStyle(3)
                 lineAtOne.Draw("same")
-                rp.GetLowerPad().Update()                        
+
+
+                
+
+                # writeExtraText = True       #// if extra text
+                # extraText  = "Preliminary"#;  // default extra text is "Preliminary"
+                # lumi_8TeV  = "19.1 fb^{-1}"#; // default is "19.7 fb^{-1}"
+                # lumi_7TeV  = "4.9 fb^{-1}"#;  // default is "5.1 fb^{-1}"
+                # lumi_sqrtS = "13 TeV"#;       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)   
+
+                # CMS_lumi( DataMCRatio_c, 4,  20)
+
+
+                rp.GetLowerPad().Update()       
+
+                # setTDRStyle() # https://ghm.web.cern.ch/ghm/plots/
+
                 DataMCRatio_c.Update()                
                 DataMCRatio_c.SaveAs(outName) 
                 outName = outName.replace(".pdf",".png")                    

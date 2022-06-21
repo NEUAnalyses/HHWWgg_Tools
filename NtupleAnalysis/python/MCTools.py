@@ -8,6 +8,8 @@
 
 ##-- Note: This module can be shrunk by mapping file name to treename, MCName, and MCCategory. Don't need dictionary for each one 
 
+from ROOT import TColor 
+
 def GetMCTreeNameOld(fileName_):
     MCTreesDict = {
         # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhotonJetsBox1BJet_MGG_80toInf_13TeV_Sherpa",
@@ -873,15 +875,12 @@ def OrderHistos(histos_,categories_):
 def GetMCColor(MC_Category_):
 
     MCColorsDict = {
-        # 5 = yellow, 70 = cyanish, 800 = kOrange, 51 = purple
-        "\gamma+jet" : "6",
-        "\gamma\gamma+jets" : "70", 
-        "W\gamma(s)+jets" : "4",
-        "WW":"47",
-        "tt\gamma(s)+jets":"28",
-        "W\gamma(s)+jets":"800",
-        "Signal": "9",
-        "H\\rightarrow\gamma\gamma": "4"
+        "H\\rightarrow\gamma\gamma": "ROOT.turqoise",
+        "\gamma+jet" : "ROOT.peterriver",
+        "W\gamma(s)+jets" : "ROOT.wisteria",
+        "\gamma\gamma+jets" : "ROOT.sunflower", 
+        "tt\gamma(s)+jets":"ROOT.carrot",
+        "Signal": "ROOT.alizarin",
     }    
 
     return MCColorsDict[MC_Category_]

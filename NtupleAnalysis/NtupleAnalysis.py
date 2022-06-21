@@ -19,6 +19,9 @@
 
 ##-- Plot with and without sideband scale to compare 
 
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC_updatedPlots/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_Run2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch DNN  --CutsType Unblinded --Lumi 0.3029197  --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 2   --withKinWeight --SidebandScale --log
+# python NtupleAnalysis.py --DataMC --ol /eos/user/a/atishelm/www/HIG-21-014/AN_20_165_v9_PostARCAuthorsMeeting/Data_MC_updatedPlots/ --dataFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/Data_Run2.root --signalFile /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/GluGluToHHTo2G2Qlnu_node_cHHH1_2017.root --bkgDirec /eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_SL_MultiClass_WithMETFix_12LOHH_500epochs_BalanceYields/ --VarBatch LeadingImportance  --CutsType Unblinded --Lumi 0.3029197  --verbose --SigScale 10000 --FullRegion --DNNbinWidth 0.01  --ratioMin 0.5 --ratioMax 2   --withKinWeight --SidebandScale --log
+
 ##-- For HIG-21-014 AN_20_165_v9 - ARC follow-ups
 # Note: 0.3029197 = 1/137
 
@@ -66,7 +69,7 @@
 ##-- Import python modules 
 from python.Options import * 
 from python.NtupleAnalysisTools import * 
-from ROOT import gPad, TAxis, TTree, TChain, TLine, TGraph, TMultiGraph, TFile, TCanvas, gROOT, TH2F, TH1F, kPink, kGreen, kCyan, TLegend, kRed, kOrange, kBlack, TLegend, gStyle, TObjArray, kBlue, TGraphErrors
+from ROOT import gPad, TAxis, TColor, TTree, TChain, TLine, TGraph, TMultiGraph, TFile, TCanvas, gROOT, TH2F, TH1F, kPink, kGreen, kCyan, TLegend, kRed, kOrange, kBlack, TLegend, gStyle, TObjArray, kBlue, TGraphErrors
 from array import array
 import os 
 
