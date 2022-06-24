@@ -5,15 +5,16 @@ Abraham Tishelman-Charny
 The purpose of this module is to provide variables and definitions for NtupleAnalysis.py 
 """
 
-from ROOT import TCanvas, TColor, TStyle, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
-import ROOT 
+from ROOT import TCanvas, TColor, TStyle, gROOT, gPad, TH1F, TPad, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
+import ROOT as ROOT
 import os 
 from MCTools import * 
 from VariableTools import * 
 from PlotTools import * 
 from CutsTools import * 
 from array import array
-from tdrstyle import * 
+# from tdrstyle import * 
+from tdrstyle import setTDRStyle
 from CMS_lumi import * 
 
 
@@ -561,9 +562,6 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # eval("MC_h_tmp_%s.SetFillStyle(3004)"%(i))
         ##-- 
         #S_CUT = "weight*(CMS_hgg_mass >= 115 && CMS_hgg_mass <= 135)"
-        # eval("MC_h_tmp_%s.SetFillColorAlpha(eval(mcColor),0.1)"%(i))
-        # eval("MC_h_tmp_%s.SetLineColor(eval(mcColor))"%(i))
-        eval("S_h_%s.SetFillColorAlpha(eval(mcColor),0.1)"%(i))
         eval("S_h_%s.SetLineColor(eval(mcColor))"%(i))        
         # exec('Signal_Trees.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
         exec('Signal_Trees.Draw("%s >> S_h_%s","%s")'%(v,i,S_CUT))
@@ -582,7 +580,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         newHist.SetTitle(MC_Category)
         newHist.GetXaxis().SetTitle(sigPath)
         newHist.SetLineStyle(1)
-        newHist.SetLineWidth(5)
+        newHist.SetLineWidth(4)
 
         newHist.SetDirectory(0)
         sig_histos_.append(newHist)
@@ -594,16 +592,158 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
 # def PlotDataMC(dataFiles_,mcFiles_,signalFiles_,dataDirec_,mcDirec_,signalDirec_,Tags_,ol_,args_,region_,DNNbinWidth_):
 def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNNbinWidth_, ratioMin, ratioMax, withKinWeight_):
     ##-- Misc 
-    print"Plotting Data / MC and Signal"
+    print("Plotting Data / MC and Signal")
+
+    # setTDRStyle()
+
+    tdrStyle =  ROOT.TStyle("tdrStyle","Style for P-TDR")
+
+    #for the canvas:
+    tdrStyle.SetCanvasBorderMode(0)
+    tdrStyle.SetCanvasColor(ROOT.kWhite)
+    tdrStyle.SetCanvasDefH(600) #Height of canvas
+    tdrStyle.SetCanvasDefW(600) #Width of canvas
+    tdrStyle.SetCanvasDefX(0)   #POsition on screen
+    tdrStyle.SetCanvasDefY(0)
+
+
+    tdrStyle.SetPadBorderMode(0)
+    #tdrStyle.SetPadBorderSize(Width_t size = 1)
+    tdrStyle.SetPadColor(ROOT.kWhite)
+    tdrStyle.SetPadGridX(False)
+    tdrStyle.SetPadGridY(False)
+    tdrStyle.SetGridColor(0)
+    tdrStyle.SetGridStyle(3)
+    tdrStyle.SetGridWidth(1)
+
+    #For the frame:
+    tdrStyle.SetFrameBorderMode(0)
+    tdrStyle.SetFrameBorderSize(1)
+    tdrStyle.SetFrameFillColor(0)
+    tdrStyle.SetFrameFillStyle(0)
+    tdrStyle.SetFrameLineColor(1)
+    tdrStyle.SetFrameLineStyle(1)
+    tdrStyle.SetFrameLineWidth(1)
+
+    #For the histo:
+    #tdrStyle.SetHistFillColor(1)
+    #tdrStyle.SetHistFillStyle(0)
+
+    # tdrStyle.SetHistLineColor(1)
+    # tdrStyle.SetHistLineStyle(0)
+    # tdrStyle.SetHistLineWidth(1)
+
+    #tdrStyle.SetLegoInnerR(Float_t rad = 0.5)
+    #tdrStyle.SetNumberContours(Int_t number = 20)
+
+    # tdrStyle.SetEndErrorSize(2)
+    #tdrStyle.SetErrorMarker(20)
+    #tdrStyle.SetErrorX(0.)
+
+    tdrStyle.SetMarkerStyle(20)
+
+    #For the fit/function:
+    tdrStyle.SetOptFit(1)
+    tdrStyle.SetFitFormat("5.4g")
+    tdrStyle.SetFuncColor(2)
+    tdrStyle.SetFuncStyle(1)
+    tdrStyle.SetFuncWidth(1)
+
+    #For the date:
+    tdrStyle.SetOptDate(0)
+    # tdrStyle.SetDateX(Float_t x = 0.01)
+    # tdrStyle.SetDateY(Float_t y = 0.01)
+
+    # For the statistics box:
+    tdrStyle.SetOptFile(0)
+    tdrStyle.SetOptStat(0) # To display the mean and RMS:   SetOptStat("mr")
+    tdrStyle.SetStatColor(ROOT.kWhite)
+    tdrStyle.SetStatFont(42)
+    tdrStyle.SetStatFontSize(0.025)
+    tdrStyle.SetStatTextColor(1)
+    tdrStyle.SetStatFormat("6.4g")
+    tdrStyle.SetStatBorderSize(1)
+    tdrStyle.SetStatH(0.1)
+    tdrStyle.SetStatW(0.15)
+    # tdrStyle.SetStatStyle(Style_t style = 1001)
+    # tdrStyle.SetStatX(Float_t x = 0)
+    # tdrStyle.SetStatY(Float_t y = 0)
+
+    # Margins:
+    tdrStyle.SetPadTopMargin(0.05)
+    tdrStyle.SetPadBottomMargin(0.13)
+    tdrStyle.SetPadLeftMargin(0.16)
+    tdrStyle.SetPadRightMargin(0.02)
+
+    # For the Global title:
+
+    tdrStyle.SetOptTitle(0)
+    tdrStyle.SetTitleFont(42)
+    tdrStyle.SetTitleColor(1)
+    tdrStyle.SetTitleTextColor(1)
+    tdrStyle.SetTitleFillColor(10)
+    tdrStyle.SetTitleFontSize(0.05)
+    # tdrStyle.SetTitleH(0) # Set the height of the title box
+    # tdrStyle.SetTitleW(0) # Set the width of the title box
+    # tdrStyle.SetTitleX(0) # Set the position of the title box
+    # tdrStyle.SetTitleY(0.985) # Set the position of the title box
+    # tdrStyle.SetTitleStyle(Style_t style = 1001)
+    # tdrStyle.SetTitleBorderSize(2)
+
+    # For the axis titles:
+
+    tdrStyle.SetTitleColor(1, "XYZ")
+    tdrStyle.SetTitleFont(42, "XYZ")
+    tdrStyle.SetTitleSize(0.06, "XYZ")
+    # tdrStyle.SetTitleXSize(Float_t size = 0.02) # Another way to set the size?
+    # tdrStyle.SetTitleYSize(Float_t size = 0.02)
+    tdrStyle.SetTitleXOffset(0.9)
+    tdrStyle.SetTitleYOffset(1.25)
+    # tdrStyle.SetTitleOffset(1.1, "Y") # Another way to set the Offset
+
+    # For the axis labels:
+
+    tdrStyle.SetLabelColor(1, "XYZ")
+    tdrStyle.SetLabelFont(42, "XYZ")
+    tdrStyle.SetLabelOffset(0.007, "XYZ")
+    tdrStyle.SetLabelSize(0.05, "XYZ")
+
+    # For the axis:
+
+    tdrStyle.SetAxisColor(1, "XYZ")
+    tdrStyle.SetStripDecimals(True)
+    tdrStyle.SetTickLength(0.03, "XYZ")
+    tdrStyle.SetNdivisions(510, "XYZ")
+    tdrStyle.SetPadTickX(1)  # To get tick marks on the opposite side of the frame
+    tdrStyle.SetPadTickY(1)
+
+    # Change for log plots:
+    tdrStyle.SetOptLogx(0)
+    tdrStyle.SetOptLogy(0)
+    tdrStyle.SetOptLogz(0)
+
+    # Postscript options:
+    tdrStyle.SetPaperSize(20.,20.)
+    # tdrStyle.SetLineScalePS(Float_t scale = 3)
+    # tdrStyle.SetLineStyleString(Int_t i, const char* text)
+    # tdrStyle.SetHeaderPS(const char* header)
+    # tdrStyle.SetTitlePS(const char* pstitle)
+
+    # tdrStyle.SetBarOffset(Float_t baroff = 0.5)
+    # tdrStyle.SetBarWidth(Float_t barwidth = 0.5)
+    # tdrStyle.SetPaintTextFormat(const char* format = "g")
+    # tdrStyle.SetPalette(Int_t ncolors = 0, Int_t* colors = 0)
+    # tdrStyle.SetTimeOffset(Double_t toffset)
+    # tdrStyle.SetHistMinimumZero(kTRUE)
+
+    # tdrStyle.SetHatchesLineWidth(5)
+    tdrStyle.SetHatchesSpacing(0.5)
+
+    tdrStyle.cd()
+
     gROOT.ProcessLine("gErrorIgnoreLevel = kError") # kPrint, kInfo, kWarning, kError, kBreak, kSysError, kFatal
     gStyle.SetOptStat(0)     
 
-
-    # turqoise = TColor(9999, 26/255., 188/255., 156/255.)
-    # gROOT.ForceStyle() 
-    # gStyle.ls()
-
-    #gStyle.SetErrorX(0.0001)  
     chi2 = 0
 
     ##-- Output
@@ -617,22 +757,22 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     if(args_.VarBatch == "Loose"):
         Variables, varNames = GetVars(args_.VarBatch) # get vars from var batch 
         if(args_.verbose):
-            print"Variables = ",Variables 
-            print"varNames = ",varNames
+            print("Variables = ",Variables) 
+            print("varNames = ",varNames)
     else: Variables = GetVars(args_.VarBatch) # get vars from var batch 
         
     if(args_.verbose): 
-        print "cut:",cut   
-        print "cutName:",cutName        
-        print "vars:",Variables   
+        print("cut:",cut)   
+        print("cutName:",cutName)        
+        print("vars:",Variables)   
 
     ##-- For each Variable 
     for iv,v in enumerate(Variables):
         # legend = TLegend(0.55,0.65,0.89,0.89)
         if(v == "evalDNN_HH"):
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.65, 0.89
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.65, 0.8
         else:
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.55, 0.55, 0.89, 0.89
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.55, 0.55, 0.89, 0.8
         legend = TLegend(leg_xmin, leg_ymin, leg_xmax, leg_ymax)
         legend.SetNColumns(1)
         legend.SetTextSize(0.025)
@@ -640,14 +780,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         legend.SetFillStyle(0)        
         if(args_.VarBatch == "Loose"): varTitle = varNames[iv]
         else: varTitle = GetVarTitle(v)    
-
-        # specialVarTitles = {"Scaled_Leading_Photon_pt" : "",
-        #                     "Scaled_Subleading_Photon_pt" : ""
-        #                 }
-        # if(varTitle in specialVarTitles.keys()):
-        #     varTitleLabel = specialVarTitles[varTitle]
-        # else:
-        #     varTitleLabel = varTitle
 
         if(args_.verbose): print"Plotting variable:",varTitle
         xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
@@ -707,9 +839,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         stackSum = bkgStack.GetStack().Last() #->Draw(); # for computing ratio 
         stackSum.Sumw2() 
         stackSum.SetLineColor(kBlack)
-        #stackSum.SetLineWidth(3)
-        #stackSum.SetFillStyle(0)
-        #stackSum.SetLineStyle(7) # to distinguish from data uncertainty 
 
         # # the purpose of this clone is to try and plot shaded error bands on the background stack sum 
         # stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
@@ -724,11 +853,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
 
-        #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
-        #print("binWidth:",int(binWidth))
-        #nhatchsp = gStyle.GetHatchesSpacing()
-        #print("nhatchsp:",nhatchsp)
-        gStyle.SetHatchesSpacing(0.5)
+        # gStyle.SetHatchesSpacing(0.5)
         # stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
         stackSum_clone_forError.SetFillStyle(3353)
         stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
@@ -736,28 +861,11 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         stackSum_clone_forError.SetLineWidth(0)
         stackSum_clone_forError.SetMarkerSize(0)
 
-        # for i,bin in enumerate(stackSum_clone_forError):
-            # stackSum_clone_forError.SetBinError(i,0.000001)
-        #print("stack type:",type(stackSum_clone_forError))
-        #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
-        #stackSum_clone_forError.SetLineStyle(2)
-        #stackSum_clone_forError.SetLineWidth(10)        
-
         stackSum_clone = stackSum.Clone("stackSum_clone")
         stackSum_clone.SetDirectory(0)
 
         # B_vals_ = GetBinVals(stackSum_clone)
         S_vals_ = GetBinVals(sig_orderedHistos[0]) ## assuming 1 signal 
-
-        # for s_val in S_vals_:
-            # print"s_val:",s_val
-
-        # for b_val in B_vals_:
-            # print"b_val:",b_val    
-
-        # B = sum(Bkg_Nevents)
-        # S = sum(S_vals_)
-        # print("B = ",B)
 
         ##-- By default draw background save background contributions. Later delete if not wanted 
         bkgOutName = "%s/BackgroundsPADS_%s_%s.png"%(outputFolder,varTitle,region_)
@@ -776,8 +884,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             # legend.AddEntry(DataHist,"Data","P")
             DataHist.SetLineColor(kBlack)
             DataHist.Sumw2()
-            xTitle = GetXaxisTitle(varTitle)
-            DataHist.GetXaxis().SetTitle(xTitle)
+            # xTitle = GetXaxisTitle(varTitle)
+            # DataHist.GetXaxis().SetTitle(xTitle)
 
             DataHist.SetLineColorAlpha(kBlack, 0)
 
@@ -820,7 +928,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             y  = array( 'f', y_ )
             ey = array( 'f', ey_ )
 
-            print("Data x:",x)
+            # print("Data x:",x)
 
             Data_gr = TGraphErrors( nBins, x, y, ex, ey )
             Data_gr.SetMarkerStyle(8)
@@ -849,7 +957,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 #print("binWidth:",int(binWidth))
                 #nhatchsp = gStyle.GetHatchesSpacing()
                 #print("nhatchsp:",nhatchsp)
-                gStyle.SetHatchesSpacing(0.5)
+                # gStyle.SetHatchesSpacing(0.5)
                 #stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
                 stackSum_clone_forError.SetFillStyle(3353)
                 stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
@@ -915,19 +1023,20 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)                        
+                
                 DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
 
-                # rp.SetTitle("")
-
                 rp.Draw("nogrid")
-                
                 rp.GetLowYaxis().SetNdivisions(5)
 
                 DataMCRatio_c.Update()
 
-                ratioGraph = rp.GetCalculationOutputGraph()
-                ratioGraph.SetMarkerStyle(8)
-                ratioGraph.SetMarkerSize(1)
+                # ratioGraph = rp.GetCalculationOutputGraph()
+                # ratioGraph.SetMarkerStyle(8)
+                # ratioGraph.SetMarkerSize(1)
+
+                xTitle = GetXaxisTitle(varTitle)
+                DataHist.GetXaxis().SetTitle(xTitle)
 
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
@@ -935,28 +1044,27 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.01,maxHeight*1000.)   
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
 
+                rp.GetUpperRefXaxis().SetTitle(xTitle)
+                # rp.GetLowerRefXaxis().SetTitle(xTitle)
+
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
-
-                #"""
-                # print("   ")
-                # print("~~~~~~~~~~~~~~~bkgStack xmax:",bkgStack.GetXaxis().GetXmax())
-                # print("   ")
 
                 bkgStack.SetTitle("")
 
                 bkgStack.Draw("same")
+
                 stackSum_clone_forError.SetLineWidth(0)
-                stackSum_clone_forError.Draw("sameE0E2")                
-                #"""
+                # stackSum_clone_forError.Draw("sameE0E2")   
+                stackSum_clone_forError.Draw("sameE2")   
 
-                # print("   ")
-                # print("~~~~~~~~~~~~~~~Data_gr xmax:",Data_gr.GetXaxis().GetXmax())
-                # print("   ")
-
-                #"""
+                # stackSum_clone_forError.SetLineWidth(0)
+                # stackSum_clone_forError.Draw("samePE1")                
+                # stackSum_clone_forError.Draw("sameE0E2")                
+                # stackSum_clone_forError.Draw("sameE1")                
+                # Data_gr.Draw("samePE1") 
                 Data_gr.Draw("samePE1") 
-                #"""
+                 
 
                 for sig_hist in sig_histos:
                     sigMax = sig_hist.GetMaximum()
@@ -1043,29 +1151,54 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                     #     ThisLine.Draw("same")
 
 
-                # rp.GetUpperRefXaxis().SetRangeUser(0.1,1)
 
                 rp.GetLowerPad().cd()
-
-                # lowerPad.SetUxmax(1)
-                # rp.GetLowerRefXaxis().SetRangeUser(0.1,1)
-
+                # rp.GetUpperRefXaxis().SetRangeUser(0,1)
+                # rp.GetUpperRefXaxis().Set
+                # rp.GetLowerRefXaxis().SetTitle(xTitle)
+                # rp.GetLowerRefXaxis().SetTitleOffset(0.9)
+                
                 lowerPad = rp.GetLowerPad()
-                # lowerPad.GetXAxis().SetRangeUser(0.1,1)
-                # lowerPad.
+                # lowerPad.SetCanvasSize(600,800)
+
+                lowerPad.SetLeftMargin(0.15) # it was a miracle that I figured this part out 
+                # lowerPad.SetTitleXOffset(0.9)
+                lowerPad.Draw()
+                lowerPad.cd()
+
                 lowerPad.Update()
                 lowerPad.cd()
 
-                # print("lowerPad.GetUxmin():",lowerPad.GetUxmin())
-                # print("lowerPad.GetUxmax():",lowerPad.GetUxmax())
+                rp.GetLowerPad().cd()
+                lowerPad = rp.GetLowerPad()
+
+                # lowerPad.SetBottomMargin(0.4)
+                # lowerPad.SetBottomMargin(0.55)
+                lowerPad.SetBottomMargin(0.4)
+                lowerPad.Draw()
+                lowerPad.cd()
+
+                lowerPad.Update()
+                lowerPad.cd()  
+
+                lowerPad.SetTopMargin(0)
+                lowerPad.Draw()
+                lowerPad.cd()
+                lowerPad.Update()
+                lowerPad.cd()                                
 
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
                 lineAtOne = TLine(lowerPad.GetUxmin(),1,lowerPad.GetUxmax(),1)
                 lineAtOne.SetLineStyle(3)
                 lineAtOne.Draw("same")
 
+                rp.GetUpperPad().cd()
+                upperPad = rp.GetUpperPad()
 
-                
+                # upperPad.SetBottomMargin(0.075) # it was a miracle that I figured this part out 
+                upperPad.SetBottomMargin(0.075) # it was a miracle that I figured this part out 
+                upperPad.Draw()
+                upperPad.cd()
 
                 # writeExtraText = True       #// if extra text
                 # extraText  = "Preliminary"#;  // default extra text is "Preliminary"
@@ -1073,14 +1206,19 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 # lumi_7TeV  = "4.9 fb^{-1}"#;  // default is "5.1 fb^{-1}"
                 # lumi_sqrtS = "13 TeV"#;       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)   
 
-                # CMS_lumi( DataMCRatio_c, 4,  20)
-
-
-                rp.GetLowerPad().Update()       
+                CMS_lumi( gPad, 4,  1)
 
                 # setTDRStyle() # https://ghm.web.cern.ch/ghm/plots/
 
-                DataMCRatio_c.Update()                
+                # DataMCRatio_c.SetBottomMargin(10.)
+                # DataMCRatio_c.SetRightMargin(10.)   
+                # DataMCRatio_c.SetLeftMargin(0.5)
+
+                DataMCRatio_c.cd()
+                DataMCRatio_c.Update()       
+
+                # setTDRStyle()         
+
                 DataMCRatio_c.SaveAs(outName) 
                 outName = outName.replace(".pdf",".png")                    
                 DataMCRatio_c.SaveAs(outName)   
@@ -1125,29 +1263,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             Signal_h_clone = sig_histos[0].Clone("Signal_h_clone")  ##-- assuming you want the ratio with the first signal in the list 
             Signal_h_clone.SetDirectory(0)
-            xTitle = GetXaxisTitle(varTitle)
-            Signal_h_clone.GetXaxis().SetTitle(xTitle)
-            # Signal_h_clone.SetTitle(varTitle)
-            # Signal_h_clone.SetTitle("")
-
+            # xTitle = GetXaxisTitle(varTitle)
+            # Signal_h_clone.GetXaxis().SetTitle(xTitle)
             stackSum_clone = stackSum.Clone("stackSum_clone")
             stackSum_clone.SetDirectory(0)
-            # B_vals_ = GetBinVals(stackSum_clone)
-
-            # ## get Signal values to later compute S / sqrt(B)
-            # S_vals_ = GetBinVals(Signal_h_clone)
-            # S_vals_ = []
-            # for i in range(0,xbins):
-            #     S_val = Signal_h_clone.GetBinContent(i+1) # i+1 to avoid underflow bin
-            #     S_vals_.append(S_val)
-            #     # if(S_val != 0.0): S_vals_.append(S_val)
-            # print "S_vals_:",S_vals_ ## if any of these are zero or background is zero in a bin, you may have problems with the S / sqrt(B) plot 
-
-            # B_vals_ = [] 
-            # for i in range(0,xbins):
-            #     B_val = stackSum_clone.GetBinContent(i+1)
-            #     B_vals_.append(B_val)
-            #     # if(B_val != 0.0): B_vals_.append(B_val)
 
             for i,bin in enumerate(stackSum):
                 print("")
@@ -1155,8 +1274,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 print("")
                 
                 binUnc = bin**(1/2)
-                # print"bin %s: yield equals: %s"%(i,bin) 
-                # print"uncertainty: ",stackSum.GetBinError(i)
                 stackSum.SetBinError(i,binUnc)
 
             rp = TRatioPlot(Signal_h_clone,stackSum) ## S / B
@@ -1172,8 +1289,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 
             for fileType in ["pdf"]:
-                #gStyle.SetErrorX(0.0001)
-                # varTitle = GetVarTitle(v)
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(plotLog): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)                        
