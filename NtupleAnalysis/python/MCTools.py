@@ -877,9 +877,9 @@ def GetMCColor(MC_Category_):
     MCColorsDict = {
         "H\\rightarrow\gamma\gamma": "ROOT.turqoise",
         "\gamma+jet" : "ROOT.peterriver",
-        "W\gamma(s)+jets" : "ROOT.wisteria",
+        "W\gamma(s)+jet(s)" : "ROOT.wisteria",
         "\gamma\gamma+jets" : "ROOT.sunflower", 
-        "tt\gamma(s)+jets":"ROOT.carrot",
+        "tt\gamma(s)+jet(s)":"ROOT.carrot",
         "Signal": "ROOT.alizarin",
     }    
 

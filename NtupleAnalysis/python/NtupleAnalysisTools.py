@@ -5,7 +5,7 @@ Abraham Tishelman-Charny
 The purpose of this module is to provide variables and definitions for NtupleAnalysis.py 
 """
 
-from ROOT import TCanvas, TColor, TStyle, gROOT, gPad, TH1F, TPad, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray
+from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, gStyle, THStack, TLegend, kYellow, TRatioPlot, kBlack, TLine, TLatex, TGraphErrors
 import ROOT as ROOT
 import os 
 from MCTools import * 
@@ -13,8 +13,6 @@ from VariableTools import *
 from PlotTools import * 
 from CutsTools import * 
 from array import array
-# from tdrstyle import * 
-from tdrstyle import setTDRStyle
 from CMS_lumi import * 
 
 
@@ -208,10 +206,6 @@ def GetFiles(direc, cutName):
 #     for file in os.listdir(Direc): files.append(file)
 #     return files 
 
-def AppendNtuples(dataFiles_, mcFiles_, signalFiles_):
-    print "In AppendNtuples"
-    # for each input file, make a new output file with an added branch
-
 def CalcEff(h_,cut_):
     ##-- return percentage of events that pass cut 
     pctPass_ = 0
@@ -237,23 +231,9 @@ def GetBinVals(h_):
 
 def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWidth_,region_):
     # print "Getting data histogram" 
-    dFile = TFile.Open(dPath)
-    # print "Data file path: ",dPath
-    # ch = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
-    # data_trees = TChain('%sData_13TeV_HHWWggTag_0'%(prefix))
     data_trees = TChain('data_trees')
-    # data_trees.Add("%s/%sData"%(dPath,prefix))
-    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_0"%(dPath,prefix))
     data_trees.Add("%s/%sData_13TeV_HHWWggTag_0_v1"%(dPath,prefix))
 
-    ##-- Hardcoding the addition of 2016 and 2018 data for AN-20-165 v5 checks
-
-    # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2016_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
-    # data_trees.Add("/eos/user/a/atishelm/ntuples/HHWWgg_DNN/MultiClassifier/HHWWyyDNN_WithHggFactor2-200Epochs-3ClassMulticlass_EvenSingleH_2Hgg_withKinWeightCut10_BalanceYields/Data_2018_HHWWggTag_0_MoreVars.root/%sData_13TeV_HHWWggTag_0_v1"%(prefix))
-
-    # data_trees.Add("%s/%stagsDumper/trees/Data_13TeV_HHWWggTag_0"%(dPath,prefix))
-    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_1"%(dPath,prefix))
-    # data_trees.Add("%s/%sData_13TeV_HHWWggTag_2"%(dPath,prefix))
     SB_CUT = "(CMS_hgg_mass <= 115 || CMS_hgg_mass >= 135)"
     MASS_RANGE_CUT = "(CMS_hgg_mass >= 100 && CMS_hgg_mass <= 180)"
     ZERO_CUT = "ZERO_CUT" ## to cut empty entries 
@@ -274,9 +254,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
 
     ##-- Fill histogram with data  
-
     # special binning for evalDNN_HH
-
     # edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
     edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
     N_bins_special = len(edges) -1 
@@ -289,19 +267,7 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     Data_h_tmp.SetTitle("%s"%(varTitle))
     Data_h_tmp.SetMarkerStyle(8)
 
-    # print("xnax:",Data_h_tmp.GetXaxis().GetXmax())
-
-    # print"v:",v
-    # print"DATA_CUT:",DATA_CUT
     exec('data_trees.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
-    # exec('data_trees.Draw("%s >> Data_h_tmp","%s")'%(v,DATA_CUT))
-    # print"filled histogram"
-
-    ##-- Only save number of events for first variable. Should be same for all because same cut is used 
-    # if(iv == 0): 
-        # dataNevents = Data_h_tmp.GetEntries()
-        # dataNevents_list.append(dataNevents)
-    # print"Blinded Data numEvents:",Data_h_tmp.GetEntries()   
                      
     DataHist_ = Data_h_tmp.Clone("DataHist")
     DataHist_.SetDirectory(0)
@@ -520,15 +486,12 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
     signalFiles = [] 
     signalFiles.append(signalFile_)
     for i,sigPath in enumerate(signalFiles):
-        # sigPath = "%s/%s"%(signalDirec,sigF_)
         sigEnd = sigPath.split('/')[-1]
         sigFile = TFile.Open(sigPath)
         treeName = GetMCTreeName(sigEnd)
-        # treeName += "_13TeV_HHWWggTag_0"
         treeName += "_13TeV_HHWWggTag_0"
         MC_Category = GetMCCategory(sigEnd)
         if(verbose):
-            # print"Signal File:",sigPath 
             print"Signal:",MC_Category
 
         # Signal_Trees = TChain('%s%s_13TeV_HHWWggTag_0'%(args_.prefix,treeName))
@@ -558,12 +521,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         thisHist = eval("S_h_%s"%(i))
         mcColor = GetMCColor(MC_Category) 
         ##-- Style options for signal to distinguish from Data, Background 
-        # eval("MC_h_tmp_%s.SetFillColor(eval(mcColor))"%(i))
-        # eval("MC_h_tmp_%s.SetFillStyle(3004)"%(i))
-        ##-- 
-        #S_CUT = "weight*(CMS_hgg_mass >= 115 && CMS_hgg_mass <= 135)"
         eval("S_h_%s.SetLineColor(eval(mcColor))"%(i))        
-        # exec('Signal_Trees.Draw("%s >> MC_h_tmp_%s","%s")'%(v,i,SIGNAL_CUT))
         exec('Signal_Trees.Draw("%s >> S_h_%s","%s")'%(v,i,S_CUT))
         exec('Signal_Trees.Draw("%s >> S_h_%s_unweighted","%s")'%(v,i,S_CUT_NOWEIGHTS))
         SigXS_Scale = GetXScale("Signal") # how to scale the XS which is by default in flashgg 1fb
@@ -594,7 +552,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     ##-- Misc 
     print("Plotting Data / MC and Signal")
 
+    NLegend_Columns = 2
+
     # setTDRStyle()
+
+    # I don't know why, but for some reason calling the setTDRStyle lines in a separate file made things completely different.
+    # I prefer to make plots I like quickly rather than deeply understand the issue, so I am leaving it like this.
 
     tdrStyle =  ROOT.TStyle("tdrStyle","Style for P-TDR")
 
@@ -676,7 +639,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     tdrStyle.SetPadRightMargin(0.02)
 
     # For the Global title:
-
     tdrStyle.SetOptTitle(0)
     tdrStyle.SetTitleFont(42)
     tdrStyle.SetTitleColor(1)
@@ -691,7 +653,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     # tdrStyle.SetTitleBorderSize(2)
 
     # For the axis titles:
-
     tdrStyle.SetTitleColor(1, "XYZ")
     tdrStyle.SetTitleFont(42, "XYZ")
     tdrStyle.SetTitleSize(0.06, "XYZ")
@@ -702,14 +663,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     # tdrStyle.SetTitleOffset(1.1, "Y") # Another way to set the Offset
 
     # For the axis labels:
-
     tdrStyle.SetLabelColor(1, "XYZ")
     tdrStyle.SetLabelFont(42, "XYZ")
     tdrStyle.SetLabelOffset(0.007, "XYZ")
     tdrStyle.SetLabelSize(0.05, "XYZ")
 
     # For the axis:
-
     tdrStyle.SetAxisColor(1, "XYZ")
     tdrStyle.SetStripDecimals(True)
     tdrStyle.SetTickLength(0.03, "XYZ")
@@ -770,11 +729,11 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     for iv,v in enumerate(Variables):
         # legend = TLegend(0.55,0.65,0.89,0.89)
         if(v == "evalDNN_HH"):
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.65, 0.8
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.65, 0.8 # xmin, ymin, xmax, ymax 
         else:
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.55, 0.55, 0.89, 0.8
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.575, 0.875, 0.875 # xmin, ymin, xmax, ymax 
         legend = TLegend(leg_xmin, leg_ymin, leg_xmax, leg_ymax)
-        legend.SetNColumns(1)
+        legend.SetNColumns(NLegend_Columns)
         legend.SetTextSize(0.025)
         legend.SetBorderSize(0)
         legend.SetFillStyle(0)        
@@ -793,8 +752,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         MC_AddedtoLegend = {
            "\gamma+jet" : 0,
            "\gamma\gamma+jets" : 0,
-           "W\gamma(s)+jets" : 0,
-           "tt\gamma(s)+jets" : 0,
+           "W\gamma(s)+jet(s)" : 0,
+           "tt\gamma(s)+jet(s)" : 0,
            "H\\rightarrow\gamma\gamma": 0,
            "Signal" : 0, # if "1", do not add to legend (this is a hardcoded hack :) )
         }
@@ -840,24 +799,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         stackSum.Sumw2() 
         stackSum.SetLineColor(kBlack)
 
-        # # the purpose of this clone is to try and plot shaded error bands on the background stack sum 
-        # stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
-
-        # #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
-        # #print("binWidth:",int(binWidth))
-
-        # stackSum_clone_forError.SetFillStyle(0)
-        # stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
-        # stackSum_clone_forError.SetLineStyle(2)
-        # stackSum_clone_forError.SetLineWidth(10)
-
         stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
 
-        # gStyle.SetHatchesSpacing(0.5)
-        # stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
         stackSum_clone_forError.SetFillStyle(3353)
         stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
-        # stackSum_clone_forError.SetLineStyle(0.)
         stackSum_clone_forError.SetLineWidth(0)
         stackSum_clone_forError.SetMarkerSize(0)
 
@@ -881,24 +826,16 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             # just use combined tag always. Define a category or look at cut based analysis categories by making selections 
             DataHist = GetDataHist(dataFile_,args_.prefix,cut,cutName,iv,v,varTitle,args_.VarBatch,args_.verbose,DNNbinWidth_,region_) ## assuming one data file!
             dataNevents = DataHist.GetEntries()
-            # legend.AddEntry(DataHist,"Data","P")
             DataHist.SetLineColor(kBlack)
             DataHist.Sumw2()
-            # xTitle = GetXaxisTitle(varTitle)
-            # DataHist.GetXaxis().SetTitle(xTitle)
 
             DataHist.SetLineColorAlpha(kBlack, 0)
 
             if(args_.log): 
-                if(args_.verbose): print "Setting histogram minimums"
-                # print"Setting histogram minimums"
-                #bkgStack.SetMinimum(1)
+                if(args_.verbose): print("Setting histogram minimums")
                 DataHist.SetMinimum(1.)
                 stackSum.SetMinimum(1.)
                 bkgStack.SetMinimum(1.)
-                #bkgStack.SetMinimum(0.0001)            
-                #stackSum.SetMinimum(0.0001)
-                #bkgStack.SetMinimum(0.0001)            
 
             # Convert DataHist into TGraphErrors in order to remove x errors 
             nBins = DataHist.GetNbinsX()
@@ -911,10 +848,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             for i,bin in enumerate(DataHist):
                 if(i == 0): continue # skip underflow bin 
                 if(i == (nBins + 1)): continue # skip overflow bin 
-                #print("i:",i)
-                #print("bin:",bin)       
-                #print("center_value:",DataHist.GetBinCenter(i))
-                #print("yerr:",DataHist.GetBinError(i))   
                 center_value = DataHist.GetBinCenter(i)
                 yerr = DataHist.GetBinError(i)
 
@@ -927,8 +860,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             ex = array( 'f', ex_ )
             y  = array( 'f', y_ )
             ey = array( 'f', ey_ )
-
-            # print("Data x:",x)
 
             Data_gr = TGraphErrors( nBins, x, y, ex, ey )
             Data_gr.SetMarkerStyle(8)
@@ -953,56 +884,15 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 # the purpose of this clone is to try and plot shaded error bands on the background stack sum 
                 stackSum_clone_forError = stackSum.Clone("stackSum_clone_forError")
 
-                #binWidth = stackSum_clone_forError.GetXaxis().GetBinWidth(0)
-                #print("binWidth:",int(binWidth))
-                #nhatchsp = gStyle.GetHatchesSpacing()
-                #print("nhatchsp:",nhatchsp)
-                # gStyle.SetHatchesSpacing(0.5)
-                #stackSum_clone_forError.SetLineColorAlpha(kBlack,0)
                 stackSum_clone_forError.SetFillStyle(3353)
                 stackSum_clone_forError.SetFillColorAlpha(kYellow+4, 1)
-                # stackSum_clone_forError.SetLineStyle(0.)
-                #stackSum_clone_forError.SetLineWidth(10)
                 stackSum_clone_forError.SetMarkerSize(0)
-
-                # for i,bin in enumerate(stackSum_clone_forError):
-                    # stackSum_clone_forError.SetBinError(i,0.000001)
-                #print("stack type:",type(stackSum_clone_forError))
-                #stackSum_clone_forError.SetLineColorAlpha(kBlack, 0.5)
-                #stackSum_clone_forError.SetLineStyle(2)
-                #stackSum_clone_forError.SetLineWidth(10)
-
-                # stackSum.Scale(SidebandSF)     
-
-            # # if plotting full region unblinded, add signal
-            # if(region_ == "FullRegion"):
-
 
             ##-- Compute chi squared 
             chi2 = GetChiSquared(DataHist,stackSum)
-            # print"chi2 = ",chi2 
             chi2Text = TLatex(0.129,0.75,"#Chi^{2} = %.5g"%(chi2))       
             chi2Text.SetNDC(1)
             chi2Text.SetTextSize(0.04)    
-            #for i,bin in enumerate(stackSum):
-                #binUnc = bin**(1/2)
-                #print("bin %s: yield equals: %s"%(i,bin))
-                #print("contained uncertainty: ",stackSum.GetBinError(i))
-                #print("uncer from sqrt:",binUnc)
-                #stackSum.SetBinError(i,binUnc)
-
-            # print bin errors:
-
-            #for i, bin in enumerate(stackSum)
-
-            ##-- Define ratio plot for computing Data / MC ratio 
-            # print("")
-            # print("~~~~~~~~~~~~~~DataHist:",DataHist)
-            # print("~~~~~~~~~~~~~~stackSum:",stackSum)
-            # print("DataHist xmax:",DataHist.GetXaxis().GetXmax())
-            # print("stackSum xmax:",stackSum.GetXaxis().GetXmax())
-            # print("")
-
             DataHist.SetTitle("")
             stackSum.SetTitle("")
 
@@ -1018,8 +908,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 
             for fileType in ["pdf"]:
-                #gStyle.SetErrorX(0.0001)
-                # varTitle = GetVarTitle(v)
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)                        
@@ -1038,31 +926,24 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 xTitle = GetXaxisTitle(varTitle)
                 DataHist.GetXaxis().SetTitle(xTitle)
 
+                logYMin = 0.005
+
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
                 rp.GetLowerPad().Update()
-                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.01,maxHeight*1000.)   
+                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(logYMin,maxHeight*1000.)   
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
 
                 rp.GetUpperRefXaxis().SetTitle(xTitle)
-                # rp.GetLowerRefXaxis().SetTitle(xTitle)
 
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
 
                 bkgStack.SetTitle("")
-
                 bkgStack.Draw("same")
 
                 stackSum_clone_forError.SetLineWidth(0)
-                # stackSum_clone_forError.Draw("sameE0E2")   
                 stackSum_clone_forError.Draw("sameE2")   
-
-                # stackSum_clone_forError.SetLineWidth(0)
-                # stackSum_clone_forError.Draw("samePE1")                
-                # stackSum_clone_forError.Draw("sameE0E2")                
-                # stackSum_clone_forError.Draw("sameE1")                
-                # Data_gr.Draw("samePE1") 
                 Data_gr.Draw("samePE1") 
                  
 
@@ -1090,14 +971,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                             legend.AddEntry(sig_h,"%s * %.5g"%(sig_h.GetTitle(),sigScale),"FL")
                             Signals_AddedtoLegend[sigName]  
 
-                    # print("   ")
-                    # print("~~~~~~~~~~~~~~~sig_hist xmax:",sig_hist.GetXaxis().GetXmax())
-                    # print("   ")
-                    
 
-                    #"""
                     sig_hist.Draw("samehist")
-                    #"""
 
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
@@ -1108,14 +983,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerRefGraph().SetMinimum(ratioMin)
                 rp.GetLowerRefGraph().SetMaximum(ratioMax)     
                 Npoints = rp.GetLowerRefGraph().GetN()
-                # print(" ")
-                # print("~~~~~~~~~~~~~~Npoints:",Npoints)
-                # print(" " )
-                #"""
                 for ip in range(0,Npoints):
                     rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
                     rp.GetLowerRefGraph().SetPointEXlow(ip,0)  
-                #"""
 
                 if(args_.log): 
                     UpperPad.SetLogy()
@@ -1126,11 +996,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 # Add TLines if plotting DNN score
                 if(varTitle == "evalDNN_HH"):
-
-                        # exec("ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)")
-                        # ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)
-                        # ThisLine.SetLineStyle(3)
-                        # ThisLine.Draw("same")
 
                         BoundaryLine_1 = TLine(0.63,UpperPad.GetUymin(),0.63,maxHeight*1000.)
                         BoundaryLine_2 = TLine(0.84,UpperPad.GetUymin(),0.84,maxHeight*1000.)
@@ -1144,25 +1009,17 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                         BoundaryLine_2.Draw("same")
                         BoundaryLine_3.Draw("same")
 
-                    # Boundaries = [0.63, 0.84, 0.89,1.0]
+                    # Boundaries = [0.63, 0.84, 0.89]
                     # for Boundary in Boundaries:
                     #     exec("ThisLine = TLine(Boundary,UpperPad.GetUymin(),Boundary,maxHeight*100.)")
                     #     ThisLine.SetLineStyle(3)
                     #     ThisLine.Draw("same")
 
-
-
                 rp.GetLowerPad().cd()
-                # rp.GetUpperRefXaxis().SetRangeUser(0,1)
-                # rp.GetUpperRefXaxis().Set
-                # rp.GetLowerRefXaxis().SetTitle(xTitle)
-                # rp.GetLowerRefXaxis().SetTitleOffset(0.9)
                 
                 lowerPad = rp.GetLowerPad()
-                # lowerPad.SetCanvasSize(600,800)
 
                 lowerPad.SetLeftMargin(0.15) # it was a miracle that I figured this part out 
-                # lowerPad.SetTitleXOffset(0.9)
                 lowerPad.Draw()
                 lowerPad.cd()
 
@@ -1200,24 +1057,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 upperPad.Draw()
                 upperPad.cd()
 
-                # writeExtraText = True       #// if extra text
-                # extraText  = "Preliminary"#;  // default extra text is "Preliminary"
-                # lumi_8TeV  = "19.1 fb^{-1}"#; // default is "19.7 fb^{-1}"
-                # lumi_7TeV  = "4.9 fb^{-1}"#;  // default is "5.1 fb^{-1}"
-                # lumi_sqrtS = "13 TeV"#;       // used with iPeriod = 0, e.g. for simulation-only plots (default is an empty string)   
-
                 CMS_lumi( gPad, 4,  1)
-
-                # setTDRStyle() # https://ghm.web.cern.ch/ghm/plots/
-
-                # DataMCRatio_c.SetBottomMargin(10.)
-                # DataMCRatio_c.SetRightMargin(10.)   
-                # DataMCRatio_c.SetLeftMargin(0.5)
 
                 DataMCRatio_c.cd()
                 DataMCRatio_c.Update()       
-
-                # setTDRStyle()         
 
                 DataMCRatio_c.SaveAs(outName) 
                 outName = outName.replace(".pdf",".png")                    
@@ -1232,7 +1075,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             # plotLog = 1 ##-- Plot signal region selected plots in log scale by default since HH->WWgg signal is small 
             # upperPlotymin = 0.001           
             plotLog = args_.log
-            if(plotLog): upperPlotymin = 0.001
+            if(plotLog): upperPlotymin = 0.0001
             else: upperPlotymin = 0 
             dataNevents = 0 
             ##-- Optional: Scale Backgrounds to SF: Data sidebands sum / Background sidebands sum
@@ -1304,10 +1147,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 ratioGraph.SetMarkerStyle(8)
                 ratioGraph.SetMarkerSize(0.5)
 
-                # rp.SetGraphDrawOpt("EP")
-                # rp.SetGraphDrawOpt("EPZ2")
-                # rp.GetLowerRefYaxis().SetTitle("Data / MC")
-
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerPad().Update()
                 if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*10000.)   
@@ -1358,27 +1197,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 SosqB_vals = []
                 SosqB_min, SosqB_max = 0, 0
 
-                # for ip in range(0,Npoints):
-                #     binmin = rp.GetLowerRefGraph().GetPointX(ip)
-                #     SoverB = rp.GetLowerRefGraph().GetPointY(ip)
-                #     S = S_vals_[ip]
-                #     ## calc s / sqrtB) from here and then just plot it on lower graph 
-                #     # print "binmind: ",binmin
-                #     # print "S:",S
-                #     # print "SoverB:",SoverB  
-                #     # sqrtB = (SoverB**-1)*S
-                #     B = S*(1 / SoverB)
-                #     if(B<=0): sqrtB = 0
-                #     else: sqrtB = B**1/2
-                #     if(sqrtB <= 0 or S == 0): SoversqrtB = 0
-                #     else: SoversqrtB = S / sqrtB
-                    
-                #     # print "SoversqrtB:",SoversqrtB
-                #     SosqB_vals.append(SoversqrtB)
-                
-                # SosqB_min, SosqB_max = min(SosqB_vals), max(SosqB_vals)
-                # lowerPlotMin, lowerPlotMax = SosqB_min / 2 , SosqB_max * 2
-
                 for ip in range(0,Npoints):
                     rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
                     rp.GetLowerRefGraph().SetPointEXlow(ip,0) 
@@ -1409,11 +1227,10 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- Only create yields table for 0th variable because yields are cut dependent, not variable dependent
         if(iv==0): 
-            print"SidebandSF_:",SidebandSF_
+            print("SidebandSF_:",SidebandSF_)
             B_vals_ = [] 
             CreateYieldsTable(region_,cutName,Bkg_Names,args_.removeBackgroundYields,S_vals_,B_vals_,dataNevents,SidebandSF_,Bkg_Nevents,ol_,Bkg_Nevents_unweighted, S_, S_unweighted_) 
         
         ## For each variable loop ends here 
 
     return chi2
-    

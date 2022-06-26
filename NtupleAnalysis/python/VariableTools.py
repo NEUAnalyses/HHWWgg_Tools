@@ -278,18 +278,12 @@ def GetVars(VarBatch):
 
 ##-- Get bins for a variable 
 def GetBins(variable_,DNNbinWidth_):
-# def GetBins(variable_,DNNbinWidth_ = 0.1):
 
-    # evalDNNmin, evalDNNmax = 0, 1.00001
-    # evalDNNmin, evalDNNmax = 0.9, 1.00001
-    # evalDNNmin, evalDNNmax = 0, 1.00001
     evalDNNmin, evalDNNmax = 0, 1
     nDNNbins = int(float((evalDNNmax - evalDNNmin)) / float(DNNbinWidth_))
 
-    # if(DNNbinWidth_ != 0.1):
-        # print"nDNNbins: ",nDNNbins
     # Specify bins for specific variables 
-    nbins_glob = 20
+    nbins_glob = 15
     binDict = {
 
         "Leading_Photon_MVA": [nbins_glob,-1,1],
@@ -429,6 +423,8 @@ def GetXaxisTitle(variable_):
     elif(variableName == "Scaled_Subleading_Photon_pt"): variableNameLabel = "p_{T}^{\gamma_{sublead}}/m_{\gamma\gamma}"
     elif(variableName == "evalDNN_HH"): variableNameLabel = "DNN score"
     elif(variableName == "goodLepton_E"): variableNameLabel = "E_{lepton}"
+    elif(variableName == "goodJets_1_pt"): variableNameLabel = "p_{T}^{jet_{sublead}}"
+    elif(variableName == "goodJets_0_pt"): variableNameLabel = "p_{T}^{jet_{lead}}"
     else: variableNameLabel = variableName
         
     xAxisTitle = "%s [%s]"%(variableNameLabel,variableUnit)
