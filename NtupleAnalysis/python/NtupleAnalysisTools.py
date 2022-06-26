@@ -1065,8 +1065,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 DataMCRatio_c.SaveAs(outName) 
                 outName = outName.replace(".pdf",".png")                    
                 DataMCRatio_c.SaveAs(outName)   
-                outName = outName.replace(".png",".C")          
-                DataMCRatio_c.SaveAs("out.C")          
+                #outName = outName.replace(".png",".C")          
+                #DataMCRatio_c.SaveAs("out.C")          
 
         ##-- If plotting in the signal region, Combine Background and Signal(s)
         elif(region_ == "SR"):

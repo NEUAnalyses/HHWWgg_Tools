@@ -1,0 +1,10 @@
+executable              = condor_script.sh
+output                  = condorOutput/out.out
+error                   = condorError/out.err
+log                     = condorLog/out.log
+transfer_input_files    = python/Datasets.py, python/CreateDataFrame.py, python/PlotDataFrame.py, GenPlot_PD.py 
+
++JobFlavour             = "longlunch"
+#requirements = (OpSysAndVer=?= "CentOS7")
+
+Queue 
