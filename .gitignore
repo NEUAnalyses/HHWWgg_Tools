@@ -1,3 +1,9 @@
+Phase_II/TTGJets/
+Plot/GEN/condorError/
+Plot/GEN/condorLog/
+Plot/GEN/condorOutput/
+Lightweight_MC_Production/Test/*
+Plot/GEN/Dataframes/*
 Fragments/Outputs/*
 NtupleAnalysis/*.tex
 cmssw_9_4_7/*
