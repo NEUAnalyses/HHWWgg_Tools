@@ -873,13 +873,13 @@ def OrderHistos(histos_,categories_):
     return orderedHistos 
 
 def GetMCColor(MC_Category_):
-
+    print("MC_Category_:",MC_Category_)
     MCColorsDict = {
         "H\\rightarrow\gamma\gamma": "ROOT.turqoise",
         "\gamma+jet" : "ROOT.peterriver",
-        "W\gamma(s)+jet(s)" : "ROOT.wisteria",
+        "W\gamma(s)+jets" : "ROOT.wisteria",
         "\gamma\gamma+jets" : "ROOT.sunflower", 
-        "tt\gamma(s)+jet(s)":"ROOT.carrot",
+        "tt\gamma(s)+jets":"ROOT.carrot",
         "Signal": "ROOT.alizarin",
     }    
 

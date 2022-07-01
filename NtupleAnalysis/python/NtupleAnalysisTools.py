@@ -5,7 +5,7 @@ Abraham Tishelman-Charny
 The purpose of this module is to provide variables and definitions for NtupleAnalysis.py 
 """
 
-from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, gStyle, THStack, TLegend, kYellow, TRatioPlot, kBlack, TLine, TLatex, TGraphErrors
+from ROOT import TCanvas, gROOT, gPad, TH1F, kGray, TFile, TChain, TGraphAsymmErrors, gStyle, THStack, TLegend, kYellow, TRatioPlot, kBlack, TLine, TLatex, TGraphErrors
 import ROOT as ROOT
 import os 
 from MCTools import * 
@@ -459,7 +459,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
     return bkgHistos_, bkgHistCategories_, Bkg_Names_, Bkg_Nevents_, Bkg_Nevents_unweighted_
 
 def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinWidth_):
-    print "Getting Signal histogram(s)"
+    print"Getting Signal histogram(s)"
     sig_histos_ = []
     sig_histCategories_ = []          
 
@@ -516,7 +516,6 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         else:
             exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
             exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))             
-
 
         thisHist = eval("S_h_%s"%(i))
         mcColor = GetMCColor(MC_Category) 
@@ -752,8 +751,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         MC_AddedtoLegend = {
            "\gamma+jet" : 0,
            "\gamma\gamma+jets" : 0,
-           "W\gamma(s)+jet(s)" : 0,
-           "tt\gamma(s)+jet(s)" : 0,
+           "W\\gamma(s)+jets" : 0,
+           "tt\\gamma(s)+jets" : 0,
            "H\\rightarrow\gamma\gamma": 0,
            "Signal" : 0, # if "1", do not add to legend (this is a hardcoded hack :) )
         }
@@ -900,7 +899,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             #rp.SetH1DrawOpt("") # whether or not to draw data from datahist object 
             rp.SetH2DrawOpt("hist")
             # rp.SetH2DrawOpt("PE2")
-            # rp.SetGraphDrawOpt("PE2")
+            # rp.SetGraphDrawOpt("AF2")
+            rp.SetGraphDrawOpt("PE0")
+            removeLowererrors = 1
             dMax = DataHist.GetMaximum()
             bMax = stackSum.GetMaximum()
 
@@ -916,20 +917,92 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 rp.Draw("nogrid")
                 rp.GetLowYaxis().SetNdivisions(5)
+                
+                # rp.GetLowXaxis().SetNdivisions(5)
 
                 DataMCRatio_c.Update()
 
-                # ratioGraph = rp.GetCalculationOutputGraph()
-                # ratioGraph.SetMarkerStyle(8)
-                # ratioGraph.SetMarkerSize(1)
+                x_ratio_ = []
+                ex_ratio_low_= [] 
+                ex_ratio_high_= [] 
+                y_ratio_ = []
+                ey_ratio_low_ = []
+                ey_ratio_high_ = []
+                
+                # for i,bin in enumerate(DataHist):
+                #     if(i == 0): continue # skip underflow bin 
+                #     if(i == (nBins + 1)): continue # skip overflow bin 
+                #     center_value = DataHist.GetBinCenter(i)
+                #     yerr = DataHist.GetBinError(i)
+                
+                ratioGraph = rp.GetCalculationOutputGraph()
+                Npoints_g = ratioGraph.GetN()
+
+                x1 = float(ratioGraph.GetPointX(1))
+                x2 = float(ratioGraph.GetPointX(2))
+
+                xWidth = float(x2 - x1) / 2.
+
+                for p_i in range(0,Npoints_g):
+                    # print("p_i:",p_i)
+                    x_val = ratioGraph.GetPointX(p_i)
+                    y_val = ratioGraph.GetPointY(p_i)
+                    y_err_low = ratioGraph.GetErrorYlow(p_i)
+                    y_err_high = ratioGraph.GetErrorYhigh(p_i)
+
+                    # print("x_val:",x_val)
+                    # print("y_val:",y_val)
+                    # print("y_err_low:",y_err_low)
+                    # print("y_err_high:",y_err_high)
+
+                    x_ratio_.append(x_val)
+
+                    if(varTitle != "evalDNN_HH"):
+                        ex_ratio_low_.append(xWidth) 
+                        ex_ratio_high_.append(xWidth) 
+                    else:
+
+                        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
+
+                        edgeUpper = edges[p_i+1]
+                        edgeLower = edges[p_i]
+
+                        er_up = float(edgeUpper - x_val)
+                        er_down = float(x_val - edgeLower)
+
+                        ex_ratio_low_.append(er_up) 
+                        ex_ratio_high_.append(er_down) 
+
+                    y_ratio_.append(1) # set to 1 on purpose to make bars from ratio = 1 to show agreement
+                    ey_ratio_low_.append(y_err_low)                    
+                    ey_ratio_high_.append(y_err_high)                    
+
+                x_ratio  = array( 'f', x_ratio_ )
+                ex_ratio_low = array( 'f', ex_ratio_low_ )
+                ex_ratio_high = array( 'f', ex_ratio_high_ )
+                y_ratio  = array( 'f', y_ratio_ )
+                ey_ratio_low = array( 'f', ey_ratio_low_ )
+                ey_ratio_high = array( 'f', ey_ratio_high_ )
+
+                ratio_bars = TGraphAsymmErrors(Npoints_g, x_ratio, y_ratio, ex_ratio_low, ex_ratio_high, ey_ratio_low, ey_ratio_high)
 
                 xTitle = GetXaxisTitle(varTitle)
                 DataHist.GetXaxis().SetTitle(xTitle)
 
-                logYMin = 0.005
+                # logYMin = 0.005
+                logYMin = 0.0001
 
                 rp.GetUpperRefYaxis().SetTitle("Entries")   
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
+
+                rp.GetLowerPad().cd()
+                # ratio_bars.SetFillColor(1)
+                ratio_bars.SetFillStyle(1001)
+                ratio_bars.SetFillColorAlpha(kGray+2, 0.5)
+                ratio_bars.Draw("sameF2")
+
+                # rp.GetLowerRefXaxis().SetNdivisions(10)
+
                 rp.GetLowerPad().Update()
                 if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(logYMin,maxHeight*1000.)   
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
@@ -945,7 +1018,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 stackSum_clone_forError.SetLineWidth(0)
                 stackSum_clone_forError.Draw("sameE2")   
                 Data_gr.Draw("samePE1") 
-                 
 
                 for sig_hist in sig_histos:
                     sigMax = sig_hist.GetMaximum()
@@ -983,9 +1055,14 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerRefGraph().SetMinimum(ratioMin)
                 rp.GetLowerRefGraph().SetMaximum(ratioMax)     
                 Npoints = rp.GetLowerRefGraph().GetN()
-                for ip in range(0,Npoints):
-                    rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
-                    rp.GetLowerRefGraph().SetPointEXlow(ip,0)  
+
+                if(removeLowererrors):
+                    for ip in range(0,Npoints):
+                        rp.GetLowerRefGraph().SetPointEXhigh(ip,0)  
+                        rp.GetLowerRefGraph().SetPointEXlow(ip,0) 
+
+                        rp.GetLowerRefGraph().SetPointEYhigh(ip,0)  
+                        rp.GetLowerRefGraph().SetPointEYlow(ip,0)                          
 
                 if(args_.log): 
                     UpperPad.SetLogy()
@@ -1029,8 +1106,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerPad().cd()
                 lowerPad = rp.GetLowerPad()
 
-                # lowerPad.SetBottomMargin(0.4)
-                # lowerPad.SetBottomMargin(0.55)
                 lowerPad.SetBottomMargin(0.4)
                 lowerPad.Draw()
                 lowerPad.cd()
@@ -1052,7 +1127,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetUpperPad().cd()
                 upperPad = rp.GetUpperPad()
 
-                # upperPad.SetBottomMargin(0.075) # it was a miracle that I figured this part out 
                 upperPad.SetBottomMargin(0.075) # it was a miracle that I figured this part out 
                 upperPad.Draw()
                 upperPad.cd()
@@ -1070,10 +1144,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
         ##-- If plotting in the signal region, Combine Background and Signal(s)
         elif(region_ == "SR"):
-            print "Plotting Signal Region"
+            print("Plotting Signal Region")
 
             # plotLog = 1 ##-- Plot signal region selected plots in log scale by default since HH->WWgg signal is small 
-            # upperPlotymin = 0.001           
             plotLog = args_.log
             if(plotLog): upperPlotymin = 0.0001
             else: upperPlotymin = 0 
@@ -1106,8 +1179,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
             Signal_h_clone = sig_histos[0].Clone("Signal_h_clone")  ##-- assuming you want the ratio with the first signal in the list 
             Signal_h_clone.SetDirectory(0)
-            # xTitle = GetXaxisTitle(varTitle)
-            # Signal_h_clone.GetXaxis().SetTitle(xTitle)
             stackSum_clone = stackSum.Clone("stackSum_clone")
             stackSum_clone.SetDirectory(0)
 
@@ -1127,7 +1198,6 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             sMax = Signal_h_clone.GetMaximum()
             bMax = stackSum.GetMaximum()
 
-            # maxHeight = max(sMax,bMax) 
             maxHeight = max(sMax,bMax) 
 
             ##-- Create the entire picture: Combine Data, MC, Data / MC ratio and signal in one plot 

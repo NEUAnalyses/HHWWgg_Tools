@@ -223,11 +223,6 @@ if __name__ == '__main__':
                 # if(args.SumTags): ntags = 2 
                 # else: ntags = 1 
                 for tag in range(0,ntags):
-                    # if(not args.SumTags and tag == 1): continue  
-                    # print'path:',path
-                    # print'fi =',fi
-                    # print'len(orderedFiles):',len(orderedFiles)
-                    # if fi == len(orderedFiles) - 2: continue 
                     color = colors[fi]
 
                     print('Num events in MicroAOD:',nTotEvents)
@@ -242,9 +237,6 @@ if __name__ == '__main__':
                     elif(args.NMSSM): treeEnd = 'NMSSM_XYHWWggqqlnu_%s_13TeV_HHWWggTag_%s'%(massPair,tag) 
 
                     sig_tree = signal_file.Get('tagsDumper/trees/' + treeEnd)
-
-                    # outputName = mass + '_CutFlow_efficiencies.txt' # output text file path 
-                    # EfficienciesTxt = "bthresh\tsigeff\tttHeff\n"
 
                     sig_h_0 = TH1F('sig_h_0','sig_h_0',2,0,2)
                     sig_h_1 = TH1F('sig_h_1','sig_h_1',2,0,2)
