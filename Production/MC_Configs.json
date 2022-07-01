@@ -1,13 +1,13 @@
 [
-				{
-						"step"      : "GEN-SIM",
+				{ 
+						"step"      : "MINIAOD",
 						"events"    : 100000,
 						"jobs_jobsize"      : 1,
-						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/VBFToHHTo_WWgg_qqlnu_nodeSM/HHWWgg_v2-8_100000events_wPU_DR2/200930_103823/0000/",
+						"fragment_directory"  : "/eos/cms/store/group/phys_higgs/resonant_HH/RunII/MicroAOD/HHWWggSignal/VBFToHHTo_WWgg_qqlnu_nodeSM/HHWWgg_v2-8_100000events_wPU_DR2/200930_103823/0000/", 
 						"pileup"              : "wPU",
 						"localGridpack"                : "0",
 						"Campaign"            : "HHWWgg_v2-8",
-						"Year"                : "2017",
+						"Year"                : "2017", 
 						"dryRun"              : "0"
 				}
 ]

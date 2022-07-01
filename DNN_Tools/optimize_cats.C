@@ -1,7 +1,7 @@
 #include <iostream>
 #include <fstream>
 #include <TH1F.h>
-#include <TTree.h> 
+#include <TTree.h>
 #include <TPaveText.h>
 #include <TStyle.h>
 #include <TCanvas.h>
@@ -25,29 +25,29 @@ using namespace std;
 void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, double bin_width_, TString ext, TString nTupleLocation) {
 // void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double xcutoff, int Nbins, TString ext, TString nTupleLocation, TString year) {
 	TString year = "2017";
-	// Misc 
+	// Misc
 	gROOT->SetBatch("kTrue");
 
-	// Parameters 
+	// Parameters
 	cout << "extension: " << ext << endl;
 	TString scaleOpt;
 	if(scaleBkgSideband) scaleOpt = "withSidebandScale";
-	else scaleOpt = "noSidebandScale";	
+	else scaleOpt = "noSidebandScale";
 	TString outDir = "/eos/user/a/atishelm/www/HHWWgg/DNN_Tools_again/";
 	TString what_to_opt = "evalDNN";
 	double minevents = 5;
 	double xmin = xcutoff;
-	double xmax = 1.00001; // to include values that == 1  
-	// double xmax = 1; // 
+	double xmax = 1.00001; // to include values that == 1
+	// double xmax = 1; //
 	Double_t bin_width = bin_width_;
 	// int Nbins = Nbins_;
 	TString xmin_str = to_string(xcutoff);
-	TString binWidth_str = to_string(bin_width_); 
+	TString binWidth_str = to_string(bin_width_);
 	// TString Nbins_str = to_string(Nbins);
 
 	TString extraSelections = "*(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets >= 1 )";
 	TString Mgg_window = "*((CMS_hgg_mass>115)&&(CMS_hgg_mass<135))";
-	TString Mgg_sideband = "*((CMS_hgg_mass<=115)||(CMS_hgg_mass>=135))";
+	TString Mgg_sideband = "*((CMS_hgg_mass<=135)||(CMS_hgg_mass>=135))";
 
 	//// Important: Semi-Leptonic branching ratio of 0.441 is in here. Need to change for other final states
 	// 41.5 set as 2017 luminosity
@@ -56,14 +56,14 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	else if(year=="2017")   lumi = "41.5" ;
 	else if(year=="2018") lumi = "59.4";
 
-	// TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section 
+	// TString selection_sig = "33.49*0.00097*0.441*41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section
 	TString selection_sig = "31.049*0.00097*0.441*" + lumi + "*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections; // normalize signal properly with cross section and branching ratio
 	TString selection_bg = "41.5*weight*(CMS_hgg_mass > 100 && CMS_hgg_mass < 180)" + extraSelections;
 	TString selection_data = "(1)" + extraSelections;
 	TString s; TString sel;
 	TString outname = s.Format("%sCategorization_%s_%dcats_%s",year.Data(),what_to_opt.Data(),NCATS,ext.Data());
 
-// --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/ 
+// --ol /eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_testnewfiles/
 // --nTupleDirec /eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/
 
 	// Combine Signal Trees
@@ -83,7 +83,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	else if(year=="2018") signal_Location = signal_Loc_s.Format("/eos/user/a/atishelm/ntuples/HHWWgg_DataSignalMCnTuples/2018/Signal/HHWWgg-SL-SM-NLO-2018.root/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8alesauva_2018_1_10_6_4_v0_RunIIAutumn18MiniAOD_102X_upgrade2018_realistic_v15_v1_460d9a73477aa42da0177ac2dc7ecf49USER");
 	else{
 		cout << "Don't know what to do for year: " << year << endl;
-		cout << "Exiting" << endl; 
+		cout << "Exiting" << endl;
 	}
 
 	TChain *file_s =  new TChain("file_s");
@@ -107,11 +107,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	TChain *tree_bg =  new TChain("tree_bg");
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Backgrounds_promptpromptselapplied";
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied";
-	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
-	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied 
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied
+	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds"; ///// no prompt prompt removal applied
 
 	TString bkg_Loc_s;
-	// TString bkg_Location = bkg_Loc_s.Format("%s/Bkgs/",nTupleLocation.Data()); 
+	// TString bkg_Location = bkg_Loc_s.Format("%s/Bkgs/",nTupleLocation.Data());
 	// TString bkg_Location = bkg_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_weights_exp_allBkgs/Bkgs/"); //-- Hardcoded
 	TString bkg_Location = bkg_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/PromptPromptApplied-TagsMerged/HHWWyyDNN_binary_testnewfiles_allBkgs/Bkgs/"); //-- Hardcoded
 
@@ -119,30 +119,30 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// string backgroundDirec = "/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN_addWjets/Backgrounds_promptpromptselapplied"; // Prompt Prompt removal applied
 	cout << "backgroundDirec " << backgroundDirec << endl;
 	vector<string> v;
-	v = read_directory(backgroundDirec); // Get vector of background files 
-	cout << " " << endl; 
+	v = read_directory(backgroundDirec); // Get vector of background files
+	cout << " " << endl;
 	cout << "Number of background files: " << v.size() << endl;
 
-	for(int i = 0; i < v.size(); i++){ // for each file 
+	for(int i = 0; i < v.size(); i++){ // for each file
 		string file = v[i];
 		string treePath = GetMCTreeName(file);
-		string fullPath = backgroundDirec + "/"; 
+		string fullPath = backgroundDirec + "/";
 		fullPath.append(file);
 		fullPath.append( "/" + treePath);
-		
+
 		// cout << "full path: " << fullPath << endl;
 
-		tree_bg->Add(fullPath.c_str());	
+		tree_bg->Add(fullPath.c_str());
 
-		// If there are multiple trees per file 
-		// for(int c = 0; c < 3; c++){ // for each category 
+		// If there are multiple trees per file
+		// for(int c = 0; c < 3; c++){ // for each category
 			// string cat = to_string(c);
 			// string file = v[i];
 			// string treePath = GetMCTreeName(file);
-			// string fullPath = backgroundDirec + "/"; 
+			// string fullPath = backgroundDirec + "/";
 			// fullPath.append(file);
 			// fullPath.append( "/" + treePath + "_13TeV_HHWWggTag_" + cat);
-			
+
 			// // cout << "full path: " << fullPath << endl;
 
 			// tree_bg->Add(fullPath.c_str());
@@ -150,12 +150,12 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		// }
 	}
 
-	// Combine Data Trees 
+	// Combine Data Trees
 	TString Data_Loc_s;
 	// TString Data_Location = Data_Loc_s.Format("%s/Data/Data.root/Data",nTupleLocation.Data());
 	// TString Data_Location = Data_Loc_s.Format("%s/Data/2017-Data.root/Data",nTupleLocation.Data());
-	// TString Data_Location = Data_Loc_s.Format("%s/Data/2017-Data.root/Data",nTupleLocation.Data()); 
-	TString Data_Location = Data_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_testnewfiles_allBkgs/2017-Data.root/Data"); 
+	// TString Data_Location = Data_Loc_s.Format("%s/Data/2017-Data.root/Data",nTupleLocation.Data());
+	TString Data_Location = Data_Loc_s.Format("/eos/user/b/bmarzocc/HHWWgg/HHWWgg_DataSignalMCnTuples/HHWWyyDNN_binary_testnewfiles_allBkgs/2017-Data.root/Data");
 
 	TChain *tree_data =  new TChain("tree_data");
 	tree_data->Add(Data_Location);
@@ -163,7 +163,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_1");
 	// tree_data->Add("/eos/user/a/atishelm/ntuples/HHWWgg_DataMC/DNN/Data/Data.root/Data_13TeV_HHWWggTag_2");
 
-	// Get Data over Background in sidebands scale factor 
+	// Get Data over Background in sidebands scale factor
 	TH1F* hist_background_sideband = new TH1F("hist_background_sideband","hist_background_sideband",100,-1,1);
 	TH1F* hist_data_sideband = new TH1F("hist_data_sideband","hist_data_sideband",100,-1,1);
 
@@ -197,7 +197,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	if(verbose){
 		cout << " " << endl;
 		cout << "BG integral under Mgg "<< hist_B->Integral() << endl;
-	} 
+	}
 	TH1F *hist_B_sideband = new TH1F("hist_B_sideband","hist_B_sideband",int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax)); // background sideband region
 	// TH1F *hist_B_sideband = new TH1F("hist_B_sideband","hist_B_sideband",Nbins,float(xmin),float(xmax)); // background sideband region
 
@@ -221,9 +221,9 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	if(verbose){
 		cout << " " << endl;
 		cout << "Data integral sidebands " << hist_D_sideband->Integral() << endl;
-	} 
+	}
 
-	// Get Start and Ends of Optimization Range 
+	// Get Start and Ends of Optimization Range
 	double END = hist_B->GetBinCenter(hist_B->FindLastBinAbove(-1.)) + hist_B->GetBinWidth(1)/2.; // Left end of BDT distibution
 	double START = hist_B->GetBinCenter(hist_B->FindFirstBinAbove(-1.)) - hist_B->GetBinWidth(1)/2.; // Right end of BDT distibution
 	cout << "START: " << START << endl;
@@ -242,7 +242,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	hist_B->SetFillColor(kBlue-10);
 	hist_B->SetLineWidth(2);
 
-	// Make Copies of Background and Signal Histograms 
+	// Make Copies of Background and Signal Histograms
 	TH1F *hist_B2 = (TH1F*)hist_B->Clone("b_new");
 	TH1F *hist_S2 = (TH1F*)hist_S->Clone("s_new");
 
@@ -300,7 +300,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	float TOTAL_S2OB = 0;
 
 	for(int i = 0; i < (int) hist_S2->GetEntries(); i++){
-		s1 = hist_S2->GetBinContent(i+1); // +1 to skip underflow bin 
+		s1 = hist_S2->GetBinContent(i+1); // +1 to skip underflow bin
 		b1 = hist_B2->GetBinContent(i+1);
 		if(b1 != 0) TOTAL_S2OB += pow(s1,2) / (b1);
 	}
@@ -338,13 +338,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	std::vector<double> categories_scans;
 	std::vector<double> significance_scans;
 
-	// Categorization 
+	// Categorization
 	do {
 		max_n[0] = 0; // I think S^2 / B for one or all categories
 		sig_n[0] = hist_S->Integral(1,hist_S->FindBin(start_n[0])-1); // Optimize cats based on integral of Signifiance?
 		bkg_n[0] = hist_B->Integral(1,hist_B->FindBin(start_n[0])-1);
 
-		// Sidebands 
+		// Sidebands
 		bkg_sideband_n[0] = hist_B_sideband->Integral(1,hist_B_sideband->FindBin(start_n[0])-1);
 		data_sideband_n[0] = hist_D_sideband->Integral(1,hist_D_sideband->FindBin(start_n[0])-1);
 
@@ -400,8 +400,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 						bkg_n[3] = 1;
 						bkg_sideband_n[3] = 1;
 						data_sideband_n[3] = 1;
-					} 
-					
+					}
+
 					else {
 						sig_n[3] = hist_S->Integral(hist_S->FindBin(start_n[2]),hist_S->FindBin(start_n[3])-1);
 						bkg_n[3] = hist_B->Integral(hist_B->FindBin(start_n[2]),hist_B->FindBin(start_n[3])-1);
@@ -415,27 +415,27 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 					max_n[4]=0;
 
-					if (NCATS<=4) 
+					if (NCATS<=4)
 					{
 						sig_n[4] = 0.;
 						bkg_n[4] = 1.;
 						bkg_sideband_n[4] = 1.;
 						data_sideband_n[4] = 1.;
-					} 
-					
-					else 
+					}
+
+					else
 					{
 						sig_n[4] = hist_S->Integral(hist_S->FindBin(start_n[3]),hist_S->GetNbinsX()+1); // FindBin returns the bin number corresponding to the x value
-						bkg_n[4] = hist_B->Integral(hist_B->FindBin(start_n[3]),hist_B->GetNbinsX()+1); // 
+						bkg_n[4] = hist_B->Integral(hist_B->FindBin(start_n[3]),hist_B->GetNbinsX()+1); //
 
-						// Sidebands 
+						// Sidebands
 						bkg_sideband_n[4] = hist_B_sideband->Integral(hist_B_sideband->FindBin(start_n[3]),hist_B_sideband->GetNbinsX()+1);
 						data_sideband_n[4] = hist_D_sideband->Integral(hist_D_sideband->FindBin(start_n[3]),hist_D_sideband->GetNbinsX()+1);
 
 						// cout << "#5 BIN " << start_n[3] << endl;
 
 					}
-						
+
 					if (bkg_n[4]!=0) max_n[4]=pow(sig_n[4],2)/bkg_n[4];
 
 					double max_sum = 0;
@@ -444,8 +444,8 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 						max_sum+=max_n[index];
 						// minevt_cond_n[index] = ( (data_sideband_n[index] >= 4));
 						//  minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents );
-						// minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 3)); // 3 hardcoded for number of sideband events 
-						minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 10)); // 3 hardcoded for number of sideband events 
+						// minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 3)); // 3 hardcoded for number of sideband events
+						minevt_cond_n[index] = (bkg_sideband_n[index]>=minevents && (data_sideband_n[index] >= 10)); // 3 hardcoded for number of sideband events
 					}
 					minevt_cond = std::accumulate(minevt_cond_n, minevt_cond_n + NCATS, 0); // minevt_cond_n+1 for tth only when optimizing separately
 					if (((max_sum)>=max) && (minevt_cond==(NCATS))) { //NCATS-1 for tth
@@ -461,13 +461,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 						}
 					}
 					start_n[3]+=bin_width;
-				} while (start_n[3]<=(END-(NCATS-4)*bin_width)); // probably max at num cats - NCATS because you can't determine the significance integral for the 1st category so high that cats can't be added at bins starting above it 
+				} while (start_n[3]<=(END-(NCATS-4)*bin_width)); // probably max at num cats - NCATS because you can't determine the significance integral for the 1st category so high that cats can't be added at bins starting above it
 				start_n[2]+=bin_width;
 			} while (start_n[2]<=(END-(NCATS-3)*bin_width));
 			start_n[1]+=bin_width;
 		} while (start_n[1]<=(END-(NCATS-2)*bin_width));
 		start_n[0]+=bin_width;
-	} while (start_n[0]<=(END-(NCATS-1)*bin_width)); 
+	} while (start_n[0]<=(END-(NCATS-1)*bin_width));
 
 	borders[NCATS] = END;
 
@@ -484,14 +484,14 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	outborder<<endl;
 	outborder.close();
 
-	// Write Output Text File 
+	// Write Output Text File
 	ofstream out;
 	out.open(s.Format("%s%s_%s_xmin-%s_binWidth-%s.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),binWidth_str.Data()));
 	// out.open(s.Format("%s%s_%s_xmin-%s_Nbins-%s.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),Nbins_str.Data()));
 	out << "(S**2)tot/Btot over all bins: " << TOTAL_S2OB << endl;
 	out << endl;
 	out << "sqrt((S**2)tot/Btot) over all bins: " << sqrt(TOTAL_S2OB) << endl;
-	out << endl;	
+	out << endl;
 	out << "S**2/B total over the chosen categories : " << max_total << "  , S/sqrt(B) =  " << sqrt(max_total) << endl;
 	out << endl;
 	out << "borders of categories : ";
@@ -590,13 +590,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
 	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s.pdf",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
 	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s.png",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
-	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s.pdf",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));	
-	
-	
+	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s.pdf",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
+
+
         gPad->Update();
         frame2->SetMaximum(100);
         c1->SetLogy(0);
-                
+
 	// c1->Print(s.Format("%s/%s_%s_xMin-%s_Nbins-%s_nonLog.png",outDir.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),Nbins_str.Data()));
 	c1->Print(s.Format("%s/%s%s_%s_xMin-%s_binWidth-%s_nonLog.png",outDir.Data(),year.Data(),scaleOpt.Data(),outname.Data(),xmin_str.Data(),binWidth_str.Data()));
 
@@ -606,11 +606,11 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	double* sign_scan = &significance_scans[0];
 	int counter = significance_scans.size();
 
-	// TGraph *gr = new TGraph(counter,cat_scan,sign_scan); // significance plot 
+	// TGraph *gr = new TGraph(counter,cat_scan,sign_scan); // significance plot
 
 	// cout << sign_scan << endl;
 	// cout << "ymin: " << *std::max_element(sign_scan,sign_scan+counter) << endl;
-	// old end of ymin: * 0.01 
+	// old end of ymin: * 0.01
 	ymin = *std::max_element(sign_scan,sign_scan+counter) * 0.01;
 	ymax = *std::max_element(sign_scan,sign_scan+counter) * 1.1;
 	// gr->SetMarkerStyle(20);
@@ -644,7 +644,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 
 	gStyle->SetOptStat(0000);
 	int bin_i = 0;
-	double sig, bkg = 0.; 
+	double sig, bkg = 0.;
 	double sigOverSqrtb = 0;
 	double maxsigOverSqrtb = -99;
 	TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,int((float(xmax)-float(xmin))/float(bin_width)),float(xmin),float(xmax));
@@ -652,19 +652,19 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	// TH1F * Significance_h = new TH1F("Significance_h","S/#sqrt{B} vs. DNN Score " + scaleOpt,Nbins,float(xmin),float(xmax));
 	for(int i = 0; i < (int) hist_S2->GetNbinsX(); i++){
 		bin_i = i + 1; // +1 to skip underflow bin
-		sig = hist_S2->GetBinContent(bin_i);  
+		sig = hist_S2->GetBinContent(bin_i);
 		bkg = hist_B2->GetBinContent(bin_i);
 
 		// if(verbose){
 			// cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
 			// cout << "S : " << sig << endl;
-			// cout << "B : " << bkg << endl;		
+			// cout << "B : " << bkg << endl;
 		// }
 
-		
+
 		if(bkg > 0){
-			sigOverSqrtb = sig / sqrt(bkg);	
-			Significance_h->SetBinContent(bin_i, sigOverSqrtb); 
+			sigOverSqrtb = sig / sqrt(bkg);
+			Significance_h->SetBinContent(bin_i, sigOverSqrtb);
 			if(sigOverSqrtb > maxsigOverSqrtb) maxsigOverSqrtb = sigOverSqrtb;
 			cout << "evalDNN bin x min: " << Significance_h->GetBinLowEdge(bin_i) << endl;
 			cout << "S : " << sig << endl;
@@ -673,7 +673,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		}
 		else{
 			cout << "for DNN val: " << Significance_h->GetBinLowEdge(bin_i) << ", Background Yield < 0: " << bkg << endl;
-			Significance_h->SetBinContent(bin_i, 0); 
+			Significance_h->SetBinContent(bin_i, 0);
 
 		}
 	}
@@ -699,20 +699,20 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	ofstream catSigOut;
 	// catSigOut.open(s.Format("%s%s_%s_xmin-%s_Nbins-%s_CatSignificances.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),Nbins_str.Data()));
 	catSigOut.open(s.Format("%s%s_%s_xmin-%s_binWidth-%s_CatSignificances.txt",outDir.Data(),outname.Data(),scaleOpt.Data(),xmin_str.Data(),binWidth_str.Data()));
-	double cat_min, cat_max = 0.; 	
+	double cat_min, cat_max = 0.;
 	double Cat_significance = 0.;
 	int min_bin, max_bin = 0;
-	double S_total, B_total = 0; 
+	double S_total, B_total = 0;
 	// int numBins = int((float(xmax)-float(xmin))/float(bin_width));
 	// int num
 
 
 	for(int i = 0; i < NCATS; i++){
-		cout << "---" << endl; 
+		cout << "---" << endl;
 		// cat_min = borders[i];
 		// cat_max = borders[i+1];
 
-		//assuming xcutoff 0 for now 
+		//assuming xcutoff 0 for now
 		if(i == 0){
 			cat_min = xcutoff;
 			cat_max = borders[i+1];
@@ -732,27 +732,27 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		// cout << "(cat_min - xmin) / bin_width: " << (cat_min - xmin) / bin_width << endl;
 
 		// cout << "cat_max - xmin: " << (cat_max - xmin) << endl;
-		// cout << "(cat_max - xmin) / bin_width: " << (cat_max - xmin) / bin_width << endl;		
+		// cout << "(cat_max - xmin) / bin_width: " << (cat_max - xmin) / bin_width << endl;
 
 		cout << "bin_width = " << bin_width << endl;
 
 		min_bin = (float(cat_min) - float(xmin)) / float(bin_width) + 1;
-		max_bin = (float(cat_max) - float(xmin)) / float(bin_width);		
+		max_bin = (float(cat_max) - float(xmin)) / float(bin_width);
 
 		cout << "min_bin : " << min_bin << endl;
 		cout << "max_bin : " << max_bin << endl;
 
 		// cout << "min_bin low edge: " << hist_S2->GetBinLowEdge(int(min_bin)) << endl;
-		// cout << "max_bin low edge: " << hist_B2->GetBinLowEdge(int(max_bin)) << endl;		
+		// cout << "max_bin low edge: " << hist_B2->GetBinLowEdge(int(max_bin)) << endl;
 
 		// Cat_significance = Significance_h->Integral(min_bin,max_bin); // significance for all signal region events in this category
 		S_total = hist_S2->Integral(min_bin, max_bin);
 		B_total = hist_B2->Integral(min_bin, max_bin);
 
-		cout << "S: " << S_total << endl; 
-		cout << "B: " << B_total << endl; 
+		cout << "S: " << S_total << endl;
+		cout << "B: " << B_total << endl;
 
-		Cat_significance = S_total / sqrt(B_total); 
+		Cat_significance = S_total / sqrt(B_total);
 		cout << "Significance in the signal region events: " << Cat_significance << endl;
 		catSigOut << "Cat: [" << cat_min << ", " << cat_max << "]: " << Cat_significance << "\n";
 		cout << "---" << endl;
@@ -772,7 +772,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	sig_c->Update(); // https://root-forum.cern.ch/t/drawing-tline-over-a-histogram/10279/3
 	canvas_ymin = sig_c->GetUymin();
 	canvas_ymax = sig_c->GetUymax();
-	// double cat_min, cat_max = 0.; 	
+	// double cat_min, cat_max = 0.;
 	for (int i = 0; i < NCATS-1; i++){
 		CatLines[i] = new TLine(borders[i+1],canvas_ymin,borders[i+1],canvas_ymax);
 		CatLines[i]->SetLineStyle(9);
@@ -794,7 +794,7 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 	gPad->Update();
 	TLine* CatLinesLog[10];
 	canvas_ymin = sig_c->GetUymin();
-	canvas_ymax = sig_c->GetUymax();	
+	canvas_ymax = sig_c->GetUymax();
 	for (int i = 0; i < NCATS-1; i++){
 		Double_t lm = gPad->GetLeftMargin();
 		Double_t rm = 1.-gPad->GetRightMargin();
@@ -806,13 +806,13 @@ void optimize_cats(const int NCATS, bool scaleBkgSideband, bool verbose, double 
 		CatLinesLog[i]->SetLineColor(1);
 		CatLinesLog[i]->SetLineWidth(3);
 		CatLinesLog[i]->DrawLineNDC(xndc,bm,xndc,tm);
-	}	
+	}
 
 	// Shaded_Area->SetBinContent(1,100);
 	// Shaded_Area->Draw("hist same");
 	// sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_Nbins-" + Nbins_str + "_log.png");
 	// sig_c_log->SaveAs(outDir + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_Nbins-" + Nbins_str + "_log.pdf");
 	sig_c_log->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.png");
-	sig_c_log->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.pdf");	
-	
+	sig_c_log->SaveAs(outDir + year.Data() + "Significance_" + scaleOpt + "_" + ext.Data() + "_xmin-" + xmin_str + "_binWidth-" + binWidth_str + "_log.pdf");
+
 }
