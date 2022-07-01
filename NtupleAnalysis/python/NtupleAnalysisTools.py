@@ -331,7 +331,7 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         treeName += "_13TeV_HHWWggTag_0"
         # treeName += "_13TeV_HHWWggTag_0_v1"
         MC_Category = GetMCCategory(mcEnd)
-        print("MC_Category:",MC_Category)
+        #print("MC_Category:",MC_Category)
         v1_mcs = ["VBFH","ttHJetToGG","ggH","VH", "H$\gamma\gamma$", "H\\rightarrow\gamma\gamma"]   
         if(MC_Category in v1_mcs):
             treeName += "_v1"
@@ -728,9 +728,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     for iv,v in enumerate(Variables):
         # legend = TLegend(0.55,0.65,0.89,0.89)
         if(v == "evalDNN_HH"):
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.65, 0.8 # xmin, ymin, xmax, ymax 
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.625, 0.55, 0.865 # xmin, ymin, xmax, ymax 
         else:
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.575, 0.875, 0.875 # xmin, ymin, xmax, ymax 
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.6, 0.875, 0.865 # xmin, ymin, xmax, ymax 
         legend = TLegend(leg_xmin, leg_ymin, leg_xmax, leg_ymax)
         legend.SetNColumns(NLegend_Columns)
         legend.SetTextSize(0.025)
