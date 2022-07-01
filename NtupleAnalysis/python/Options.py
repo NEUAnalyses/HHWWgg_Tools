@@ -1,6 +1,6 @@
-# The purpose of this module is to define options based on user input for running NtupleAnalysis modules 
+# The purpose of this module is to define options based on user input for running NtupleAnalysis modules
 
-import argparse 
+import argparse
 
 def GetOptions():
     parser = argparse.ArgumentParser()
@@ -10,7 +10,7 @@ def GetOptions():
     parser.add_argument("--DataMC", action="store_true", default=False, help="Produce Data / MC Comparisons", required=False)
     parser.add_argument("--GenReco", action="store_true", default=False, help="Perform Gen Reco analysis", required=False)
 
-    ##-- Efficiency Plots 
+    ##-- Efficiency Plots
     parser.add_argument("--ratio", action="store_true", default=False, help="Efficiency Ratio", required=False)
     parser.add_argument('--folders', type=str, default="", help="Comma separated list of ntuple folders", required=False)
     parser.add_argument('--campaigns', type=str, default="", help="Comma separated list of campaigns", required=False)
@@ -27,7 +27,7 @@ def GetOptions():
     parser.add_argument('--note', type=str, default="", help="Note for titles and file path", required=False)
     parser.add_argument('--folder', type=str, default="", help="Input folder with hadded files", required=False)
 
-    ##-- Data / MC comparison 
+    ##-- Data / MC comparison
     parser.add_argument('--dataFile', type=str, default="", help="Path to data file", required=False)
     parser.add_argument('--signalFile', type=str, default="", help="Path to signal file", required=False)
     parser.add_argument('--bkgDirec', type=str, default="", help="Directory containing backgrounds", required=False)
@@ -40,7 +40,7 @@ def GetOptions():
     parser.add_argument('--Tags', type=str, default="", help="Comma separated list of tags to run. Ex: HHWWggTag_0,HHWWggTag_1,HHWWggTag_2 or HHWWggTag_2 or HHWWggTag_2,combined", required=False)
     parser.add_argument("--noQCD", action="store_true", default=False, help="Turn on to skip QCD", required=False)
     parser.add_argument("--SidebandScale", action="store_true", default=False, help="Scale all MC to Data sidebands", required=False)
-    parser.add_argument('--removeBackgroundYields', action="store_true", default=False, help="In yeilds output, only show last few summary rows", required=False) ##-- ideally you should just output both 
+    parser.add_argument('--removeBackgroundYields', action="store_true", default=False, help="In yeilds output, only show last few summary rows", required=False) ##-- ideally you should just output both
     parser.add_argument('--prefix', type=str, default="", help="Tree prefix. Example: tagsDumper/trees/", required=False)
     parser.add_argument("--SB", action="store_true", default=False, help="Plot and analyze signal sidebands", required=False)
     parser.add_argument("--SR", action="store_true", default=False, help="Plot and analyze signal region", required=False)
@@ -54,4 +54,4 @@ def GetOptions():
 
     args = parser.parse_args()
 
-    return args 
+    return args

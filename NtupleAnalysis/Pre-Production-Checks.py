@@ -1,7 +1,7 @@
 from ROOT import *
 import argparse
 from array import array
-import os 
+import os
 
 parser = argparse.ArgumentParser()
 parser.add_argument("-p","--plot", action="store_true", default=False, help="Plot", required=False)
@@ -14,15 +14,15 @@ def Draw_Histogram(h_,opt_,fn_):
     c_tmp = TCanvas('c_tmp','c_tmp',1300,800)
     h_.Draw(opt_)
     c_tmp.SaveAs(fn_)
-    return 
+    return
 
 def MakeEffPlot(tree_, Note_,ol_, Note2_, SL_channel):
     print"Computing efficiency for: %s"%(Note_)
-    if(Note_=="SL"): 
-        print"Semi-Leptonic channel: ",SL_channel    
+    if(Note_=="SL"):
+        print"Semi-Leptonic channel: ",SL_channel
     # print"tree:",tree_
     n = 100
-    x, y = array( 'd' ), array( 'd' )    
+    x, y = array( 'd' ), array( 'd' )
     cuts = [i*0.01 for i in range(1,101)]
     N_tot_Entries = tree_.GetEntries()
 
@@ -30,18 +30,18 @@ def MakeEffPlot(tree_, Note_,ol_, Note2_, SL_channel):
     LUMI = "41.5"
     SIGNAL_SCALE = "1"
     CHANNEL_SELECTION = "1"
-    if(Note_=="SL"): 
-        if(SL_channel=="Electron"): 
-            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)" ##-- add lepton flavor selection 
+    if(Note_=="SL"):
+        if(SL_channel=="Electron"):
+            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)" ##-- add lepton flavor selection
             CHANNEL_SELECTION = "(N_goodElectrons==1)"
-        elif(SL_channel=="Muon"): 
+        elif(SL_channel=="Muon"):
             SIGNAL_SCALE = "(31.049*0.00097)*(0.441)"
             CHANNEL_SELECTION = "(N_goodMuons==1)"
-        
+
     if(Note_=="FH"): SIGNAL_SCALE = "(31.049*0.00097)*(0.454)"
     if(Note_=="FL"): SIGNAL_SCALE = "(31.049*0.00097)*(0.107)"
 
-    ##-- Compute integral with all events once for denominator 
+    ##-- Compute integral with all events once for denominator
     h_tmp_all = TH1F("h_tmp_all","h_tmp_all",20,115,135)
     tree_.Draw("CMS_hgg_mass >> h_tmp_all","1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION))
     total_weighed_entries = h_tmp_all.Integral()
@@ -51,20 +51,20 @@ def MakeEffPlot(tree_, Note_,ol_, Note2_, SL_channel):
         x.append(cut)
         condition = ""
         maxJets = 5
-        h_tmp = TH1F("h_tmp","h_tmp",20,115,135) ##-- signal region 
+        h_tmp = TH1F("h_tmp","h_tmp",20,115,135) ##-- signal region
         for jet_i in range(0,maxJets):
             scoreFormat = "goodJets_%s_bDiscriminator_mini_pfDeepFlavourJetTags_prob"%(jet_i)
             variable = "(%s%s + %s%s + %s%s < %s)"%(scoreFormat,"b",scoreFormat,"bb",scoreFormat,"lepb",cut)
             condition += variable
-            if jet_i == maxJets-1: break 
+            if jet_i == maxJets-1: break
             else: condition += " && "
-        
+
         tree_.Draw("CMS_hgg_mass >> h_tmp","(%s)*weight*(%s)*(%s)*(%s)*(%s)"%(condition,LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION))
         tmp_integral = h_tmp.Integral()
         N_weighted_entries_pass = tmp_integral
         eff = float(N_weighted_entries_pass) / float(total_weighed_entries)
         y.append(eff)
-        del h_tmp 
+        del h_tmp
 
     eff_g = TGraph(n,x,y)
     eff_g.SetMarkerStyle( 21 )
@@ -75,8 +75,8 @@ def MakeEffPlot(tree_, Note_,ol_, Note2_, SL_channel):
         outputName = ol_ + 'EffVsBthreshold_%s_%s_%s.png'%(Note_,Note2_,SL_channel)
     else:
         outputName = ol_ + 'EffVsBthreshold_%s_%s.png'%(Note_,Note2_)
-    Draw_Histogram(eff_g,'ACP',outputName)   
-    return eff_g    
+    Draw_Histogram(eff_g,'ACP',outputName)
+    return eff_g
 
 def PlotEffVsEffsTogether(g1, g2, g3, ol_):
     c = TCanvas("c","c",800,600)
@@ -84,7 +84,7 @@ def PlotEffVsEffsTogether(g1, g2, g3, ol_):
     g1.SetLineColor(kBlue)
     g1.SetLineWidth(2)
     g1.SetMarkerColor(kBlue)
-    g1.SetMarkerStyle( 21 ) 
+    g1.SetMarkerStyle( 21 )
 
     g1.SetTitle( 'Sig Eff. vs. ttH Eff' )
     g1.GetXaxis().SetTitle( 'ttH efficiency' )
@@ -93,7 +93,7 @@ def PlotEffVsEffsTogether(g1, g2, g3, ol_):
     g2.SetLineColor(kGreen+2)
     g2.SetLineWidth(2)
     g2.SetMarkerColor(kGreen+2)
-    g2.SetMarkerStyle( 21 )     
+    g2.SetMarkerStyle( 21 )
 
     g1.Draw("ACP")
     g2.Draw("CP same")
@@ -108,7 +108,7 @@ def PlotEffVsEff(sig_g, ttH_g,ol_,Note_):
     nEntries = sig_g.GetN()
     print"sig_g:",sig_g
     print"sig_g.GetPointX(0):",sig_g.GetPointX(0)
-    sig_eff_vals_, ttH_eff_vals_ = [], [] 
+    sig_eff_vals_, ttH_eff_vals_ = [], []
     for i in range(nEntries):
         bThresh = sig_g.GetPointX(i)
         sigPoint = sig_g.GetPointY(i)
@@ -136,7 +136,7 @@ def PlotEffVsEff(sig_g, ttH_g,ol_,Note_):
     effVseff_h.GetXaxis().SetTitle( 'ttH efficiency' )
     effVseff_h.GetYaxis().SetTitle( 'signal efficiency' )
     outputName = ol_ + 'sigEffvsttHeff_%s.png'%(Note_)
-    Draw_Histogram(effVseff_h,'ACP',outputName)   
+    Draw_Histogram(effVseff_h,'ACP',outputName)
     return effVseff_h
 
 def PlotAllEffs(signal_SL_g_, signal_FH_g_, signal_FL_g_, ol_, Note_, Note2_, titles_):
@@ -151,19 +151,19 @@ def PlotAllEffs(signal_SL_g_, signal_FH_g_, signal_FL_g_, ol_, Note_, Note2_, ti
     signal_SL_g_.SetLineColor(kBlue)
     signal_SL_g_.SetLineWidth(2)
     signal_SL_g_.SetMarkerColor(kBlue)
-    signal_SL_g_.SetMarkerStyle( 20 ) 
+    signal_SL_g_.SetMarkerStyle( 20 )
 
     signal_FH_g_.SetLineColor(kGreen+2)
     signal_FH_g_.SetLineWidth(2)
     signal_FH_g_.SetMarkerColor(kGreen+2)
-    signal_FH_g_.SetMarkerStyle( 20 )  
+    signal_FH_g_.SetMarkerStyle( 20 )
 
     signal_FL_g_.SetLineColor(kPink+2)
     signal_FL_g_.SetLineWidth(2)
     signal_FL_g_.SetMarkerColor(kPink+2)
-    signal_FL_g_.SetMarkerStyle( 20 )      
+    signal_FL_g_.SetMarkerStyle( 20 )
 
-    ##-- Lines at 3 working points    
+    ##-- Lines at 3 working points
     signal_SL_g_.Draw("ACP")
     signal_FH_g_.Draw("CP same")
     signal_FL_g_.Draw("CP same")
@@ -188,42 +188,42 @@ def PlotAllEffs(signal_SL_g_, signal_FH_g_, signal_FL_g_, ol_, Note_, Note2_, ti
     Line_Tight.Draw("same")
     c.SetTickx(1)
     c.SetTicky(1)
-    c.SaveAs("%s%s%sEffsTogether.png"%(ol_,Note_,Note2_)) 
+    c.SaveAs("%s%s%sEffsTogether.png"%(ol_,Note_,Note2_))
 
 def SetGrStyles(gr_, signal_, type_):
     gr_.SetLineWidth(2)
     gr_.SetMarkerSize(0.5)
-    
+
     if(signal_ == "SL"):
         if(type_ == "prev"):
             gr_.SetLineColor(kBlue)
-            gr_.SetMarkerColor(kBlue)            
+            gr_.SetMarkerColor(kBlue)
         elif(type_ == "upd"):
             gr_.SetLineColor(kBlue-2)
-            gr_.SetMarkerColor(kBlue-2)            
+            gr_.SetMarkerColor(kBlue-2)
     elif(signal_ == "FH"):
         if(type_ == "prev"):
             gr_.SetLineColor(kGreen+2)
-            gr_.SetMarkerColor(kGreen+2)            
+            gr_.SetMarkerColor(kGreen+2)
         elif(type_ == "upd"):
             gr_.SetLineColor(kGreen-2)
-            gr_.SetMarkerColor(kGreen-2)          
+            gr_.SetMarkerColor(kGreen-2)
     elif(signal_ == "FL"):
         if(type_ == "prev"):
             gr_.SetLineColor(kPink+2)
-            gr_.SetMarkerColor(kPink+2)            
+            gr_.SetMarkerColor(kPink+2)
         elif(type_ == "upd"):
             gr_.SetLineColor(kPink-2)
-            gr_.SetMarkerColor(kPink-2)          
+            gr_.SetMarkerColor(kPink-2)
 
     if(type_ == "prev"):
-        gr_.SetMarkerStyle( 20 )       
-        gr_.SetLineStyle(2)  
+        gr_.SetMarkerStyle( 20 )
+        gr_.SetLineStyle(2)
     elif(type_ == "upd"):
         gr_.SetMarkerStyle( 21 )
-        gr_.SetLineStyle(1)  
+        gr_.SetLineStyle(1)
 
-    return gr_ 
+    return gr_
 
 # def PlotTwoVars(signal_SL_g_, signal_FH_g_, signal_FL_g_, ol_, Note_, Note2_, titles_):
 def PlotTwoVars(signal_g_one, signal_g_two, signal_tag, ol_, Note_):
@@ -240,14 +240,14 @@ def PlotTwoVars(signal_g_one, signal_g_two, signal_tag, ol_, Note_):
     signal_g_one.GetYaxis().SetRangeUser(0,1)
 
     SetGrStyles(signal_g_two, signal_tag, "upd")
-  
+
     signal_g_one.Draw("ACP")
     signal_g_two.Draw("CP same")
 
     if(signal_tag == "SL"):
         SL_channel = Note_.split('-')[-1]
         legendText = "%s %s"%(signal_tag, SL_channel)
-    else: 
+    else:
         legendText = "%s"%(signal_tag)
 
     l = TLegend(0.35,0.35,0.6,0.6)
@@ -269,15 +269,15 @@ def PlotTwoVars(signal_g_one, signal_g_two, signal_tag, ol_, Note_):
     Line_Tight.Draw("same")
     c.SetTickx(1)
     c.SetTicky(1)
-    c.SaveAs("%s%s%sEffsTogether.png"%(ol_,signal_tag,Note_))            
+    c.SaveAs("%s%s%sEffsTogether.png"%(ol_,signal_tag,Note_))
 
 def ComputeIntegralRatio(signal_tree, ttH_tree, channel_,ol_,SL_channel, IncludeSFs, FL_channel):
     print"Computing signal / ttH integral in the signal region for %s"%(channel_)
-    if(channel_=="SL"): 
+    if(channel_=="SL"):
         print"Semi-Leptonic channel: ",SL_channel
     # n = 100
     n = 100 ##-- because ratio in 0th bin might be inf.
-    x, y = array( 'd' ), array( 'd' )    
+    x, y = array( 'd' ), array( 'd' )
     # cuts = [i*0.01 for i in range(0,100)]
     cuts = [i*0.01 for i in range(1,101)]
     # N_tot_Entries = tree_.GetEntries()
@@ -285,29 +285,29 @@ def ComputeIntegralRatio(signal_tree, ttH_tree, channel_,ol_,SL_channel, Include
     LUMI = "41.5"
     SIGNAL_SCALE = "1"
     CHANNEL_SELECTION = "1"
-    if(channel_=="SL"): 
-        if(SL_channel=="Electron"): 
-            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)" ##-- add lepton flavor selection 
+    if(channel_=="SL"):
+        if(SL_channel=="Electron"):
+            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)" ##-- add lepton flavor selection
             CHANNEL_SELECTION = "(N_goodElectrons==1)"
-        elif(SL_channel=="Muon"): 
-            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)*(N_goodMuons==1)"    
+        elif(SL_channel=="Muon"):
+            SIGNAL_SCALE = "(31.049*0.00097)*(0.441)*(N_goodMuons==1)"
             CHANNEL_SELECTION = "(N_goodMuons==1)"
     if(channel_=="FH"): SIGNAL_SCALE = "(31.049*0.00097)*(0.454)"
-    if(channel_=="FL"): 
+    if(channel_=="FL"):
         SIGNAL_SCALE = "(31.049*0.00097)*(0.107)"
         print"****FL_channel = ",FL_channel
         if(FL_channel == "ee"): CHANNEL_SELECTION = "(FL_Lep_Flavor==0)"
         elif(FL_channel == "mumu"): CHANNEL_SELECTION = "(FL_Lep_Flavor==1)"
         elif(FL_channel == "emu"): CHANNEL_SELECTION = "(FL_Lep_Flavor==2)"
         elif(FL_channel == "mue"): CHANNEL_SELECTION = "(FL_Lep_Flavor==3)"
-        else: CHANNEL_SELECTION = 1 
+        else: CHANNEL_SELECTION = 1
 
     SF_SELECTION = "1"
-    if(not IncludeSFs): 
+    if(not IncludeSFs):
         print"----------Dividing OUT Scale Factors-----------------"
         SF_SELECTION = "(1/centralObjectWeight)"
 
-    ##-- Compute integral with all events once for denominator 
+    ##-- Compute integral with all events once for denominator
     h_tmp_Signal_all = TH1F("h_tmp_Signal_all","h_tmp_Signal_all",20,115,135)
     h_tmp_ttH_all = TH1F("h_tmp_ttH_all","h_tmp_ttH_all",20,115,135)
     signal_tree.Draw("CMS_hgg_mass >> h_tmp_Signal_all","1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION))
@@ -319,20 +319,20 @@ def ComputeIntegralRatio(signal_tree, ttH_tree, channel_,ol_,SL_channel, Include
     print"Ratio in Signal Region no cut:",float(totalSignal) / float(totalttH)
 
     for icut,cut in enumerate(cuts):
-        # print"icut: ",icut 
+        # print"icut: ",icut
         x.append(cut)
-        # print"cut value btag < :",cut 
+        # print"cut value btag < :",cut
         condition = ""
         maxJets = 5
-        h_tmp = TH1F("h_tmp","h_tmp",20,115,135) ##-- signal region 
-        h_tmp_ttH = TH1F("h_tmp_ttH","h_tmp_ttH",20,115,135) ##-- ttH in signal region 
+        h_tmp = TH1F("h_tmp","h_tmp",20,115,135) ##-- signal region
+        h_tmp_ttH = TH1F("h_tmp_ttH","h_tmp_ttH",20,115,135) ##-- ttH in signal region
         for jet_i in range(0,maxJets):
             scoreFormat = "goodJets_%s_bDiscriminator_mini_pfDeepFlavourJetTags_prob"%(jet_i)
             variable = "(%s%s + %s%s + %s%s < %s)"%(scoreFormat,"b",scoreFormat,"bb",scoreFormat,"lepb",cut)
             condition += variable
-            if jet_i == maxJets-1: break 
+            if jet_i == maxJets-1: break
             else: condition += " && "
-        # print "condition = ",condition 
+        # print "condition = ",condition
 
         signal_tree.Draw("CMS_hgg_mass >> h_tmp","(%s)*weight*(%s)*(%s)*(%s)*(%s)"%(condition,LUMI,SIGNAL_SCALE,CHANNEL_SELECTION,SF_SELECTION))
         ttH_tree.Draw("CMS_hgg_mass >> h_tmp_ttH","(%s)*weight*(%s)*(%s)*(%s)"%(condition,LUMI,CHANNEL_SELECTION,SF_SELECTION))
@@ -344,7 +344,7 @@ def ComputeIntegralRatio(signal_tree, ttH_tree, channel_,ol_,SL_channel, Include
         # N_weighted_entries_pass = tmp_integral
         # eff = float(N_weighted_entries_pass) / float(total_weighed_entries)
         # y.append(eff)
-        del h_tmp 
+        del h_tmp
         del h_tmp_ttH
 
     sigTottHRatio_g = TGraph(n,x,y)
@@ -352,15 +352,15 @@ def ComputeIntegralRatio(signal_tree, ttH_tree, channel_,ol_,SL_channel, Include
     sigTottHRatio_g.SetTitle( '%s Signal integral / ttH integral in signal region'%(channel_) )
     sigTottHRatio_g.GetXaxis().SetTitle( 'b Score Threshold' )
     sigTottHRatio_g.GetYaxis().SetTitle( '%s / ttH'%(channel_) )
-    
+
     if(channel_=="SL"):
        outputName = ol_ + 'SigOverttHVsBthreshold_%s_%s.png'%(channel_,SL_channel)
     elif(channel_=="FL"):
         outputName = ol_ + 'SigOverttHVsBthreshold_%s_%s.png'%(channel_,FL_channel)
     else:
-        outputName = ol_ + 'SigOverttHVsBthreshold_%s.png'%(channel_) 
-    Draw_Histogram(sigTottHRatio_g,'ACP',outputName)   
-    return sigTottHRatio_g        
+        outputName = ol_ + 'SigOverttHVsBthreshold_%s.png'%(channel_)
+    Draw_Histogram(sigTottHRatio_g,'ACP',outputName)
+    return sigTottHRatio_g
 
 def CombineRatioGraphs(SLTottHRatio_g_, FHTottHRatio_g_, FLTottHRatio_g_, ol_):
     c = TCanvas("c","c",800,600)
@@ -376,19 +376,19 @@ def CombineRatioGraphs(SLTottHRatio_g_, FHTottHRatio_g_, FLTottHRatio_g_, ol_):
     SLTottHRatio_g_.SetLineColor(kBlue)
     SLTottHRatio_g_.SetLineWidth(2)
     SLTottHRatio_g_.SetMarkerColor(kBlue)
-    SLTottHRatio_g_.SetMarkerStyle( 20 ) 
+    SLTottHRatio_g_.SetMarkerStyle( 20 )
 
     FHTottHRatio_g_.SetLineColor(kGreen+2)
     FHTottHRatio_g_.SetLineWidth(2)
     FHTottHRatio_g_.SetMarkerColor(kGreen+2)
-    FHTottHRatio_g_.SetMarkerStyle( 20 )  
+    FHTottHRatio_g_.SetMarkerStyle( 20 )
 
     FLTottHRatio_g_.SetLineColor(kPink+2)
     FLTottHRatio_g_.SetLineWidth(2)
     FLTottHRatio_g_.SetMarkerColor(kPink+2)
-    FLTottHRatio_g_.SetMarkerStyle( 20 )      
+    FLTottHRatio_g_.SetMarkerStyle( 20 )
 
-    ##-- Lines at 3 working points    
+    ##-- Lines at 3 working points
     SLTottHRatio_g_.Draw("ACP")
     FHTottHRatio_g_.Draw("CP same")
     FLTottHRatio_g_.Draw("CP same")
@@ -414,13 +414,13 @@ def CombineRatioGraphs(SLTottHRatio_g_, FHTottHRatio_g_, FLTottHRatio_g_, ol_):
     c.SetTicky(1)
 
     # c.SetLeftMargin(0.5)
-    c.SaveAs("%s/SigOverttHRatiosTogether.png"%(ol_))    
+    c.SaveAs("%s/SigOverttHRatiosTogether.png"%(ol_))
 
 # def GetTrees(prefix):
-    # #-- LooseElecID_TightMuonIDISO Files 
-    # signal_path_SL = "%sSL_SM2017.root"%(prefix) 
-    # signal_path_FH = "%sFH_SM2017.root"%(prefix) 
-    # signal_path_FL = "%sFL_SM2017.root"%(prefix) 
+    # #-- LooseElecID_TightMuonIDISO Files
+    # signal_path_SL = "%sSL_SM2017.root"%(prefix)
+    # signal_path_FH = "%sFH_SM2017.root"%(prefix)
+    # signal_path_FL = "%sFL_SM2017.root"%(prefix)
     # ttH_path = "%sttHJetToGG_2017.root"%(prefix)
     # signal_file_SL = TFile.Open(signal_path_SL)
     # signal_file_FH = TFile.Open(signal_path_FH)
@@ -445,28 +445,28 @@ def CombineRatioGraphs(SLTottHRatio_g_, FHTottHRatio_g_, FLTottHRatio_g_, ol_):
     # for finalState in ["SL","FH","FL"]:
     #     print"num %s signal entries: "%(finalState)
     #     exec('print eval("%s_tree.GetEntries()")'%(finalState))
-        
+
     #     print"num %s ttH entries: "%(finalState)
     #     exec('print eval("ttH_%s_tree.GetEntries()")'%(finalState))
 
-    # return SL_tree, FH_tree, FL_tree, ttH_SL_tree, ttH_FH_tree, ttH_FL_tree 
+    # return SL_tree, FH_tree, FL_tree, ttH_SL_tree, ttH_FH_tree, ttH_FL_tree
 
 def ComputeEff(Direc_, ttHFile_LETM_, ttHFile_MEMM_):
-    print"Computing Efficiency" 
+    print"Computing Efficiency"
 
     files = [os.path.join(Direc_, file) for file in os.listdir(Direc_)]
     for file in files:
         print"file:",file
         tfile = TFile.Open(file)
-        if("SL" in file): 
+        if("SL" in file):
             channel = "SL"
             treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_13TeV_HHWWggTag_CAT"
             sigCat = treeName[:].replace("CAT","0")
-        elif("FL" in file): 
+        elif("FL" in file):
             channel = "FL"
             treeName = "tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_13TeV_HHWWggTag_CAT"
             sigCat = treeName[:].replace("CAT","2")
-        untaggedCat = treeName[:].replace("CAT","3") 
+        untaggedCat = treeName[:].replace("CAT","3")
         sigTree = tfile.Get(sigCat)
         untaggedTree = tfile.Get(untaggedCat)
 
@@ -478,9 +478,9 @@ def ComputeEff(Direc_, ttHFile_LETM_, ttHFile_MEMM_):
         SIGNAL_SCALE = sigScaleDict[channel]
         PHOTON_CUTS = "( ( (Leading_Photon_pt / CMS_hgg_mass) > 0.33 ) && ( (Subleading_Photon_pt / CMS_hgg_mass) > 0.25 ) )"
         LUMI = "41.5"
-        SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied  
-        # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors 
-        CHANNEL_SELECTION = "(1)" ##-- for each channel in cat 
+        SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied
+        # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors
+        CHANNEL_SELECTION = "(1)" ##-- for each channel in cat
 
         channelDict = {
             "SL" : [["SL_e","(N_goodElectrons==1)"],["SL_mu","(N_goodMuons==1)"]],
@@ -492,29 +492,29 @@ def ComputeEff(Direc_, ttHFile_LETM_, ttHFile_MEMM_):
         ##-- One denominator value for all subchannels, compute first
         h_tmp_sig = TH1F("h_tmp_sig","h_tmp_sig",20,115,135)
         h_tmp_untag = TH1F("h_tmp_untag","h_tmp_untag",20,115,135)
-        sigTree.Draw("CMS_hgg_mass >> h_tmp_sig","1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,SF_SELECTION)) 
-        untaggedTree.Draw("CMS_hgg_mass >> h_tmp_untag","1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,SF_SELECTION)) 
+        sigTree.Draw("CMS_hgg_mass >> h_tmp_sig","1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,SF_SELECTION))
+        untaggedTree.Draw("CMS_hgg_mass >> h_tmp_untag","1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,SF_SELECTION))
         sigTot = h_tmp_sig.Integral()
         untagTot = h_tmp_untag.Integral()
-        totalYield = float(sigTot) + float(untagTot) 
+        totalYield = float(sigTot) + float(untagTot)
         print"totalYield:",totalYield
 
         del h_tmp_sig
-        del h_tmp_untag 
+        del h_tmp_untag
 
         for subchannel in subchannels:
             sc_name, CHANNEL_SELECTION = subchannel[0], subchannel[1]
             print"sc_name:",sc_name
             h_tmp_sig = TH1F("h_tmp_sig","h_tmp_sig",20,115,135)
-            sigTree.Draw("CMS_hgg_mass >> h_tmp_sig","1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION)) 
+            sigTree.Draw("CMS_hgg_mass >> h_tmp_sig","1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION))
             totalSig = h_tmp_sig.Integral()
             # print"totalSig:",totalSig
-            # print"tag Efficiency:", float(totalSig) / float(totalYield) 
+            # print"tag Efficiency:", float(totalSig) / float(totalYield)
 
-            del h_tmp_sig 
+            del h_tmp_sig
 
             if(sc_name == "SL_e" or sc_name == "SL_mu"):
-                ##-- Make ttH comparison 
+                ##-- Make ttH comparison
                 lepVarDict = {
                     "SL_e" : "goodElectrons_0_pt",
                     "SL_mu" : "goodMuons_0_pt"
@@ -534,11 +534,11 @@ def ComputeEff(Direc_, ttHFile_LETM_, ttHFile_MEMM_):
                         ttHSigTree = ttHtfile.Get(ttHtreeName)
                         ttH_lep_pt_h = TH1F("ttH_lep_pt_h","ttH_lep_pt_h",100,0,200)
                         SL_lep_pt_h = TH1F("SL_lep_pt_h","SL_lep_pt_h",100,0,200)
-                        ttHSigTree.Draw("%s >> ttH_lep_pt_h"%(leptonVariable),"1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION)) 
+                        ttHSigTree.Draw("%s >> ttH_lep_pt_h"%(leptonVariable),"1*weight*(%s)*(%s)*(%s)*(%s)"%(LUMI,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION))
                         ttH_lep_pt_h.Print()
                         ttH_lep_pt_h.Scale(1/ttH_lep_pt_h.Integral())
                         ttH_lep_pt_h.SetDirectory(0)
-                        sigTree.Draw("%s >> SL_lep_pt_h"%(leptonVariable),"1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION)) 
+                        sigTree.Draw("%s >> SL_lep_pt_h"%(leptonVariable),"1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,SIGNAL_SCALE,PHOTON_CUTS,CHANNEL_SELECTION,SF_SELECTION))
                         SL_lep_pt_h.Print()
                         SL_lep_pt_h.Scale(1/SL_lep_pt_h.Integral())
                         SL_lep_pt_h.SetDirectory(0)
@@ -557,44 +557,44 @@ def ComputeEff(Direc_, ttHFile_LETM_, ttHFile_MEMM_):
                         l.AddEntry(ttH_lep_pt_h,"ttH","f")
                         l.AddEntry(SL_lep_pt_h,"SL","f")
                         l.SetBorderSize(0)
-                        l.Draw("same")   
-                        c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Lep-ID-ISO/%s-SLTagged-%s-pt.png"%(idType,sc_name))                 
+                        l.Draw("same")
+                        c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Lep-ID-ISO/%s-SLTagged-%s-pt.png"%(idType,sc_name))
 
-    return 
+    return
 
 # def PUJetIDCompare(Data_NoPUJetID_, Data_TightPUJetID_, FH_NoPUJetID_, FH_TightPUJetID_):
 def PUJetIDCompare(Direc_):
-    ##-- Plot Datasidebands, Signal with and without PUJetID 
-    ##-- Put yields on plot 
-    ##-- S / sqrt(B) for each case 
-    ##-- Should also plot N_goodJets for all final state tags, but then don't have signal to compare to 
+    ##-- Plot Datasidebands, Signal with and without PUJetID
+    ##-- Put yields on plot
+    ##-- S / sqrt(B) for each case
+    ##-- Should also plot N_goodJets for all final state tags, but then don't have signal to compare to
     print"PUJetIDCompare"
     Variable = "CMS_hgg_mass"
     # Variable = "N_goodJets"
     Tags = ["0","1","2","3"]
     # Tags = ["1"]
     for Tag in Tags:
-        Data_hists = [] 
-        Signal_hists = []         
+        Data_hists = []
+        Signal_hists = []
         files = [os.path.join(Direc_, file) for file in os.listdir(Direc_)]
         for file in files:
             print"file:",file
             tfile = TFile.Open(file)
-            if("SL" in file): 
+            if("SL" in file):
                 channel = "SL"
                 treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_%s"%(Tag)
-            elif("FH" in file): 
+            elif("FH" in file):
                 channel = "FH"
                 treeName = "tagsDumper/trees/GluGluToHHTo2G4Q_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_%s"%(Tag)
-            elif("FL" in file): 
+            elif("FL" in file):
                 channel = "FL"
-                treeName = "tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_%s"%(Tag)                                
-            elif("Data" in file): 
+                treeName = "tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_%s"%(Tag)
+            elif("Data" in file):
                 channel = "Data"
                 treeName = "tagsDumper/trees/Data_13TeV_HHWWggTag_%s"%(Tag)
             tree = tfile.Get(treeName)
             SIGNAL_REGION_CUT = "(CMS_hgg_mass >= 115 && CMS_hgg_mass <= 135)"
-            DATA_SIDEBANDS_CUT = "(CMS_hgg_mass < 115 || CMS_hgg_mass > 135)"
+            DATA_SIDEBANDS_CUT = "(CMS_hgg_mass < 135 || CMS_hgg_mass > 135)"
             sigScaleDict = {
                 "FL" : ["(31.049*0.00097)*(0.107)",SIGNAL_REGION_CUT],
                 "SL" : ["(31.049*0.00097)*(0.441)",SIGNAL_REGION_CUT],
@@ -607,11 +607,11 @@ def PUJetIDCompare(Direc_):
             # PHOTON_CUTS = "( ( (Leading_Photon_pt / CMS_hgg_mass) > 0.33 ) && ( (Subleading_Photon_pt / CMS_hgg_mass) > 0.25 ) )*(dipho_pt > 160)"
             LUMI = "41.5"
             SF_SELECTION = "(1)"
-            # SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied  
-            # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors 
-            CHANNEL_SELECTION = "(1)" ##-- for each channel in cat     
+            # SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied
+            # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors
+            CHANNEL_SELECTION = "(1)" ##-- for each channel in cat
 
-            ##-- Plot distribution 
+            ##-- Plot distribution
             binDict = {
                 "N_goodJets" : [10,0,10],
                 "CMS_hgg_mass" : [80,100,180]
@@ -621,10 +621,10 @@ def PUJetIDCompare(Direc_):
             nJetsInfo = 10
             # for PUJetIDType in ["None","Loose","Medium","Tight"]:
             for PUJetIDType in ["None","Loose","Medium","Tight"]:
-                Cut = "("  
+                Cut = "("
                 if(PUJetIDType == "None"):
                     PUJETIDCUTS_Info.append(["(1)","None"])
-                    continue 
+                    continue
                 for i in range(0,nJetsInfo):
                     Cut += "(goodJets_%s_Pass%sJetPUID==1) "%(i,PUJetIDType)
                     if(i < nJetsInfo-1): Cut += "+"
@@ -636,7 +636,7 @@ def PUJetIDCompare(Direc_):
                 if(channel == "Data"):
                     LUMI = "(1)"
                     tree.Draw("%s >> h"%(Variable),"1*weight*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,PHOTON_CUTS,REGION_SELECTION,SIGNAL_SCALE,PUJETIDCUT))
-                else: 
+                else:
                     tree.Draw("%s >> h"%(Variable),"1*weight*(%s)*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,PHOTON_CUTS,REGION_SELECTION,SIGNAL_SCALE,PUJETIDCUT,SF_SELECTION))
                 # elif(channel == "FH"):
                     # tree.Draw("%s >> h"%(Variable),"1*weight*(%s)*(%s)*(%s)*(%s)*(%s)*(%s)"%(LUMI,PHOTON_CUTS,REGION_SELECTION,SIGNAL_SCALE,PUJETIDCUT,SF_SELECTION))
@@ -648,13 +648,13 @@ def PUJetIDCompare(Direc_):
                     Signal_hists.append([h, "%s"%(PUJetIDType)])
 
         print"Data_hists:",Data_hists
-        print"Signal_hists:",Signal_hists 
+        print"Signal_hists:",Signal_hists
 
         data_c = TCanvas("data_c","data_c",800,600)
         data_l = TLegend(0.6,0.6,0.85,0.85)
         gStyle.SetOptStat(0)
         for i,dHist_info in enumerate(Data_hists):
-            dHist, plotType = dHist_info[0], dHist_info[1] 
+            dHist, plotType = dHist_info[0], dHist_info[1]
             colorMap = {
                 "None" : "kRed+2",
                 "Loose" : "kGreen+2",
@@ -664,35 +664,35 @@ def PUJetIDCompare(Direc_):
             color = colorMap[plotType]
             # dHist.SetFillColorAlpha(eval(color),0.5)
             dHist.SetFillColor(eval(color))
-            if(Variable == "N_goodJets"): ## -- want to look at change in shape 
+            if(Variable == "N_goodJets"): ## -- want to look at change in shape
                 total = dHist.Integral()
                 if(total != 0 and Tag != "0"):
                     dHist.Scale(1 / total)
-                    dHist.GetYaxis().SetRangeUser(0,0.8)     
+                    dHist.GetYaxis().SetRangeUser(0,0.8)
                 if(Tag == "0"):
-                    dHist.GetYaxis().SetRangeUser(0,3000)                       
-                dHist.GetYaxis().SetTitle("Normalized Entries")    
+                    dHist.GetYaxis().SetRangeUser(0,3000)
+                dHist.GetYaxis().SetTitle("Normalized Entries")
                 dHist.SetFillColorAlpha(eval(color),0)
                 dHist.SetLineColor(eval(color))
                 dHist.SetLineWidth(3)
             data_l.AddEntry(dHist, "%s"%(plotType),"f")
-            if(i==0): 
+            if(i==0):
                 dHist.SetTitle(Variable)
                 dHist.GetXaxis().SetTitle(Variable)
                 dHist.Draw("hist")
-            else: 
+            else:
                 dHist.Draw("hist same")
         data_l.SetBorderSize(0)
-        data_l.Draw("same")  
+        data_l.Draw("same")
         data_c.SetTickx(1)
         data_c.SetTicky(1)
         data_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/PUJetID/Data-%s-HHWWggTag_%s-all.png"%(Variable,Tag))
-        
+
         signal_c = TCanvas("signal_c","signal_c",800,600)
         signal_l = TLegend(0.6,0.6,0.85,0.85)
         gStyle.SetOptStat(0)
         for i,sHist_info in enumerate(Signal_hists):
-            sHist, plotType = sHist_info[0], sHist_info[1]    
+            sHist, plotType = sHist_info[0], sHist_info[1]
             colorMap = {
                 "None" : "kRed+2",
                 "Loose" : "kGreen+2",
@@ -702,28 +702,28 @@ def PUJetIDCompare(Direc_):
             color = colorMap[plotType]
             # sHist.SetFillColorAlpha(eval(color),0.5)
             sHist.SetFillColor(eval(color))
-            if(Variable == "N_goodJets"): ## -- want to look at change in shape 
+            if(Variable == "N_goodJets"): ## -- want to look at change in shape
                 total = sHist.Integral()
                 if(total != 0 and Tag != "0"):
-                    sHist.Scale(1 / total)    
+                    sHist.Scale(1 / total)
                     sHist.GetYaxis().SetRangeUser(0,0.8)
                 if(Tag == "0"):
                     sHist.GetYaxis().SetRangeUser(0,3000)
-                sHist.GetYaxis().SetTitle("Normalized Entries")         
+                sHist.GetYaxis().SetTitle("Normalized Entries")
                 sHist.SetFillColorAlpha(eval(color),0)
                 sHist.SetLineColor(eval(color))
                 sHist.SetLineWidth(3)
             signal_l.AddEntry(sHist, "%s"%(plotType),"f")
-            if(i==0): 
+            if(i==0):
                 sHist.SetTitle(Variable)
-                sHist.GetXaxis().SetTitle(Variable)            
+                sHist.GetXaxis().SetTitle(Variable)
                 sHist.Draw("hist")
-            else: 
+            else:
                 sHist.Draw("hist same")
         signal_l.SetBorderSize(0)
-        signal_l.Draw("same")  
+        signal_l.Draw("same")
         signal_c.SetTickx(1)
-        signal_c.SetTicky(1)    
+        signal_c.SetTicky(1)
         signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/PUJetID/Signal-%s-Channel-%s-HHWWggTag_%s-all.png"%(Variable,channel,Tag))
 
 def PlotBscores(Direc_):
@@ -734,28 +734,28 @@ def PlotBscores(Direc_):
     # Variables = [""]
     # Tags = ["2"]
     # for Tag in Tags:
-    Data_hists = [] 
-    Signal_hists = []         
+    Data_hists = []
+    Signal_hists = []
     files = [os.path.join(Direc_, file) for file in os.listdir(Direc_)]
     for file in files:
         print"file:",file
         tfile = TFile.Open(file)
-        if("SL" in file): 
+        if("SL" in file):
             channel = "SL"
-            treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0"        
-        elif("FH" in file): 
+            treeName = "tagsDumper/trees/GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_0"
+        elif("FH" in file):
             channel = "FH"
             treeName = "tagsDumper/trees/GluGluToHHTo2G4Q_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_1"
         elif("FL" in file):
             channel = "FL"
             # treeName = "tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_13TeV_HHWWggTag_2"
             treeName = "tagsDumper/trees/GluGluToHHTo2G2l2nu_node_cHHH1_TuneCP5_PSWeights_13TeV_powheg_pythia8_13TeV_HHWWggTag_2"
-        # elif("Data" in file): 
+        # elif("Data" in file):
             # channel = "Data"
             # treeName = "tagsDumper/trees/Data_13TeV_HHWWggTag_%s"%(Tag)
         tree = tfile.Get(treeName)
         SIGNAL_REGION_CUT = "(CMS_hgg_mass >= 115 && CMS_hgg_mass <= 135)"
-        DATA_SIDEBANDS_CUT = "(CMS_hgg_mass < 115 || CMS_hgg_mass > 135)"
+        DATA_SIDEBANDS_CUT = "(CMS_hgg_mass < 135 || CMS_hgg_mass > 135)"
         sigScaleDict = {
             "FL" : ["(31.049*0.00097)*(0.107)",SIGNAL_REGION_CUT],
             "SL" : ["(31.049*0.00097)*(0.441)",SIGNAL_REGION_CUT],
@@ -768,11 +768,11 @@ def PlotBscores(Direc_):
         # PHOTON_CUTS = "( ( (Leading_Photon_pt / CMS_hgg_mass) > 0.33 ) && ( (Subleading_Photon_pt / CMS_hgg_mass) > 0.25 ) )*(dipho_pt > 160)"
         LUMI = "41.5"
         SF_SELECTION = "(1)"
-        # SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied  
-        # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors 
-        # CHANNEL_SELECTION = "(1)" ##-- for each channel in cat     
+        # SF_SELECTION = "(1/JetBTagReshapeWeightCentral)" ##-- Remove btag SF if no bVeto applied
+        # SF_SELECTION = "(1/centralObjectWeight)" ##-- No scale factors
+        # CHANNEL_SELECTION = "(1)" ##-- for each channel in cat
 
-        ##-- Plot distribution 
+        ##-- Plot distribution
         binDict = {
             "N_goodJets" : [10,0,10],
             "CMS_hgg_mass" : [80,100,180],
@@ -795,7 +795,7 @@ def PlotBscores(Direc_):
         for jet_i in range(0,nGoodJets):
             if(Variable == "bScores"):
                 jetStr = "goodJets_%s_bDiscriminator_mini_pfDeepFlavourJetTags_prob"%(jet_i)
-                var = "(%sb + %sbb + %slepb)"%(jetStr, jetStr, jetStr)                
+                var = "(%sb + %sbb + %slepb)"%(jetStr, jetStr, jetStr)
             elif(Variable == "PassPUJetID"):
                 var = "goodJets_%s_PassLooseJetPUID"%(jet_i)
 
@@ -815,22 +815,22 @@ def PlotBscores(Direc_):
             h.GetXaxis().SetTitle(plotTitle)
             signal_c = TCanvas("signal_c","signal_c",800,600)
             # signal_l = TLegend(0.6,0.6,0.85,0.85)
-            gStyle.SetOptStat(0) 
+            gStyle.SetOptStat(0)
             h.Draw("hist")
             # signal_l.SetBorderSize(0)
-            # signal_l.Draw("same")  
+            # signal_l.Draw("same")
             signal_c.SetTickx(1)
-            signal_c.SetTicky(1)    
-            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/PUJetID/Signal-%s-HHWWggTag_%s-all.png"%(Variable,Tag))                
-            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Bscores/Signal-%s-HHWWggTag_%s-all.png"%(Variable))                
-            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Bscores/Signal-bScore-Jet_%s-%s-signal.png"%(jet_i,channel))                
-            signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Vars/Signal-%s-Jet_%s-%s-signal.png"%(Variable,jet_i,channel))                
-            del signal_c 
-            # del signal_l 
-            del h           
+            signal_c.SetTicky(1)
+            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/PUJetID/Signal-%s-HHWWggTag_%s-all.png"%(Variable,Tag))
+            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Bscores/Signal-%s-HHWWggTag_%s-all.png"%(Variable))
+            # signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Bscores/Signal-bScore-Jet_%s-%s-signal.png"%(jet_i,channel))
+            signal_c.SaveAs("/eos/user/a/atishelm/www/HHWWgg/Pre-Production-Checks/Jet-Vars/Signal-%s-Jet_%s-%s-signal.png"%(Variable,jet_i,channel))
+            del signal_c
+            # del signal_l
+            del h
 
 if __name__ == '__main__':
-    gROOT.SetBatch(1) # Do not output upon draw statement 
+    gROOT.SetBatch(1) # Do not output upon draw statement
 
     # PlotBscores("/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/NtupleAnalysis/15kSL/")
     PlotBscores("/afs/cern.ch/work/a/atishelm/private/HHWWgg_Tools/NtupleAnalysis/15kFH/")
@@ -843,25 +843,25 @@ if __name__ == '__main__':
     # Direc = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Pre-Production-Checks/hadded/"
     # ttHFile = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Pre-Production-Checks/hadded/"
     # ttHFile_LETM = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Signal_LooseElecID_TightMuonIDISO/hadded/ttHJetToGG_2017.root" ##-- LooseElecTightMuon
-    # ttHFile_MEMM = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Signal_MediumMVAElecID_MediumMuonIDISO/hadded/ttHJetToGG_2017.root" ##-- MedElecMedMuon 
+    # ttHFile_MEMM = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Signal_MediumMVAElecID_MediumMuonIDISO/hadded/ttHJetToGG_2017.root" ##-- MedElecMedMuon
     # ComputeEff(Direc, ttHFile_LETM, ttHFile_MEMM)
     # PUJetID_Direc = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/Pre-Production-Checks/PUJetID/hadded_allIDs/"
     # Data_NoPUJetID = "%s/file.root"
-    # Data_TightPUJetID = "%s/file.root" 
+    # Data_TightPUJetID = "%s/file.root"
     # FH_NoPUJetID = "%s/file.root"
-    # FH_TightPUJetID = "%s/file.root" 
+    # FH_TightPUJetID = "%s/file.root"
     # PUJetIDCompare(PUJetID_Direc)
     # PUJetIDCompare(Data_NoPUJetID, Data_TightPUJetID, FH_NoPUJetID, FH_TightPUJetID)
     # PlotLepPt(Direc)
-    exit(1) 
+    exit(1)
 
     # prev_SL_tree, prev_FH_tree, prev_FL_tree, prev_ttH_SL_tree, prev_ttH_FH_tree, prev_ttH_FL_tree = GetTrees(prefix_prev)
     # upd_SL_tree, upd_FH_tree, upd_FL_tree, upd_ttH_SL_tree, upd_ttH_FH_tree, upd_ttH_FL_tree = GetTrees(prefix_updated)
-        
-    ##-- Get Trees 
-    signal_path_SL = "%sSL_SM2017.root"%(prefix_prev) 
-    signal_path_FH = "%sFH_SM2017.root"%(prefix_prev) 
-    signal_path_FL = "%sFL_SM2017.root"%(prefix_prev) 
+
+    ##-- Get Trees
+    signal_path_SL = "%sSL_SM2017.root"%(prefix_prev)
+    signal_path_FH = "%sFH_SM2017.root"%(prefix_prev)
+    signal_path_FL = "%sFL_SM2017.root"%(prefix_prev)
     ttH_path = "%sttHJetToGG_2017.root"%(prefix_prev)
     signal_file_SL = TFile.Open(signal_path_SL)
     signal_file_FH = TFile.Open(signal_path_FH)
@@ -879,7 +879,7 @@ if __name__ == '__main__':
     for finalState in ["SL","FH","FL"]:
         print"num %s signal entries: "%(finalState)
         exec('print eval("prev_%s_tree.GetEntries()")'%(finalState))
-        
+
         print"num %s ttH entries: "%(finalState)
         exec('print eval("prev_ttH_%s_tree.GetEntries()")'%(finalState))
 
@@ -903,7 +903,7 @@ if __name__ == '__main__':
     # prev_FL_tree.Draw("N_goodElectrons >> prev_goodElectrons_h","1*weight*%s*%s"%(LUMI,SIGNAL_SCALE))
     prev_FL_tree.Draw("N_goodMuons >> prev_goodMuons_h","1")
     prev_goodMuons_h.SetDirectory(0)
-    # upd_FL_tree.Draw("N_goodElectrons >> upd_goodElectrons_h","1*weight*%s*%s"%(LUMI,SIGNAL_SCALE))    
+    # upd_FL_tree.Draw("N_goodElectrons >> upd_goodElectrons_h","1*weight*%s*%s"%(LUMI,SIGNAL_SCALE))
     print"**********Previous IDs******************"
 
     # prev_SLTottHRatio_g_elec = ComputeIntegralRatio(prev_SL_tree,prev_ttH_SL_tree,"SL",ol,"Electron",1) ##-- Final argument: IncludeSFs
@@ -914,10 +914,10 @@ if __name__ == '__main__':
     # prev_FLTottHRatio_g = ComputeIntegralRatio(prev_FL_tree,prev_ttH_FL_tree,"FL",ol,"",1,"emu")
     # prev_FLTottHRatio_g = ComputeIntegralRatio(prev_FL_tree,prev_ttH_FL_tree,"FL",ol,"",1,"mue")
 
-    ##-- Updated IDs and ISOs 
-    signal_path_SL = "%sSL_SM2017.root"%(prefix_updated) 
-    signal_path_FH = "%sFH_SM2017.root"%(prefix_updated) 
-    signal_path_FL = "%sFL_SM2017.root"%(prefix_updated) 
+    ##-- Updated IDs and ISOs
+    signal_path_SL = "%sSL_SM2017.root"%(prefix_updated)
+    signal_path_FH = "%sFH_SM2017.root"%(prefix_updated)
+    signal_path_FL = "%sFL_SM2017.root"%(prefix_updated)
     ttH_path = "%sttHJetToGG_2017.root"%(prefix_updated)
     signal_file_SL = TFile.Open(signal_path_SL)
     signal_file_FH = TFile.Open(signal_path_FH)
@@ -933,7 +933,7 @@ if __name__ == '__main__':
     upd_ttH_FH_tree = ttH_file.Get('tagsDumper/trees/tth_125_13TeV_HHWWggTag_1')
     upd_ttH_FL_tree = ttH_file.Get('tagsDumper/trees/tth_125_13TeV_HHWWggTag_2')
 
-    ##-- Plot N_goodElectrons, N_goodMuons for fully leptonic final state 
+    ##-- Plot N_goodElectrons, N_goodMuons for fully leptonic final state
     upd_goodElectrons_h = TH1F("upd_goodElectrons_h","upd_goodElectrons_h",10,0,10)
     LUMI = "41.5"
     SIGNAL_SCALE = "(31.049*0.00097)*(0.107)"
@@ -951,7 +951,7 @@ if __name__ == '__main__':
     # signal_SL_g_upd_elec = MakeEffPlot(upd_SL_tree,"SL",ol,"Updated","Electron")
     # signal_SL_g_upd_muon = MakeEffPlot(upd_SL_tree,"SL",ol,"Updated","Muon")
     # signal_FH_g_upd = MakeEffPlot(upd_FH_tree,"FH",ol,"Updated","")
-    # signal_FL_g_upd = MakeEffPlot(upd_FL_tree,"FL",ol,"Updated","")    
+    # signal_FL_g_upd = MakeEffPlot(upd_FL_tree,"FL",ol,"Updated","")
     print"**********Updated IDs******************"
 
     # upd_SLTottHRatio_g_elec = ComputeIntegralRatio(upd_SL_tree,upd_ttH_SL_tree,"SL",ol,"Electron",1)
@@ -962,7 +962,7 @@ if __name__ == '__main__':
     upd_FLTottHRatio_g = ComputeIntegralRatio(upd_FL_tree,upd_ttH_FL_tree,"FL",ol,"",1,"emu")
     upd_FLTottHRatio_g = ComputeIntegralRatio(upd_FL_tree,upd_ttH_FL_tree,"FL",ol,"",1,"mue")
 
-    ##-- Plot Together 
+    ##-- Plot Together
     # PlotTwoVars(signal_SL_g_prev_elec, signal_SL_g_upd_elec, "SL", ol, "Eff-Electron")
     # PlotTwoVars(signal_SL_g_prev_muon, signal_SL_g_upd_muon, "SL", ol, "Eff-Muon")
     # PlotTwoVars(signal_FH_g_prev, signal_FH_g_upd, "FH", ol, "Eff")
@@ -973,9 +973,9 @@ if __name__ == '__main__':
     # PlotTwoVars(prev_SLTottHRatio_g_muon, upd_SLTottHRatio_g_muon, "SL", ol, "IntRatio-Muon")
     # exit(1)
     # PlotTwoVars(prev_FHTottHRatio_g, upd_FHTottHRatio_g, "FH", ol, "IntRatio")
-    PlotTwoVars(prev_FLTottHRatio_g, upd_FLTottHRatio_g, "FL", ol, "IntRatio")    
-    exit(1) 
-    ##-- Plot N_goodElectrons, N_goodMuons for fully leptonic final state 
+    PlotTwoVars(prev_FLTottHRatio_g, upd_FLTottHRatio_g, "FL", ol, "IntRatio")
+    exit(1)
+    ##-- Plot N_goodElectrons, N_goodMuons for fully leptonic final state
     # prev_goodElectrons_h = TH1F("prev_goodElectrons_h","prev_goodElectrons_h",10,0,10)
     # upd_goodElectrons_h = TH1F("upd_goodElectrons_h","upd_goodElectrons_h",10,0,10)
     # prev_goodMuons_h = TH1F("prev_goodMuons_h","prev_goodMuons_h",10,0,10)
@@ -1001,7 +1001,7 @@ if __name__ == '__main__':
 
     c_comb.SaveAs("%s/N_goodElectrons_FL.png"%(ol))
 
-    ##-- Good Muons 
+    ##-- Good Muons
     prev_goodMuons_h.SetFillColor(kBlue)
     prev_goodMuons_h.SetTitle("N good Muons")
     upd_goodMuons_h.SetFillColor(kRed+2)
@@ -1016,15 +1016,15 @@ if __name__ == '__main__':
     l.SetBorderSize(0)
     l.Draw("same")
 
-    c_comb.SaveAs("%s/N_goodMuons_FL.png"%(ol))    
+    c_comb.SaveAs("%s/N_goodMuons_FL.png"%(ol))
 
-    ##-- Compute integral with all events once for denominator 
+    ##-- Compute integral with all events once for denominator
     # h_tmp_all = TH1F("h_tmp_all","h_tmp_all",20,115,135)
     # tree_.Draw("CMS_hgg_mass >> h_tmp_all","1*weight*(%s)*(%s)"%(LUMI,SIGNAL_SCALE))
     # total_weighed_entries = h_tmp_all.Integral()
     # print"total_weighed_entries in signal region:",total_weighed_entries
 
-    ##-- Plot Together 
+    ##-- Plot Together
     # c_comb = TCanvas("c_comb","c_comb",800,600)
     # signal_SL_g_upd.SetMarkerStyle(kSquare)
     # signal_SL_g_prev.Draw()
@@ -1048,10 +1048,10 @@ if __name__ == '__main__':
     # SL_effvseff_g = PlotEffVsEff(signal_SL_g,ttHeff_SL_g,ol,"SL")
     # FH_effvseff_g = PlotEffVsEff(signal_FH_g,ttHeff_FH_g,ol,"FH")
     # FL_effvseff_g = PlotEffVsEff(signal_FL_g,ttHeff_FL_g,ol,"FL")
-   
+
     # PlotAllEffs(SL_effvseff_g, FH_effvseff_g, FL_effvseff_g, ol, "both", "effvseff")
-   
+
     # PlotEffVsEff(signal_FL_g,ttHeff_FL_g,ol,"FL")
     # PlotEffVsEffsTogether(SL_effvseff_g, FH_effvseff_g, FL_effvseff_g, ol)
     # PlotEffVsEff(SigEff_g,ttHEff_g,ol)
-   
+

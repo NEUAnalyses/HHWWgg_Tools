@@ -11,14 +11,14 @@ from ROOT import TH2F, TCanvas
 def GetCuts(CutsType):
     cuts, cutNames = [], []
 
-    ##-- Only apply preselections. This means applying no cut because preselection already applied to events in microAODs 
+    ##-- Only apply preselections. This means applying no cut because preselection already applied to events in microAODs
     # if(CutsType == "PreSelections"):
         # cuts = ["1"]
         # cutNames = ["PreSelections"]
 
     if(CutsType == "OneGoodLep"):
         cuts = ["1"]
-        cutNames = ["OneGoodLep"]        
+        cutNames = ["OneGoodLep"]
 
     elif(CutsType == "OneGoodElec"):
         cuts = ["(N_goodElectrons==1)"]
@@ -26,7 +26,7 @@ def GetCuts(CutsType):
 
     elif(CutsType == "OneGoodMuon"):
         cuts = ["(N_goodMuons==1)"]
-        cutNames = ["OneGoodMuon"] 
+        cutNames = ["OneGoodMuon"]
 
     ##-- jets
     # elif(CutsType == "LeadbScores"):
@@ -59,13 +59,13 @@ def GetCuts(CutsType):
 
         cuts = ["( (((%s) + (%s)) == 1) && ((%s) >= 2) && (%s))"%(electronCuts,muonCuts,jetCuts,photonCuts)] # exactly one lepton passing looser selections, at least two jets passing looser selections
         #print"LOOSE cuts:",cuts
-        cutNames = ["Loose"]    
+        cutNames = ["Loose"]
 
     # elif(CutsType == "TrainingSelections"):
-    #     cuts = ["(1)"] # training selections 
-    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 1/3)*((Subleading_Photon_pt/CMS_hgg_mass) > 1/4))"] # training selections 
-    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections 
-    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections 
+    #     cuts = ["(1)"] # training selections
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 1/3)*((Subleading_Photon_pt/CMS_hgg_mass) > 1/4))"] # training selections
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) "] # training selections
+    #     # cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.33)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && (N_goodElectrons + N_goodMuons == 1) && (N_goodJets>=1))"] # training selections
     #     cutNames = ["TrainingSelections"]
 
     # elif(CutsType == "TrainingSelections"):
@@ -77,85 +77,85 @@ def GetCuts(CutsType):
 
     elif(CutsType == "DataModeling"):
         cuts = ["(evalDNN_HH > 0.1)"]
-        cutNames = ["DataModeling"]    
+        cutNames = ["DataModeling"]
 
     elif(CutsType == "DataModelingNoDNNCut"):
         cuts = ["(1.)"]
-        cutNames = ["DataModelingNoDNNCut"]    
+        cutNames = ["DataModelingNoDNNCut"]
 
-    ##-- With/without DNN cut 
+    ##-- With/without DNN cut
     elif(CutsType == "NoSidebandScaleNoDNNCut"):
         cuts = ["(1.)"]
-        cutNames = ["NoSidebandScaleNoDNNCut"]   
+        cutNames = ["NoSidebandScaleNoDNNCut"]
 
     elif(CutsType == "WithSidebandScaleNoDNNCut"):
         cuts = ["(1.)"]
-        cutNames = ["WithSidebandScaleNoDNNCut"]    
+        cutNames = ["WithSidebandScaleNoDNNCut"]
 
     elif(CutsType == "NoSidebandScaleDNNCut"):
         cuts = ["(evalDNN_HH > 0.1)"]
-        cutNames = ["NoSidebandScaleDNNCut"]   
+        cutNames = ["NoSidebandScaleDNNCut"]
 
     elif(CutsType == "WithSidebandScaleDNNCut"):
         cuts = ["(evalDNN_HH > 0.1)"]
-        cutNames = ["WithSidebandScaleDNNCut"]           
+        cutNames = ["WithSidebandScaleDNNCut"]
 
-    ##-- 
+    ##--
 
     elif(CutsType == "KinWeightsNoGlobalScale"):
         cuts = ["(1.)"]
-        cutNames = ["KinWeightsNoGlobalScale"]   
+        cutNames = ["KinWeightsNoGlobalScale"]
 
     elif(CutsType == "KinWeightsWithGlobalScale"):
         cuts = ["(1.)"]
-        cutNames = ["KinWeightsWithGlobalScale"]                                
+        cutNames = ["KinWeightsWithGlobalScale"]
 
     elif(CutsType == "TrainingSelectionsNoDNNCut"):
         cuts = ["(1.)"]
         # cuts = ["((fabs(weight*kinWeight) < 10.))"]
         # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
         # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
-        cutNames = ["TrainingSelectionsNoDNNCut"]  
+        cutNames = ["TrainingSelectionsNoDNNCut"]
 
     elif(CutsType == "TrainingSelectionsNoDNNCutNosidebandscale"):
         cuts = ["(1.)"]
         # cuts = ["((fabs(weight*kinWeight) < 10.))"]
         # cuts = ["(evalDNN > 0.1) && (goodJets_0_pt > 50) && ((Leading_Photon_pt / CMS_hgg_mass) > 0.3)"]
         # cuts = ["(evalDNN > 0.1) && ((Leading_Photon_pt / CMS_hgg_mass) > 0. )"]
-        cutNames = ["TrainingSelectionsNoDNNCutNosidebandscale"]                
+        cutNames = ["TrainingSelectionsNoDNNCutNosidebandscale"]
 
     # elif(CutsType == "WithWJetsTraining"):
-    #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections 
+    #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"] # training selections
     #     cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && goodJets==1 )"]
     #     cutNames = ["WithWJetsTraining"]
 
     elif(CutsType == "WithWJetsTrainingLoose"):
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1)"]
-        cutNames = ["WithWJetsTrainingLoose"] 
+        cutNames = ["WithWJetsTrainingLoose"]
 
     elif(CutsType == "DNNLoose"):
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1)"]
-        cutNames = ["DNNLoose"]    
+        cutNames = ["DNNLoose"]
     elif(CutsType == "DNNLooseCat0"):
         cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets>=1 && evalDNN > 0.9)"]
-        cutNames = ["DNNLooseCat0"]                   
+        cutNames = ["DNNLooseCat0"]
 
     elif(CutsType == "DNNScan"):
         cuts = []
-        cutNames = [] 
+        cutNames = []
         for nGoodJets in [0,1,2,3,4,5]:
             cut = "(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1 && N_goodJets==%s)"%(nGoodJets)
             cutName = "DNNScan-%sGoodJets"%(nGoodJets)
             cuts.append(cut)
             cutNames.append(cutName)
-        
+
 
     # elif(CutsType == "WithWJetsTrainingLoose"):
     #     # cuts = ["(passPhotonSels==1 && passbVeto==1 && ExOneLep==1 && goodJets==1)"]
     #     cuts = ["(((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25) && passbVeto==1 && ExOneLep==1)"]
-    #     cutNames = ["WithWJetsTrainingLoose"]        
+    #     cutNames = ["WithWJetsTrainingLoose"]
 
-    ##-- Apply each analysis selection separately 
+    ##-- Apply each analysis selection separately
     # elif(CutsType == "all"):
         # cuts = ["1", "passPhotonSels == 1", "passbVeto == 1", "ExOneLep == 1", "goodJets == 1"] # preselections, photon sels, bVeto, exactly 1 lepton, at least 2 good jets
         # cutNames = ["PreSelections","PhotonSelections","bVeto","OneLep","TwoGoodJets"]
@@ -165,6 +165,120 @@ def GetCuts(CutsType):
         cuts = ["1"]
         # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
         cutNames = ["4Jet-Sel"]
+
+    elif(CutsType == "4Jet_PhotonSel"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7)"]
+        cutNames = ["4Jet_PhotonSel"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNN0p1"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_WWvsAll>0.1)"]
+        cutNames = ["4Jet_PhotonSel_DNN0p1"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNN0p5"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_WWvsAll>0.5)"]
+        cutNames = ["4Jet_PhotonSel_DNN0p5"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNN0p7"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_WWvsAll>0.7)"]
+        cutNames = ["4Jet_PhotonSel_DNN0p7"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNN0p9"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_WWvsAll>0.9)"]
+        cutNames = ["4Jet_PhotonSel_DNN0p9"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB0p2"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.2)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB0p2"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p1"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.1)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p1"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p3"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.3)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p3"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p5"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.5)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p5"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p7"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.7)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p7"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p8"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.8)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p8"]
+
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p9"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.9)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p9"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WW0p95"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.95)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WW0p95"]
+
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WWCat0"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.974285714286)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WWCat0"]
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WWCat1"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll<0.974285714286 && evalDNN_WWvsAll>0.961428571429)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WWCat1"]
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WWCat2"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll<0.961428571429 && evalDNN_WWvsAll>0.807142857143)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WWCat2"]
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WWCat3"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll<0.807142857143 && evalDNN_WWvsAll>0.1)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WWCat3"]
+    elif(CutsType == "4Jet_PhotonSel_DNNBB_WWCat012"):
+        # cuts = ["1"]
+        # cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
+        cuts = ["( (Leading_Photon_pt/CMS_hgg_mass) > 1/3. && (Subleading_Photon_pt/CMS_hgg_mass) > 1/4. && Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7 && evalDNN_BBvsAll<0.6 && evalDNN_WWvsAll>0.807142857143)"]
+        cutNames = ["4Jet_PhotonSel_DNNBB_WWCat012"]
+
+
+# 0.974285714286
 
     ##-- Apply 4 4-jet
     elif(CutsType == "4Jet-SelPhoPt"):
@@ -207,21 +321,21 @@ def GetCuts(CutsType):
     elif(CutsType == "4Jet-Sel41"):
         # cuts = ["(passPhotonSels==1)"]
         bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
-  
+
         cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)*(mH_105To160==1)*"+bDis]
         cutNames = ["4Jet-Sel41"]
 
     elif(CutsType == "4Jet-Sel31"):
         # cuts = ["(passPhotonSels==1)"]
         bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
-  
+
         cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*(mW1_65To105==1)*"+bDis]
         cutNames = ["4Jet-Sel31"]
 
     elif(CutsType == "4Jet-Sel21"):
         # cuts = ["(passPhotonSels==1)"]
         bDis =      "(goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_0_bDiscriminator_mini_pfDeepFlavourJetTags_problepb < 0.7221)*(goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_1_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_2_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)*(goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_probbb + goodJets_3_bDiscriminator_mini_pfDeepFlavourJetTags_problepb<0.7221)"
-  
+
         cuts = ["((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(passPhotonSels==1)*(HGGCandidate_pt>160)*"+bDis]
         cutNames = ["4Jet-Sel21"]
 
@@ -267,7 +381,7 @@ def GetCuts(CutsType):
 
     elif(CutsType == "finalNoSumpt"):
         cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)"]
-        cutNames = ["finalNoSumpt"] 
+        cutNames = ["finalNoSumpt"]
 
     elif(CutsType == "old_HHWWggTag_0"):
         cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(N_goodElectrons==1)"]
@@ -275,7 +389,7 @@ def GetCuts(CutsType):
 
     elif(CutsType == "old_HHWWggTag_1"):
         cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(goodJets==1)*(N_goodMuons==1)"]
-        cutNames = ["old_HHWWggTag_1"]        
+        cutNames = ["old_HHWWggTag_1"]
 
     ##-- Cut based analysis categories
     elif(CutsType == "HHWWggTag_0"):
@@ -285,7 +399,7 @@ def GetCuts(CutsType):
     elif(CutsType == "HHWWggTag_1"):
         cuts = ["(passPhotonSels==1)*(passbVeto==1)*(ExOneLep==1)*(N_goodMuons==1)*(goodJets==1)*((Leading_Photon_pt/CMS_hgg_mass) > 0.35)*((Subleading_Photon_pt/CMS_hgg_mass) > 0.25)*(Leading_Photon_pt + Subleading_Photon_pt > 100)"]
         cutNames = ["HHWWggTag_1"]
-    
+
     ##-- Apply b Veto, exactly one good lepton, at least two good jets selections (Tight2017 Jet ID may be missing)
     elif(CutsType == "final-noPhoSels"):
         cuts = ["(passbVeto==1)*(ExOneLep==1)*(goodJets==1)"]
@@ -306,7 +420,7 @@ def GetCuts(CutsType):
 ##-- Create table with number of events all backgrounds plus (Blinded) Data for each set cutSet,tag pair
 # def CreateEventsTable(cutName,HHWWggTag,dataNevents,MC_Nevents,MC_names,ol_):
 
-## need a new table for s/sqrt(b) since it's only the signal region and the current table shows MC yields for entire 100->180 region 
+## need a new table for s/sqrt(b) since it's only the signal region and the current table shows MC yields for entire 100->180 region
 # def CreateYieldsTables(cutBatchTag_pairs, dataNevents_list, MC_names, MC_Nevents_lists, MC_Nevents_noweight_lists,
                     #    ol_, Signal_Nevents_list_, removeBackgroundYields_, B_lists_, SidebandSF_):
 
@@ -320,7 +434,7 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
 
     if(region == "SB"):
         yaxisLabels.append("Data / MC")
-        yaxisLabels.append("Data (Blinded)")     
+        yaxisLabels.append("Data (Blinded)")
         yaxisLabels.append("S / sqrt(B)")
         yaxisLabels.append("sqrt(B)")
         yaxisLabels.append("B")
@@ -331,8 +445,8 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
         yaxisLabels.append("sqrt(B)")
         yaxisLabels.append("B")
         yaxisLabels.append("S")
-        dataNevents = 0 
-    else: 
+        dataNevents = 0
+    else:
         print "[ERROR] - In CutsTools.py:CreateYieldsTable"
         print "Don't know what to do for region:",region
         print "Exiting"
@@ -340,8 +454,8 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
 
     numSpecialCats = len(yaxisLabels)
 
-    if(not removeBackgroundYields): 
-        for Bkg_Name in Bkg_Names: 
+    if(not removeBackgroundYields):
+        for Bkg_Name in Bkg_Names:
             yaxisLabels.append(Bkg_Name)
 
     xaxisLabels = []
@@ -350,14 +464,14 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
     nyLabels = len(yaxisLabels)
     nxLabels = len(xaxisLabels)
 
-    ##-- For table 
-    names, Unweighted_vals, Weighted_vals = [], [], []  
+    ##-- For table
+    names, Unweighted_vals, Weighted_vals = [], [], []
 
     # for ylabel in yaxisLabels:
     for MC_name in Bkg_Names:
         names.append(MC_name)
 
-    ##-- Create TeX file for each 
+    ##-- Create TeX file for each
     for doUnweighted in [0,1]:
 
         histTitles = ["Weighted Events", "Unweighted Events"]
@@ -372,7 +486,7 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
 
         h_grid = TH2F('h_grid',histTitle,nxLabels,0,nxLabels,nyLabels,0,nyLabels)
         h_grid.SetStats(0)
-        h_grid.GetXaxis().SetLabelSize(.03)   
+        h_grid.GetXaxis().SetLabelSize(.03)
 
         for yli, yl in enumerate(yaxisLabels):
             h_grid.GetYaxis().SetBinLabel(yli+1,yl)
@@ -382,13 +496,13 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
             B = sum(bkgYields)
             h_grid.GetXaxis().SetBinLabel(ixL+1,xLabel)
 
-            B *= SidebandSF # SidebandSF_ should be 1 by default 
-        
-            if(B <= 0.0): 
-                data_over_MC = -1 
-                SqrtB = -1 
-                sOverSqrtB = -1 
-            else: 
+            B *= SidebandSF # SidebandSF_ should be 1 by default
+
+            if(B <= 0.0):
+                data_over_MC = -1
+                SqrtB = -1
+                sOverSqrtB = -1
+            else:
                 data_over_MC = dataNevents / B
                 SqrtB = B**0.5
                 sOverSqrtB = S / SqrtB
@@ -409,35 +523,35 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
 
             # for ie,numEvents in enumerate(MC_Nevents):
             for ie,numEvents in enumerate(bkgYields):
-                h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats 
+                h_grid.Fill(ixL,ie+numSpecialCats,numEvents) ## num specialCats is non MC background yield cats
                 exec("%s_vals.append(%s)"%(outLabel,numEvents))
 
         sideScaleOpt = ""
         if(SidebandSF != 1): sideScaleOpt = "WithSidebandScale"
         else: sideScaleOpt = "WithoutSidebandScale"
         outNamepng = "%s/%s_%s_YieldsTable_%s_%s.png"%(ol, region, cut, outLabel, sideScaleOpt)
-        outNamepdf = "%s/%s_%s_YieldsTable_%s_%s.pdf"%(ol, region, cut, outLabel, sideScaleOpt)       
+        outNamepdf = "%s/%s_%s_YieldsTable_%s_%s.pdf"%(ol, region, cut, outLabel, sideScaleOpt)
         c_tmp = TCanvas('c_tmp','c_tmp',800,600)
         c_tmp.SetRightMargin(0.15)
         c_tmp.SetLeftMargin(0.23)
         c_tmp.SetBottomMargin(0.15)
         c_tmp.SetTopMargin(0.1)
-        
-        if(not removeBackgroundYields): 
-            h_grid.GetXaxis().SetLabelSize(0.1)        
+
+        if(not removeBackgroundYields):
+            h_grid.GetXaxis().SetLabelSize(0.1)
             h_grid.SetMarkerSize(1.2)
-        else: 
+        else:
             if(region == "SB"): h_grid.GetYaxis().SetLabelSize(0.08)
             else: h_grid.GetYaxis().SetLabelSize(0.1)
-            h_grid.GetXaxis().SetLabelSize(0.1)        
+            h_grid.GetXaxis().SetLabelSize(0.1)
             h_grid.SetMarkerSize(5)
         h_grid.Draw("text COL1")
         # label.DrawLatex(0.3,0.95,"HHWWgg 95% CL Limits: " + ml)
         c_tmp.SaveAs(outNamepng)
-        c_tmp.SaveAs(outNamepdf) 
+        c_tmp.SaveAs(outNamepdf)
 
 
-    ##-- TeX file table 
+    ##-- TeX file table
     fileName = "Yields-Table.tex"
     file = open(fileName,"w")
     file.write("\\begin{table}[H]\n")
@@ -454,7 +568,7 @@ def CreateYieldsTable(region,cut,Bkg_Names,removeBackgroundYields,S_vals,B_vals,
     file.write("\t\t\end{tabular}\n")
     file.write("\t\caption{Unweighted and weighted training MC yields}\n")
     file.write("\t\\end{center}\n")
-    file.write("\end{table}\n")  
+    file.write("\end{table}\n")
 
     file.close()
 

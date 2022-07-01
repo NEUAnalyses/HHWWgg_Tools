@@ -61,11 +61,11 @@ print("Start of program...")
 
 if __name__ == '__main__':
     gROOT.SetBatch(1) # Do not output upon draw statement
-    if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis-v2/cutFlow/'
+    if(args.Efficiency): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March/cutFlow/'
     elif(args.DataMC):
         print("Data/MC comparison...")
-        if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/New_2021/NtupleAnalysis_v1/'
-        #nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
+        if(args.testFeatures): ol = '/eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March/'
+        # nTupleDirec = '/eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/January_2021_Production/DNN/'
         else:
             ol = args.ol  # '/eos/user/a/atishelm/www/HHWWgg/NtupleAnalysis/DNN_addWjets/'
             if(not os.path.exists(ol)):
@@ -440,6 +440,7 @@ if __name__ == '__main__':
         ##-- Data, MC and Signal Together. Data and MC in sidebands
         if(args.SB): region = "SB"
         elif(args.SR): region = "SR"
+        print("Cut type: "+args.CutsType)
         cuts, cutNames = GetCuts(args.CutsType)
         for i in range(0,len(cuts)):
             cut_ = cuts[i] ## using only first cut.

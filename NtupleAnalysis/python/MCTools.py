@@ -7,6 +7,7 @@
 ###########################################################################################################################
 
 ##-- Note: This module can be shrunk by mapping file name to treename, MCName, and MCCategory. Don't need dictionary for each one
+import ROOT
 
 def GetMCTreeNameOld(fileName_):
     MCTreesDict = {
@@ -579,9 +580,9 @@ def GetMCCategory(fileName_):
         "allData_QCD_2017.root": "QCD_Data", # QCD from Data
         "Data_2017.root": "QCD_Data", # QCD from Data
         "datadrivenQCD_v2.root": "QCD_Data", # QCD from QCD_Data
-        "TTGG_0Jets_TuneCP5_13TeV.root": "tt",  # FH
-        "TTGJets_TuneCP5_13TeV.root": "tt",  # FH
-        "TTJets_TuneCP5_13TeV.root": "tt",  # FH
+        "TTGG_0Jets_TuneCP5_13TeV.root": "tt\gamma(s)+jets",  # FH
+        "TTGJets_TuneCP5_13TeV.root": "tt\gamma(s)+jets",  # FH
+        "TTJets_TuneCP5_13TeV.root": "tt\gamma(s)+jets",  # FH
         "WW_TuneCP5_13TeV-pythia8.root": "WW",  # FH
         "GluGluHToGG_M125_TuneCP5_13TeV.root": "ggH",  # FH
         "VBFHToGG_M125_13TeV.root": "VBFH",  # FH
@@ -653,22 +654,22 @@ def GetMCCategory(fileName_):
         "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars.root" : "DiPhoJetsBox",
 
         # HHWWgg_bkg_v2
-        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTToHadronic_HHWWggTag_0_MoreVars.root" : "tt",
+        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTToHadronic_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
         # # "DiPhotonJetsBox1BJet_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
         # # "DiPhotonJetsBox2BJets_MGG-80toInf_13TeV-Sherpa_Hadded_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
         # "DiPhotonJetsBox_M40_80_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
         # "DiPhotonJetsBox_MGG-80toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "DiPhoJetsBox",
 
         # # HHWWgg_bkg_v2
-        # "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        # "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        # "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        # "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
-        # "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt",
+        # "TTJets_HT-2500toInf_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt\gamma(s)+jets",
+        # "TTJets_HT-800to1200_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt\gamma(s)+jets",
+        # "TTJets_HT-1200to2500_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt\gamma(s)+jets",
+        # "TTJets_HT-600to800_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt\gamma(s)+jets",
+        # "TTToHadronic_HHWWggTag_0_MoreVars_kinWeight_noHgg.root" : "tt\gamma(s)+jets",
 
 
         # ##-- HHWWgg_bkg_v3
@@ -715,11 +716,11 @@ def GetMCCategory(fileName_):
         "WW_TuneCP5_HHWWggTag_0_MoreVars.root" : "WW", # non exclusive with WWTo... ?
         "WWTo1L1Nu2Q_HHWWggTag_0_MoreVars.root" : "WW",
         "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8.root": "WW",
-        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars.root" : "tt",
-        "TTGG_0Jets_HHWWggTag_0_MoreVars.root" : "tt",
-        "TTJets_TuneCP5_HHWWggTag_0_MoreVars.root" : "tt",
-        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root" : "tt",
-        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
+        "TTGG_0Jets_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_extra_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
+        "TTGJets_TuneCP5_HHWWggTag_0_MoreVars.root" : "tt\gamma(s)+jets",
 
 
         "DYJetsToLL_M-50_HHWWggTag_0_MoreVars_kinWeight_noHgg_v3.root" : "DY",
@@ -792,11 +793,11 @@ def GetMCCategoryOld(fileName_):
         "DiPhotonJetsBox_MGG-80toInf_13TeV-Sherpa_Hadded.root" : "DiPhoJetsBox",
 
         # HHWWgg_bkg_v2
-        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt",
-        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt",
-        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8_Hadded.root" : "tt",
+        "TTJets_HT-2500toInf_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-800to1200_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-1200to2500_TuneCP5_13TeV-madgraphMLM-pythia8.root" : "tt\gamma(s)+jets",
+        "TTJets_HT-600to800_TuneCP5_13TeV-madgraphMLM-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTToHadronic_TuneCP5_13TeV-powheg-pythia8_Hadded.root" : "tt\gamma(s)+jets",
 
 
         # ##-- HHWWgg_bkg_v3
@@ -841,10 +842,10 @@ def GetMCCategoryOld(fileName_):
         "WW_TuneCP5_13TeV-pythia8_Hadded.root" : "WW", # non exclusive with WWTo... ?
         "WWTo1L1Nu2Q_13TeV_amcatnloFXFX_madspin_pythia8.root" : "WW",
 
-        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt",
-        "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "tt",
-        "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "tt",
-        "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt",
+        # "ttHJetToGG_M125_13TeV_amcatnloFXFX_madspin_pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTGG_0Jets_TuneCP5_13TeV_amcatnlo_madspin_pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTJets_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "tt\gamma(s)+jets",
+        "TTGJets_TuneCP5_13TeV-amcatnloFXFX-madspin-pythia8_Hadded.root" : "tt\gamma(s)+jets",
 
         "DYJetsToLL_M-50_TuneCP5_13TeV-amcatnloFXFX-pythia8_Hadded.root" : "DY",
         "DYJetsToLL_M-50_TuneCP5_13TeV.root": "DY",
@@ -869,13 +870,13 @@ def GetMCCategoryOld(fileName_):
 
 def OrderHistos(histos_,categories_):
     # print"histos_:",histos_
-    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox","W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu", "WW", "tt", "DY", "WGGJets", "ttW",
+    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox","W1JetsToLNu", "W2JetsToLNu", "W3JetsToLNu", "W4JetsToLNu", "WW", "tt\gamma(s)+jets", "DY", "WGGJets", "ttW",
     #             "HHWWgg_SM"
     #             ]
-    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
+    # MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt\gamma(s)+jets", "DY", "WGGJets", "ttW", "WGJJ",
                 # "HHWWgg_SM"
                 # ]
-    MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt", "DY", "WGGJets", "ttW", "WGJJ",
+    MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt\gamma(s)+jets", "DY", "WGGJets", "ttW", "WGJJ",
                "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ","TTToHadronic", "QCD_Data"
                ]
 
@@ -903,7 +904,7 @@ def GetMCColor(MC_Category_):
     #     # "W4JetsToLNu" : "222",
     #     "WJets" : "70",
     #     "WW":"47",
-    #     "tt":"51",
+    #     "tt\gamma(s)+jets":"51",
     #     "DY":"28",
     #     "WGGJets":"2",
     #     "ttW":"30",
@@ -914,7 +915,7 @@ def GetMCColor(MC_Category_):
 
     MCColorsDict = {
         "WGGJets":"2",
-        "DiPhoJets" : "6",
+        "DiPhoJets" : "ROOT.sunflower",
         "TTToHadronic": "7",
         "QCD" : "8",
         "QCD_Data": "8",
@@ -927,11 +928,11 @@ def GetMCColor(MC_Category_):
         "ttW":"30",
         "ttHJetToGG" : "41",
         # "GJets" : "7",
-        "DiPhoJetsBox" : "42",
+        "DiPhoJetsBox" : "798",
         "GJet" : "46",
         "WW":"47",
-        "tt":"51",
-        "HHWWgg_SM": "56",
+        "tt\gamma(s)+jets":"ROOT.carrot",
+        "HHWWgg_SM": "ROOT.alizarin",
         # "W1JetsToLNu" : "70",
         # "W2JetsToLNu" : "38",
         # "W3JetsToLNu" : "208",

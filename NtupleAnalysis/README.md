@@ -4,6 +4,15 @@ The purpose of the python modules in this directory is to analyze flashgg output
 
 **Note**: Can probably speed up plotting by implementing uproot
 
+# FH Commands
+
+```bash
+python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March_DNNVars/ --dataFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/Data_2017.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch FH_DNN_TrainingVars  --CutsType 4Jet-Sel  --Lumi 41.5 --Tags HHWWggTag_1 --verbose  --SB  --SigScale 1000000
+
+python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March_DNNVars_Unblinded/ --dataFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/Data_2017.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch FHDNN --CutsType 4Jet-Sel  --Lumi 41.5 --Tags HHWWggTag_1 --verbose   --SigScale 1000000 --SB
+
+```
+
 ## Data / MC: Example Usage and Explanation
 
 **Note**: Plots are setup to output onto a CERN website. The website path needs to be set by the user in the python module NtupleAnalysis: [here](https://github.com/NEUAnalyses/HHWWgg_Tools/blob/master/NtupleAnalysis/NtupleAnalysis.py#L36-L37), where ol = output location. Note that you can also set a separate output location to test features (the ol definition when args.testFeatures is true).
@@ -20,6 +29,8 @@ python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --sign
 
 python NtupleAnalysis.py --DataMC --dataFolder data --mcFolder background --signalFolder signal --VarBatch Fully-Hadronic  --CutsType 4Jet-SelPhoPt --Lumi 41.5 --Tags HHWWggTag_2  --verbose
 ```
+
+
 
 An explanation of each flag in the command:
 
