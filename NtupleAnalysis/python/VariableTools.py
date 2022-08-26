@@ -63,6 +63,11 @@ def GetVars(VarBatch):
             "goodLepton_E"
         ]
 
+    elif(VarBatch == "Scaled_Subleading_Photon_pt"):
+        return [
+            Scaled_Subleading_Photon_pt
+        ]        
+
     elif(VarBatch == "TrainingVariables"):
         TrainingVars = [
             "evalDNN_HH",
@@ -284,6 +289,7 @@ def GetBins(variable_,DNNbinWidth_):
 
     # Specify bins for specific variables 
     nbins_glob = 15
+    # nbins_glob = 9
     binDict = {
 
         "Leading_Photon_MVA": [nbins_glob,-1,1],
@@ -309,7 +315,7 @@ def GetBins(variable_,DNNbinWidth_):
         "METCor_pt": [nbins_glob,0,400],
         "goodJets_0_E": [nbins_glob,0,360],
         "Scaled_Leading_Photon_pt" : [nbins_glob,0,3],
-        "Scaled_Subleading_Photon_pt" : [nbins_glob,0,1.5],
+        "Scaled_Subleading_Photon_pt" : [nbins_glob,0,1.3],
         "Scaled_Leading_Photon_E" : [nbins_glob,0,3],
         "Scaled_Subleading_Photon_E" : [nbins_glob,0,1.5],
         "Leading_Jet_bscore" : [nbins_glob,0,1],
@@ -388,6 +394,8 @@ def GetXaxisTitle(variable_):
     variableName = variable_ 
     variableUnit = ""
 
+    print("variable_:",variable_)
+
     variableUnitDict = {
         "CMS_hgg_mass": "GeV",
         "E" : "GeV",
@@ -412,12 +420,21 @@ def GetXaxisTitle(variable_):
         "Subleading_Jet_bscore" : "unitless",
         "Scaled_Leading_Photon_E" : "unitless",
         "Scaled_Subleading_Photon_E" : "unitless",
-        "Wmt_L" : "GeV"
+        "Wmt_L" : "GeV",
+        "Scaled_Subleading_Photon_pt" : "unitless",
+        "goodLepton_E" : "GeV",
+        "goodJets_0_pt" : "GeV",
+        "goodJets_1_pt" : "GeV",
+        "METCor_pt" : "GeV",
+        "goodLepton_pt" : "GeV"
     }
 
-    for varFrag in variableUnitDict:
-        varUnit = variableUnitDict[varFrag]
-        if varFrag in variableName: variableUnit = varUnit
+    variableUnit = variableUnitDict[variable_]
+
+    # for varFrag in variableUnitDict:
+        # print("varUnit:",varUnit)
+        # varUnit = variableUnitDict[varFrag]
+        # if varFrag in variableName: variableUnit = varUnit
 
     if(variableName == "Scaled_Leading_Photon_pt"): variableNameLabel = "p_{T}^{\gamma_{lead}}/m_{\gamma\gamma}"
     elif(variableName == "Scaled_Subleading_Photon_pt"): variableNameLabel = "p_{T}^{\gamma_{sublead}}/m_{\gamma\gamma}"
@@ -428,6 +445,8 @@ def GetXaxisTitle(variable_):
     else: variableNameLabel = variableName
         
     xAxisTitle = "%s [%s]"%(variableNameLabel,variableUnit)
+
+    print("variableUnit:",variableUnit)
 
     if(variableUnit == "unitless"):
         xAxisTitle = xAxisTitle.replace("[unitless]", "") # if unitless, remove x axis label

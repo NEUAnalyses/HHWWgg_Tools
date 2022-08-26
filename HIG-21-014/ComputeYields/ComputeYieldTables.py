@@ -3,6 +3,10 @@
 Abraham Tishelman-Charny
 
 The purpose of this python module is to produce yields tables for each WW final state before and after preselections.
+
+Example usage:
+python3 ComputeYieldTables.py 
+
 """
 
 import uproot 
@@ -16,8 +20,13 @@ Parameters
 """
 verbose = 0
 round_digits = 4
-Min_MC_Events = 1000
-Min_MC_Events_FL = 100
+
+Min_MC_Events = 1
+Min_MC_Events_FL = 1
+
+# Min_MC_Events = 1000
+# Min_MC_Events_FL = 100
+
 bkg_d = "/eos/user/a/atishelm/ntuples/HHWWgg_flashgg/January_2021_Production/2017/Backgrounds/"
 # process_types = ["HH"]
 process_types = ["Continuum_Background", "Single_Higgs", "HH"]

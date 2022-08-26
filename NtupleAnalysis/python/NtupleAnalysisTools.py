@@ -253,14 +253,14 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     # if(varTitle == "weight"): MC_CUT = MC_CUT.replace(MC_WEIGHT,"(1)") # if you want to plot the "weight" variable, you should not scale it by weight!             
     xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
 
-    ##-- Fill histogram with data  
-    # special binning for evalDNN_HH
-    # edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
-    edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
-    N_bins_special = len(edges) -1 
-    
     if(varTitle == "evalDNN_HH"): 
+        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.630000,0.75,0.84000,0.89000,1.0001])
+        N_bins_special = len(edges) -1         
         Data_h_tmp = TH1F('Data_h_tmp',varTitle,N_bins_special,edges)
+    elif(varTitle == "Scaled_Subleading_Photon_pt"):
+        edges = array('d',[0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.95, 1.1, 1.3])
+        N_bins_special = len(edges) -1         
+        Data_h_tmp = TH1F('Data_h_tmp',varTitle,N_bins_special,edges)        
     else: Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
 
     # Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
@@ -367,14 +367,16 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         # exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         # exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
 
-        # exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
-        # edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
-        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
-        N_bins_special = len(edges) - 1  
 
         if(varTitle == "evalDNN_HH"): 
+            edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.630000,0.75,0.84000,0.89000,1.0001])
+            N_bins_special = len(edges) - 1  
             exec("B_h_%s = TH1F('B_h_%s',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region
+        elif(varTitle == "Scaled_Subleading_Photon_pt"):
+            edges = array('d',[0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.95, 1.1, 1.3])
+            N_bins_special = len(edges) - 1  
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region            
         else: 
             exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
@@ -506,13 +508,20 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
         # exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i)) 
 
-        # edges = array('d',[0.1000,0.2,0.3,0.4,0.5,0.630000,0.7,0.84000,0.89000,1.0001])
-        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
-        N_bins_special = len(edges) - 1
-
         if(varTitle == "evalDNN_HH"):
+            edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.630000,0.75,0.84000,0.89000,1.0001])
+            N_bins_special = len(edges) - 1
+
             exec("S_h_%s = TH1F('S_h_%s',v,N_bins_special,edges)"%(i,i)) 
-            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,N_bins_special,edges)"%(i,i))             
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,N_bins_special,edges)"%(i,i))                 
+
+        elif(varTitle == "Scaled_Subleading_Photon_pt"):
+            edges = array('d',[0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.95, 1.1, 1.3])
+            N_bins_special = len(edges) - 1
+
+            exec("S_h_%s = TH1F('S_h_%s',v,N_bins_special,edges)"%(i,i)) 
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,N_bins_special,edges)"%(i,i))       
+            
         else:
             exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i)) 
             exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))             
@@ -727,8 +736,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     ##-- For each Variable 
     for iv,v in enumerate(Variables):
         # legend = TLegend(0.55,0.65,0.89,0.89)
-        if(v == "evalDNN_HH"):
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.625, 0.55, 0.865 # xmin, ymin, xmax, ymax 
+        if(v == "evalDNN_HH"): # 0.24
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.22, 0.575, 0.52, 0.8 # xmin, ymin, xmax, ymax 
         else:
             leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.6, 0.875, 0.865 # xmin, ymin, xmax, ymax 
         legend = TLegend(leg_xmin, leg_ymin, leg_xmax, leg_ymax)
@@ -957,12 +966,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                     x_ratio_.append(x_val)
 
-                    if(varTitle != "evalDNN_HH"):
-                        ex_ratio_low_.append(xWidth) 
-                        ex_ratio_high_.append(xWidth) 
-                    else:
-
-                        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
+                    if(varTitle == "evalDNN_HH"):
+                        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.6,0.630000,0.75,0.84000,0.89000,1.0001])
 
                         edgeUpper = edges[p_i+1]
                         edgeLower = edges[p_i]
@@ -972,6 +977,22 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                         ex_ratio_low_.append(er_up) 
                         ex_ratio_high_.append(er_down) 
+
+                    elif(varTitle == "Scaled_Subleading_Photon_pt"):
+                        edges = array('d',[0, 0.2, 0.3, 0.4, 0.5, 0.6, 0.7, 0.8, 0.95, 1.1, 1.3])
+
+                        edgeUpper = edges[p_i+1]
+                        edgeLower = edges[p_i]
+
+                        er_up = float(edgeUpper - x_val)
+                        er_down = float(x_val - edgeLower)
+
+                        ex_ratio_low_.append(er_up) 
+                        ex_ratio_high_.append(er_down) 
+
+                    else:
+                        ex_ratio_low_.append(xWidth) 
+                        ex_ratio_high_.append(xWidth) 
 
                     y_ratio_.append(1) # set to 1 on purpose to make bars from ratio = 1 to show agreement
                     ey_ratio_low_.append(y_err_low)                    
@@ -989,6 +1010,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 xTitle = GetXaxisTitle(varTitle)
                 DataHist.GetXaxis().SetTitle(xTitle)
 
+                print("xTitle:",xTitle)
+
                 # logYMin = 0.005
                 logYMin = 0.0001
 
@@ -1004,7 +1027,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 # rp.GetLowerRefXaxis().SetNdivisions(10)
 
                 rp.GetLowerPad().Update()
-                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(logYMin,maxHeight*1000.)   
+                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(logYMin,maxHeight*100000.)   
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text 
 
                 rp.GetUpperRefXaxis().SetTitle(xTitle)
@@ -1074,9 +1097,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 # Add TLines if plotting DNN score
                 if(varTitle == "evalDNN_HH"):
 
-                        BoundaryLine_1 = TLine(0.63,UpperPad.GetUymin(),0.63,maxHeight*1000.)
-                        BoundaryLine_2 = TLine(0.84,UpperPad.GetUymin(),0.84,maxHeight*1000.)
-                        BoundaryLine_3 = TLine(0.89,UpperPad.GetUymin(),0.89,maxHeight*1000.)
+                        BoundaryLine_1 = TLine(0.63,UpperPad.GetUymin(),0.63,maxHeight*100000.)
+                        BoundaryLine_2 = TLine(0.84,UpperPad.GetUymin(),0.84,maxHeight*100000.)
+                        BoundaryLine_3 = TLine(0.89,UpperPad.GetUymin(),0.89,maxHeight*100000.)
 
                         BoundaryLine_1.SetLineStyle(3)
                         BoundaryLine_2.SetLineStyle(3)
