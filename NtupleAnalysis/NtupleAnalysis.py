@@ -50,7 +50,7 @@
 ##-- Import python modules
 from python.Options import *
 from python.NtupleAnalysisTools import *
-from ROOT import gPad, TAxis, TTree, TChain, TLine, TGraph, TMultiGraph, TFile, TCanvas, gROOT, TH2F, TH1F, kPink, kGreen, kCyan, TLegend, kRed, kOrange, kBlack, TLegend, gStyle, TObjArray, kBlue, TGraphErrors
+from ROOT import gPad, TAxis, TTree, TChain, TLine, TGraph, TMultiGraph, TFile, TCanvas, gROOT, TH2F, TH1F, kPink, kGreen, kCyan, kRed, kOrange, kBlack, TLegend, gStyle, TObjArray, kBlue, TGraphErrors
 from array import array
 import os
 

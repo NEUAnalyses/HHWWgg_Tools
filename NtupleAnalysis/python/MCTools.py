@@ -85,7 +85,7 @@ def GetMCTreeNameOld(fileName_):
         "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "HHWWgg_SM",
+        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "Signal",
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"ggF_SM_WWgg_qqlnugg",
         "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
         "HHWWgg-SL-SM-NLO-2016.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
@@ -351,7 +351,7 @@ def GetMCName(fileName_):
         # "WGJJToLNuGJJ_EWK_aQGC-FS-FM_TuneCP5_13TeV-madgraph-pythia8_HHWWggTag_0_MoreVars.root" : "WGJJToLNuGJJ_EWK_aQGC_FS_FM_TuneCP5_13TeV_madgraph_pythia8",
 
         ##-- HHWWgg Signal
-        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "HHWWgg_SM",
+        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "Signal",
         "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars.root":"ggF_SM_WWgg_qqlnugg",
         "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars.root":"GluGluToHHTo_WWgg_qqlnu_nodeSM",
         "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars.root":"GluGluToHHTo2G2Qlnu_node_cHHH1_TuneCUETP8M1_PSWeights_13TeV_powheg_pythia8alesauva_2016_1_10_6_4_v0_RunIISummer16MiniAODv3_PUMoriond17_94X_mcRun2_asymptotic_v3_v1_c3d8a5638586a0e8df7c55ce908b2878USER",
@@ -557,7 +557,7 @@ def GetMCNameOld(fileName_):
 
         ##-- HHWWgg Signal
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "GluGluToHHTo_WWgg_qqqq_nodeSM.root":"HHWWgg_SM",
+        "GluGluToHHTo_WWgg_qqqq_nodeSM.root":"Signal",
         "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
         "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
         "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
@@ -736,7 +736,7 @@ def GetMCCategory(fileName_):
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_even_MoreVars_kinWeight_noHgg_v3.root" : "HHWWgg_SM",
         "GluGluToHHTo2G2Qlnu_node_cHHH1_2017_HHWWggTag_0_MoreVars.root" : "HHWWgg_SM",
 
-        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "HHWWgg_SM",
+        "GluGluToHHTo2G4Q_node_cHHH1_2017.root": "Signal",
         "ggF_SM_WWgg_qqlnugg_Hadded_HHWWggTag_0_MoreVars.root":"HHWWgg_SM",
         "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus_HHWWggTag_0_MoreVars.root":"HHWWgg_SM",
         "HHWWgg-SL-SM-NLO-2016_HHWWggTag_0_MoreVars.root" : "HHWWgg_SM",
@@ -858,7 +858,7 @@ def GetMCCategoryOld(fileName_):
 
         ##-- HHWWgg Signal
         "ggF_SM_WWgg_qqlnugg_Hadded.root":"HHWWgg_SM",
-        "GluGluToHHTo_WWgg_qqqq_nodeSM.root":"HHWWgg_SM",
+        "GluGluToHHTo_WWgg_qqqq_nodeSM.root":"Signal",
         "ggF_SM_WWgg_qqlnugg_Hadded_WithTaus.root":"HHWWgg_SM",
         "HHWWgg-SL-SM-NLO-2016.root" : "HHWWgg_SM",
         "HHWWgg-SL-SM-NLO-2017.root" : "HHWWgg_SM",
@@ -877,7 +877,7 @@ def OrderHistos(histos_,categories_):
                 # "HHWWgg_SM"
                 # ]
     MC_Cats = ["QCD", "SMhgg", "GJet", "DiPhoJets", "DiPhoJetsBox", "WJets", "WW", "tt\gamma(s)+jets", "DY", "WGGJets", "ttW", "WGJJ",
-               "HHWWgg_SM", "ggH","VH","VBFH","ttHJetToGG","THQ","TTToHadronic", "QCD_Data"
+               "Signal", "ggH","VH","VBFH","ttHJetToGG","THQ","TTToHadronic", "QCD_Data"
                ]
 
     orderedHistos = []
@@ -932,7 +932,7 @@ def GetMCColor(MC_Category_):
         "GJet" : "46",
         "WW":"47",
         "tt\gamma(s)+jets":"ROOT.carrot",
-        "HHWWgg_SM": "ROOT.alizarin",
+        "Signal": "ROOT.alizarin",
         # "W1JetsToLNu" : "70",
         # "W2JetsToLNu" : "38",
         # "W3JetsToLNu" : "208",
@@ -1034,5 +1034,9 @@ def GetXScale(sigCampaign_):
         HH_ProdXS = 33.49
         BR_HH_WWgg = 0.00097
         BR_WWgg_finalState = 0.441 # qqlnu, e mu tau included
+    elif(sigCampaign_ == "Signal"):
+        HH_ProdXS = 33.49
+        BR_HH_WWgg = 0.00097
+        BR_WWgg_finalState = 0.4544 # qqlnu, e mu tau included
     XS_Scale = float(HH_ProdXS)*float(BR_HH_WWgg)*float(BR_WWgg_finalState)
     return XS_Scale

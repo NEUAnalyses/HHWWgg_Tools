@@ -7,11 +7,11 @@ import ROOT as rt
 #
 
 cmsText     = "CMS";
-cmsTextFont   = 61  
+cmsTextFont   = 61
 
 writeExtraText = True
 extraText   = "Preliminary"
-extraTextFont = 52 
+extraTextFont = 52
 
 lumiTextSize     = 0.6
 lumiTextOffset   = 0.2
@@ -25,9 +25,9 @@ relExtraDY = 1.2
 
 extraOverCmsTextSize  = 0.76
 
-# lumi_13TeV = "138 fb^{-1}"
-lumi_13TeV = "41.5 fb^{-1}"
-lumi_8TeV  = "19.7 fb^{-1}" 
+lumi_13TeV = "138 fb^{-1}"
+# lumi_13TeV = "41.5 fb^{-1}"
+lumi_8TeV  = "19.7 fb^{-1}"
 lumi_7TeV  = "5.1 fb^{-1}"
 lumi_sqrtS = ""
 
@@ -64,8 +64,8 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
         lumiText += lumi_8TeV
         lumiText += " (8 TeV)"
 
-    elif( iPeriod==3 ):      
-        lumiText = lumi_8TeV 
+    elif( iPeriod==3 ):
+        lumiText = lumi_8TeV
         lumiText += " (8 TeV)"
         lumiText += " + "
         lumiText += lumi_7TeV
@@ -75,10 +75,10 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
         lumiText += " (13 TeV)"
     elif ( iPeriod==7 ):
         if( outOfFrame ):lumiText += "#scale[0.85]{"
-        lumiText += lumi_13TeV 
+        lumiText += lumi_13TeV
         lumiText += " (13 TeV)"
         lumiText += " + "
-        lumiText += lumi_8TeV 
+        lumiText += lumi_8TeV
         lumiText += " (8 TeV)"
         lumiText += " + "
         lumiText += lumi_7TeV
@@ -88,28 +88,28 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
         lumiText += "8 TeV"
     elif ( iPeriod==0 ):
         lumiText += lumi_sqrtS
-            
+
     print lumiText
 
     latex = rt.TLatex()
     latex.SetNDC()
     latex.SetTextAngle(0)
-    latex.SetTextColor(rt.kBlack)    
-    
+    latex.SetTextColor(rt.kBlack)
+
     extraTextSize = extraOverCmsTextSize*cmsTextSize
-    
+
     latex.SetTextFont(42)
-    latex.SetTextAlign(31) 
-    latex.SetTextSize(lumiTextSize*t)    
+    latex.SetTextAlign(31)
+    latex.SetTextSize(lumiTextSize*t)
 
     latex.DrawLatex(1-r,1-t+lumiTextOffset*t,lumiText)
 
     if( outOfFrame ):
         latex.SetTextFont(cmsTextFont)
-        latex.SetTextAlign(11) 
-        latex.SetTextSize(cmsTextSize*t)    
+        latex.SetTextAlign(11)
+        latex.SetTextSize(cmsTextSize*t)
         latex.DrawLatex(l,1-t+lumiTextOffset*t,cmsText)
-  
+
     pad.cd()
 
     posX_ = 0
@@ -136,7 +136,7 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
             pad_logo.cd()
             CMS_logo.Draw("X")
             pad_logo.Modified()
-            pad.cd()          
+            pad.cd()
         else:
             latex.SetTextFont(cmsTextFont)
             latex.SetTextSize(cmsTextSize*t)
@@ -155,6 +155,6 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
         latex.SetTextFont(extraTextFont)
         latex.SetTextSize(extraTextSize*t)
         latex.SetTextAlign(align_)
-        latex.DrawLatex(posX_, posY_, extraText)      
+        latex.DrawLatex(posX_, posY_, extraText)
 
     pad.Update()

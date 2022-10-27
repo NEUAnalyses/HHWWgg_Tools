@@ -467,13 +467,21 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
 
         # eval("MC_h_tmp_%s.Scale(float(args_.Lumi))"%(i))
         if (MC_Category == "QCD_Data"):
-            eval("B_h_%s.Scale(0.9)"%(i))
+            eval("B_h_%s.Scale(0.9*3.33)"%(i)) # 138/41.5 = 3.321299639
         elif (MC_Category == "DiPhoJetsBox"):
-            eval("B_h_%s.Scale(float(Lumi)*1.25)"%(i))
+            eval("B_h_%s.Scale(float(138)*1.25)"%(i))
         elif (MC_Category == "GJet"):
-            eval("B_h_%s.Scale(float(Lumi)*2.23)"%(i))
+            eval("B_h_%s.Scale(float(138)*2.23)"%(i))
+        # elif (MC_Category == "tt\gamma(s)+jets"):
+            # import sys
+            # print 'lumi: ', Lumi
+            # sys.exit()
+            # eval("B_h_%s.Scale(float(Lumi)*3.321299639)"%(i))
         else:
-            eval("B_h_%s.Scale(float(Lumi))"%(i))
+            # print 'lumi: ', Lumi, 'MC_Category: ',MC_Category
+            # import sys
+            # sys.exit()
+            eval("B_h_%s.Scale(float(138))"%(i))
         ##-- If required, scale by fraction of events to total due to flashgg submission
         # need for
         # W1JetsToLNu_LHEWpT_150-250
@@ -589,7 +597,7 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         exec('Signal_Trees.Draw("%s >> S_h_%s_unweighted","%s*((Leading_Photon_MVA>-0.7 && Subleading_Photon_MVA>-0.7))")'%(v,i,S_CUT_NOWEIGHTS))
         SigXS_Scale = GetXScale("HHWWgg_SM") # how to scale the XS which is by default in flashgg 1fb
         if(verbose): print"SigXS_Scale: ",SigXS_Scale
-        eval("S_h_%s.Scale(float(Lumi))"%(i))
+        eval("S_h_%s.Scale(float(138))"%(i))
         eval("S_h_%s.Scale(float(SigXS_Scale))"%(i))
 
         S_ = eval("S_h_%s.Integral()"%(i))
@@ -711,15 +719,15 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     tdrStyle.SetTitleSize(0.06, "XYZ")
     # tdrStyle.SetTitleXSize(Float_t size = 0.02) # Another way to set the size?
     # tdrStyle.SetTitleYSize(Float_t size = 0.02)
-    tdrStyle.SetTitleXOffset(0.9)
+    tdrStyle.SetTitleXOffset(0.7)
     tdrStyle.SetTitleYOffset(1.25)
     # tdrStyle.SetTitleOffset(1.1, "Y") # Another way to set the Offset
 
     # For the axis labels:
     tdrStyle.SetLabelColor(1, "XYZ")
     tdrStyle.SetLabelFont(42, "XYZ")
-    tdrStyle.SetLabelOffset(0.007, "XYZ")
-    tdrStyle.SetLabelSize(0.05, "XYZ")
+    tdrStyle.SetLabelOffset(0.003, "XYZ")
+    tdrStyle.SetLabelSize(0.035, "XYZ")
 
     # For the axis:
     tdrStyle.SetAxisColor(1, "XYZ")
@@ -789,7 +797,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         print("Variable to plot: (",iv,"): ",v)
         # legend = TLegend(0.55,0.65,0.89,0.89)
         # legend = TLegend(0.55,0.55,0.89,0.89)
-        NLegend_Columns = 2
+        NLegend_Columns = 1
         if(v == "evalDNN_HH"):
             leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.625, 0.55, 0.865 # xmin, ymin, xmax, ymax
         else:
@@ -849,7 +857,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
 
         Signals_AddedtoLegend = {
-            "HHWWgg_SM" : 0
+            "Signal" : 0
         }
 
         ##-- Order histograms by MC category
@@ -1084,7 +1092,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(args_.log): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)
-                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
+                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",900,1200)
                 rp.Draw("nogrid")
                 rp.GetLowYaxis().SetNdivisions(5)
                 DataMCRatio_c.Update()
@@ -1194,9 +1202,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 #stackSum.SetMinimum(1.)
                 #bkgStack.SetMinimum(1.)
 
-                #DataHist.SetMaximum(6000.)
-                #stackSum.SetMaximum(6000.)
-                #bkgStack.SetMaximum(6000.)
+                # DataHist.SetMaximum(2500000.)
+                # stackSum.SetMaximum(1000000.)
+                # bkgStack.SetMaximum(1000000.)
 
                 for sig_hist in sig_histos:
                     sigMax = sig_hist.GetMaximum()
@@ -1224,6 +1232,35 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                     sig_hist.Draw("samehist")
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
+                # l1 = TLine(0.961428571429,0.0,0.961428571429,14000)
+                # l2 = TLine(0.974285714286,0.0,0.974285714286,14000)
+                # l1.Draw()
+                # l2.Draw()
+
+                # text1 = ROOT.TPaveText(0.86, 1.0, 0.90, 5.0)
+                # text2 = ROOT.TPaveText(0.961428571429, 1.0, 0.974285714286, 5.0)
+                # text3 = ROOT.TPaveText(0.98, 1.0, 0.99, 5.0)
+                # text1.AddText("cat-3")
+                # text1.Draw()
+                # text2.AddText("cat-2")
+                # text2.Draw()
+                # text3.AddText("cat-1")
+                # # text3.SetTextAngle(90.0)
+                # # text3.SetTextAlign(22)
+                # # text3.SetAllWith("cat",'align',90.0)
+                # text3.Draw()
+
+                # txt4 = ROOT.TText(0.99, 1.0, "CAT-1")
+                # txt4.SetTextAngle(90)
+                # txt4.Draw()
+                # txt5 = ROOT.TText(0.972, 1.0, "CAT-2")
+                # txt5.SetTextAngle(90)
+                # txt5.Draw()
+                # txt6 = ROOT.TText(0.88, 1.0, "CAT-3")
+                # txt6.SetTextAngle(90)
+                # txt6.Draw()
+
+
                 # selText.Draw("same")
                 # CatText.Draw("same")
                 # chi2Text.Draw("same")
@@ -1248,7 +1285,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerPad().cd()
                 lowerPad = rp.GetLowerPad()
                 lowerPad.SetBottomMargin(0.0)
-                lowerPad.SetTopMargin(0)
+                lowerPad.SetTopMargin(0.0)
                 lowerPad.SetLeftMargin(0.15) # it was a miracle that I figured this part out
 
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
@@ -1364,7 +1401,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(plotLog): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)
-                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
+                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",900,1200)
                 rp.Draw("nogrid")
                 rp.GetLowYaxis().SetNdivisions(5)
                 DataMCRatio_c.Update()

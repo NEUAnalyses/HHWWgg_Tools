@@ -7,10 +7,15 @@ The purpose of the python modules in this directory is to analyze flashgg output
 # FH Commands
 
 ```bash
-python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March_DNNVars/ --dataFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/Data_2017.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch FH_DNN_TrainingVars  --CutsType 4Jet-Sel  --Lumi 41.5 --Tags HHWWggTag_1 --verbose  --SB  --SigScale 1000000
+python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/UnblindedPlots/July20_v1/ --dataFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/Data_2017.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch  ThreeTopVar_FH  --CutsType 4Jet_PhotonSel_DNNBB_WW0p1 --Lumi 41.5 --Tags HHWWggTag_1 --verbose  --SB  --SigScale  10000 --log
+```
 
-python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/NtupleAnalysis_2022March_DNNVars_Unblinded/ --dataFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/Data_2017.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch FHDNN --CutsType 4Jet-Sel  --Lumi 41.5 --Tags HHWWggTag_1 --verbose   --SigScale 1000000 --SB
+## 27 October 2022
 
+```bash
+python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/UnblindedPlots/Oct2022/ --dataFile /afs/cern.ch/user/r/rasharma/work/public/DoubleHiggs/Data_161718.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch  ThreeTopVar_FH  --CutsType 4Jet_PhotonSel_DNNBB_WW0p1 --Lumi 41.5 --Tags HHWWggTag_1 --verbose  --SB  --SigScale  10000 --log
+
+python NtupleAnalysis.py --DataMC --ol /eos/user/r/rasharma/www/doubleHiggs/UnblindedPlots/Oct2022_27_allDNNVar/ --dataFile /afs/cern.ch/user/r/rasharma/work/public/DoubleHiggs/Data_161718.root --signalFile /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/GluGluToHHTo2G4Q_node_cHHH1_2017.root --bkgDirec /eos/user/r/rasharma/post_doc_ihep/double-higgs/ntuples/DNN_Nov2021/temp_21March/ --VarBatch  FH_DNN_TrainingVars  --CutsType 4Jet_PhotonSel_DNNBB_WW0p1 --Lumi 41.5 --Tags HHWWggTag_1 --verbose  --SB  --SigScale  10000 --log
 ```
 
 ## Data / MC: Example Usage and Explanation

@@ -123,8 +123,11 @@ def GetVars(VarBatch):
         # "New_DR_gg",
         # Scaled_Leading_Photon_pt,
         # "New_pTBasedSel_WW_pT",
-        # "CMS_hgg_mass",
-        "evalDNN_WWvsAll"
+        "New_DPhi_gg",
+        "New_SumTwoMaxBScore",
+        "New_pTBasedSel_a_costheta2",
+        "CMS_hgg_mass",
+        # "evalDNN_WWvsAll"
         ]
         return TrainingVars
     elif(VarBatch == "FH_DNN_TrainingVars"):
@@ -649,7 +652,10 @@ def GetXaxisTitle(variable_):
         "Scaled_Leading_Photon_E" : "unitless",
         "Scaled_Subleading_Photon_E" : "unitless",
         "Wmt_L" : "GeV",
-        "New_pTBasedSel_WW_pT": "GeV"
+        "New_pTBasedSel_WW_pT": "GeV",
+        "New_DPhi_gg":"unitless",
+        "New_SumTwoMaxBScore":"unitless",
+        "New_pTBasedSel_a_costheta2":"unitless"
     }
 
     variableName_Rep = {
@@ -657,7 +663,10 @@ def GetXaxisTitle(variable_):
         "Scaled_Leading_Photon_pt": "p_{T}(#gamma #gamma)/M_{#gamma #gamma}",
         "New_pTBasedSel_WW_pT": "p_{T}(WW)",
         "evalDNN_WWvsAll": "DNN Score",
-        "CMS_hgg_mass": "M_{#gamma #gamma}"
+        "CMS_hgg_mass": "M_{#gamma #gamma}",
+        "New_DPhi_gg":"#Delta #phi(#gamma #gamma)",
+        "New_SumTwoMaxBScore":"Sum of two highest b-jet score",
+        "New_pTBasedSel_a_costheta2":"cos(#theta_{2})"
     }
 
     for varRep in variableName_Rep:
