@@ -127,7 +127,7 @@ def GetVars(VarBatch):
         "New_SumTwoMaxBScore",
         "New_pTBasedSel_a_costheta2",
         "CMS_hgg_mass",
-        # "evalDNN_WWvsAll"
+        "evalDNN_WWvsAll"
         ]
         return TrainingVars
     elif(VarBatch == "FH_DNN_TrainingVars"):
@@ -550,7 +550,7 @@ def GetBins(variable_,DNNbinWidth_):
         "a_Phi1": [10,-1,1],
         "W2Candidate_M": [25,0,300],
         "W2Candidate_pt": [25,0,400],
-        "New_DPhi_gg": [20,-3.14,3.14],
+        "New_DPhi_gg": [20,-3.14,3.11],
         "New_DR_gg": [10,0,4],
         "New_DPhi_HH": [20,-3.14,3.14],
         "New_DR_HH": [20,0,6],

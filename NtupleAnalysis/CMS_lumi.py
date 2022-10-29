@@ -13,10 +13,10 @@ writeExtraText = True
 extraText   = "Preliminary"
 extraTextFont = 52
 
-lumiTextSize     = 0.6
+lumiTextSize     = 0.6*0.8
 lumiTextOffset   = 0.2
 
-cmsTextSize      = 0.75
+cmsTextSize      = 0.75*0.8
 cmsTextOffset    = 0.1
 
 relPosX    = 0.045
@@ -148,13 +148,17 @@ def CMS_lumi(pad,  iPeriod,  iPosX ):
                 latex.SetTextSize(extraTextSize*t)
                 latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
     elif( writeExtraText ):
-        if( iPosX==0):
-            posX_ =   l +  relPosX*(1-l-r)
-            posY_ =   1-t+lumiTextOffset*t
-
+        # if( iPosX==0):
+        posX_ =   l +  relPosX*(1-l-r)*3.5
+        posY_ =   1-t+lumiTextOffset*t*2.5
+        print("chuw:",posX_,posY_)
         latex.SetTextFont(extraTextFont)
         latex.SetTextSize(extraTextSize*t)
         latex.SetTextAlign(align_)
         latex.DrawLatex(posX_, posY_, extraText)
+        # latex.SetTextFont(extraTextFont)
+        # latex.SetTextAlign(align_)
+        # latex.SetTextSize(extraTextSize*t)
+        # latex.DrawLatex(posX_, posY_- relExtraDY*cmsTextSize*t, extraText)
 
     pad.Update()

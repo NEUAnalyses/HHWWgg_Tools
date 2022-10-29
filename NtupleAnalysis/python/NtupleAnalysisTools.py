@@ -652,15 +652,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     #For the histo:
     #tdrStyle.SetHistFillColor(1)
     #tdrStyle.SetHistFillStyle(0)
-
-    # tdrStyle.SetHistLineColor(1)
-    # tdrStyle.SetHistLineStyle(0)
-    # tdrStyle.SetHistLineWidth(1)
-
+    # tdrStyle.SetHistLineColor(1) # FH: Ram
+    # tdrStyle.SetHistLineStyle(0) # FH: Ram
+    # tdrStyle.SetHistLineWidth(1) # FH: Ram
     #tdrStyle.SetLegoInnerR(Float_t rad = 0.5)
     #tdrStyle.SetNumberContours(Int_t number = 20)
 
-    # tdrStyle.SetEndErrorSize(2)
+    # tdrStyle.SetEndErrorSize(2) # FH: Ram
     #tdrStyle.SetErrorMarker(20)
     #tdrStyle.SetErrorX(0.)
 
@@ -700,6 +698,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     tdrStyle.SetPadRightMargin(0.02)
 
     # For the Global title:
+
     tdrStyle.SetOptTitle(0)
     tdrStyle.SetTitleFont(42)
     tdrStyle.SetTitleColor(1)
@@ -714,22 +713,25 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     # tdrStyle.SetTitleBorderSize(2)
 
     # For the axis titles:
+
     tdrStyle.SetTitleColor(1, "XYZ")
     tdrStyle.SetTitleFont(42, "XYZ")
     tdrStyle.SetTitleSize(0.06, "XYZ")
     # tdrStyle.SetTitleXSize(Float_t size = 0.02) # Another way to set the size?
     # tdrStyle.SetTitleYSize(Float_t size = 0.02)
-    tdrStyle.SetTitleXOffset(0.7)
+    tdrStyle.SetTitleXOffset(0.7) # FH: Ram
     tdrStyle.SetTitleYOffset(1.25)
     # tdrStyle.SetTitleOffset(1.1, "Y") # Another way to set the Offset
 
     # For the axis labels:
+
     tdrStyle.SetLabelColor(1, "XYZ")
     tdrStyle.SetLabelFont(42, "XYZ")
-    tdrStyle.SetLabelOffset(0.003, "XYZ")
-    tdrStyle.SetLabelSize(0.035, "XYZ")
+    tdrStyle.SetLabelOffset(0.003, "XYZ") # FH: Ram
+    tdrStyle.SetLabelSize(0.035, "XYZ") # FH: Ram
 
     # For the axis:
+
     tdrStyle.SetAxisColor(1, "XYZ")
     tdrStyle.SetStripDecimals(True)
     tdrStyle.SetTickLength(0.03, "XYZ")
@@ -756,8 +758,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     # tdrStyle.SetTimeOffset(Double_t toffset)
     # tdrStyle.SetHistMinimumZero(kTRUE)
 
-    # tdrStyle.SetHatchesLineWidth(5)
-    tdrStyle.SetHatchesSpacing(0.5)
+    # tdrStyle.SetHatchesLineWidth(5) # FH: Ram
+    tdrStyle.SetHatchesSpacing(0.05)
 
     tdrStyle.cd()
 
@@ -798,7 +800,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         # legend = TLegend(0.55,0.65,0.89,0.89)
         # legend = TLegend(0.55,0.55,0.89,0.89)
         NLegend_Columns = 1
-        if(v == "evalDNN_HH"):
+        if(v == "evalDNN_WWvsAll" or v == "New_pTBasedSel_a_costheta2"):
             leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.625, 0.55, 0.865 # xmin, ymin, xmax, ymax
         else:
             leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.6, 0.875, 0.865 # xmin, ymin, xmax, ymax
@@ -1232,32 +1234,38 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                     sig_hist.Draw("samehist")
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
-                # l1 = TLine(0.961428571429,0.0,0.961428571429,14000)
-                # l2 = TLine(0.974285714286,0.0,0.974285714286,14000)
-                # l1.Draw()
-                # l2.Draw()
+                if(v == "evalDNN_WWvsAll"):
+                    l1 = TLine(0.961428571429,0.0,0.961428571429,700000)
+                    l2 = TLine(0.807142857143,0.0,0.807142857143,700000)
+                    l3 = TLine(0.974285714286,0.0,0.974285714286,700000)
+                    l1.SetLineStyle(3)
+                    l2.SetLineStyle(3)
+                    l3.SetLineStyle(3)
+                    l1.Draw()
+                    l2.Draw()
+                    l3.Draw()
 
-                # text1 = ROOT.TPaveText(0.86, 1.0, 0.90, 5.0)
-                # text2 = ROOT.TPaveText(0.961428571429, 1.0, 0.974285714286, 5.0)
-                # text3 = ROOT.TPaveText(0.98, 1.0, 0.99, 5.0)
-                # text1.AddText("cat-3")
+                text1 = ROOT.TPaveText(0.86, 1.0, 0.90, 5.0)
+                text2 = ROOT.TPaveText(0.961428571429, 1.0, 0.974285714286, 5.0)
+                text3 = ROOT.TPaveText(0.98, 1.0, 0.99, 5.0)
+                text1.AddText("cat-3")
                 # text1.Draw()
-                # text2.AddText("cat-2")
+                text2.AddText("cat-2")
                 # text2.Draw()
-                # text3.AddText("cat-1")
-                # # text3.SetTextAngle(90.0)
-                # # text3.SetTextAlign(22)
-                # # text3.SetAllWith("cat",'align',90.0)
+                text3.AddText("cat-1")
+                # text3.SetTextAngle(90.0)
+                # text3.SetTextAlign(22)
+                # text3.SetAllWith("cat",'align',90.0)
                 # text3.Draw()
 
-                # txt4 = ROOT.TText(0.99, 1.0, "CAT-1")
-                # txt4.SetTextAngle(90)
+                txt4 = ROOT.TText(0.99, 1.0, "CAT-1")
+                txt4.SetTextAngle(90)
                 # txt4.Draw()
-                # txt5 = ROOT.TText(0.972, 1.0, "CAT-2")
-                # txt5.SetTextAngle(90)
+                txt5 = ROOT.TText(0.972, 1.0, "CAT-2")
+                txt5.SetTextAngle(90)
                 # txt5.Draw()
-                # txt6 = ROOT.TText(0.88, 1.0, "CAT-3")
-                # txt6.SetTextAngle(90)
+                txt6 = ROOT.TText(0.88, 1.0, "CAT-3")
+                txt6.SetTextAngle(90)
                 # txt6.Draw()
 
 
