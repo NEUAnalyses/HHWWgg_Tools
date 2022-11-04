@@ -6,6 +6,7 @@
 #
 ###########################################################################################################################
 # import ROOT
+import math
 from ROOT import TCanvas, gROOT, gPad, TH1F, TFile, TChain, TPaveStats, gStyle, THStack, kBlue, kCyan, kRed, kGreen, TLegend, kYellow, TRatioPlot, kBlack, TLine, kPink, TLatex, kOrange, gErrorIgnoreLevel, kWarning, TGraphErrors, kGray, TGraphAsymmErrors
 import os
 from MCTools import *
@@ -720,7 +721,7 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
     # tdrStyle.SetTitleXSize(Float_t size = 0.02) # Another way to set the size?
     # tdrStyle.SetTitleYSize(Float_t size = 0.02)
     tdrStyle.SetTitleXOffset(0.7) # FH: Ram
-    tdrStyle.SetTitleYOffset(1.25)
+    tdrStyle.SetTitleYOffset(1.0)
     # tdrStyle.SetTitleOffset(1.1, "Y") # Another way to set the Offset
 
     # For the axis labels:
@@ -1082,6 +1083,8 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
             rp.SetH2DrawOpt("hist")
             # rp.SetH2DrawOpt("PE2")
             # rp.SetGraphDrawOpt("PE2")
+            rp.SetGraphDrawOpt("PE0")
+            removeLowererrors = 0
             dMax = DataHist.GetMaximum()
             bMax = stackSum.GetMaximum()
 
@@ -1120,12 +1123,43 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 xWidth = float(x2 - x1) / 2.
 
-                for p_i in range(0,Npoints_g):
+                for p_i in range(0, stackSum.GetNbinsX()):
                     # print("p_i:",p_i)
                     x_val = ratioGraph.GetPointX(p_i)
                     y_val = ratioGraph.GetPointY(p_i)
                     y_err_low = ratioGraph.GetErrorYlow(p_i)
+                    print("Chuw ratio error:",ratioGraph.GetErrorYlow(p_i))
+
                     y_err_high = ratioGraph.GetErrorYhigh(p_i)
+                    if(stackSum.GetBinContent(p_i+1)!=0):
+                        y_err_low = stackSum.GetBinErrorLow(p_i+1)/stackSum.GetBinContent(p_i+1)*y_val# MC relatively error
+                        y_err_high = stackSum.GetBinErrorUp(p_i+1)/stackSum.GetBinContent(p_i+1)*y_val
+                    else:
+                        y_err_low = 0
+                        y_err_high = 0
+                    # print("Chuw MC error:",y_err_low)
+                    # y_val=DataHist.GetBinContent(p_i+1)/stackSum.GetBinContent(p_i+1)
+                    if(DataHist.GetBinContent(p_i+1)!=0):
+                        data_err_low = DataHist.GetBinErrorLow(p_i+1)/DataHist.GetBinContent(p_i+1)*y_val # relative Data error * ratio
+                        data_err_high = DataHist.GetBinErrorUp(p_i+1)/DataHist.GetBinContent(p_i+1)*y_val
+                    else:
+                        data_err_low = 0
+                        data_err_high = 0
+                    UseRatioErr=0
+                    if(UseRatioErr):
+                        data_err_low=ratioGraph.GetErrorYlow(p_i)
+                        data_err_high=ratioGraph.GetErrorYhigh(p_i)
+                    print("Chuw Data error:",data_err_low)
+                    # print("Chuw ratio:",y_val)
+                    print("chuw Data/MC error:",y_val*math.sqrt(((data_err_low*data_err_low)/(y_val*y_val))+(y_err_low*y_err_low)/(y_val*y_val)))
+                    print("Diff:",(y_val*math.sqrt(((data_err_low*data_err_low)/(y_val*y_val))+((y_err_low*y_err_low)/(y_val*y_val)))-ratioGraph.GetErrorYlow(p_i))/ratioGraph.GetErrorYlow(p_i))
+                    print("=======")
+                    rp.GetLowerRefGraph().SetPointEXhigh(p_i,0)
+                    rp.GetLowerRefGraph().SetPointEXlow(p_i,0)
+
+                    rp.GetLowerRefGraph().SetPointEYhigh(p_i,data_err_high)
+                    rp.GetLowerRefGraph().SetPointEYlow(p_i,data_err_low)
+
 
                     # print("x_val:",x_val)
                     # print("y_val:",y_val)
@@ -1163,6 +1197,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 ratio_bars = TGraphAsymmErrors(Npoints_g, x_ratio, y_ratio, ex_ratio_low, ex_ratio_high, ey_ratio_low, ey_ratio_high)
 
+                xTitle = GetXaxisTitle(varTitle)
+                DataHist.GetXaxis().SetTitle(xTitle)
+
+                print("xTitle:",xTitle)
+
+                # logYMin = 0.005
+                logYMin = 0.0001
                 rp.GetUpperRefYaxis().SetTitle("Entries")
                 rp.GetLowerRefYaxis().SetTitle("Data / MC")
 
@@ -1171,17 +1212,26 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 ratio_bars.SetFillStyle(1001)
                 ratio_bars.SetFillColorAlpha(kGray+2, 0.5)
                 ratio_bars.Draw("sameF2")
+                LowerLegend=TLegend(0.2, 0.8, .4, .9)
+                LowerLegend.AddEntry(ratio_bars,"MC stat. unc.","F")
+                LowerLegend.Draw("same")
+                # rp.GetLowerRefXaxis().SetNdivisions(1
 
                 rp.GetLowerPad().Update()
-                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)
+                # if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(0.1,maxHeight*100.)
+                if(args_.log): rp.GetUpperRefYaxis().SetRangeUser(logYMin,maxHeight*100000.)
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text
+
+                rp.GetUpperRefXaxis().SetTitle(xTitle)
 
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
+                bkgStack.SetTitle("")
                 bkgStack.Draw("same")
                 #stackSum.Draw("same") # error option for sum of backgrounds stack
                 stackSum_clone_forError.SetLineWidth(0)
-                stackSum_clone_forError.Draw("sameE0E2")
+                # stackSum_clone_forError.Draw("sameE0E2")
+                stackSum_clone_forError.Draw("sameE2")
 
                 #stackSum.DrawCopy("hist")
                 #stackSum.SetFillColor(kBlue)
@@ -1235,9 +1285,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
                 if(v == "evalDNN_WWvsAll"):
-                    l1 = TLine(0.961428571429,0.0,0.961428571429,700000)
-                    l2 = TLine(0.807142857143,0.0,0.807142857143,700000)
-                    l3 = TLine(0.974285714286,0.0,0.974285714286,700000)
+                    l1 = TLine(0.961428571429,0.0,0.961428571429,1000000000)
+                    l2 = TLine(0.807142857143,0.0,0.807142857143,1000000000)
+                    l3 = TLine(0.974285714286,0.0,0.974285714286,1000000000)
                     l1.SetLineStyle(3)
                     l2.SetLineStyle(3)
                     l3.SetLineStyle(3)
@@ -1276,17 +1326,17 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 rp.GetLowerRefGraph().SetMaximum(ratioMax)
                 Npoints = rp.GetLowerRefGraph().GetN()
 
-                if(1):
-                    for ip in range(0,Npoints):
-                        rp.GetLowerRefGraph().SetPointEXhigh(ip,0)
-                        rp.GetLowerRefGraph().SetPointEXlow(ip,0)
+                # if(1):
+                #     for ip in range(0,Npoints):
+                #         rp.GetLowerRefGraph().SetPointEXhigh(ip,0)
+                #         rp.GetLowerRefGraph().SetPointEXlow(ip,0)
 
-                        rp.GetLowerRefGraph().SetPointEYhigh(ip,0)
-                        rp.GetLowerRefGraph().SetPointEYlow(ip,0)
+                #         rp.GetLowerRefGraph().SetPointEYhigh(ip,0)
+                #         rp.GetLowerRefGraph().SetPointEYlow(ip,0)
 
-                for ip in range(0,Npoints):
-                    rp.GetLowerRefGraph().SetPointEXhigh(ip,0)
-                    rp.GetLowerRefGraph().SetPointEXlow(ip,0)
+                # for ip in range(0,Npoints):
+                #     rp.GetLowerRefGraph().SetPointEXhigh(ip,0)
+                #     rp.GetLowerRefGraph().SetPointEXlow(ip,0)
                 if(args_.log):
                     UpperPad.SetLogy()
                     UpperPad.Update()
@@ -1409,14 +1459,16 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 outName = "%s/DataMC_%s_%s.%s"%(outputFolder,varTitle,region_,fileType)
                 if(plotLog): outName = "%s/DataMC_%s_%s_log.%s"%(outputFolder,varTitle,region_,fileType)
                 else: outName = "%s/DataMC_%s_%s_nonLog.%s"%(outputFolder,varTitle,region_,fileType)
-                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",900,1200)
+                DataMCRatio_c = TCanvas("DataMCRatio_c","DataMCRatio_c",600,800)
+                rp.SetTitle("")
+
                 rp.Draw("nogrid")
                 rp.GetLowYaxis().SetNdivisions(5)
                 DataMCRatio_c.Update()
 
                 ratioGraph = rp.GetCalculationOutputGraph()
                 ratioGraph.SetMarkerStyle(8)
-                # ratioGraph.SetMarkerSize(0.5)
+                ratioGraph.SetMarkerSize(0.5)
 
                 # rp.SetGraphDrawOpt("EP")
                 # rp.SetGraphDrawOpt("EPZ2")
@@ -1424,9 +1476,13 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                 rp.GetUpperRefYaxis().SetTitle("Entries")
                 rp.GetLowerPad().Update()
-                if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*100.)
+                # if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*100.)
+                if(plotLog): rp.GetUpperRefYaxis().SetRangeUser(upperPlotymin,maxHeight*10000.)
                 # else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*1.4) # to make room for plot text
                 else: rp.GetUpperRefYaxis().SetRangeUser(0,maxHeight*2.0) # to make room for plot text
+
+                bkgStack.SetTitle("")
+                stackSum.SetTitle("")
 
                 UpperPad = rp.GetUpperPad()
                 UpperPad.cd()
@@ -1527,4 +1583,3 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         ## For each variable loop ends here
 
     return chi2
-
