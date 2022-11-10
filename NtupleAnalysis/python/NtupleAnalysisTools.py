@@ -317,7 +317,13 @@ def GetDataHist(dPath,prefix,cut,cutName,iv,v,varTitle,VarBatch,verbose,DNNbinWi
     xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
 
     ##-- Fill histogram with data
-    Data_h_tmp = TH1F('Data_h_tmp',"",xbins,xmin,xmax)
+    # special binning for evalDNN_WWvsAll
+    edges = array('d',[0.1000,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.8071,0.85,0.90,0.9614,1.0001])
+    N_bins_special = len(edges) -1
+
+    if(varTitle == "evalDNN_WWvsAll_"):
+        Data_h_tmp = TH1F('Data_h_tmp',varTitle,N_bins_special,edges)
+    else: Data_h_tmp = TH1F('Data_h_tmp',varTitle,xbins,xmin,xmax)
     Data_h_tmp.SetTitle("%s"%(""))
     Data_h_tmp.SetMarkerStyle(8)
     print"v:",v
@@ -412,11 +418,20 @@ def GetBackgroundHists(bkgFiles_,noQCD,verbose,prefix,varTitle,region,v,Lumi,cut
         xbins, xmin, xmax = GetBins(varTitle, DNNbinWidth_)
         # exec("MC_h_tmp_%s = TH1F('MC_h_tmp_%s',varTitle,xbins,xmin,xmax)"%(i,i))
         # exec("MC_h_tmp_noweight_%s = TH1F('MC_h_tmp_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i))
-        exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+        edges = array('d',[0.1000,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.8071,0.85,0.90,0.9614,1.0001])
+        N_bins_special = len(edges) - 1
+
+        if(varTitle == "evalDNN_WWvsAll_"):
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region
+        else:
+            exec("B_h_%s = TH1F('B_h_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+
         # exec("B_h_noweight_%s = TH1F('B_h_noweight_%s',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
         ##-- no weights
-        exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
+        if(varTitle == "evalDNN_WWvsAll_"):
+            exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,N_bins_special,edges)"%(i,i)) # histogram specifically for computing B in signal region
+        else: exec("B_h_%s_noweights = TH1F('B_h_%s_noweights',varTitle,xbins,xmin,xmax)"%(i,i)) # histogram specifically for computing B in signal region
 
         # thisHist = eval("MC_h_tmp_%s"%(i))
         thisHist = eval("B_h_%s"%(i))
@@ -580,8 +595,17 @@ def GetSignalHists(signalFile_,prefix,v,region,varTitle,Lumi,verbose,cut,DNNbinW
         # Signal_Trees.Add("%s/%s%s_13TeV_HHWWggTag_4"%(sigPath,prefix,treeName)) ## - tags 3 and 4 may be here in signal but not data and background
 
         xbins, xmin, xmax = GetBins(varTitle,DNNbinWidth_)
-        exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i))
-        exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))
+
+        edges = array('d',[0.1000,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.8071,0.85,0.90,0.9614,1.0001])
+        N_bins_special = len(edges) - 1
+
+        if(varTitle == "evalDNN_WWvsAll_"):
+            exec("S_h_%s = TH1F('S_h_%s',v,N_bins_special,edges)"%(i,i))
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,N_bins_special,edges)"%(i,i))
+        else:
+            exec("S_h_%s = TH1F('S_h_%s',v,xbins,xmin,xmax)"%(i,i))
+            exec("S_h_%s_unweighted = TH1F('S_h_%s_unweighted',v,xbins,xmin,xmax)"%(i,i))
+
         thisHist = eval("S_h_%s"%(i))
         mcColor = GetMCColor(MC_Category)
         ##-- Style options for signal to distinguish from Data, Background
@@ -802,12 +826,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
         # legend = TLegend(0.55,0.55,0.89,0.89)
         NLegend_Columns = 1
         if(v == "evalDNN_WWvsAll" or v == "New_pTBasedSel_a_costheta2"):
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.625, 0.55, 0.865 # xmin, ymin, xmax, ymax
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.545, 0.55, 0.865 # xmin, ymin, xmax, ymax
         else:
-            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.45, 0.6, 0.875, 0.865 # xmin, ymin, xmax, ymax
+            leg_xmin, leg_ymin, leg_xmax, leg_ymax = 0.25, 0.55, 0.875, 0.865 # xmin, ymin, xmax, ymax
         legend = TLegend(leg_xmin, leg_ymin, leg_xmax, leg_ymax)
         legend.SetNColumns(NLegend_Columns)
-        legend.SetTextSize(0.025)
+        legend.SetTextSize(0.038)
         legend.SetBorderSize(0)
         legend.SetFillStyle(0)
         if(args_.VarBatch == "Loose"): varTitle = varNames[iv]
@@ -1168,12 +1192,12 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
 
                     x_ratio_.append(x_val)
 
-                    if(varTitle != "evalDNN_HH"):
+                    if(varTitle != "evalDNN_WWvsAll_"):
                         ex_ratio_low_.append(xWidth)
                         ex_ratio_high_.append(xWidth)
                     else:
 
-                        edges = array('d',[0.1000,0.15, 0.2,0.25,0.3,0.35,0.4,0.45,0.5,0.55,0.630000,0.7,0.75,0.84000,0.89000,1.0001])
+                        edges = array('d',[0.1000,0.15,0.20,0.25,0.30,0.35,0.40,0.45,0.50,0.55,0.60,0.65,0.70,0.75,0.8071,0.85,0.90,0.9614,1.0001])
 
                         edgeUpper = edges[p_i+1]
                         edgeLower = edges[p_i]
@@ -1285,9 +1309,9 @@ def PlotDataMC(dataFile_,bkgFiles_,signalFile_,ol_,args_,region_,cut,cutName,DNN
                 legend.AddEntry(DataHist,"Data","P")
                 legend.Draw("same")
                 if(v == "evalDNN_WWvsAll"):
-                    l1 = TLine(0.961428571429,0.0,0.961428571429,1000000000)
-                    l2 = TLine(0.807142857143,0.0,0.807142857143,1000000000)
-                    l3 = TLine(0.974285714286,0.0,0.974285714286,1000000000)
+                    l1 = TLine(0.9614,0.0,0.9614,1000000000)
+                    l2 = TLine(0.8071,0.0,0.8071,1000000000)
+                    l3 = TLine(0.9743,0.0,0.9743,1000000000)
                     l1.SetLineStyle(3)
                     l2.SetLineStyle(3)
                     l3.SetLineStyle(3)
